@@ -36,7 +36,7 @@ FROM
                 ,evt_index
         FROM {{ ref('sushiswap_ethereum_trades') }}
         /*
-        UNION
+        UNION DISTINCT
         <add future protocols versions here>
         */
 )

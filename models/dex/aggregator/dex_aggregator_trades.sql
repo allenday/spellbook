@@ -36,7 +36,7 @@ FROM
             unique_trade_id
         FROM {{ ref('cow_protocol_trades') }}
         /*
-        UNION
+        UNION DISTINCT
         <add future protocols here>
         */
     )

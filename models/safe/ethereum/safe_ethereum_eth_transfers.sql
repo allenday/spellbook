@@ -35,7 +35,7 @@ where et.block_time > '2018-11-24' -- for initial query optimisation
 where et.block_time > date_trunc("day", now() - interval '10 days')
 {% endif %}
         
-union all
+UNION ALL
     
 select 
     s.address, 

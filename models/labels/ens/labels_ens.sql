@@ -36,7 +36,7 @@ FROM (
 ) ens
 
 -- For now, we want to limit the amount of ENS labels to 1
---UNION
+--UNION DISTINCT
 --SELECT array('ethereum') as blockchain,
 --       address,
 --       name,
@@ -46,7 +46,7 @@ FROM (
 --       date('2022-10-06') as created_at,
 --       now() as modified_at
 --FROM {{ ref('ens_resolver_latest') }}
---UNION
+--UNION DISTINCT
 --SELECT array('ethereum') as blockchain,
 --       address,
 --       name,

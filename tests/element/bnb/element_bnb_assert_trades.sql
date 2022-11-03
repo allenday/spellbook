@@ -8,7 +8,7 @@ WITH raw_events AS (
   FROM {{ source('element_ex_bnb','ERC721OrdersFeature_evt_ERC721SellOrderFilled') }}
   WHERE evt_block_time >= '2022-04-15'
   AND evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT evt_block_time AS raw_block_time
   , evt_tx_hash AS raw_tx_hash
   , erc721Token AS raw_nft_contract_address
@@ -17,7 +17,7 @@ WITH raw_events AS (
   FROM {{ source('element_ex_bnb','ERC721OrdersFeature_evt_ERC721BuyOrderFilled') }}
   WHERE evt_block_time >= '2022-04-15'
   AND evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT evt_block_time AS raw_block_time
   , evt_tx_hash AS raw_tx_hash
   , erc1155Token AS raw_nft_contract_address
@@ -26,7 +26,7 @@ WITH raw_events AS (
   FROM {{ source('element_ex_bnb','ERC1155OrdersFeature_evt_ERC1155SellOrderFilled') }}
   WHERE evt_block_time >= '2022-04-15'
   AND evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT evt_block_time AS raw_block_time
   , evt_tx_hash AS raw_tx_hash
   , erc1155Token AS raw_nft_contract_address

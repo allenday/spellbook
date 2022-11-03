@@ -7,7 +7,7 @@ with
         -- uni v2 pools
         select pair
         from uniswap_v2_ethereum.Factory_evt_PairCreated
-        union
+        UNION DISTINCT
         
         -- uni v3 pools
         select pool as pair

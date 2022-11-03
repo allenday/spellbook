@@ -12,7 +12,7 @@ SELECT
   FROM (
     SELECT * 
     FROM {{source('ethereumnameservice_ethereum', 'ENSRegistry_evt_NewOwner')}}
-    UNION
+    UNION DISTINCT
     SELECT * FROM {{source('ethereumnameservice_ethereum', 'ENSRegistryWithFallback_evt_NewOwner')}}
   ) r
 GROUP BY node, label ;

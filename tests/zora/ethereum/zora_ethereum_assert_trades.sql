@@ -8,7 +8,7 @@ WITH raw_events AS (
   FROM {{ source('zora_v3_ethereum','OffersV1_evt_ExchangeExecuted') }}
   WHERE evt_block_time >= '2021-01-30'
   AND evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT evt_block_time AS raw_block_time
   , evt_tx_hash AS raw_tx_hash
   , get_json_object(a, '$.tokenContract') AS raw_nft_contract_address
@@ -17,7 +17,7 @@ WITH raw_events AS (
   FROM {{ source('zora_v3_ethereum','AsksV1_0_evt_ExchangeExecuted') }}
   WHERE evt_block_time >= '2021-01-30'
   AND evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT evt_block_time AS raw_block_time
   , evt_tx_hash AS raw_tx_hash
   , get_json_object(a, '$.tokenContract') AS raw_nft_contract_address
@@ -26,7 +26,7 @@ WITH raw_events AS (
   FROM {{ source('zora_v3_ethereum','AsksV1_1_evt_ExchangeExecuted') }}
   WHERE evt_block_time >= '2021-01-30'
   AND evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT evt_block_time AS raw_block_time
   , evt_tx_hash AS raw_tx_hash
   , tokenContract AS raw_nft_contract_address
@@ -35,7 +35,7 @@ WITH raw_events AS (
   FROM {{ source('zora_v3_ethereum','ReserveAuctionFindersEth_evt_AuctionEnded') }}
   WHERE evt_block_time >= '2021-01-30'
   AND evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT evt_block_time AS raw_block_time
   , evt_tx_hash AS raw_tx_hash
   , tokenContract AS raw_nft_contract_address
@@ -44,7 +44,7 @@ WITH raw_events AS (
   FROM {{ source('zora_v3_ethereum','AsksPrivateEth_evt_AskFilled') }}
   WHERE evt_block_time >= '2021-01-30'
   AND evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT evt_block_time AS raw_block_time
   , evt_tx_hash AS raw_tx_hash
   , tokenContract AS raw_nft_contract_address
@@ -53,7 +53,7 @@ WITH raw_events AS (
   FROM {{ source('zora_v3_ethereum','AsksCoreEth_evt_AskFilled') }}
   WHERE evt_block_time >= '2021-01-30'
   AND evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT evt_block_time AS raw_block_time
   , evt_tx_hash AS raw_tx_hash
   , tokenContract AS raw_nft_contract_address
@@ -62,7 +62,7 @@ WITH raw_events AS (
   FROM {{ source('zora_v3_ethereum','ReserveAuctionCoreEth_evt_AuctionEnded') }}
   WHERE evt_block_time >= '2021-01-30'
   AND evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT evt_block_time AS raw_block_time
   , evt_tx_hash AS raw_tx_hash
   , tokenContract AS raw_nft_contract_address
@@ -71,7 +71,7 @@ WITH raw_events AS (
   FROM {{ source('zora_v3_ethereum','ReserveAuctionCoreErc20_evt_AuctionEnded') }}
   WHERE evt_block_time >= '2021-01-30'
   AND evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT evt_block_time AS raw_block_time
   , evt_tx_hash AS raw_tx_hash
   , tokenContract AS raw_nft_contract_address
@@ -80,7 +80,7 @@ WITH raw_events AS (
   FROM {{ source('zora_v3_ethereum','ReserveAuctionFindersErc20_evt_AuctionEnded') }}
   WHERE evt_block_time >= '2021-01-30'
   AND evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT evt_block_time AS raw_block_time
   , evt_tx_hash AS raw_tx_hash
   , tokenContract AS raw_nft_contract_address
@@ -89,7 +89,7 @@ WITH raw_events AS (
   FROM {{ source('zora_v3_ethereum','ReserveAuctionListingEth_evt_AuctionEnded') }}
   WHERE evt_block_time >= '2021-01-30'
   AND evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT evt_block_time AS raw_block_time
   , evt_tx_hash AS raw_tx_hash
   , tokenContract AS raw_nft_contract_address
@@ -98,7 +98,7 @@ WITH raw_events AS (
   FROM {{ source('zora_v3_ethereum','ReserveAuctionListingErc20_evt_AuctionEnded') }}
   WHERE evt_block_time >= '2021-01-30'
   AND evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT evt_block_time AS raw_block_time
   , evt_tx_hash AS raw_tx_hash
   , tokenContract AS raw_nft_contract_address
@@ -107,7 +107,7 @@ WITH raw_events AS (
   FROM {{ source('zora_ethereum','AuctionHouse_evt_AuctionEnded') }}
   WHERE evt_block_time >= '2021-01-30'
   AND evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT evt_block_time AS raw_block_time
   , evt_tx_hash AS raw_tx_hash
   , '0xabefbc9fd2f806065b4f3c237d4b59d9a97bcac7' AS raw_nft_contract_address

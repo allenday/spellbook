@@ -51,7 +51,7 @@ where et.success = true
     and et.block_time > date_trunc("day", now() - interval '1 week')
     {% endif %}
         
-union all
+UNION ALL
     
 select contract_address as address, 
     '1.3.0' as creation_version, 

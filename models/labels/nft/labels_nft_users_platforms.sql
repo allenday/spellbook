@@ -6,7 +6,7 @@ SELECT
     project,
     buyer AS address
 FROM {{ ref('nft_trades') }}
-        UNION
+        UNION DISTINCT
 SELECT
     blockchain,
     project,

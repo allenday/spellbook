@@ -6,7 +6,7 @@
 )}}
 
 SELECT * FROM {{ ref('labels_nft_traders_transactions') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_nft_traders_volume_usd') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_nft_users_platforms') }}

@@ -72,7 +72,7 @@ mapped_wallets as (
         FROM 
         get_daohaus_wallets
 
-        UNION -- molochs are wallet addresses as well so using a union here since there'll be duplicates as i'm unioning the moloch addresses & minion addresses 
+        UNION DISTINCT -- molochs are wallet addresses as well so using a union here since there'll be duplicates as i'm unioning the moloch addresses & minion addresses 
 
         SELECT 
             'ethereum' as blockchain, 

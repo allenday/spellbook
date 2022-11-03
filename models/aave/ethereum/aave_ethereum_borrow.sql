@@ -26,7 +26,7 @@ FROM
             evt_block_time,
             evt_block_number  
       FROM {{ ref('aave_v1_ethereum_borrow') }}
-      UNION
+      UNION DISTINCT
       SELECT
             version,
             transaction_type,

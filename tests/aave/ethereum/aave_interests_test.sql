@@ -16,7 +16,7 @@ with unit_test1
 select *
 from   (select *
        from   unit_test1
-       union
+       UNION DISTINCT
        select *
        from   unit_test2)
 where  test = false

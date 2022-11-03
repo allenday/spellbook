@@ -35,7 +35,7 @@ glp_balances AS -- This CTE returns the accuals of WETH tokens in the Fee GLP co
                 date_trunc('minute', evt_block_time) AS minute,
                 mintAmount/1e18 AS mint_burn_value
             FROM {{source('gmx_arbitrum', 'GlpManager_evt_AddLiquidity')}}
-            UNION
+            UNION DISTINCT
             SELECT
                 date_trunc('minute', evt_block_time) AS minute,
                 (-1 * glpAmount)/1e18 AS mint_burn_value

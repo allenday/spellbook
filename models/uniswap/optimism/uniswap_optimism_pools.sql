@@ -761,7 +761,7 @@ select
   ,col.fee
 from ovm1_legacy_pools_raw
 
-union
+UNION DISTINCT
 
 select
   * 

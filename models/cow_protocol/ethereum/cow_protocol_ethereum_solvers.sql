@@ -12,7 +12,7 @@ WITH
 solver_activation_events as (
     select solver, evt_block_number, evt_index, True as activated
     from {{ source('gnosis_protocol_v2_ethereum', 'GPv2AllowListAuthentication_evt_SolverAdded') }}
-    union
+    UNION DISTINCT
     select solver, evt_block_number, evt_index, False as activated
     from {{ source('gnosis_protocol_v2_ethereum', 'GPv2AllowListAuthentication_evt_SolverRemoved') }}
 ),
@@ -34,7 +34,13 @@ registered_solvers as (
 -- Manually inserting environment and name for each "known" solver
 known_solver_metadata (address, environment, name) as (
     SELECT *
-    FROM (VALUES ('0xf2d21ad3c88170d4ae52bbbeba80cb6078d276f4', 'prod', 'MIP'),
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<address STRING, environment STRING, name STRING>
+{% else %}
+    FROM (VALUES 
+{% endif %}
+                 ('0xf2d21ad3c88170d4ae52bbbeba80cb6078d276f4', 'prod', 'MIP'),
                  ('0x15f4c337122ec23859ec73bec00ab38445e45304', 'prod', 'Gnosis_ParaSwap'),
                  ('0xde1c59bc25d806ad9ddcbe246c4b5e5505645718', 'prod', 'Gnosis_1inch'),
                  ('0x340185114f9d2617dc4c16088d0375d09fee9186', 'prod', 'Naive'),
@@ -93,7 +99,11 @@ known_solver_metadata (address, environment, name) as (
                  ('0xa03be496e67ec29bc62f01a428683d7f9c204930', 'service', 'Withdraw'),
                  ('0x2caef7f0ee82fb0abf1ab0dcd3a093803002e705', 'test', 'Test Solver 1'),
                  ('0x56d4ed5e49539ebb1366c7d6b8f2530f1e4fe753', 'test', 'Test Solver 2')
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
          ) as _
+{% endif %}
 )
 -- Combining the metadata with current activation status for final table
 select solver as address,

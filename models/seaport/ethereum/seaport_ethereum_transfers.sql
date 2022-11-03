@@ -58,7 +58,7 @@ with p1_call as (
                {% endif %}
             ) e
           inner join p1_call c on c.tx_hash = e.evt_tx_hash
-                      union all
+                      UNION ALL
     select c.main_type
           ,c.tx_hash
           ,c.block_time
@@ -302,7 +302,7 @@ with p1_call as (
       ) c
        where call_success
 
-                                                  union all
+                                                  UNION ALL
       select 'available_orders' as main_type
           ,'bulk' as sub_type
           ,idx as sub_idx
@@ -521,7 +521,7 @@ with p1_call as (
       where call_block_time >= (select max(block_time) from {{ this }})
       {% endif %}
      group by 1,2,3,4
-     union all
+     UNION ALL
     select 'advanced_order' as main_type
           ,call_tx_hash as tx_hash
           ,call_block_time as block_time
@@ -556,7 +556,7 @@ with p1_call as (
         {% endif %}
         ) e
         inner join p3_call c on c.tx_hash = e.evt_tx_hash
-        union all
+        UNION ALL
         select c.main_type
             ,c.tx_hash
             ,c.block_time
@@ -795,7 +795,7 @@ with p1_call as (
      ) c
     where call_success
 
-    union all
+    UNION ALL
     select 'match_advanced_orders' as main_type
           ,'match_advanced_orders' as sub_type
           ,idx as sub_idx
@@ -1011,12 +1011,12 @@ with p1_call as (
             )
 
 select * from p1_seaport_transfers
-    union all
+    UNION ALL
 select *
       from p2_seaport_transfers
-    union all
+    UNION ALL
 select *
       from p3_seaport_transfers
-    union all
+    UNION ALL
 select *
       from p4_seaport_transfers

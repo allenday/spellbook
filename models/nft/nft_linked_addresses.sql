@@ -21,7 +21,7 @@ with nft_trade_address as (
     {% if is_incremental() %}
     and block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    union all
+    UNION ALL
 
     select distinct blockchain, seller as address_a, buyer as address_b
     from {{ ref('nft_trades') }}
@@ -49,7 +49,7 @@ linked_address_sorted as (
         (case when address_a > address_b then address_b else address_a end) as master_address,
         address_a as alternative_address
     from linked_address_nft_trade
-    union
+    UNION DISTINCT
     select blockchain,
         (case when address_a > address_b then address_b else address_a end) as master_address,
         address_b as alternative_address

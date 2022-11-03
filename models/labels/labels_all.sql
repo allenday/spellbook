@@ -10,40 +10,40 @@
 
 -- Static Labels
 SELECT * FROM {{ ref('labels_cex') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_funds') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_bridges') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_ofac_sanctionned_ethereum') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_multisig_ethereum') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_hackers_ethereum') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_mev_ethereum') }}
-UNION
+UNION DISTINCT
 SELECT blockchain, address, name, category, contributor, source, created_at, updated_at FROM {{ ref('labels_aztec_v2_contracts_ethereum') }}
-UNION
+UNION DISTINCT
 -- Query Labels
 SELECT * FROM {{ ref('labels_nft') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_safe_ethereum') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_tornado_cash') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_contracts') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_miners') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_airdrop_1_receivers_optimism') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_arbitrage_traders')}}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_flashbots_ethereum') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_ens') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_validators') }}
-UNION
+UNION DISTINCT
 SELECT * FROM {{ ref('labels_sandwich_attackers') }}

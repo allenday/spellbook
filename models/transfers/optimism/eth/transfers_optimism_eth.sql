@@ -38,7 +38,7 @@ with eth_transfers as (
         and t.block_time >= date_trunc('day', now() - interval '1 week')
         {% endif %}
 
-    union all 
+    UNION ALL 
     --ETH Transfers from deposits and withdrawals are ERC20 transfers of the 'deadeadead' ETH token. These do not appear in traces.
 
     select 
