@@ -12,7 +12,7 @@ symbol,
 standard, 
 category 
 FROM  {{ ref('tokens_avalanche_c_nft') }}
-            UNION
+            UNION DISTINCT
 SELECT
 'ethereum' as blockchain, 
 contract_address, 
@@ -21,7 +21,7 @@ symbol,
 standard, 
 category 
 FROM  {{ ref('tokens_ethereum_nft') }}
-            UNION
+            UNION DISTINCT
 SELECT
 'gnosis' as blockchain, 
 contract_address, 
@@ -30,7 +30,7 @@ symbol,
 standard, 
 CAST(NULL as STRING) as category 
 FROM  {{ ref('tokens_gnosis_nft') }}
-            UNION
+            UNION DISTINCT
 SELECT
 'optimism' as blockchain, 
 contract_address, 
@@ -39,7 +39,7 @@ CAST(NULL as STRING) as symbol,
 CAST(NULL as STRING) as standard, 
 CAST(NULL as STRING) as category 
 FROM  {{ ref('tokens_optimism_nft') }}
-            UNION
+            UNION DISTINCT
 SELECT
 'optimism' as blockchain, 
 contract_address, 
@@ -48,7 +48,7 @@ symbol,
 standard, 
 category 
 FROM  {{ ref('tokens_optimism_nft_bridged_mapping') }}
-            UNION
+            UNION DISTINCT
 SELECT
 'bnb' as blockchain, 
 contract_address, 

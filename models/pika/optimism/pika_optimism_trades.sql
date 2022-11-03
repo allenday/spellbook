@@ -31,7 +31,7 @@ FROM
                 ,tx_to
                 ,evt_index
         FROM {{ ref('pika_v1_optimism_trades') }}
-        UNION
+        UNION DISTINCT
         SELECT
                 blockchain
 		,block_date
@@ -53,7 +53,7 @@ FROM
                 ,tx_to
                 ,evt_index
         FROM {{ ref('pika_v2_optimism_trades') }}
-        UNION
+        UNION DISTINCT
         SELECT
                 blockchain
 		,block_date

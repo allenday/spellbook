@@ -32,7 +32,7 @@ WITH work_evt AS (
                     'keep3r_network_ethereum',
                     'Keep3r_evt_KeeperWork'
                 ) }}
-            UNION
+            UNION DISTINCT
             SELECT
                 evt_block_time,
                 evt_tx_hash,
@@ -81,7 +81,7 @@ reward_evt AS (
                     'keep3r_network_ethereum',
                     'Keep3r_evt_LiquidityCreditsReward'
                 ) }}
-            UNION
+            UNION DISTINCT
             SELECT
                 _rewardedAt,
                 evt_tx_hash,
@@ -110,7 +110,7 @@ SELECT
     NULL AS period_credits
 FROM
     work_evt
-UNION
+UNION DISTINCT
 SELECT
     `timestamp`,
     tx_hash,
@@ -124,7 +124,7 @@ SELECT
     period_credits
 FROM
     reward_evt
-UNION
+UNION DISTINCT
 SELECT
     `timestamp`,
     tx_hash,

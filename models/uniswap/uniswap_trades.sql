@@ -35,7 +35,7 @@ FROM
                 ,trace_address
                 ,evt_index
         FROM {{ ref('uniswap_ethereum_trades') }}
-        UNION
+        UNION DISTINCT
         SELECT
                 blockchain
                 ,project
@@ -61,7 +61,7 @@ FROM
                 ,trace_address
                 ,evt_index
         FROM {{ ref('uniswap_optimism_trades') }}
-        UNION
+        UNION DISTINCT
         SELECT
                 blockchain
                 ,project
@@ -88,7 +88,7 @@ FROM
                 ,evt_index
         FROM {{ ref('uniswap_arbitrum_trades') }}
         /*
-        UNION
+        UNION DISTINCT
         <add future blockchains here>
         */
 )

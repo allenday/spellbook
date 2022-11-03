@@ -56,7 +56,7 @@ with base_level as (
       and ct.block_time >= date_trunc('day', now() - interval '1 week')
 
     -- to get existing history of contract mapping
-    union all 
+    UNION ALL 
 
     select 
       creator_address
@@ -79,7 +79,7 @@ with base_level as (
     on bl.contract_address = t.contract_address
   group by 1, 2
 
-  union all 
+  UNION ALL 
 
   select 
     bl.contract_address
@@ -153,7 +153,7 @@ with base_level as (
   left join {{ source('optimism', 'contracts') }} as oc 
     on cc.contract_address = oc.address 
 
-  union all
+  UNION ALL
   -- ovm 1.0 contracts
 
   select 
@@ -182,7 +182,7 @@ with base_level as (
     {% endif %}
     group by 1, 2, 3, 4, 5, 6, 7, 8, 9
 
-  union all 
+  UNION ALL 
   --synthetix genesis contracts
 
   select 

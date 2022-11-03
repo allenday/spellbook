@@ -9,7 +9,7 @@ WITH raw_events AS (
   LEFT JOIN {{ source('foundation_ethereum','market_evt_ReserveAuctionCreated') }} c ON c.auctionId=f.auctionId AND c.evt_block_time<=f.evt_block_time
   WHERE f.evt_block_time >= '2022-04-15'
   AND f.evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT f.evt_block_time AS raw_block_time
   , f.evt_tx_hash AS raw_tx_hash
   , f.nftContract AS raw_nft_contract_address
@@ -18,7 +18,7 @@ WITH raw_events AS (
     FROM {{ source('foundation_ethereum','market_evt_BuyPriceAccepted') }} f
   WHERE f.evt_block_time >= '2022-04-15'
   AND f.evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT f.evt_block_time AS raw_block_time
   , f.evt_tx_hash AS raw_tx_hash
   , f.nftContract AS raw_nft_contract_address
@@ -27,7 +27,7 @@ WITH raw_events AS (
     FROM {{ source('foundation_ethereum','market_evt_OfferAccepted') }} f
   WHERE f.evt_block_time >= '2022-04-15'
   AND f.evt_block_time < NOW() - interval '1 day' -- allow some head desync
-  UNION
+  UNION DISTINCT
   SELECT f.evt_block_time AS raw_block_time
   , f.evt_tx_hash AS raw_tx_hash
   , f.nftContract AS raw_nft_contract_address

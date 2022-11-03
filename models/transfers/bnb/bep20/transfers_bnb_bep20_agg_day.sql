@@ -73,7 +73,7 @@ with
             amount_raw
         from sent_transfers
 
-        union
+        UNION DISTINCT
 
         select
             wallet_address,
@@ -82,7 +82,7 @@ with
             amount_raw
         from received_transfers
 
-        union
+        UNION DISTINCT
 
         select
             wallet_address,
@@ -91,7 +91,7 @@ with
             amount_raw
         from deposited_wbnb
 
-        union
+        UNION DISTINCT
 
         select
             wallet_address,

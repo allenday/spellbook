@@ -14,6 +14,6 @@ WITH unit_test1
 SELECT *
 FROM   (SELECT *
        FROM   unit_test1
-       UNION
+       UNION DISTINCT
        SELECT *
        FROM   unit_test2)

@@ -16,7 +16,7 @@ FROM (
         expires,
         evt_block_time
     FROM {{source('ethereumnameservice_ethereum', 'BaseRegistrarImplementation_evt_NameRegistered')}}
-    UNION
+    UNION DISTINCT
     SELECT
         conv((id),10,16) AS label,
         expires,

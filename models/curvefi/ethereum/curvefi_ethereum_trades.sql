@@ -83,7 +83,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     -- Curvefi TokenExchangeUnderlying
     SELECT
@@ -115,7 +115,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -142,7 +142,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -169,7 +169,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -196,7 +196,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -223,7 +223,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -250,7 +250,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -277,7 +277,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -304,7 +304,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -333,7 +333,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -362,7 +362,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -393,7 +393,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -424,7 +424,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -455,7 +455,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -486,7 +486,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -517,7 +517,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -548,7 +548,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -575,7 +575,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -604,7 +604,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -633,7 +633,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -662,7 +662,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -689,7 +689,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,
@@ -718,7 +718,7 @@ WITH dexs AS
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION DISTINCT
 
     SELECT
         evt_block_time AS block_time,

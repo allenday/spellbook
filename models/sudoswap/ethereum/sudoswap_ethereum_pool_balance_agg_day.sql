@@ -70,7 +70,7 @@ WITH
         GROUP BY
           1,2
     ) foo
-    union all
+    UNION ALL
     select * from (
         SELECT
           date_trunc('day',tr.block_time) AS day

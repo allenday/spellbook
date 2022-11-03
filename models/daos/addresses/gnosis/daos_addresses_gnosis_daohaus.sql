@@ -74,7 +74,7 @@ mapped_wallets as (
         FROM 
         get_daohaus_wallets
 
-        UNION 
+        UNION DISTINCT
 
         SELECT 
             'gnosis' as blockchain, 

@@ -40,7 +40,7 @@ FROM
 	WHERE block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
 	{% endif %}
 
-	UNION
+	UNION DISTINCT
 
 	SELECT
 		blockchain
@@ -67,7 +67,7 @@ FROM
 	WHERE block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
 	{% endif %}
 
-	UNION
+	UNION DISTINCT
 
 	SELECT
 		blockchain

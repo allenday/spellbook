@@ -32,7 +32,7 @@ FROM
                 'keep3r_network_ethereum',
                 'Keep3r_evt_JobMigrationSuccessful'
             ) }}
-        UNION
+        UNION DISTINCT
         SELECT
             evt_block_time,
             evt_tx_hash,

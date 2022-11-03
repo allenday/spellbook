@@ -11,10 +11,10 @@ SELECT *
 FROM (
     SELECT *
     FROM {{ ref('clipper_v1_ethereum_trades') }}
-    UNION
+    UNION DISTINCT
     SELECT *
     FROM {{ ref('clipper_v2_ethereum_trades') }}
-    UNION
+    UNION DISTINCT
     SELECT *
     FROM {{ ref('clipper_v3_ethereum_trades') }}
 )

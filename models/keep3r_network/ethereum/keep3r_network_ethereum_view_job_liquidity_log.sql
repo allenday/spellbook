@@ -29,7 +29,7 @@ WITH job_liquidities AS (
                     'keep3r_network_ethereum',
                     'Keep3r_evt_LiquidityAddition'
                 ) }}
-            UNION
+            UNION DISTINCT
             SELECT
                 evt_block_time,
                 evt_tx_hash,
@@ -68,7 +68,7 @@ WITH job_liquidities AS (
                     'keep3r_network_ethereum',
                     'Keep3r_evt_LiquidityWithdrawal'
                 ) }}
-            UNION
+            UNION DISTINCT
             SELECT
                 evt_block_time,
                 evt_tx_hash,
@@ -96,7 +96,7 @@ df AS (
         amount
     FROM
         job_liquidities
-    UNION
+    UNION DISTINCT
     SELECT
         migs.event,
         migs.evt_index,

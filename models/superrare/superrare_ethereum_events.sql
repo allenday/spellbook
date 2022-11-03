@@ -27,7 +27,7 @@ with all_superrare_sales as (
     where evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    union all 
+    UNION ALL 
     
     select evt_block_time
             , contract_address
@@ -42,7 +42,7 @@ with all_superrare_sales as (
     where evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    union all 
+    UNION ALL 
     
     select evt_block_time
             , `_originContract` as contract_address
@@ -57,7 +57,7 @@ with all_superrare_sales as (
     where evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}    
 
-    union all 
+    UNION ALL 
     
     select evt_block_time
             , contract_address
@@ -72,7 +72,7 @@ with all_superrare_sales as (
     where evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    union all 
+    UNION ALL 
     
     select evt_block_time
             , `_originContract`
@@ -87,7 +87,7 @@ with all_superrare_sales as (
     where evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    union all 
+    UNION ALL 
     
     select evt_block_time
             , `_contractAddress`
@@ -102,7 +102,7 @@ with all_superrare_sales as (
     where evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    union all 
+    UNION ALL 
     
     select evt_block_time
             , `_originContract`
@@ -117,7 +117,7 @@ with all_superrare_sales as (
     where evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 
-    union all 
+    UNION ALL 
     
     select  block_time
             , concat('0x',substring(topic2 from 27 for 40)) as contract_address 
@@ -134,7 +134,7 @@ with all_superrare_sales as (
         and block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
 
-    union all 
+    UNION ALL 
     
     select block_time
             , concat('0x',substring(topic2 from 27 for 40)) as contract_address 
