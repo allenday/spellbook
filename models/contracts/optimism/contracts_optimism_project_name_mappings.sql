@@ -12,8 +12,14 @@
 select 
   dune_name
   ,mapped_name
-from (
-    values
+
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<dune_name STRING, mapped_name STRING>
+{% else %}
+    FROM (VALUES
+{% endif %}
+
     ('lyra_v1',	'Lyra')
     ,('Lyra V1', 'Lyra')
     ,('aave_v3', 'Aave')
@@ -59,4 +65,9 @@ from (
     ,('quixotic', 'Quix')
     ,('project galaxy', 'Galxe')
     ,('project_galaxy', 'Galxe')
+
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
     ) as temp_table (dune_name, mapped_name)
+{% endif %}
