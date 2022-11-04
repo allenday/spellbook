@@ -32,7 +32,7 @@ transactions as (
             'tx_in' as tx_type, 
             evt_index as tx_index,
             from as address_interacted_with,
-            array('') as trace_address
+            ARRAY('') as trace_address
         FROM 
         {{ source('erc20_gnosis', 'evt_transfer') }}
         {% if not is_incremental() %}
@@ -54,7 +54,7 @@ transactions as (
             'tx_out' as tx_type, 
             evt_index as tx_index,
             to as address_interacted_with,
-            array('') as trace_address
+            ARRAY('') as trace_address
         FROM 
         {{ source('erc20_gnosis', 'evt_transfer') }}
         {% if not is_incremental() %}

@@ -1,7 +1,7 @@
 {{config(alias='validators_ethereum')}}
 
 SELECT distinct
-    array('ethereum') as blockchain,
+    ARRAY('ethereum') as blockchain,
     from AS address,
     'Ethereum Validator' as name,
     'validators' AS category,

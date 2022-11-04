@@ -4,7 +4,7 @@
                                     "labels",
                                     \'["hildobby"]\') }}')}}
 
-SELECT DISTINCT array('ethereum') AS blockchain
+SELECT DISTINCT ARRAY('ethereum') AS blockchain
 , account_address AS address
 , 'Flashbots User' AS name
 , 'flashbots' AS category

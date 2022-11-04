@@ -27,7 +27,7 @@ with
         and buy.tx_to != '0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45' -- uniswap v3 router
   )
 select
-  array("ethereum") as blockchain,
+  ARRAY("ethereum") as blockchain,
   address,
   "Sandwich Attacker" AS name,
   "sandwich_attackers" AS category,

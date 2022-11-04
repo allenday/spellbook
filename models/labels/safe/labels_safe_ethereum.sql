@@ -1,7 +1,7 @@
 {{config(alias='safe_ethereum')}}
 
 SELECT
-    array('ethereum') as blockchain,
+    ARRAY('ethereum') as blockchain,
     address,
     'Safe'  || ' version ' || creation_version AS name,
     'safe' AS category,

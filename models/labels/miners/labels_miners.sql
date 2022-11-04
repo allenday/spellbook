@@ -5,7 +5,7 @@
                                     \'["soispoke"]\') }}')
 }}
 
-SELECT DISTINCT array('ethereum') as blockchain,
+SELECT DISTINCT ARRAY('ethereum') as blockchain,
        miner, 
        'Ethereum Miner' as name,
        'contracts' as category,
@@ -16,7 +16,7 @@ SELECT DISTINCT array('ethereum') as blockchain,
 FROM {{ source('ethereum','blocks') }} 
 {% if not var('disable_gnosis')  %}
 UNION DISTINCT
-SELECT DISTINCT array('gnosis') as blockchain,
+SELECT DISTINCT ARRAY('gnosis') as blockchain,
        miner, 
        'Gnosis Miner' as name,
        'contracts' as category,
@@ -28,7 +28,7 @@ FROM {{ source('gnosis','blocks') }}
 {% endif %}
 {% if not var('disable_avalanche_c')  %}
 UNION DISTINCT 
-SELECT DISTINCT array('avalanche_c') as blockchain,
+SELECT DISTINCT ARRAY('avalanche_c') as blockchain,
        miner, 
        'Avalanche Miner' as name,
        'contracts' as category,
@@ -40,7 +40,7 @@ FROM {{ source('avalanche_c','blocks') }}
 {% endif %}
 {% if not var('disable_arbitrum')  %}
 UNION DISTINCT 
-SELECT DISTINCT array('arbitrum') as blockchain,
+SELECT DISTINCT ARRAY('arbitrum') as blockchain,
        miner, 
        'Arbitrum Miner' as name,
        'contracts' as category,
@@ -52,7 +52,7 @@ FROM {{ source('arbitrum','blocks') }}
 {% endif %}
 {% if not var('disable_bnb')  %}
 UNION DISTINCT
-SELECT DISTINCT array('bnb') as blockchain,
+SELECT DISTINCT ARRAY('bnb') as blockchain,
        miner, 
        'BNB Chain Miner' as name,
        'contracts' as category,
@@ -64,7 +64,7 @@ FROM {{ source('bnb','blocks') }}
 {% endif %}
 {% if not var('disable_optimism')  %}
 UNION DISTINCT
-SELECT DISTINCT array('optimism') as blockchain,
+SELECT DISTINCT ARRAY('optimism') as blockchain,
        miner, 
        'Optimism Miner' as name,
        'contracts' as category,

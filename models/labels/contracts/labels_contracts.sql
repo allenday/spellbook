@@ -5,7 +5,7 @@
                                     \'["soispoke"]\') }}')
 }}
 
-SELECT array('ethereum') as blockchain,
+SELECT ARRAY('ethereum') as blockchain,
        address, 
        concat(upper(substring(namespace,1,1)),substring(namespace,2)) || ': ' || name as name,
        'contracts' as category,
@@ -15,7 +15,7 @@ SELECT array('ethereum') as blockchain,
        CURRENT_TIMESTAMP as modified_at
 FROM {{ source('ethereum','contracts') }} 
 UNION DISTINCT
-SELECT array('gnosis') as blockchain,
+SELECT ARRAY('gnosis') as blockchain,
        address, 
        concat(upper(substring(namespace,1,1)),substring(namespace,2)) || ': ' || name as name,
        'contracts' as category,
@@ -25,7 +25,7 @@ SELECT array('gnosis') as blockchain,
        CURRENT_TIMESTAMP as modified_at
 FROM {{ source('gnosis','contracts') }} 
 UNION DISTINCT
-SELECT array('avalanche_c') as blockchain,
+SELECT ARRAY('avalanche_c') as blockchain,
        address, 
        concat(upper(substring(namespace,1,1)),substring(namespace,2)) || ': ' || name as name,
        'contracts' as category,
@@ -35,7 +35,7 @@ SELECT array('avalanche_c') as blockchain,
        CURRENT_TIMESTAMP as modified_at
 FROM {{ source('avalanche_c','contracts') }} 
 UNION DISTINCT
-SELECT array('arbitrum') as blockchain,
+SELECT ARRAY('arbitrum') as blockchain,
        address, 
        concat(upper(substring(namespace,1,1)),substring(namespace,2)) || ': ' || name as name,
        'contracts' as category,
@@ -45,7 +45,7 @@ SELECT array('arbitrum') as blockchain,
        CURRENT_TIMESTAMP as modified_at
 FROM {{ source('arbitrum','contracts') }} 
 UNION DISTINCT
-SELECT array('bnb') as blockchain,
+SELECT ARRAY('bnb') as blockchain,
        address, 
        concat(upper(substring(namespace,1,1)),substring(namespace,2)) || ': ' || name as name,
        'contracts' as category,
@@ -55,7 +55,7 @@ SELECT array('bnb') as blockchain,
        CURRENT_TIMESTAMP as modified_at
 FROM {{ source('bnb','contracts') }} 
 UNION DISTINCT
-SELECT array('optimism') as blockchain,
+SELECT ARRAY('optimism') as blockchain,
        address, 
        concat(upper(substring(namespace,1,1)),substring(namespace,2)) || ': ' || name as name,
        'contracts' as category,

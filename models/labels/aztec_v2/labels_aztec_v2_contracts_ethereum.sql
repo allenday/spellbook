@@ -3,7 +3,7 @@
 with
   contract_labels as (
     SELECT
-      array('ethereum') as blockchain,
+      ARRAY('ethereum') as blockchain,
       contract_address as address,
       description as name,
       contract_type as category,
