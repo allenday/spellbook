@@ -1,7 +1,12 @@
 {{ config( alias='erc20')}}
 
 SELECT LOWER(contract_address) as contract_address, symbol, decimals
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<contract_address STRING, symbol STRING, decimals INT64>
+{% else %}
 FROM (VALUES
+{% endif %}
           ('0x3106a0a076bedae847652f42ef07fd58589e001f', '$ADS', 18),
           ('0xa48F7A48BDAFf54587A1C4e4B2f35459a2328E29', '$BATTLE', 9),
           ('0xee06a81a695750e71a662b51066f2c74cf4478a0', '$DG', 18),
@@ -6716,4 +6721,8 @@ FROM (VALUES
           ('0xf05e58fcea29ab4da01a495140b349f8410ba904', 'clevCVX', 18),
           ('0xf55cd1e399e1cc3d95303048897a680be3313308', 'TRIO', 8),
           ('0xff709449528b6fb6b88f557f7d93dece33bca78d', 'ApeUSD', 18)
-     ) AS temp_table (contract_address, symbol, decimals)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (contract_address, symbol, decimals)
+{% endif %}

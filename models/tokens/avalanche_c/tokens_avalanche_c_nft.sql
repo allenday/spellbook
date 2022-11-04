@@ -1,7 +1,12 @@
 {{ config( alias='nft') }}
 
 SELECT LOWER(contract_address) AS contract_address, name, symbol, standard, category
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<contract_address STRING, name STRING, symbol STRING, standard STRING, category STRING>
+{% else %}
 FROM (VALUES
+{% endif %}
       ('0xdce4867e34f977619b296646b04bdb334b8f6950', 'Bananaz', 'NANAZ', 'erc721', ''),
       ('0xddccc21fc45e96a04d4213e3b0b9e54498107702', 'Scourge Apes', 'SAPE', 'erc721', ''),
       ('0x357928b721890ed007142e45502a323827caf812', 'CHAD DOGE', 'CHAD', 'erc721', ''),
@@ -1498,4 +1503,8 @@ FROM (VALUES
       ('0xa86a6e8531e9abe98db00dd1f2a90d2efbca2cbd', 'H', 'H0', 'erc721', ''),
       ('0x3d6def4b0417614b22abac43dea1a81f31bb8cc2', 'ljljl', 'lkjlk', 'erc721', ''),
       ('0x66b5543c25424574a3b9a8e07c310db2362e99ca', 'Animated Feelings', 'AFEEL', 'erc721', '')
-  ) AS temp_table (contract_address, name, symbol, standard, category)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (contract_address, name, symbol, standard, category)
+{% endif %}

@@ -34,7 +34,13 @@ registered_solvers as (
 -- Manually inserting environment and name for each "known" solver
 known_solver_metadata (address, environment, name) as (
     SELECT *
-    FROM (VALUES ('0xd8da60bDe22461D7Aa11540C338dC56a0E546b0D', 'barn', 'Legacy'),
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<address STRING, environment STRING, name STRING>
+{% else %}
+FROM (VALUES
+{% endif %}
+                 ('0xd8da60bDe22461D7Aa11540C338dC56a0E546b0D', 'barn', 'Legacy'),
                  ('0xe66EB17F8679f90cCc0ed9A05c23f267cAef421E', 'barn', 'Naive'),
                  ('0x79f175703ECE2AbC7BE2e2a603eBBa319FB84Acc', 'barn', 'Baseline'),
                  ('0x508bCC23C1a808A9c41D10E2FCB544Ffb76ae3E5', 'barn', 'MIP'),
@@ -55,7 +61,11 @@ known_solver_metadata (address, environment, name) as (
                  ('0x68dEE65bB88d919463495E5CeA9870a81f1e9413', 'service', 'Withdraw'),
                  ('0xa03be496e67ec29bc62f01a428683d7f9c204930', 'service', 'Withdraw'),
                  ('0x7524942F9283FBFa8F17b05CC0a9cBde397d25b3', 'test', 'Test 1')
-         ) as _
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS _
+{% endif %}
 )
 -- Combining the metadata with current activation status for final table
 select solver as address,

@@ -3,7 +3,12 @@
         )
 }}
 select contract_address, project_id, project_id_base_value, collection_name, artist_name, grails_season, grail_id, art_collection_unique_id
-from (VALUES
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<contract_address STRING, project_id INT64, project_id_base_value INT64, collection_name STRING, artist_name STRING, grails_season INT64, grail_id INT64, art_collection_unique_id STRING>
+{% else %}
+FROM (VALUES
+{% endif %}
         ('0xd78afb925a21f87fa0e35abae2aead3f70ced96b', 0, 1, 'Belly of the Whale: 01', 'Tom Sachs', 2, 1, '0xd78afb925a21f87fa0e35abae2aead3f70ced96b-0')
         , ('0xd78afb925a21f87fa0e35abae2aead3f70ced96b', 1, 1, 'Store', 'Grant Riven Yun', 2, 2, '0xd78afb925a21f87fa0e35abae2aead3f70ced96b-1')
         , ('0xd78afb925a21f87fa0e35abae2aead3f70ced96b', 2, 1, 'Fixer-upper', 'Process Grey', 2, 3, '0xd78afb925a21f87fa0e35abae2aead3f70ced96b-2')
@@ -1184,6 +1189,10 @@ from (VALUES
         , ('0xd78afb925a21f87fa0e35abae2aead3f70ced96b', 1177, 1, 'The Fabric of Trees', 'Zancan', 2, 25, '0xd78afb925a21f87fa0e35abae2aead3f70ced96b-1177')
 
 
-) as temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, grails_season, grail_id, art_collection_unique_id)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, grails_season, grail_id, art_collection_unique_id)
+{% endif %}
 
 order by project_id asc 

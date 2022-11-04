@@ -1,7 +1,13 @@
 {{ config( alias='erc20')}}
 
 SELECT LOWER(contract_address) as contract_address, symbol, decimals
-FROM (VALUES ('0x3f9463bdb502ec2079bf39da6c924d4022ff9f4c', 'biubiu.tools', 18),
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<contract_address STRING, symbol STRING, decimals INT64>
+{% else %}
+FROM (VALUES
+{% endif %}
+             ('0x3f9463bdb502ec2079bf39da6c924d4022ff9f4c', 'biubiu.tools', 18),
              ('0xdbf3ea6f5bee45c02255b2c26a16f300502f68da', 'BZZ', 16),
              ('0xc6c32e5de8358ed4ea792588492d10398be1467f', 'heyuejia.app', 18),
              ('0x000000000097658392368828c0163f62989bd0e4', 'GMLU', 18),
@@ -8964,4 +8970,8 @@ FROM (VALUES ('0x3f9463bdb502ec2079bf39da6c924d4022ff9f4c', 'biubiu.tools', 18),
              ('0xd5084760914184d78a9e21cd7aa3da9015fd59bd', 'CRC', 18),
              ('0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', 'ETH', 18),
              ('0xf9a797b40dbc6c92aaa69aba169b1e68a5722037', 'WagTest9WXDAI', 18)
-     ) AS temp_table (contract_address, symbol, decimals)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (contract_address, symbol, decimals)
+{% endif %}

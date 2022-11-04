@@ -5,7 +5,12 @@
                                     \'["hildobby"]\') }}')}}
     
     SELECT address, protocol, description, blockchain, currency_contract, currency_symbol
-    FROM (VALUES
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<address STRING, protocol STRING, description STRING, blockchain STRING, currency_contract STRING, currency_symbol STRING>
+{% else %}
+FROM (VALUES
+{% endif %}
     -- Source: https://home.treasury.gov/policy-issues/financial-sanctions/recent-actions/20220808
       ('0x8589427373d6d84e98730d7795d8f6f8731fda16', 'Tornado Cash', 'Donate', 'ethereum', '0x0000000000000000000000000000000000000000', 'ETH')
     , ('0x722122df12d4e14e13ac3b6895a86e84145b6967', 'Tornado Cash', 'Proxy', 'ethereum', '0x0000000000000000000000000000000000000000', 'ETH')
@@ -52,4 +57,8 @@
     , ('0xd90e2f925da726b50c4ed8d0fb90ad053324f31b', 'Tornado Cash', 'Router', 'ethereum', '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 'USDC')
     , ('0xd96f2b1c14db8458374d9aca76e26c3d18364307', 'Tornado Cash', '100 USDC Pool', 'ethereum', '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 'USDC')
     , ('0x4736dcf1b7a3d580672cce6e7c65cd5cc9cfba9d', 'Tornado Cash', '1000 USDC Pool', 'ethereum', '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 'USDC')
-    ) AS x (address, protocol, description, blockchain, currency_contract, currency_symbol)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS x (address, protocol, description, blockchain, currency_contract, currency_symbol)
+{% endif %}

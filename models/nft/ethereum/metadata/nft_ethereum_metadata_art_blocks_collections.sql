@@ -5,7 +5,12 @@
 }}
 
     select contract_address, project_id, project_id_base_value, collection_name, artist_name, art_blocks_project_type, art_blocks_curated_season, art_collection_unique_id
-    from (VALUES
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<contract_address STRING, project_id INT64, project_id_base_value INT64, collection_name STRING, artist_name STRING, art_blocks_project_type STRING, art_blocks_curated_season STRING, art_collection_unique_id STRING>
+{% else %}
+FROM (VALUES
+{% endif %}
         ('0x059edd72cd353df5106d2b9cc5ab83a52287ac3a', 0, 1000000, 'Chromie Squiggle', 'Snowfro', 'Curated', '1', '0x059edd72cd353df5106d2b9cc5ab83a52287ac3a-0')
         , ('0x059edd72cd353df5106d2b9cc5ab83a52287ac3a', 1, 1000000, 'Genesis', 'DCA', 'Curated', '1', '0x059edd72cd353df5106d2b9cc5ab83a52287ac3a-1')
         , ('0x059edd72cd353df5106d2b9cc5ab83a52287ac3a', 2, 1000000, 'Construction Token', 'Jeff Davis', 'Curated', '1', '0x059edd72cd353df5106d2b9cc5ab83a52287ac3a-2')
@@ -386,6 +391,10 @@
         , ('0x64780ce53f6e966e18a22af13a2f97369580ec11',2,1000000,'QWERTY','Tara Donovan','Art Blocks x Pace','N/A','0x64780ce53f6e966e18a22af13a2f97369580ec11-2')
         , ('0x64780ce53f6e966e18a22af13a2f97369580ec11',3,1000000,'Contractions','Loie Hollowell','Art Blocks x Pace','N/A','0x64780ce53f6e966e18a22af13a2f97369580ec11-3')
 
-    ) as temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, art_blocks_project_type, art_blocks_curated_season, art_collection_unique_id)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, art_blocks_project_type, art_blocks_curated_season, art_collection_unique_id)
+{% endif %}
     
 order by project_id asc 

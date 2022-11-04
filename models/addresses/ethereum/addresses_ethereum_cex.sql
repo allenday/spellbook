@@ -5,7 +5,12 @@
                                     \'["hildobby"]\') }}')}}
 
 SELECT address, cex_name, distinct_name
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<address STRING, cex_name STRING, distinct_name STRING>
+{% else %}
 FROM (VALUES
+{% endif %}
     -- Binance, Source: https://etherscan.io/accounts/label/binance
     ('0x3f5ce5fbfe3e9af3971dd833d26ba9b5c936f0be', 'Binance', 'Binance 1')
     , ('0xd551234ae421e3bcba99a0da6d736074f22192ff', 'Binance', 'Binance 2')
@@ -497,4 +502,8 @@ FROM (VALUES
     , ('0x258b7b9a1ba92f47f5f4f5e733293477620a82cb', 'Beldex', 'Beldex 1') -- https://etherscan.io/address/0x258b7b9a1ba92f47f5f4f5e733293477620a82cb
     -- SouthXchange
     , ('0x324cc2c9fb379ea7a0d1c0862c3b48ca28d174a4', 'SouthXchange', 'SouthXchange 1') -- https://etherscan.io/address/0x324cc2c9fb379ea7a0d1c0862c3b48ca28d174a4
-    ) AS x (address, cex_name, distinct_name)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS x (address, cex_name, distinct_name)
+{% endif %}
