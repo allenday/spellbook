@@ -15,4 +15,4 @@ SELECT
     UNION DISTINCT
     SELECT * FROM {{source('ethereumnameservice_ethereum', 'ENSRegistryWithFallback_evt_NewOwner')}}
   ) r
-GROUP BY node, label ;
+GROUP BY node, label

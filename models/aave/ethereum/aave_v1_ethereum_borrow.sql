@@ -90,4 +90,3 @@ LEFT JOIN {{ source('prices','usd') }} p
     ON p.minute = date_trunc('minute', borrow.evt_block_time) 
     AND p.contract_address = borrow.token
     AND p.blockchain = 'ethereum'    
-;

@@ -104,4 +104,3 @@ LEFT JOIN {{ source('prices', 'usd') }} pb
     {% if is_incremental() %}
     AND pb.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-;

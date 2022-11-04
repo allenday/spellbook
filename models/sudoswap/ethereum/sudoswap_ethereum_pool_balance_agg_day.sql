@@ -108,4 +108,3 @@ FROM eth_deltas e
 FULL JOIN erc721_deltas n
     ON e.day = n.day
     AND e.pool_address = n.pool_address
-;

@@ -226,4 +226,3 @@ LEFT JOIN {{ ref('tokens_erc20') }} erc20 ON erc20.contract_address = wa.currenc
       *
     FROM
       {{ ref('opensea_v1_ethereum_excluded_txns') }})
-;

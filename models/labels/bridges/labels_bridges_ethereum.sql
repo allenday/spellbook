@@ -133,5 +133,5 @@ FROM (VALUES
 {% if var('declare_values_with_unnest') %}
 ])
 {% else %}
-) AS x (blockchain, address, name, category, contributor, source, created_at, updated_at);
+) AS x (blockchain, address, name, category, contributor, source, created_at, updated_at)
 {% endif %}

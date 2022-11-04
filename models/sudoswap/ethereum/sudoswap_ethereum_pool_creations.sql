@@ -56,4 +56,3 @@ WITH
   )
 
 SELECT * FROM pool_creations
-;

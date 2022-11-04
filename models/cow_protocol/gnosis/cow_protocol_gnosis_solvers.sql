@@ -73,4 +73,4 @@ select solver as address,
       case when name is not null then name else 'Uncatalogued' end      as name,
       active
 from registered_solvers
-    left outer join known_solver_metadata on solver = lower(address);
+    left outer join known_solver_metadata on solver = lower(address)

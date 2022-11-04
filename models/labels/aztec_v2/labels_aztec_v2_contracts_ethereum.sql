@@ -96,4 +96,3 @@ from
   contract_labels c
   inner join ethereum.traces t on t.type = 'create'
   and c.address = t.address
-;

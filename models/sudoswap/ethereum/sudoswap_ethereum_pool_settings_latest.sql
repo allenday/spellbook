@@ -160,4 +160,3 @@ with
 
 
 select * from full_settings_backfilled
-;
