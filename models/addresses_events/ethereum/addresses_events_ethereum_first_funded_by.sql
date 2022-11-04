@@ -26,7 +26,7 @@ JOIN
     LEFT ANTI JOIN {{this}} ffb
         ON et.to = ffb.address
     {% endif %}
-    WHERE et.success
+    WHERE et.success IS TRUE
     AND (et.call_type NOT IN ('delegatecall', 'callcode', 'staticcall') OR et.call_type IS NULL)
     AND et.value > 0
     {% if is_incremental() %}
@@ -36,11 +36,10 @@ JOIN
 ) AS b 
 ON a.to = b.to
     AND a.block_number = b.first_block
-WHERE a.success
+WHERE a.success IS TRUE
     AND (a.call_type NOT IN ('delegatecall', 'callcode', 'staticcall') OR a.call_type IS NULL)
     AND a.value > 0
     {% if is_incremental() %}
     AND a.block_time >= date_trunc('day', now() - interval '1 week')
     {% endif %}
 GROUP BY b.to
-;
