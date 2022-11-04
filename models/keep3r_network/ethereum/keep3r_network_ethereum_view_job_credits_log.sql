@@ -54,7 +54,7 @@ WITH work_evt AS (
 reward_evt AS (
     SELECT
         CASE
-            WHEN LENGTH(_rewardedAt) = 10 THEN _rewardedAt :: INT :: TIMESTAMP
+            WHEN LENGTH(_rewardedAt) = 10 THEN CAST(CAST(_rewardedAt AS INT64) AS TIMESTAMP)
             ELSE _rewardedAt
         END AS `timestamp`,
         evt_tx_hash AS tx_hash,

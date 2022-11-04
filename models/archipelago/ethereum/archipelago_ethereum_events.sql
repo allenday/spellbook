@@ -129,7 +129,7 @@ WITH
             block_number
             ,sum(fee_amount_raw) as royalty_fee_amount_raw
             ,sum(fee_percentage) as royalty_fee_percentage
-            ,null::string as royalty_fee_receive_address -- we have multiple address so have to null this field
+            ,CAST(NULL AS STRING) as royalty_fee_receive_address -- we have multiple address so have to null this field
             ,unique_trade_id
         from fee_events
             where not is_protocol_fee
@@ -227,7 +227,7 @@ SELECT
     , royalty_fee_amount_usd
     , royalty_fee_amount_raw
     , royalty_fee_currency_symbol
-    , royalty_fee_receive_address -- null here
+    , royalty_fee_receive_address -- NULL here
     , royalty_fee_percentage
     , unique_trade_id
 from trades_enhanced

@@ -171,7 +171,7 @@ valued_trades as (
                         ELSE sell_price * units_sold
                         END
                 WHEN sell_price IS NULL AND buy_price IS NOT NULL THEN buy_price * units_bought
-                ELSE NULL::numeric
+                ELSE CAST(NULL AS NUMERIC)
                END)                                        as usd_value,
            buy_price,
            buy_price * units_bought                        as buy_value_usd,
@@ -188,7 +188,7 @@ valued_trades as (
                         END
                 WHEN sell_price IS NULL AND buy_price IS NOT NULL
                     THEN buy_price * units_bought * fee / units_sold
-                ELSE NULL::numeric
+                ELSE CAST(NULL AS NUMERIC)
                END)                                        as fee_usd,
            app_data,
            receiver

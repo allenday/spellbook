@@ -83,7 +83,7 @@ combined_batch_info as (
         gas_used,
         (gas_price * gas_used * eth_price) / pow(10, 18) as tx_cost_usd,
         fee_value,
-        length(data)::decimal / 1024                     as call_data_size,
+        CAST(length(data) AS DECIMAL) / 1024                     as call_data_size,
         unwraps,
         token_approvals
     from batch_counts b

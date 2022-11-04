@@ -3,7 +3,7 @@ alias='fees') }}
 
 SELECT
     block_time,
-    CASE WHEN size(trace_address) = 1 then ARRAY(3::bigint) -- for single row join
+    CASE WHEN size(trace_address) = 1 then ARRAY(CAST(3 AS INT64)) -- for single row join
     WHEN size(trace_address) = 2 then ARRAY(trace_address[0])
     WHEN size(trace_address) = 3 then ARRAY(trace_address[0], trace_address[1])
     END as trace_address,
@@ -21,7 +21,7 @@ UNION ALL
 
 SELECT
     evt_block_time as block_time,
-    ARRAY(3::bigint) as trace_address,
+    ARRAY(CAST(3 AS INT64)) as trace_address,
     evt_tx_hash as tx_hash,
     SUM(value) AS fees,
     to,

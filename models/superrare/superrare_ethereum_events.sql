@@ -310,7 +310,7 @@ SELECT
     when a.currencyAddress = '0xba5bde662c17e2adff1075610382b9b691296350' then 'RARE'
     else 'ETH' -- only RARE and ETH possible
     end as royalty_fee_currency_symbol,
-    'superrare' || '-' || a.evt_tx_hash || '-' || a.tokenId:: string || '-' || a.seller:: string || '-' || COALESCE(a.contract_address) || '-' || 'Trade' as unique_trade_id
+    'superrare' || '-' || a.evt_tx_hash || '-' || CAST(a.tokenId AS STRING) || '-' || CAST(a.seller AS STRING) || '-' || COALESCE(a.contract_address) || '-' || 'Trade' as unique_trade_id
 from all_superrare_sales a
 left outer join
     (

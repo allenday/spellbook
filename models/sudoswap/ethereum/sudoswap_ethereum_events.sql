@@ -204,7 +204,7 @@ WITH
                 CASE WHEN (tr.to = sb.protocolfee_recipient) THEN value
                 ELSE 0 END
                  ) as protocol_fee_amount -- what the buyer paid
-            , ARRAY_AGG(distinct CASE WHEN substring(input,1,10)='0x42842e0e' THEN bytea2numeric_v2(substring(input,139,64))::int ELSE null::int END)
+            , ARRAY_AGG(distinct CASE WHEN substring(input,1,10)='0x42842e0e' THEN CAST(bytea2numeric_v2(substring(input,139,64)) AS INT64) ELSE CAST(NULL AS INT64) END)
                 as token_id
             , sb.call_tx_hash
             , sb.trade_recipient
@@ -266,7 +266,7 @@ WITH
             , nftcontractaddress as nft_contract_address
             , project_contract_address -- This is either the router or the pool address if called directly
             , call_tx_hash as tx_hash
-            , '' as evt_index --we didn't use events in our case for decoding, so this will be null until we find a way to tie it together.
+            , '' as evt_index --we didn't use events in our case for decoding, so this will be NULL until we find a way to tie it together.
             , protocol_fee_amount as platform_fee_amount_raw
             , protocol_fee_amount/1e18 as platform_fee_amount
             , protocolfee as platform_fee_percentage
@@ -275,12 +275,12 @@ WITH
             , (trade_price-protocol_fee_amount)/(1+pool_fee)*pool_fee/1e18 as pool_fee_amount
             , pool_fee as pool_fee_percentage
             -- royalties don't currently exist on the AMM,
-            , null::double as royalty_fee_amount_raw
-            , null::double as royalty_fee_amount
-            , null::double as royalty_fee_percentage
-            , null::string as royalty_fee_receive_address
-            , null::double as royalty_fee_amount_usd
-            , null::string as royalty_fee_currency_symbol
+            , CAST(NULL AS DOUBLE) as royalty_fee_amount_raw
+            , CAST(NULL AS DOUBLE) as royalty_fee_amount
+            , CAST(NULL AS DOUBLE) as royalty_fee_percentage
+            , CAST(NULL AS STRING) as royalty_fee_receive_address
+            , CAST(NULL AS DOUBLE) as royalty_fee_amount_usd
+            , CAST(NULL AS STRING) as royalty_fee_currency_symbol
             -- these 2 are used for matching the aggregator address, dropped later
             , router_caller
             , call_from
@@ -360,7 +360,7 @@ WITH
             , pool_fee_amount_raw/number_of_items as pool_fee_amount_raw
             , pool_fee_amount_usd/number_of_items as pool_fee_amount_usd
             , pool_fee_percentage
-            --below are null
+            --below are NULL
             , royalty_fee_amount/number_of_items as royalty_fee_amount
             , royalty_fee_amount_raw/number_of_items as royalty_fee_amount_raw
             , royalty_fee_amount_usd/number_of_items as royalty_fee_amount_usd
@@ -373,5 +373,5 @@ WITH
 --final SELECT CTE
 SELECT
     *
-    , 'sudoswap-' || tx_hash || '-' || nft_contract_address || token_id::string || '-' || seller || '-' || amount_original::string || 'Trade' AS unique_trade_id
+    , 'sudoswap-' || tx_hash || '-' || nft_contract_address || CAST(token_id AS STRING) || '-' || seller || '-' || CAST(amount_original AS STRING) || 'Trade' AS unique_trade_id
 FROM swaps_exploded

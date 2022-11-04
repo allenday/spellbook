@@ -45,12 +45,12 @@ SELECT
   THEN 'Token ID is larger than 64 bits and can not be displayed'
   WHEN contains('0xf242432a', substring(calldataBuy,1,4)) AND length(ltrim('0', substr(calldataBuy,139,64))) > 16
   THEN 'Token ID is larger than 64 bits and can not be displayed'
-  WHEN contains('0xfb16a595', substring(calldataBuy,1,4)) THEN conv(substr(calldataBuy,203,64),16,10)::string
-  WHEN contains('0x96809f90', substring(calldataBuy,1,4)) THEN conv(substr(calldataBuy,203,64),16,10)::string
-  WHEN contains('0x23b872dd', substring(calldataBuy,1,4)) THEN conv(substr(calldataBuy,139,64),16,10)::string
-  WHEN contains('0xf242432a', substring(calldataBuy,1,4)) THEN conv(substr(calldataBuy,139,64),16,10)::string
+  WHEN contains('0xfb16a595', substring(calldataBuy,1,4)) THEN CAST(conv(substr(calldataBuy,203,64),16,10) AS STRING)
+  WHEN contains('0x96809f90', substring(calldataBuy,1,4)) THEN CAST(conv(substr(calldataBuy,203,64),16,10) AS STRING)
+  WHEN contains('0x23b872dd', substring(calldataBuy,1,4)) THEN CAST(conv(substr(calldataBuy,139,64),16,10) AS STRING)
+  WHEN contains('0xf242432a', substring(calldataBuy,1,4)) THEN CAST(conv(substr(calldataBuy,139,64),16,10) AS STRING)
   END AS token_id,
-  CASE WHEN size(call_trace_address) = 0 then ARRAY(3::bigint) -- for bundle join
+  CASE WHEN size(call_trace_address) = 0 then ARRAY(CAST(3 AS INT64)) -- for bundle join
   ELSE call_trace_address
   END as call_trace_address,
   addrs [6] AS currency_contract_original
@@ -100,8 +100,8 @@ erc_transfers as
 (SELECT evt_tx_hash,
         -- token_id_erc will be used for joining. It may be 'Token ID is larger than 64 bits and can not be displayed'
         -- token_id_erc_uncapped will be used for displaying the token_id after joining
-        CASE WHEN length(id::string) > 64 THEN 'Token ID is larger than 64 bits and can not be displayed' ELSE id::string END as token_id_erc,
-        id::string as token_id_erc_uncapped,
+        CASE WHEN length(CAST(id AS STRING)) > 64 THEN 'Token ID is larger than 64 bits and can not be displayed' ELSE CAST(id AS STRING) END as token_id_erc,
+        CAST(id AS STRING) as token_id_erc_uncapped,
         cardinality(collect_list(value)) as count_erc,
         value as value_unique,
         CASE WHEN erc1155.from = '0x0000000000000000000000000000000000000000' THEN 'Mint'
@@ -115,8 +115,8 @@ erc_transfers as
 SELECT evt_tx_hash,
         -- token_id_erc will be used for joining. It may be 'Token ID is larger than 64 bits and can not be displayed'
         -- token_id_erc_uncapped will be used for displaying the token_id after joining
-        CASE WHEN length(tokenId::string) > 64 THEN 'Token ID is larger than 64 bits and can not be displayed' ELSE tokenId::string END as token_id_erc,
-		tokenId::string as token_id_erc_uncapped,							 
+        CASE WHEN length(CAST(tokenId AS STRING)) > 64 THEN 'Token ID is larger than 64 bits and can not be displayed' ELSE CAST(tokenId AS STRING) END as token_id_erc,
+		CAST(tokenId AS STRING) as token_id_erc_uncapped,							 
         COUNT(tokenId) as count_erc,
         NULL as value_unique,
         CASE WHEN erc721.from = '0x0000000000000000000000000000000000000000' THEN 'Mint'
@@ -150,12 +150,12 @@ SELECT DISTINCT
       WHEN wa.token_standard = 'erc1155' THEN erc_transfers.value_unique
       WHEN wa.token_standard = 'erc721' THEN erc_transfers.count_erc
       ELSE (SELECT
-              count(1)::bigint cnt
+              CAST(count(1) AS INT64) cnt
           FROM {{ source('erc721_ethereum','evt_transfer') }} erc721
           WHERE erc721.evt_tx_hash = wa.call_tx_hash
         ) +
         (SELECT
-             count(1)::bigint cnt
+             CAST(count(1) AS INT64) cnt
           FROM {{ source('erc1155_ethereum','evt_transfersingle') }} erc1155
           WHERE erc1155.evt_tx_hash = wa.call_tx_hash
         ) END AS number_of_items,
@@ -185,10 +185,10 @@ SELECT DISTINCT
   wa.fees AS royalty_fee_amount_raw,
   wa.fees / power(10,erc20.decimals) AS royalty_fee_amount,
   wa.fees / power(10,erc20.decimals) * p.price AS royalty_fee_amount_usd,
-  (wa.fees / wa.amount_original * 100)::string  AS royalty_fee_percentage,
+  CAST((wa.fees / wa.amount_original * 100) AS STRING)  AS royalty_fee_percentage,
   wa.fee_receive_address as royalty_fee_receive_address,
   wa.fee_currency_symbol as royalty_fee_currency_symbol,
-  'opensea' || '-' || wa.call_tx_hash || '-' || coalesce(token_id_erc_uncapped, wa.token_id, '') || '-' ||  wa.seller || '-' || coalesce(erc_transfers.evt_index::string, '') || '-' || coalesce(wa.call_trace_address::string,'') as unique_trade_id
+  'opensea' || '-' || wa.call_tx_hash || '-' || coalesce(token_id_erc_uncapped, wa.token_id, '') || '-' ||  wa.seller || '-' || coalesce(CAST(erc_transfers.evt_index AS STRING), '') || '-' || coalesce(CAST(wa.call_trace_address AS STRING),'') as unique_trade_id
 FROM wyvern_all wa
 INNER JOIN {{ source('ethereum','transactions') }} tx ON wa.call_tx_hash = tx.hash
     {% if is_incremental() %}

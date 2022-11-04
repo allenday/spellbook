@@ -15,7 +15,7 @@
 WITH looks_rare AS (
         SELECT
         ask.evt_block_time AS block_time,
-        ask.tokenId::string AS token_id,
+        CAST(ask.tokenId AS STRING) AS token_id,
         ask.amount AS number_of_items,
         taker AS seller,
         maker AS buyer,
@@ -47,7 +47,7 @@ WITH looks_rare AS (
                             UNION DISTINCT
     SELECT
         bid.evt_block_time AS block_time,
-        bid.tokenId::string AS token_id,
+        CAST(bid.tokenId AS STRING) AS token_id,
         bid.amount AS number_of_items,
         maker AS seller,
         taker AS buyer,
@@ -79,7 +79,7 @@ WITH looks_rare AS (
 erc_transfers as
 (SELECT evt_tx_hash,
         contract_address,
-        id::string as token_id_erc,
+        CAST(id AS STRING) as token_id_erc,
         cardinality(collect_list(value)) as count_erc,
         value as value_unique,
         CASE WHEN erc1155.from = '0x0000000000000000000000000000000000000000' THEN 'Mint'
@@ -98,7 +98,7 @@ erc_transfers as
             UNION DISTINCT
 SELECT evt_tx_hash,
         contract_address,
-        tokenId::string as token_id_erc,
+        CAST(tokenId AS STRING) as token_id_erc,
         COUNT(tokenId) as count_erc,
         NULL as value_unique,
         CASE WHEN erc721.from = '0x0000000000000000000000000000000000000000' THEN 'Mint'
@@ -135,12 +135,12 @@ SELECT DISTINCT
         WHEN tokens.standard = 'erc1155' THEN erc.value_unique
         WHEN tokens.standard = 'erc721' THEN erc.count_erc
         ELSE COALESCE((SELECT
-                count(1)::bigint cnt
+                CAST(count(1) AS INT64) cnt
             FROM {{ source('erc721_ethereum','evt_transfer') }} erc721
             WHERE erc721.evt_tx_hash = looks_rare.tx_hash
             ) +
             (SELECT
-                count(1)::bigint cnt
+                CAST(count(1) AS INT64) cnt
             FROM {{ source('erc1155_ethereum','evt_transfersingle') }} erc1155
             WHERE erc1155.evt_tx_hash = looks_rare.tx_hash
             ), 0) END AS number_of_items,
@@ -174,7 +174,7 @@ SELECT DISTINCT
     COALESCE(royalty_fee / looks_rare.price * 100, 0) as royalty_fee_percentage,
     royalty_fee_receive_address,
     royalty_fee_currency_symbol,
-    'looksrare' || '-' || COALESCE(looks_rare.tx_hash, '-1') || '-' ||  COALESCE(token_id::string, '-1') || '-' ||  COALESCE(seller::string, '-1') || '-' || COALESCE(erc.contract_address, nft_contract_address) || '-' || COALESCE(looks_rare.evt_index::string, '-1') || '-' || COALESCE(evt_type::string, 'Other')  || '-' || COALESCE(erc.evt_index, '-1')  || '-' || COALESCE(case when erc.value_unique::string is null then '0' ELSE '1' end, '1') as unique_trade_id
+    'looksrare' || '-' || COALESCE(looks_rare.tx_hash, '-1') || '-' ||  COALESCE(CAST(token_id AS STRING), '-1') || '-' ||  COALESCE(CAST(seller AS STRING), '-1') || '-' || COALESCE(erc.contract_address, nft_contract_address) || '-' || COALESCE(CAST(looks_rare.evt_index AS STRING), '-1') || '-' || COALESCE(CAST(evt_type AS STRING), 'Other')  || '-' || COALESCE(erc.evt_index, '-1')  || '-' || COALESCE(case when CAST(erc.value_unique AS STRING) is null then '0' ELSE '1' end, '1') as unique_trade_id
 FROM looks_rare
 INNER JOIN {{ source('ethereum','transactions') }} tx ON looks_rare.tx_hash = tx.hash
     {% if not is_incremental() %}
