@@ -17,7 +17,7 @@ FROM (
 
 {% if var('declare_values_with_unnest') %}
 FROM UNNEST([
-STRUCT<creator_address STRING, creator_project STRING>
+STRUCT<creator_address STRING, contract_project STRING>
 {% else %}
     FROM (VALUES
 {% endif %}
