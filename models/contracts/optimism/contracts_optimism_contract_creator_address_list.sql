@@ -14,8 +14,14 @@ FROM (
   select 
     lower(creator_address) as creator_address
     ,contract_project
-  from 
-      (values
+
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<creator_address STRING, creator_project STRING>
+{% else %}
+    FROM (VALUES
+{% endif %}
+
       ('0x932607335869cff6349ef450e74c83a3b871a9ff', 'Lyra V1')
       ,('0x41a742d0cb523b0c313518309ade763fb609da25', 'Lyra V1')
       ,('0x924ac9910c09a0215b06458653b30471a152022f', 'Hop Protocol')
@@ -337,7 +343,12 @@ FROM (
       ,('0xC6387E937Bcef8De3334f80EDC623275d42457ff', 'Yearn')
       ,('0x4B9f696c998f9549485a3a85DcA692Fd6CCE491F', 'Flashstake')
       ,('0x652c46a302060B324A02d2d3e4a56e3DA07FA91b', 'Kwenta')
+
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
   ) as temp_table (creator_address, contract_project)
+{% endif %}
 
 ) f
 
