@@ -18,9 +18,26 @@ SELECT
     undercoin3,
     deposit_contract,
     coin3
-FROM
-    (
-        VALUES
+
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<version STRING, name STRING, symbol STRING,
+        pool_address STRING,
+        token_address STRING,
+        gauge_contract STRING,
+        coin0 STRING,
+        coin1 STRING,
+        coin2 STRING,
+        undercoin0 STRING,
+        undercoin1 STRING,
+        undercoin2 STRING,
+        undercoin3 STRING,
+        deposit_contract STRING,
+        coin3 STRING>
+{% else %}
+    FROM (VALUES
+{% endif %}
+
             (
                 'Regular',
                 '3pool',
@@ -854,6 +871,10 @@ FROM
                 '0xbBC81d23Ea2c3ec7e56D39296F0cbB648873a5d3',
                 '0x73a052500105205d34daf004eab301916da8190f'
             )
+
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
     ) AS temp_table (
         version,
         `name`,
@@ -871,3 +892,4 @@ FROM
         deposit_contract,
         coin3
     )
+{% endif %}
