@@ -2,13 +2,13 @@
 
 SELECT blockchain, address, name, category, contributor, source, created_at, updated_at
 {% if var('declare_values_with_unnest') %}
-{% set ARRAY_start = '[' %}
-{% set ARRAY_end = ']' %}
+{% set array_start = '[' %}
+{% set array_end = ']' %}
 FROM UNNEST([
 STRUCT<blockchain ARRAY<STRING>, address STRING, name STRING, category STRING, contributor STRING, source STRING, created_at TIMESTAMP, updated_at TIMESTAMP>
 {% else %}
-{% set ARRAY_start = '{% array_start %}(' %}
-{% set ARRAY_end = ')' %}
+{% set array_start = '{% array_start %}(' %}
+{% set array_end = ')' %}
 FROM (VALUES
 {% endif %}
      ({% array_start %}'ethereum'{% array_end %},'0x2B1Ad6184a6B0fac06bD225ed37C2AbC04415fF4', 'a16z', 'funds', 'soispoke', 'static', timestamp('2022-09-03'), now())
