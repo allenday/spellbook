@@ -4,7 +4,12 @@
 }}
 
 SELECT token_id, token_id_short, background, body, extra_color, peg_layout, peg_scaling, peg_style, size, wrap_orientation, wrap_style, peg_count, pegs_used, padded_pegs, dark_mode
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<token_id INT64, token_id_short INT64, background STRING, body STRING, extra_color STRING, peg_layout STRING, peg_scaling STRING, peg_style STRING, size STRING, wrap_orientation STRING, wrap_style STRING, peg_count INT64, pegs_used INT64, padded_pegs STRING, dark_mode STRING>
+{% else %}
 FROM (VALUES
+{% endif %}
         (13000000,0,'White','White','N/A','4x4 grid','Uniform','Solid','Normal','Balanced','Weave',16,8,'',''),
         (13000001,1,'White','Black','N/A','4x4 grid','Bigger near center','Solid','smol boi','Balanced','Loop',11,11,'',''),
         (13000002,2,'White','Black','N/A','4x4 grid','Uniform','Solid','Normal','Balanced','Weave',9,9,'',''),
@@ -1005,4 +1010,8 @@ FROM (VALUES
         (13000997,997,'Beige','White','N/A','Recursive grid','Bigger near center','Solid','Normal','Off-center','Loop',6,6,'',''),
         (13000998,998,'White','White','Blue','5x5 grid','Uniform','Bullseye','Normal','Balanced','Weave',25,13,'',''),
         (13000999,999,'White','Red','N/A','Recursive grid','Bigger near center','Solid','Normal','Balanced','Weave',41,22,'','')
- ) AS temp_table (token_id, token_id_short, background, body, extra_color, peg_layout, peg_scaling, peg_style, size, wrap_orientation, wrap_style, peg_count, pegs_used, padded_pegs, dark_mode)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (token_id, token_id_short, background, body, extra_color, peg_layout, peg_scaling, peg_style, size, wrap_orientation, wrap_style, peg_count, pegs_used, padded_pegs, dark_mode)
+{% endif %}

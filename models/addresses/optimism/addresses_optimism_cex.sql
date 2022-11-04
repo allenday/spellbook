@@ -5,7 +5,12 @@
                                     \'["msilb7"]\') }}')}}
 
 SELECT lower(address) as address, cex_name, distinct_name
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<address STRING, cex_name STRING, distinct_name STRING>
+{% else %}
 FROM (VALUES
+{% endif %}
      ("0x88880809d6345119ccabe8a9015e4b1309456990","Juno","Juno 1")
     ,("0x5122e9aa635c13afd2fc31de3953e0896bac7ab4","Coinbase","Coinbase 1")
     ,("0xf491d040110384dbcf7f241ffe2a546513fd873d","Coinbase","Coinbase 2")
@@ -29,4 +34,8 @@ FROM (VALUES
     ,("0x1bf7f994cf93c4eaab5f785d712668e2d6fff9d6", "Binance", "Binance 13")
     ,("0xb22ffd456ab4efc3863be8299f4a404d813b92be", "Binance", "Binance 14")
     ,("0xef7fb88f709ac6148c07d070bc71d252e8e13b92", "Binance", "Binance 15")
-    ) AS x (address, cex_name, distinct_name)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS x (address, cex_name, distinct_name)
+{% endif %}

@@ -5,7 +5,12 @@
 
 
 select contract_address, project_id, project_id_base_value, collection_name, artist_name, bright_moments_city, art_collection_unique_id
-from (VALUES
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<contract_address STRING, project_id INT64, project_id_base_value INT64, collection_name STRING, artist_name STRING, bright_moments_city STRING, art_collection_unique_id STRING>
+{% else %}
+FROM (VALUES
+{% endif %}
         ('0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676', 1, 1000000, 'Stellaraum', 'Alida Sun', 'Berlin', '0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676-1')
         , ('0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676', 2, 1000000, 'Parnassus', 'mpkoz', 'Berlin', '0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676-2')
         , ('0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676', 3, 1000000, 'Inflection', 'Jeff Davis', 'Berlin', '0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676-3')
@@ -22,7 +27,11 @@ from (VALUES
         , ('0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676', 14, 1000000, 'KERNELS', 'Julian Hespenheide', 'All', '0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676-14')
         , ('0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676', 15, 1000000, 'Brise Soleil', 'Jorge Ledezma', 'Venice','0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676-15')
 
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, bright_moments_city, art_collection_unique_id)
+{% endif %}
 
-) as temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, bright_moments_city, art_collection_unique_id)
     
 order by project_id asc 

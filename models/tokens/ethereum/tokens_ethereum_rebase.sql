@@ -1,7 +1,12 @@
 {{ config( alias='rebase')}}
 
 SELECT contract_address, symbol
-  FROM (VALUES
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<contract_address STRING, symbol STRING>
+{% else %}
+FROM (VALUES
+{% endif %}
           ('0x798d1be841a82a273720ce31c822c61a67a601c3'
         , '$DIGG')
         , ('0xd46ba6d942050d489dbd938a2c909a5d5039a161'
@@ -33,4 +38,11 @@ SELECT contract_address, symbol
         , '$OHM')
         -- Olympus (OHM)
         , ('0x64aa3364f17a4d01c6f1751fd97c2bd3d7e7f1d5'
-        , '$OHM')) AS temp_table (contract_address, symbol)
+        , '$OHM')
+
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (contract_address, symbol)
+{% endif %}
+

@@ -4,7 +4,12 @@
 }}
 
 select contract_address, project_id, project_id_base_value, collection_name, artist_name, mirage_project_name, art_collection_unique_id
-from (VALUES
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<contract_address STRING, project_id INT64, project_id_base_value INT64, collection_name STRING, artist_name STRING, mirage_project_name STRING, art_collection_unique_id STRING>
+{% else %}
+FROM (VALUES
+{% endif %}
         ('0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5', 1, 10000, 'Ebbs and Flows: Our Universe', 'Roope Rainisto & SOMNAI', 'Otherwhere', '0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5-1')
         , ('0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5', 2, 10000, 'Ebbs and Flows: Our Universe', 'Roope Rainisto & SOMNAI', 'ANIMA', '0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5-2')
         , ('0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5', 3, 10000, 'Life and Death: An Exploration of Impermanence', 'Austiin', 'Remnants', '0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5-3')
@@ -17,6 +22,11 @@ from (VALUES
         , ('0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5', 10, 10000, 'AI Art is Not Art', 'Claire Silver', 'Page', '0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5-10')
         , ('0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5', 11, 10000, 'Abstract (ART)chitecture', 'MrHabMo', 'Esquisse', '0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5-11')
 
-) as temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, mirage_project_name, art_collection_unique_id)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, mirage_project_name, art_collection_unique_id)
+{% endif %}
+
     
 order by project_id asc 
