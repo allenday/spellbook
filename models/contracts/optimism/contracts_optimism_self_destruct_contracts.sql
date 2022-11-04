@@ -42,4 +42,3 @@ join {{ source('optimism', 'traces') }} as sd
   and sd.block_time >= date_trunc('day', now() - interval '1 week')
   {% endif %}
 group by 1, 2, 3, 4
-;
