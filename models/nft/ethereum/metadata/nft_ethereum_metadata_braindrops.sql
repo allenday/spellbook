@@ -4,7 +4,12 @@
 }}
 
 select contract_address, project_id, project_id_base_value, collection_name, artist_name, art_collection_unique_id
-from (VALUES
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<contract_address STRING, project_id INT64, project_id_base_value INT64, collection_name STRING, artist_name STRING, art_collection_unique_id STRING>
+{% else %}
+FROM (VALUES
+{% endif %}
         ('0xdfde78d2baec499fe18f2be74b6c287eed9511d7', 1, 1000000, 'Brain Loops', 'Gene Kogan', '0xdfde78d2baec499fe18f2be74b6c287eed9511d7-1')
         , ('0xdfde78d2baec499fe18f2be74b6c287eed9511d7', 2, 1000000, 'podGANs', 'Pindar Van Arman', '0xdfde78d2baec499fe18f2be74b6c287eed9511d7-2')
         , ('0xdfde78d2baec499fe18f2be74b6c287eed9511d7', 3, 1000000, 'Genesis', 'Claire Silver', '0xdfde78d2baec499fe18f2be74b6c287eed9511d7-3')
@@ -21,6 +26,10 @@ from (VALUES
         , ('0xdfde78d2baec499fe18f2be74b6c287eed9511d7', 14, 1000000, 'miniPODs', 'Van Arman x Mindshift x ricky', '0xdfde78d2baec499fe18f2be74b6c287eed9511d7-14')
 
 
-) as temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, art_collection_unique_id)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, art_collection_unique_id)
+{% endif %}
 
 order by project_id asc 

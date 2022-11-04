@@ -4,7 +4,12 @@
 }}
 
 SELECT token_id, color_direction, color_spread, end_color, height, segments, spectrum, start_color, steps_between, squiggle_type, day_zero, harmonic
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<token_id INT64, color_direction STRING, color_spread INT64, end_color INT64, height INT64, segments INT64, spectrum STRING, start_color INT64, steps_between INT64, squiggle_type STRING, day_zero STRING, harmonic STRING>
+{% else %}
 FROM (VALUES
+{% endif %}
     (0,'Forward',25,2,3,19,'Normal',105,200,'Normal','Yes',''),
     (1,'Forward',45,136,3,14,'Normal',74,200,'Normal','Yes',''),
     (2,'Reverse',29,9,3,13,'Normal',175,200,'Normal','Yes',''),
@@ -9691,5 +9696,8 @@ FROM (VALUES
     (9683,'Reverse',26,116,3,15,'Normal',1,200,'Normal','',''),
     (9684,'Forward',21,34,3,12,'Normal',228,1000,'Fuzzy','','')
 
-
- ) AS temp_table (token_id, color_direction, color_spread, end_color, height, segments, spectrum, start_color, steps_between, squiggle_type, day_zero, harmonic)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (token_id, color_direction, color_spread, end_color, height, segments, spectrum, start_color, steps_between, squiggle_type, day_zero, harmonic)
+{% endif %}

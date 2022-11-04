@@ -11,7 +11,12 @@
 SELECT
 "optimism" as blockchain, feed_name, LOWER(proxy_address) AS proxy_address, LOWER(underlying_token_address) AS underlying_token_address, CAST( extra_decimals AS NUMERIC) AS extra_decimals
 
-FROM (values
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<feed_name STRING, proxy_address STRING, underlying_token_address STRING, extra_decimals INT64>
+{% else %}
+FROM (VALUES
+{% endif %}
 	 ("AAVE / USD", "0x338ed6787f463394D24813b297401B9F05a8C9d1", "0x76FB31fb4af56892A25e32cFC43De717950c9278", 0)
 	,("AAVE / USD", "0x338ed6787f463394D24813b297401B9F05a8C9d1", "0x00B8D5a5e1Ac97Cb4341c4Bc4367443c8776e8d9", 0)
 	,("BTC / USD", "0xD702DD976Fb76Fffc2D3963D037dfDae5b04E593", "0x68f180fcCe6836688e9084f035309E29Bf0A2095", 0)
@@ -42,4 +47,8 @@ FROM (values
 	,("FRAX / USD", "0xc7D132BeCAbE7Dcc4204841F33bae45841e41D9C", "0x2E3D870790dC77A83DD1d18184Acc7439A53f475", 0)
 	,("FXS / USD", "0xB9B16330671067B1b062B9aC2eFd2dB75F03436E", "0x67ccea5bb16181e7b4109c9c2143c24a1c2205be", 0)
 	,("INR / USD", "0x5535e67d8f99c8ebe961E1Fc1F6DDAE96FEC82C9", "0xa3A538EA5D5838dC32dde15946ccD74bDd5652fF", 0)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
 ) a (feed_name, proxy_address, underlying_token_address, extra_decimals)
+{% endif %}

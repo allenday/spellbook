@@ -7,7 +7,12 @@
 -- Source: https://etherscan.io/accounts/label/mev-bot
 
 SELECT address
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<address STRING>
+{% else %}
 FROM (VALUES
+{% endif %}
     ('0xeb4c5ab9b36437f969888be99af42fc9087005a5')
     , ('0x0000000000036414940324055c43e75f56b7d016')
     , ('0x0000000009cb38fb8a1bbb8ada23c8261118f019')
@@ -267,4 +272,8 @@ FROM (VALUES
     , ('0xff2fbc735d33ae830f056107f1b551783ec4ed5b')
     , ('0xff62dfadca3b5643d0b283571fe154d886580c0c')
     , ('0x93f9a668dccc090f63b0ec27d809527dc2f0ebba')
-    ) AS x (address)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS x (address)
+{% endif %}

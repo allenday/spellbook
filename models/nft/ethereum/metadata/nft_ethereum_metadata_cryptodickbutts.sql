@@ -4,7 +4,12 @@
 }}
 
 SELECT token_id,background,body,butt,dick,eyes,hand,hat,legendary,mouth,nose,shoes,skin,special,trait_count
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<token_id INT64, background STRING, body STRING, butt STRING, dick STRING, eyes STRING, hand STRING, hat STRING, legendary STRING, mouth STRING, nose STRING, shoes STRING, skin STRING, special STRING, trait_count STRING>
+{% else %}
 FROM (VALUES
+{% endif %}
 
 (1000,'Sunset','Boxers','None','Elephant Trunk','Nerd','Boxing Glove','Miner','','None','None','None','Mid','None','7'),
 (1001,'Grassy Knoll','Chest Hair','None','Fuse','Hippie','None','Swimming Cap','','Pierced','None','None','Zombie','None','7'),
@@ -5207,4 +5212,8 @@ FROM (VALUES
 (998,'Picnic Day','None','None','Tentacle','Blindfold','None','Cute Ears','','None','None','Basketball','Light','None','6'),
 (999,'Ocean Mist','Sash','None','Flame','Hippie','Boxing Glove','Bowl Cut','','None','None','Basketball','Dark','None','8')
 
- ) AS temp_table (token_id,background,body,butt,dick,eyes,hand,hat,legendary,mouth,nose,shoes,skin,special,trait_count)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (token_id,background,body,butt,dick,eyes,hand,hat,legendary,mouth,nose,shoes,skin,special,trait_count)
+{% endif %}

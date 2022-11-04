@@ -4,7 +4,12 @@
 }}
 
 SELECT token_id, mode, chroma, biome, terraform_zone, x_coordinate, y_coordinate, terraform_level, question_marks, x_seed, y_seed, lith0, spine
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<token_id INT64, mode STRING, chroma STRING, biome INT64, terraform_zone STRING, x_coordinate INT64, y_coordinate INT64, terraform_level INT64, question_marks INT64, x_seed STRING, y_seed STRING, lith0 STRING, spine STRING>
+{% else %}
 FROM (VALUES
+{% endif %}
     (1,'Origin','Pulse',32,'Hypermage',9,5,13,52453,'','','',''),
     (2,'Origin','Flow',63,'Jadeite',20,14,7,53941,'','','',''),
     (3,'Origin','Flow',90,'Tetsu',14,3,5,28709,'','','',''),
@@ -9915,4 +9920,8 @@ FROM (VALUES
     (9908,'Origin','Flow',46,'Holo',23,8,14,44428,'','','',''),
     (9909,'Origin','Flow',21,'Dynacrypts',36,24,13,51891,'','','','')
 
- ) AS temp_table (token_id, mode, chroma, biome, terraform_zone, x_coordinate, y_coordinate, terraform_level, question_marks, x_seed, y_seed, lith0, spine)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (token_id, mode, chroma, biome, terraform_zone, x_coordinate, y_coordinate, terraform_level, question_marks, x_seed, y_seed, lith0, spine)
+{% endif %}

@@ -3,7 +3,12 @@
         )
 }}
 select contract_address, project_id, project_id_base_value, collection_name, artist_name, grails_season, grail_id, art_collection_unique_id
-from (VALUES
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<contract_address STRING, project_id INT64, project_id_base_value INT64, collection_name STRING, artist_name STRING, grails_season INT64, grail_id INT64, art_collection_unique_id STRING>
+{% else %}
+FROM (VALUES
+{% endif %}
         ('0xb6329bd2741c4e5e91e26c4e653db643e74b2b19', 0, 1, 'What do you "B"', 'Gary Vaynerchuk', 1, 1, '0xb6329bd2741c4e5e91e26c4e653db643e74b2b19-0')
         , ('0xb6329bd2741c4e5e91e26c4e653db643e74b2b19', 1, 1, 'What do you "B"', 'Gary Vaynerchuk', 1, 1, '0xb6329bd2741c4e5e91e26c4e653db643e74b2b19-1')
         , ('0xb6329bd2741c4e5e91e26c4e653db643e74b2b19', 2, 1, 'MIRROR, MIRROR.', 'Lucréce', 1, 2, '0xb6329bd2741c4e5e91e26c4e653db643e74b2b19-2')
@@ -1041,6 +1046,10 @@ from (VALUES
         , ('0xb6329bd2741c4e5e91e26c4e653db643e74b2b19', 1034, 1, 'euphoria', 'Marlo', 1, 8, '0xb6329bd2741c4e5e91e26c4e653db643e74b2b19-1034')
         , ('0xb6329bd2741c4e5e91e26c4e653db643e74b2b19', 1035, 1, 'What do you "B"', 'Gary Vaynerchuk', 1, 1, '0xb6329bd2741c4e5e91e26c4e653db643e74b2b19-1035')
 
-) as temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, grails_season, grail_id, art_collection_unique_id)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, grails_season, grail_id, art_collection_unique_id)
+{% endif %}
 
 order by project_id asc 
