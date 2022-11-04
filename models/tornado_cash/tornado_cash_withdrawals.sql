@@ -42,13 +42,13 @@ FROM
                 AND et.block_time >= (select min(evt_block_time) from {{ source('tornado_cash_ethereum','eth_evt_Withdrawal') }})
                 {% endif %}
                 {% if is_incremental() %}
-                AND et.block_time >= date_trunc("day", now() - interval '1 week')
+                AND et.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
                 {% endif %}
         {% if not is_incremental() %}
         WHERE tc.evt_block_time >= (select min(evt_block_time) from {{ source('tornado_cash_ethereum','eth_evt_Withdrawal') }})
         {% endif %}
         {% if is_incremental() %}
-        WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE tc.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
 
         UNION DISTINCT
@@ -142,13 +142,13 @@ FROM
                 AND et.block_time >= (select min(evt_block_time) from {{ source('tornado_cash_ethereum','erc20_evt_Withdrawal') }})
                 {% endif %}
                 {% if is_incremental() %}
-                AND et.block_time >= date_trunc("day", now() - interval '1 week')
+                AND et.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
                 {% endif %}
         {% if not is_incremental() %}
         WHERE tc.evt_block_time >= (select min(evt_block_time) from {{ source('tornado_cash_ethereum','erc20_evt_Withdrawal') }})
         {% endif %}
         {% if is_incremental() %}
-        WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE tc.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
 
         UNION DISTINCT
@@ -242,13 +242,13 @@ FROM
                 AND et.block_time >= (select min(evt_block_time) from {{ source('tornado_cash_ethereum','ERC20Tornado_evt_Withdrawal') }})
                 {% endif %}
                 {% if is_incremental() %}
-                AND et.block_time >= date_trunc("day", now() - interval '1 week')
+                AND et.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
                 {% endif %}
         {% if not is_incremental() %}
         WHERE tc.evt_block_time >= (select min(evt_block_time) from {{ source('tornado_cash_ethereum','ERC20Tornado_evt_Withdrawal') }})
         {% endif %}
         {% if is_incremental() %}
-        WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE tc.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
 
         UNION DISTINCT
@@ -280,13 +280,13 @@ FROM
                 AND bt.block_time >= (select min(evt_block_time) from {{ source('tornado_cash_bnb','TornadoCashBNB_evt_Withdrawal') }})
                 {% endif %}
                 {% if is_incremental() %}
-                AND bt.block_time >= date_trunc("day", now() - interval '1 week')
+                AND bt.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
                 {% endif %}
         {% if not is_incremental() %}
         WHERE tc.evt_block_time >= (select min(evt_block_time) from {{ source('tornado_cash_bnb','TornadoCashBNB_evt_Withdrawal') }})
         {% endif %}
         {% if is_incremental() %}
-        WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE tc.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
 
         UNION DISTINCT
@@ -318,13 +318,13 @@ FROM
                 AND gt.block_time >= (select min(evt_block_time) from {{ source('tornado_cash_gnosis','eth_evt_Withdrawal') }})
                 {% endif %}
                 {% if is_incremental() %}
-                AND gt.block_time >= date_trunc("day", now() - interval '1 week')
+                AND gt.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
                 {% endif %}
         {% if not is_incremental() %}
         WHERE tc.evt_block_time >= (select min(evt_block_time) from {{ source('tornado_cash_gnosis','eth_evt_Withdrawal') }})
         {% endif %}
         {% if is_incremental() %}
-        WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE tc.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
 
         UNION DISTINCT
@@ -356,13 +356,13 @@ FROM
                 AND ot.block_time >= (select min(evt_block_time) from {{ source('tornado_cash_optimism','ETHTornado_evt_Withdrawal') }})
                 {% endif %}
                 {% if is_incremental() %}
-                AND ot.block_time >= date_trunc("day", now() - interval '1 week')
+                AND ot.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
                 {% endif %}
         {% if not is_incremental() %}
         WHERE tc.evt_block_time >= (select min(evt_block_time) from {{ source('tornado_cash_optimism','ETHTornado_evt_Withdrawal') }})
         {% endif %}
         {% if is_incremental() %}
-        WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE tc.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
 
         UNION DISTINCT
@@ -393,13 +393,13 @@ FROM
                 AND at.block_time >= (select min(evt_block_time) from {{ source('tornado_cash_avalanche_c','ETHTornado_evt_Withdrawal') }})
                 {% endif %}
                 {% if is_incremental() %}
-                AND at.block_time >= date_trunc("day", now() - interval '1 week')
+                AND at.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
                 {% endif %}
         {% if not is_incremental() %}
         WHERE tc.evt_block_time >= (select min(evt_block_time) from {{ source('tornado_cash_avalanche_c','ETHTornado_evt_Withdrawal') }})
         {% endif %}
         {% if is_incremental() %}
-        WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE tc.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
 
         UNION DISTINCT
@@ -431,12 +431,12 @@ FROM
                 AND at.block_time >= (select min(evt_block_time) from {{ source('tornado_cash_arbitrum','ETHTornado_evt_Withdrawal') }})
                 {% endif %}
                 {% if is_incremental() %}
-                AND at.block_time >= date_trunc("day", now() - interval '1 week')
+                AND at.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
                 {% endif %}
         {% if not is_incremental() %}
         WHERE tc.evt_block_time >= (select min(evt_block_time) from {{ source('tornado_cash_arbitrum','ETHTornado_evt_Withdrawal') }})
         {% endif %}
         {% if is_incremental() %}
-        WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE tc.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
 )

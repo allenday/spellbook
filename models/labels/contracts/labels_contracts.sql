@@ -12,7 +12,7 @@ SELECT array('ethereum') as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-26') as created_at,
-       now() as modified_at
+       CURRENT_TIMESTAMP as modified_at
 FROM {{ source('ethereum','contracts') }} 
 UNION DISTINCT
 SELECT array('gnosis') as blockchain,
@@ -22,7 +22,7 @@ SELECT array('gnosis') as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-26') as created_at,
-       now() as modified_at
+       CURRENT_TIMESTAMP as modified_at
 FROM {{ source('gnosis','contracts') }} 
 UNION DISTINCT
 SELECT array('avalanche_c') as blockchain,
@@ -32,7 +32,7 @@ SELECT array('avalanche_c') as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-26') as created_at,
-       now() as modified_at
+       CURRENT_TIMESTAMP as modified_at
 FROM {{ source('avalanche_c','contracts') }} 
 UNION DISTINCT
 SELECT array('arbitrum') as blockchain,
@@ -42,7 +42,7 @@ SELECT array('arbitrum') as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-26') as created_at,
-       now() as modified_at
+       CURRENT_TIMESTAMP as modified_at
 FROM {{ source('arbitrum','contracts') }} 
 UNION DISTINCT
 SELECT array('bnb') as blockchain,
@@ -52,7 +52,7 @@ SELECT array('bnb') as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-26') as created_at,
-       now() as modified_at
+       CURRENT_TIMESTAMP as modified_at
 FROM {{ source('bnb','contracts') }} 
 UNION DISTINCT
 SELECT array('optimism') as blockchain,
@@ -62,5 +62,5 @@ SELECT array('optimism') as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-26') as created_at,
-       now() as modified_at
+       CURRENT_TIMESTAMP as modified_at
 FROM {{ source('optimism','contracts') }} 

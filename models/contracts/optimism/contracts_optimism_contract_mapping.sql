@@ -48,12 +48,12 @@ with base_level as (
       and ct.tx_hash = sd.creation_tx_hash
       and ct.block_time = sd.created_time
       {% if is_incremental() %}
-      and sd.created_time >= date_trunc('day', now() - interval '1 week')
+      and sd.created_time >= date_trunc('day', CURRENT_TIMESTAMP - interval '1 week')
       {% endif %}
     where 
       true
     {% if is_incremental() %}
-      and ct.block_time >= date_trunc('day', now() - interval '1 week')
+      and ct.block_time >= date_trunc('day', CURRENT_TIMESTAMP - interval '1 week')
 
     -- to get existing history of contract mapping
     UNION ALL 

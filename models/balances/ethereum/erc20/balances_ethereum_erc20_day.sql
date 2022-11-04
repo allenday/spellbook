@@ -12,7 +12,7 @@ with
         select
             explode(
                 sequence(
-                    to_date('2015-01-01'), date_trunc('day', now()), interval 1 day
+                    to_date('2015-01-01'), date_trunc('day', CURRENT_TIMESTAMP), interval 1 day
                 )
             ) as day
     )
@@ -25,7 +25,7 @@ with
     amount,
     day,
     symbol,
-    lead(day, 1, now()) OVER (PARTITION BY token_address, wallet_address ORDER BY day) AS next_day
+    lead(day, 1, CURRENT_TIMESTAMP) OVER (PARTITION BY token_address, wallet_address ORDER BY day) AS next_day
     FROM {{ ref('transfers_ethereum_erc20_rolling_day') }})
 
 SELECT

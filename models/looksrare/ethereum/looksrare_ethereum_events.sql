@@ -42,7 +42,7 @@ WITH looks_rare AS (
     LEFT JOIN {{ source('looksrare_ethereum','looksrareexchange_evt_royaltypayment') }} roy ON roy.evt_tx_hash = ask.evt_tx_hash
     AND ask.evt_index - 2 = roy.evt_index
      {% if is_incremental() %} -- this filter will only be applied on an incremental run
-     WHERE ask.evt_block_time >= date_trunc("day", now() - interval '1 week')
+     WHERE ask.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
      {% endif %}
                             UNION DISTINCT
     SELECT
@@ -71,7 +71,7 @@ WITH looks_rare AS (
     LEFT JOIN {{ source('looksrare_ethereum','looksrareexchange_evt_royaltypayment') }} roy ON roy.evt_tx_hash = bid.evt_tx_hash
     AND roy.evt_index = bid.evt_index - 4
      {% if is_incremental() %} -- this filter will only be applied on an incremental run
-     WHERE bid.evt_block_time >= date_trunc("day", now() - interval '1 week')
+     WHERE bid.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
      {% endif %}
     ),
 
@@ -92,7 +92,7 @@ erc_transfers as
         WHERE erc1155.evt_block_time > '2022-01-01'
         {% endif %}
         {% if is_incremental() %} -- this filter will only be applied on an incremental run
-        WHERE erc1155.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE erc1155.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
         GROUP BY evt_tx_hash,value,id,evt_index, erc1155.from, erc1155.to, erc1155.contract_address
             UNION DISTINCT
@@ -111,7 +111,7 @@ SELECT evt_tx_hash,
         WHERE erc721.evt_block_time > '2022-01-01'
         {% endif %}
         {% if is_incremental() %} -- this filter will only be applied on an incremental run
-        WHERE erc721.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE erc721.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
         GROUP BY evt_tx_hash,tokenId,evt_index, erc721.from, erc721.to, erc721.contract_address)
 
@@ -181,7 +181,7 @@ INNER JOIN {{ source('ethereum','transactions') }} tx ON looks_rare.tx_hash = tx
     AND tx.block_time > '2022-01-01'
     {% endif %}
     {% if is_incremental() %}
-    AND tx.block_time >= date_trunc("day", now() - interval '1 week')
+    AND tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
 LEFT JOIN erc_transfers erc ON erc.evt_tx_hash = looks_rare.tx_hash AND erc.token_id_erc = token_id
 LEFT JOIN {{ ref('tokens_nft') }} tokens ON tokens.contract_address =  nft_contract_address AND tokens.blockchain = 'ethereum'
@@ -190,7 +190,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', loo
     AND p.contract_address = currency_contract
     AND p.blockchain ='ethereum'
     {% if is_incremental() %}
-    AND p.minute >= date_trunc("day", now() - interval '1 week')
+    AND p.minute >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} erc20 ON erc20.contract_address = currency_contract AND erc20.blockchain = 'ethereum'
 LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_block_time=looks_rare.block_time
@@ -199,7 +199,7 @@ LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_bloc
     AND erct2.tokenId=looks_rare.token_id
     AND erct2.from=looks_rare.buyer
     {% if is_incremental() %}
-    AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND erct2.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=looks_rare.block_time
     AND looks_rare.nft_contract_address=erct3.contract_address
@@ -207,7 +207,7 @@ LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.e
     AND erct3.id=looks_rare.token_id
     AND erct3.from=looks_rare.buyer
     {% if is_incremental() %}
-    AND erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND erct3.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct4 ON erct4.evt_block_time=looks_rare.block_time
     AND looks_rare.nft_contract_address=erct4.contract_address
@@ -215,15 +215,15 @@ LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct4 ON erct4.evt_bloc
     AND erct4.tokenId=looks_rare.token_id
     AND erct4.from=looks_rare.seller
     {% if is_incremental() %}
-    AND erct4.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND erct4.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('ethereum','traces') }} ett
         ON looks_rare.block_time = ett.block_time AND looks_rare.tx_hash = ett.tx_hash AND right(ett.input, 8) IN ('72db8c0b', '332d1229')
         {% if is_incremental() %}
-        and ett.block_time >= date_trunc("day", now() - interval '1 week')
+        and ett.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
 WHERE number_of_items >= 1
 {% if is_incremental() %}
 -- this filter will only be applied on an incremental run
-AND looks_rare.block_time >= date_trunc("day", now() - interval '1 week')
+AND looks_rare.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
 {% endif %}

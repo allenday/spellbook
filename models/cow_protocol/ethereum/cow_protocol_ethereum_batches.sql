@@ -36,8 +36,8 @@ batch_counts as (
         join cow_protocol_ethereum.solvers
             on solver = address
     {% if is_incremental() %}
-    WHERE s.evt_block_time >= date_trunc("day", now() - interval '1 week')
-    AND i.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE s.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
+    AND i.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
     group by s.evt_tx_hash, solver, s.evt_block_time, name
 ),
@@ -55,7 +55,7 @@ batch_values as (
             and p.minute = date_trunc('minute', block_time)
             and blockchain = 'ethereum'
     {% if is_incremental() %}
-    WHERE block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
     group by tx_hash, price
 ),
@@ -92,7 +92,7 @@ combined_batch_info as (
         inner join {{ source('ethereum', 'transactions') }} tx
             on evt_tx_hash = hash
             {% if is_incremental() %}
-            AND block_time >= date_trunc("day", now() - interval '1 week')
+            AND block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
             {% endif %}
     where num_trades > 0 --! Exclude Withdraw Batches
 )

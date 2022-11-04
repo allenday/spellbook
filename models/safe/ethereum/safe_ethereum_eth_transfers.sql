@@ -32,7 +32,7 @@ where et.block_time > '2018-11-24' -- for initial query optimisation
 {% endif %}
 {% if is_incremental() %}
 -- to prevent potential counterfactual safe deployment issues we take a bigger interval
-where et.block_time > date_trunc("day", now() - interval '10 days')
+where et.block_time > date_trunc("day", CURRENT_TIMESTAMP - interval '10 days')
 {% endif %}
         
 UNION ALL
@@ -55,5 +55,5 @@ where et.block_time > '2018-11-24' -- for initial query optimisation
 {% endif %}
 {% if is_incremental() %}
 -- to prevent potential counterfactual safe deployment issues we take a bigger interval
-where et.block_time > date_trunc("day", now() - interval '10 days')
+where et.block_time > date_trunc("day", CURRENT_TIMESTAMP - interval '10 days')
 {% endif %}

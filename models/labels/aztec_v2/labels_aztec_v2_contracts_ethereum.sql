@@ -10,7 +10,7 @@ with
       'jackiep00' as contributor,
       'wizard' as source,
       date('2022-09-19') as created_at,
-      now() as updated_at,
+      CURRENT_TIMESTAMP as updated_at,
       version,
       protocol
     from

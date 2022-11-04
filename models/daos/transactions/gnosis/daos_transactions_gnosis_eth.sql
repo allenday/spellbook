@@ -39,7 +39,7 @@ transactions as (
         WHERE block_time >= '{{transactions_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        WHERE block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
         AND to IN (SELECT dao_wallet_address FROM dao_tmp)
         AND LOWER(call_type) NOT IN ('delegatecall', 'callcode', 'staticcall') 
@@ -64,7 +64,7 @@ transactions as (
         WHERE block_time >= '{{transactions_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        WHERE block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
         AND from IN (SELECT dao_wallet_address FROM dao_tmp)
         AND LOWER(call_type) NOT IN ('delegatecall', 'callcode', 'staticcall') 
@@ -106,5 +106,5 @@ LEFT JOIN
     AND p.minute >= '{{transactions_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p.minute >= date_trunc("day", now() - interval '1 week')
+    AND p.minute >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}

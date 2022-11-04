@@ -119,13 +119,13 @@ SELECT
 FROM buys
 INNER JOIN {{ source('ethereum','transactions') }} tx ON buys.evt_tx_hash = tx.hash
 {% if is_incremental() %}
-    AND tx.block_time >= date_trunc("day", now() - interval '1 week')
+    AND tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
 {% endif %}
 LEFT JOIN {{ ref('nft_ethereum_aggregators') }} agg ON agg.contract_address = tx.to
 LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', buys.evt_block_time)
     AND p.contract_address = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
     AND p.blockchain = "ethereum"
 {% if is_incremental() %}
-    AND p.minute >= date_trunc("day", now() - interval '1 week')
+    AND p.minute >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
 {% endif %}
 WHERE buys.type = "PunkBought"

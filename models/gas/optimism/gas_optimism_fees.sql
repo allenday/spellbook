@@ -44,15 +44,15 @@ SELECT
 FROM {{ source('optimism','transactions') }} txns
 JOIN {{ source('optimism','blocks') }} blocks ON blocks.number = txns.block_number
 {% if is_incremental() %}
-AND block_time >= date_trunc("day", now() - interval '2 days')
-AND blocks.time >= date_trunc("day", now() - interval '2 days')
+AND block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '2 days')
+AND blocks.time >= date_trunc("day", CURRENT_TIMESTAMP - interval '2 days')
 {% endif %}
 LEFT JOIN {{ source('prices','usd') }} p ON p.minute = date_trunc('minute', block_time)
 AND p.blockchain = 'optimism'
 AND p.symbol = 'WETH'
 {% if is_incremental() %}
-AND p.minute >= date_trunc("day", now() - interval '2 days')
-WHERE block_time >= date_trunc("day", now() - interval '2 days')
-AND blocks.time >= date_trunc("day", now() - interval '2 days')
-AND p.minute >= date_trunc("day", now() - interval '2 days')
+AND p.minute >= date_trunc("day", CURRENT_TIMESTAMP - interval '2 days')
+WHERE block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '2 days')
+AND blocks.time >= date_trunc("day", CURRENT_TIMESTAMP - interval '2 days')
+AND p.minute >= date_trunc("day", CURRENT_TIMESTAMP - interval '2 days')
 {% endif %}

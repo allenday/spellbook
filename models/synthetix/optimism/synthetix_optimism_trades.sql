@@ -28,7 +28,7 @@ WITH asset_price AS (
 	LEFT JOIN {{ source('synthetix_optimism', 'FuturesMarketManager_evt_MarketAdded') }} AS sm
 		ON s.contract_address = sm.market
 	{% if is_incremental() %}
-	WHERE s.evt_block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
+	WHERE s.evt_block_time >= DATE_TRUNC("DAY", CURRENT_TIMESTAMP - INTERVAL '1 WEEK')
 	{% endif %}
 	GROUP BY market_address, asset, s.evt_block_time
 ),
@@ -95,7 +95,7 @@ perps AS (
 		AND s.evt_block_time = p.evt_block_time
 	WHERE CAST(s.tradeSize AS DOUBLE) != 0
 	{% if is_incremental() %}
-	AND s.evt_block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
+	AND s.evt_block_time >= DATE_TRUNC("DAY", CURRENT_TIMESTAMP - INTERVAL '1 WEEK')
 	{% endif %}
 )
 
@@ -126,5 +126,5 @@ INNER JOIN {{ source('optimism', 'transactions') }} AS tx
 	AND tx.block_time >= '{{project_start_date}}'
 	{% endif %}
 	{% if is_incremental() %}
-	AND tx.block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
+	AND tx.block_time >= DATE_TRUNC("DAY", CURRENT_TIMESTAMP - INTERVAL '1 WEEK')
 	{% endif %}

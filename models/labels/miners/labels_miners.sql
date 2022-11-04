@@ -12,7 +12,7 @@ SELECT DISTINCT array('ethereum') as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-28') as created_at,
-       now() as modified_at
+       CURRENT_TIMESTAMP as modified_at
 FROM {{ source('ethereum','blocks') }} 
 {% if not var('disable_gnosis')  %}
 UNION DISTINCT
@@ -23,7 +23,7 @@ SELECT DISTINCT array('gnosis') as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-28') as created_at,
-       now() as modified_at
+       CURRENT_TIMESTAMP as modified_at
 FROM {{ source('gnosis','blocks') }} 
 {% endif %}
 {% if not var('disable_avalanche_c')  %}
@@ -35,7 +35,7 @@ SELECT DISTINCT array('avalanche_c') as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-28') as created_at,
-       now() as modified_at
+       CURRENT_TIMESTAMP as modified_at
 FROM {{ source('avalanche_c','blocks') }} 
 {% endif %}
 {% if not var('disable_arbitrum')  %}
@@ -47,7 +47,7 @@ SELECT DISTINCT array('arbitrum') as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-28') as created_at,
-       now() as modified_at
+       CURRENT_TIMESTAMP as modified_at
 FROM {{ source('arbitrum','blocks') }} 
 {% endif %}
 {% if not var('disable_bnb')  %}
@@ -59,7 +59,7 @@ SELECT DISTINCT array('bnb') as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-28') as created_at,
-       now() as modified_at
+       CURRENT_TIMESTAMP as modified_at
 FROM {{ source('bnb','blocks') }} 
 {% endif %}
 {% if not var('disable_optimism')  %}
@@ -71,6 +71,6 @@ SELECT DISTINCT array('optimism') as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-28') as created_at,
-       now() as modified_at
+       CURRENT_TIMESTAMP as modified_at
 FROM {{ source('optimism','blocks') }} 
 {% endif %}

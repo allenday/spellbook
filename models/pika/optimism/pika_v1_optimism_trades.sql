@@ -34,7 +34,7 @@ WITH positions AS (
 		,'1' AS version
 	FROM {{ source('pika_perp_optimism', 'PikaPerpV2_evt_NewPosition') }}
 	{% if is_incremental() %}
-	WHERE evt_block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
+	WHERE evt_block_time >= DATE_TRUNC("DAY", CURRENT_TIMESTAMP - INTERVAL '1 WEEK')
 	{% endif %}
 
 	UNION ALL
@@ -57,7 +57,7 @@ WITH positions AS (
 		,'1' AS version
 	FROM {{ source('pika_perp_optimism', 'PikaPerpV2_evt_ClosePosition') }}
 	{% if is_incremental() %}
-	WHERE evt_block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
+	WHERE evt_block_time >= DATE_TRUNC("DAY", CURRENT_TIMESTAMP - INTERVAL '1 WEEK')
 	{% endif %}
 ),
 
@@ -160,5 +160,5 @@ INNER JOIN {{ source('optimism', 'transactions') }} AS tx
 	AND tx.block_time >= '{{project_start_date}}'
 	{% endif %}
 	{% if is_incremental() %}
-	AND tx.block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
+	AND tx.block_time >= DATE_TRUNC("DAY", CURRENT_TIMESTAMP - INTERVAL '1 WEEK')
 	{% endif %}

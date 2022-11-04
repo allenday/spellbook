@@ -12,7 +12,7 @@ with
         select
             explode(
                 sequence(
-                    to_date('2015-01-01'), date_trunc('hour', now()), interval 1 hour
+                    to_date('2015-01-01'), date_trunc('hour', CURRENT_TIMESTAMP), interval 1 hour
                 )
             ) as hour
     )
@@ -23,7 +23,7 @@ with
     token_address,
     tokenId,
     hour,
-    lead(hour, 1, now()) OVER (PARTITION BY token_address, tokenId ORDER BY hour) AS next_hour
+    lead(hour, 1, CURRENT_TIMESTAMP) OVER (PARTITION BY token_address, tokenId ORDER BY hour) AS next_hour
     FROM {{ ref('transfers_ethereum_erc721_rolling_hour') }})
 
 SELECT distinct

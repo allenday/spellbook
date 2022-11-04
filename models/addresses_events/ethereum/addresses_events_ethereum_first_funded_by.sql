@@ -30,7 +30,7 @@ JOIN
     AND (et.call_type NOT IN ('delegatecall', 'callcode', 'staticcall') OR et.call_type IS NULL)
     AND et.value > 0
     {% if is_incremental() %}
-    AND et.block_time >= date_trunc('day', now() - interval '1 week')
+    AND et.block_time >= date_trunc('day', CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
     GROUP BY et.to
 ) AS b 
@@ -40,6 +40,6 @@ WHERE a.success IS TRUE
     AND (a.call_type NOT IN ('delegatecall', 'callcode', 'staticcall') OR a.call_type IS NULL)
     AND a.value > 0
     {% if is_incremental() %}
-    AND a.block_time >= date_trunc('day', now() - interval '1 week')
+    AND a.block_time >= date_trunc('day', CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
 GROUP BY b.to

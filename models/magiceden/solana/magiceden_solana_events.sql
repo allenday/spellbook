@@ -98,7 +98,7 @@ LEFT JOIN prices.usd p
   AND p.blockchain is NULL
   AND p.symbol = 'SOL'
   {% if is_incremental() %}
-  AND p.minute >= date_trunc("day", now() - interval '1 week')
+  AND p.minute >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
   {% endif %}
 WHERE (
      array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K') -- magic eden v2
@@ -111,5 +111,5 @@ WHERE (
      {% endif %}
      {% if is_incremental() %}
      -- this filter will only be applied on an incremental run
-     AND block_date >= date_trunc("day", now() - interval '1 week')
+     AND block_date >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
      {% endif %}

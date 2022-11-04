@@ -26,7 +26,7 @@ WITH
             , tradeId as unique_trade_id
         FROM {{ source('archipelago_ethereum','ArchipelagoMarket_evt_Trade') }}
         {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
         {% if not is_incremental() %}
         WHERE evt_block_time >= '2022-6-20'
@@ -44,7 +44,7 @@ WITH
             , tradeId as unique_trade_id
         FROM {{ source('archipelago_ethereum','ArchipelagoMarket_evt_TokenTrade') }}
         {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
         {% if not is_incremental() %}
         WHERE evt_block_time >= '2022-6-20'
@@ -69,7 +69,7 @@ WITH
                 as is_protocol_fee
         FROM {{ source('archipelago_ethereum','ArchipelagoMarket_evt_RoyaltyPayment') }}
         {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
         {% if not is_incremental() %}
         WHERE evt_block_time >= '2022-6-20'
@@ -106,7 +106,7 @@ WITH
         inner join {{ source('ethereum', 'transactions') }} tx
             ON e.block_number = tx.block_number and e.tx_hash = tx.hash
             {% if is_incremental() %}
-            AND tx.block_time >= date_trunc("day", now() - interval '1 week')
+            AND tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
             {% endif %}
             {% if not is_incremental() %}
             AND tx.block_time >= '2022-6-20'
@@ -169,7 +169,7 @@ WITH
             AND p.symbol = 'WETH' -- currently we only have ETH trades
             AND date_trunc('minute', p.minute)=date_trunc('minute', t.block_time)
             {% if is_incremental() %}
-            AND p.minute >= date_trunc("day", now() - interval '1 week')
+            AND p.minute >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
             {% endif %}
             {% if not is_incremental() %}
             AND p.minute >= '2022-4-1'

@@ -38,7 +38,7 @@ SELECT
     'soispoke' AS contributor,
     'query' AS source,
     timestamp('2022-08-24') as created_at,
-    now() as updated_at
+    CURRENT_TIMESTAMP as updated_at
 FROM nft_trades
   JOIN total on total.address = nft_trades.address
 WHERE nft_trades.address is not null

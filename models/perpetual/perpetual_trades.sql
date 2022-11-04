@@ -37,7 +37,7 @@ FROM
 		,evt_index
 	FROM {{ ref('perpetual_protocol_trades') }}
 	{% if is_incremental() %}
-	WHERE block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
+	WHERE block_time >= DATE_TRUNC("DAY", CURRENT_TIMESTAMP - INTERVAL '1 WEEK')
 	{% endif %}
 
 	UNION DISTINCT
@@ -64,7 +64,7 @@ FROM
 		,evt_index
 	FROM {{ ref('pika_trades') }}
 	{% if is_incremental() %}
-	WHERE block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
+	WHERE block_time >= DATE_TRUNC("DAY", CURRENT_TIMESTAMP - INTERVAL '1 WEEK')
 	{% endif %}
 
 	UNION DISTINCT
@@ -91,6 +91,6 @@ FROM
 		,evt_index
 	FROM {{ ref('synthetix_trades') }}
 	{% if is_incremental() %}
-	WHERE block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
+	WHERE block_time >= DATE_TRUNC("DAY", CURRENT_TIMESTAMP - INTERVAL '1 WEEK')
 	{% endif %}
 )

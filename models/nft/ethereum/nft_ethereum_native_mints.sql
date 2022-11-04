@@ -164,7 +164,7 @@ where
   -- We're interested in collectible NFTs (e.g. BAYC), not functional NFTs (e.g. Uniswap LP), so we exclude NFTs originated in DeFi 
   ercs.to not in (select address from {{ ref('addresses_ethereum_defi') }})
   {% if is_incremental() %}
-  and ercs.evt_block_time >= date_trunc("day", now() - interval '1 week')
-  and tx.block_time >= date_trunc("day", now() - interval '1 week')
-  and prc.minute >= date_trunc("day", now() - interval '1 week')
+  and ercs.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
+  and tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
+  and prc.minute >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
   {% endif %}

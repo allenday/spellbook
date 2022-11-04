@@ -8,5 +8,5 @@ SELECT
     'soispoke' AS contributor,
     'query' AS source,
     timestamp('2022-09-01') as created_at,
-    now() as updated_at
+    CURRENT_TIMESTAMP as updated_at
 FROM {{ ref('safe_ethereum_safes') }}

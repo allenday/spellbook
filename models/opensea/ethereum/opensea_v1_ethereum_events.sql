@@ -61,7 +61,7 @@ WHERE
         OR addrs[10] = '0x5b3256965e7c3cf26e11fcaf296dfc8807c01073')
 AND call_success = true
 {% if is_incremental() %}
-AND call_block_time >= date_trunc("day", now() - interval '1 week')
+AND call_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
 {% endif %}
 ),
 
@@ -91,8 +91,8 @@ SELECT
     fees.tx_hash = wc.call_tx_hash
     AND fees.trace_address = wc.call_trace_address
     {% if is_incremental() %}
-    AND fees.block_time >= date_trunc("day", now() - interval '1 week')
-  WHERE wc.call_block_time >= date_trunc("day", now() - interval '1 week')
+    AND fees.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
+  WHERE wc.call_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
   {% endif %}
 ),
 
@@ -192,7 +192,7 @@ SELECT DISTINCT
 FROM wyvern_all wa
 INNER JOIN {{ source('ethereum','transactions') }} tx ON wa.call_tx_hash = tx.hash
     {% if is_incremental() %}
-    and tx.block_time >= date_trunc("day", now() - interval '1 week')
+    and tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
 LEFT JOIN erc_transfers ON erc_transfers.evt_tx_hash = wa.call_tx_hash AND (wa.token_id = erc_transfers.token_id_erc
 OR wa.token_id = null)
@@ -204,7 +204,7 @@ LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_bloc
     AND erct2.tokenId=coalesce(token_id_erc, wa.token_id)
     AND erct2.from=buyer
     {% if is_incremental() %}
-    and erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    and erct2.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=tx.block_time
     AND wa.nft_contract_address=erct3.contract_address
@@ -212,13 +212,13 @@ LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.e
     AND erct3.id=coalesce(token_id_erc, wa.token_id)
     AND erct3.from=buyer
     {% if is_incremental() %}
-    and erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    and erct3.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', tx.block_time)
     AND p.contract_address = wa.currency_contract
     AND p.blockchain ='ethereum'
     {% if is_incremental() %}
-    AND p.minute >= date_trunc("day", now() - interval '1 week')
+    AND p.minute >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} erc20 ON erc20.contract_address = wa.currency_contract and erc20.blockchain = 'ethereum'
   WHERE wa.call_tx_hash not in (

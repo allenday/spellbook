@@ -29,6 +29,6 @@ SELECT
     'soispoke' AS contributor,
     'query' AS source,
     timestamp('2022-10-01') as created_at,
-    now() as updated_at
+    CURRENT_TIMESTAMP as updated_at
 FROM tornado_addresses
 GROUP BY address

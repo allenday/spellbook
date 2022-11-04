@@ -41,12 +41,12 @@ WITH perps AS (
 		ON p.evt_tx_hash = co.call_tx_hash
 		AND co.call_success = true
 		{% if is_incremental() %}
-		AND co.call_block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
+		AND co.call_block_time >= DATE_TRUNC("DAY", CURRENT_TIMESTAMP - INTERVAL '1 WEEK')
 		{% endif %}
 	LEFT JOIN {{ source('perp_v2_optimism', 'MarketRegistry_evt_PoolAdded') }} AS pp
 		ON p.baseToken = pp.baseToken
 	{% if is_incremental() %}
-	WHERE p.evt_block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
+	WHERE p.evt_block_time >= DATE_TRUNC("DAY", CURRENT_TIMESTAMP - INTERVAL '1 WEEK')
 	{% endif %}
 	GROUP BY 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13
 )
@@ -80,5 +80,5 @@ INNER JOIN {{ source('optimism', 'transactions') }} AS tx
 	AND tx.block_time >= '{{project_start_date}}'
 	{% endif %}
 	{% if is_incremental() %}
-	AND tx.block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
+	AND tx.block_time >= DATE_TRUNC("DAY", CURRENT_TIMESTAMP - INTERVAL '1 WEEK')
 	{% endif %}

@@ -8,7 +8,7 @@ SELECT distinct
     'soispoke' AS contributor,
     'query' AS source,
     timestamp('2022-10-11') as created_at,
-    now() as updated_at
+    CURRENT_TIMESTAMP as updated_at
 FROM {{ source('ethereum','traces') }}
 WHERE to = lower('0x00000000219ab540356cBB839Cbe05303d7705Fa')
 AND success

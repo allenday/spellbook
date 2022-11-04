@@ -72,6 +72,6 @@ select
   "alexth" AS contributor,
   "query" AS source,
   timestamp('2022-10-05') as created_at,
-  now() as updated_at
+  CURRENT_TIMESTAMP as updated_at
 from
   eth_arb_traders

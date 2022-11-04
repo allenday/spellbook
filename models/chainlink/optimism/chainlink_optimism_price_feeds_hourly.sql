@@ -32,10 +32,10 @@ WITH gs AS (
                         '{{project_start_date}}'::date
                     {% endif %}
                     {% if is_incremental() %}
-                        date_trunc('hour', now() - interval '1 week')
+                        date_trunc('hour', CURRENT_TIMESTAMP - interval '1 week')
                     {% endif %}
                     ),
-                    DATE_TRUNC('hour', NOW()),
+                    DATE_TRUNC('hour', CURRENT_TIMESTAMP),
                     interval '1 hour'
                 )
             ) AS hr
@@ -100,7 +100,7 @@ FROM
                 gs.hr >= '{{project_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}
-                gs.hr >= date_trunc('hour', now() - interval '1 week')
+                gs.hr >= date_trunc('hour', CURRENT_TIMESTAMP - interval '1 week')
                 {% endif %}
             GROUP BY
                 gs.hr

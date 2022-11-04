@@ -73,7 +73,7 @@ FROM {{ source('blur_ethereum','BlurExchange_evt_OrdersMatched') }} bm
 LEFT JOIN {{ source('ethereum','transactions') }} et ON et.block_time=bm.evt_block_time
     AND et.hash=bm.evt_tx_hash
     {% if is_incremental() %}
-    AND et.block_time >= date_trunc("day", now() - interval '1 week')
+    AND et.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
 LEFT JOIN {{ ref('nft_ethereum_aggregators') }} agg ON agg.contract_address=et.to
 LEFT JOIN {{ source('prices','usd') }} pu ON pu.blockchain='ethereum'
@@ -81,7 +81,7 @@ LEFT JOIN {{ source('prices','usd') }} pu ON pu.blockchain='ethereum'
     AND (pu.contract_address=get_json_object(bm.buy, '$.paymentToken')
         OR (pu.contract_address='0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' AND get_json_object(bm.buy, '$.paymentToken')='0x0000000000000000000000000000000000000000'))
     {% if is_incremental() %}
-    AND pu.minute >= date_trunc("day", now() - interval '1 week')
+    AND pu.minute >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
 LEFT JOIN {{ ref('tokens_ethereum_nft') }} nft ON get_json_object(bm.buy, '$.collection')=nft.contract_address
 LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct ON erct.evt_block_time=bm.evt_block_time
@@ -90,7 +90,7 @@ LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct ON erct.evt_block_
     AND get_json_object(bm.buy, '$.tokenId')=erct.tokenId
     AND erct.from=get_json_object(bm.sell, '$.trader')
     {% if is_incremental() %}
-    AND erct.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND erct.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} maker_fix ON maker_fix.evt_block_time=bm.evt_block_time
     AND get_json_object(bm.buy, '$.collection')=maker_fix.contract_address
@@ -98,7 +98,7 @@ LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} maker_fix ON maker_fix.
     AND get_json_object(bm.buy, '$.tokenId')=maker_fix.tokenId
     AND maker_fix.from=agg.contract_address
     {% if is_incremental() %}
-    AND maker_fix.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND maker_fix.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} taker_fix ON taker_fix.evt_block_time=bm.evt_block_time
     AND get_json_object(bm.buy, '$.collection')=taker_fix.contract_address
@@ -106,8 +106,8 @@ LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} taker_fix ON taker_fix.
     AND get_json_object(bm.buy, '$.tokenId')=taker_fix.tokenId
     AND taker_fix.to=agg.contract_address
     {% if is_incremental() %}
-    AND taker_fix.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND taker_fix.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
 {% if is_incremental() %}
-WHERE bm.evt_block_time >= date_trunc("day", now() - interval '1 week')
+WHERE bm.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
 {% endif %}

@@ -34,7 +34,7 @@ WITH positions AS (
 		,'3' AS version
 	FROM {{ source('pika_perp_v3_optimism', 'PikaPerpV3_evt_NewPosition') }}
 	{% if is_incremental() %}
-	WHERE evt_block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
+	WHERE evt_block_time >= DATE_TRUNC("DAY", CURRENT_TIMESTAMP - INTERVAL '1 WEEK')
 	{% endif %}
 
 	UNION ALL
@@ -57,7 +57,7 @@ WITH positions AS (
 		,'3' AS version
 	FROM {{ source('pika_perp_v3_optimism', 'PikaPerpV3_evt_ClosePosition') }}
 	{% if is_incremental() %}
-	WHERE evt_block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
+	WHERE evt_block_time >= DATE_TRUNC("DAY", CURRENT_TIMESTAMP - INTERVAL '1 WEEK')
 	{% endif %}
 ),
 

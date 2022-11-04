@@ -24,7 +24,7 @@ with creates as (
       and success
       and tx_success
       {% if is_incremental() %}
-      and block_time >= date_trunc('day', now() - interval '1 week')
+      and block_time >= date_trunc('day', CURRENT_TIMESTAMP - interval '1 week')
       {% endif %}
 )
 select
@@ -39,6 +39,6 @@ join {{ source('optimism', 'traces') }} as sd
   and cr.trace_element = sd.trace_address[0]
   and sd.`type` = 'suicide'
   {% if is_incremental() %}
-  and sd.block_time >= date_trunc('day', now() - interval '1 week')
+  and sd.block_time >= date_trunc('day', CURRENT_TIMESTAMP - interval '1 week')
   {% endif %}
 group by 1, 2, 3, 4

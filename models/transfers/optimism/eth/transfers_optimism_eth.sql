@@ -34,8 +34,8 @@ with eth_transfers as (
         and r.success
         and r.value > 0 
         {% if is_incremental() %} -- this filter will only be applied on an incremental run 
-        and r.block_time >= date_trunc('day', now() - interval '1 week')
-        and t.block_time >= date_trunc('day', now() - interval '1 week')
+        and r.block_time >= date_trunc('day', CURRENT_TIMESTAMP - interval '1 week')
+        and t.block_time >= date_trunc('day', CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
 
     UNION ALL 
@@ -62,8 +62,8 @@ with eth_transfers as (
         and t.success
         and r.value > 0 
         {% if is_incremental() %} -- this filter will only be applied on an incremental run 
-        and r.evt_block_time >= date_trunc('day', now() - interval '1 week')
-        and t.block_time >= date_trunc('day', now() - interval '1 week')
+        and r.evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP - interval '1 week')
+        and t.block_time >= date_trunc('day', CURRENT_TIMESTAMP - interval '1 week')
         {% endif %}
 )
 select * from eth_transfers order by tx_block_time

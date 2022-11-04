@@ -48,7 +48,7 @@ where et.success = true
     and et.block_time > '2018-11-24' -- for initial query optimisation    
     {% endif %}
     {% if is_incremental() %}
-    and et.block_time > date_trunc("day", now() - interval '1 week')
+    and et.block_time > date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
     {% endif %}
         
 UNION ALL
@@ -63,5 +63,5 @@ from {{ source('gnosis_safe_ethereum', 'GnosisSafev1_3_0_evt_SafeSetup') }}
 where evt_block_time > '2018-11-24' -- for initial query optimisation 
 {% endif %} 
 {% if is_incremental() %}
-where evt_block_time > date_trunc("day", now() - interval '1 week')
+where evt_block_time > date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
 {% endif %}

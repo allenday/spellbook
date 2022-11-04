@@ -20,7 +20,7 @@ FROM (
        '0xRob' as contributor,
        'query' AS source,
        date('2022-10-06') as created_at,
-       now() as modified_at
+       CURRENT_TIMESTAMP as modified_at
     FROM (
         select *
         from (
@@ -44,7 +44,7 @@ FROM (
 --       '0xRob' as contributor,
 --       'query' AS source,
 --       date('2022-10-06') as created_at,
---       now() as modified_at
+--       CURRENT_TIMESTAMP as modified_at
 --FROM {{ ref('ens_resolver_latest') }}
 --UNION DISTINCT
 --SELECT array('ethereum') as blockchain,
@@ -54,6 +54,6 @@ FROM (
 --       '0xRob' as contributor,
 --       'query' AS source,
 --       date('2022-10-06') as created_at,
---       now() as modified_at
+--       CURRENT_TIMESTAMP as modified_at
 --FROM {{ ref('ens_reverse_latest') }}
 
