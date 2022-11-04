@@ -13,9 +13,20 @@ select
   lower(contract_address) as contract_address
   ,contract_project
   ,contract_name
-from 
-    (values 
+
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<contract_address STRING, contract_project STRING, contract_name STRING>
+{% else %}
+    FROM (VALUES
+{% endif %}
+
     ('0xc30141B657f4216252dc59Af2e7CdB9D8792e1B0', 'Socket', 'Socket Registry')
     ,('0x81b30ff521D1fEB67EDE32db726D95714eb00637', 'Optimistic Explorer', 'OptimisticExplorerNFT')
     ,('0x998EF16Ea4111094EB5eE72fC2c6f4e6E8647666', 'Quix', 'Seaport')
+
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
     ) as temp_table(contract_address, contract_project, contract_name)
+{% endif %}
