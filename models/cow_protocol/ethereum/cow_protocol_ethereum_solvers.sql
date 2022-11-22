@@ -32,7 +32,11 @@ registered_solvers as (
     where rk = 1
 ),
 -- Manually inserting environment and name for each "known" solver
+{% if var('declare_values_with_unnest') %}
+known_solver_metadata AS (
+{% else %}
 known_solver_metadata (address, environment, name) as (
+{% endif %}
     SELECT *
 {% if var('declare_values_with_unnest') %}
 FROM UNNEST([

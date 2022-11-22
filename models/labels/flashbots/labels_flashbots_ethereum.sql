@@ -3,8 +3,15 @@
                                     "sector",
                                     "labels",
                                     \'["hildobby"]\') }}')}}
+{% if var('declare_values_with_unnest') %}
+{% set array_start = '[' %}
+{% set array_end = ']' %}
+{% else %}
+{% set array_start = 'ARRAY(' %}
+{% set array_end = ')' %}
+{% endif %}
 
-SELECT DISTINCT ARRAY('ethereum') AS blockchain
+SELECT DISTINCT {{ array_start }}'ethereum'{{ array_end }} AS blockchain
 , account_address AS address
 , 'Flashbots User' AS name
 , 'flashbots' AS category
