@@ -10,6 +10,13 @@ profile: "spellbook"
 vars:
   DBT_ENV_CUSTOM_ENV_S3_BUCKET: "{{ env_var('DBT_ENV_CUSTOM_ENV_S3_BUCKET', 'local') }}"
   declare_values_with_unnest: true
+  safe_cast: 'SAFE_CAST'
+  date_trunc_variant: 2
+  disable_gnosis: true
+  disable_avalanche_c: true
+  disable_artbitrum: true
+  disable_bnb: true
+  disable_optimism: true
 
 # These configurations specify where dbt should look for different types of files.
 # You don't need to change these!
@@ -131,18 +138,23 @@ models:
     superrare:
       +schema: superrare
       +materialized: view
+
     looksrare:
       +schema: looksrare
       +materialized: view
       ethereum:
-        +schema: looksrare_ethereum
+        +schema: looksrare_ethereum_trades
         +materialized: view
+        +column_types:
+          block_time: timestamp
+
     foundation:
       +schema: foundation
       +materialized: view
       ethereum:
         +schema: foundation_ethereum
         +materialized: view
+
     blur:
       +schema: blur
       +materialized: view
@@ -205,6 +217,8 @@ models:
       ethereum:
         +schema: seaport_ethereum
         +materialized: view
+        +column_types:
+          block_time: timestamp
 
     balances:
       +schema: balances
@@ -444,6 +458,9 @@ seeds:
       ethereum:
         +enabled: true
         +schema: test_data
+        balances_ethereum_erc20_daily_entries:
+          +column_types:
+            timestamp: timestamp
         balances_ethereum_erc20_latest_entries:
           +column_types:
             timestamp: timestamp
@@ -487,6 +504,12 @@ seeds:
     ens:
       +enabled: true
       +schema: test_data
+      ens_view_expirations_postgres:
+        +column_types:
+          min_expires: timestamp
+      ens_view_registries_postgres:
+        +column_types:
+          min_evt_block_time: timestamp
     dex:
       +enabled: true
       +schema: test_data
@@ -497,7 +520,7 @@ seeds:
           version: string
           block_date: date
           tx_hash: string
-          evt_index: int
+          evt_index: int64
           token_bought_address: string
           token_bought_amount: float
           token_sold_address: string
@@ -507,14 +530,14 @@ seeds:
       +schema: test_data
       sudoswap_ethereum_example_trades:
         +column_types:
-          block_number: long
+          block_number: int64
           tx_hash: string
           trade_category: string
           nft_contract_address: string
           token_id: string
-          amount_original: double
-          platform_fee_amount: double
-          pool_fee_amount: double
+          amount_original: float64
+          platform_fee_amount: float64
+          pool_fee_amount: float64
     cryptopunks:
       +enabled: true
       +schema: test_data
@@ -541,7 +564,7 @@ seeds:
           dao_creator_tool: string
           dao: string
           dao_wallet_address: string
-          created_date: date 
+          created_date: date
       daos_transactions_seed:
         +column_types:
           blockchain: string
@@ -584,13 +607,13 @@ seeds:
         transfers_bnb_bep20_agg_day_v2:
           +column_types:
             blockchain: string
-            day: date
+            day: timestamp
             wallet_address: string
             token_address: string
             symbol: string
-            amount_raw: double
-            amount: double
-            tx_num: long
+            amount_raw: float64
+            amount: float64
+            tx_num: int64
         transfers_bnb_bep20_agg_hour_v2:
           +column_types:
             blockchain: string
@@ -598,6 +621,6 @@ seeds:
             wallet_address: string
             token_address: string
             symbol: string
-            amount_raw: double
-            amount: double
-            tx_num: long
+            amount_raw: float64
+            amount: float64
+            tx_num: int64
