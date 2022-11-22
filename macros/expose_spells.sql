@@ -1,5 +1,5 @@
 {% macro expose_spells(blockchains, spell_type, spell_name, contributors) %}
-{%- if target.name == 'prod'-%}
+{%- if target.name == 'prod' and target.type == 'databricks' -%}
         ALTER {{"view" if model.config.materialized == "view" else "table"}} {{ this }}
         SET TBLPROPERTIES (
         'dune.public'='true',
