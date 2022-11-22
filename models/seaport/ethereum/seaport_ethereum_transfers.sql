@@ -162,7 +162,7 @@ with p1_call as (
           'ethereum' as blockchain
           ,'seaport' as project
           ,'v1' as version
-          ,TRY_CAST(date_trunc('DAY', a.block_time) AS date) AS block_date
+          ,{{ var('safe_cast') }}(date_trunc('DAY', a.block_time) AS date) AS block_date
           ,a.block_time
           ,a.block_number
           ,a.nft_token_id as token_id
@@ -399,7 +399,7 @@ with p1_call as (
           'ethereum' as blockchain
           ,'seaport' as project
           ,'v1' as version
-          ,TRY_CAST(date_trunc('DAY', a.block_time) AS date) AS block_date
+          ,{{ var('safe_cast') }}(date_trunc('DAY', a.block_time) AS date) AS block_date
           ,a.block_time
           ,a.block_number
           ,a.nft_token_id as token_id
@@ -659,7 +659,7 @@ with p1_call as (
           'ethereum' as blockchain
           ,'seaport' as project
           ,'v1' as version
-          ,TRY_CAST(date_trunc('DAY', a.block_time) AS date) AS block_date
+          ,{{ var('safe_cast') }}(date_trunc('DAY', a.block_time) AS date) AS block_date
           ,a.block_time
           ,a.block_number
           ,a.nft_token_id as token_id
@@ -895,7 +895,7 @@ with p1_call as (
           'ethereum' as blockchain
           ,'seaport' as project
           ,'v1' as version
-          ,TRY_CAST(date_trunc('DAY', a.block_time) AS date) AS block_date
+          ,{{ var('safe_cast') }}(date_trunc('DAY', a.block_time) AS date) AS block_date
           ,a.block_time
           ,a.block_number
           ,a.nft_token_id as token_id

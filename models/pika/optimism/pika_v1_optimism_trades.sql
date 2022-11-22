@@ -1,7 +1,11 @@
 {{ config(
 	schema = 'pika_v1_optimism',
 	alias ='trades',
-	partition_by = ['block_date'],
+    partition_by = {
+       'field': 'block_date',
+       'data_type': 'timestamp',
+       'granularity': 'day'
+    },
 	materialized = 'incremental',
 	file_format = 'delta',
 	incremental_strategy = 'merge',
@@ -135,7 +139,7 @@ perps AS (
 
 SELECT
 	'optimism' AS blockchain
-	,TRY_CAST(date_trunc('DAY', perps.block_time) AS date) AS block_date
+	,{{ var('safe_cast') }}(date_trunc('DAY', perps.block_time) AS date) AS block_date
 	,perps.block_time
 	,perps.virtual_asset
 	,perps.underlying_asset

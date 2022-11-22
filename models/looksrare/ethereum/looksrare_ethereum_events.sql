@@ -119,7 +119,7 @@ SELECT DISTINCT
     'ethereum' as blockchain,
     'looksrare' as project,
     'v1' as version,
-    TRY_CAST(date_trunc('DAY', looks_rare.block_time) AS date) AS block_date,
+    {{ var('safe_cast') }}(date_trunc('DAY', looks_rare.block_time) AS date) AS block_date,
     looks_rare.block_time,
     token_id,
     tokens.name AS collection,

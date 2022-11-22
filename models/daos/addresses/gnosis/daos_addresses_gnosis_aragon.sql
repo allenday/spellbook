@@ -63,7 +63,7 @@ SELECT
     ad.dao, 
     gw.dao_wallet_address, 
     ad.created_block_time,
-    TRY_CAST(ad.created_date as DATE) as created_date
+    {{ var('safe_cast') }}(ad.created_date as DATE) as created_date
 FROM 
 aragon_daos ad 
 INNER JOIN 

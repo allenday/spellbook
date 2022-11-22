@@ -242,7 +242,7 @@ WITH
             'ethereum' as blockchain
             , 'sudoswap' as project
             , 'v1' as version
-            , TRY_CAST(date_trunc('DAY', call_block_time) AS date) AS block_date
+            , {{ var('safe_cast') }}(date_trunc('DAY', call_block_time) AS date) AS block_date
             , call_block_time as block_time
             , call_block_number as block_number
             , token_id

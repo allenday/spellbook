@@ -1,6 +1,10 @@
 {{ config(
     alias = 'trades',
-    partition_by = ['block_date'],
+    partition_by = {
+      'field': 'block_date',
+      'data_type': 'timestamp',
+      'granularity': 'day'
+    },
     materialized = 'incremental',
     file_format = 'delta',
     incremental_strategy = 'merge',
@@ -752,7 +756,7 @@ SELECT
     'ethereum' AS blockchain
     ,'curve' AS project
     ,dexs.version AS version
-    ,TRY_CAST(date_trunc('DAY', dexs.block_time) AS date) AS block_date
+    ,{{ var('safe_cast') }}(date_trunc('DAY', dexs.block_time) AS date) AS block_date
     ,dexs.block_time
     ,erc20a.symbol AS token_bought_symbol
     ,erc20b.symbol AS token_sold_symbol

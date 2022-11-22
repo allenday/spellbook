@@ -40,7 +40,7 @@ SELECT
     'ethereum' AS blockchain
     ,'clipper' AS project
     ,'1' AS version
-    ,TRY_CAST(date_trunc('DAY', e.block_time) AS date) AS block_date
+    ,{{ var('safe_cast') }}(date_trunc('DAY', e.block_time) AS date) AS block_date
     ,e.block_time
     ,t_bought.symbol AS token_bought_symbol
     ,t_sold.symbol AS token_sold_symbol

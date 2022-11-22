@@ -195,7 +195,7 @@ SELECT
     'ethereum' as blockchain
     , 'archipelago' as project
     , 'v1' as version
-    , TRY_CAST(date_trunc('DAY', block_time) AS date) AS block_date
+    , {{ var('safe_cast') }}(date_trunc('DAY', block_time) AS date) AS block_date
     , block_time
     , block_number
     , token_id

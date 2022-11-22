@@ -1,15 +1,19 @@
 {{ config(
-        alias ='withdrawals',
-        materialized='incremental',
-        partition_by='block_date',
-        file_format = 'delta',
-        incremental_strategy = 'merge',
-        unique_key = ['block_date', 'tx_hash', 'evt_index', 'blockchain'],
-        post_hook='{{ expose_spells(\'["ethereum", "bnb", "avalanche_c", "gnosis", "optimism", "arbitrum"]\',
-                                    "project",
-                                    "tornado_cash",
-                                    \'["hildobby", "dot2dotseurat"]\') }}'
-        )
+    alias ='withdrawals',
+    materialized='incremental',
+    partition_by = {
+       'field': 'block_date',
+       'data_type': 'timestamp',
+       'granularity': 'day'
+    },
+    file_format = 'delta',
+    incremental_strategy = 'merge',
+    unique_key = ['block_date', 'tx_hash', 'evt_index', 'blockchain'],
+    post_hook='{{ expose_spells(\'["ethereum", "bnb", "avalanche_c", "gnosis", "optimism", "arbitrum"]\',
+                                   "project",
+                                   "tornado_cash",
+                                   \'["hildobby", "dot2dotseurat"]\') }}'
+    )
 }}
 
 SELECT *
@@ -34,7 +38,7 @@ FROM
                 END AS amount
         , tc.evt_tx_hash AS tx_hash
         , tc.evt_index
-        , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
+        , {{ var('safe_cast') }}(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
         FROM {{ source('tornado_cash_ethereum','eth_evt_Withdrawal') }} tc
         INNER JOIN {{ source('ethereum','transactions') }} et
                 ON et.hash=tc.evt_tx_hash
@@ -134,7 +138,7 @@ FROM
                 END AS amount
         , tc.evt_tx_hash AS tx_hash
         , tc.evt_index
-        , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
+        , {{ var('safe_cast') }}(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
         FROM {{ source('tornado_cash_ethereum','erc20_evt_Withdrawal') }} tc
         INNER JOIN {{ source('ethereum','transactions') }} et
                 ON et.hash=tc.evt_tx_hash
@@ -234,7 +238,7 @@ FROM
                 END AS amount
         , tc.evt_tx_hash AS tx_hash
         , tc.evt_index
-        , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
+        , {{ var('safe_cast') }}(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
         FROM {{ source('tornado_cash_ethereum','ERC20Tornado_evt_Withdrawal') }} tc
         INNER JOIN {{ source('ethereum','transactions') }} et
                 ON et.hash=tc.evt_tx_hash
@@ -272,7 +276,7 @@ FROM
                 END AS amount
         , tc.evt_tx_hash AS tx_hash
         , tc.evt_index
-        , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
+        , {{ var('safe_cast') }}(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
         FROM {{ source('tornado_cash_bnb','TornadoCashBNB_evt_Withdrawal') }} tc
         INNER JOIN {{ source('bnb','transactions') }} bt
                 ON bt.hash=tc.evt_tx_hash
@@ -310,7 +314,7 @@ FROM
                 END AS amount
         , tc.evt_tx_hash AS tx_hash
         , tc.evt_index
-        , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
+        , {{ var('safe_cast') }}(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
         FROM {{ source('tornado_cash_gnosis','eth_evt_Withdrawal') }} tc
         INNER JOIN {{ source('gnosis','transactions') }} gt
                 ON gt.hash=tc.evt_tx_hash
@@ -348,7 +352,7 @@ FROM
                 END AS amount
         , tc.evt_tx_hash AS tx_hash
         , tc.evt_index
-        , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
+        , {{ var('safe_cast') }}(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
         FROM {{ source('tornado_cash_optimism','ETHTornado_evt_Withdrawal') }} tc
         INNER JOIN {{ source('optimism','transactions') }} ot
                 ON ot.hash=tc.evt_tx_hash
@@ -373,7 +377,7 @@ FROM
         , 'AVAX' AS currency_symbol
         , 'avalanche_c' AS blockchain
         , 'classic' AS tornado_version
-        , at.from AS tx_from
+        , `at`.from AS tx_from
         , tc.nullifierHash AS nullifier
         , tc.fee/POWER(10, 18) AS fee
         , tc.relayer
@@ -385,15 +389,15 @@ FROM
                 END AS amount
         , tc.evt_tx_hash AS tx_hash
         , tc.evt_index
-        , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
+        , {{ var('safe_cast') }}(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
         FROM {{ source('tornado_cash_avalanche_c','ETHTornado_evt_Withdrawal') }} tc
-        INNER JOIN {{ source('avalanche_c','transactions') }} at
-                ON at.hash=tc.evt_tx_hash
+        INNER JOIN {{ source('avalanche_c','transactions') }} `at`
+                ON `at`.hash=tc.evt_tx_hash
                 {% if not is_incremental() %}
-                AND at.block_time >= (select min(evt_block_time) from {{ source('tornado_cash_avalanche_c','ETHTornado_evt_Withdrawal') }})
+                AND `at`.block_time >= (select min(evt_block_time) from {{ source('tornado_cash_avalanche_c','ETHTornado_evt_Withdrawal') }})
                 {% endif %}
                 {% if is_incremental() %}
-                AND at.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
+                AND `at`.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
                 {% endif %}
         {% if not is_incremental() %}
         WHERE tc.evt_block_time >= (select min(evt_block_time) from {{ source('tornado_cash_avalanche_c','ETHTornado_evt_Withdrawal') }})
@@ -410,7 +414,7 @@ FROM
         , 'ETH' AS currency_symbol
         , 'arbitrum' AS blockchain
         , 'classic' AS tornado_version
-        , at.from AS tx_from
+        , `at`.from AS tx_from
         , tc.nullifierHash AS nullifier
         , tc.fee/POWER(10, 18) AS fee
         , tc.relayer
@@ -423,15 +427,15 @@ FROM
                 END AS amount
         , tc.evt_tx_hash AS tx_hash
         , tc.evt_index
-        , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
+        , {{ var('safe_cast') }}(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
         FROM {{ source('tornado_cash_arbitrum','ETHTornado_evt_Withdrawal') }} tc
-        INNER JOIN {{ source('arbitrum','transactions') }} at
-                ON at.hash=tc.evt_tx_hash
+        INNER JOIN {{ source('arbitrum','transactions') }} `at`
+                ON `at`.hash=tc.evt_tx_hash
                 {% if not is_incremental() %}
-                AND at.block_time >= (select min(evt_block_time) from {{ source('tornado_cash_arbitrum','ETHTornado_evt_Withdrawal') }})
+                AND `at`.block_time >= (select min(evt_block_time) from {{ source('tornado_cash_arbitrum','ETHTornado_evt_Withdrawal') }})
                 {% endif %}
                 {% if is_incremental() %}
-                AND at.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
+                AND `at`.block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
                 {% endif %}
         {% if not is_incremental() %}
         WHERE tc.evt_block_time >= (select min(evt_block_time) from {{ source('tornado_cash_arbitrum','ETHTornado_evt_Withdrawal') }})

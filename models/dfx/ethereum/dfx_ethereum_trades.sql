@@ -45,7 +45,7 @@ SELECT
     'ethereum' as blockchain, 
     'dfx' as project, 
     '0.5' as version, 
-    TRY_CAST(date_trunc('DAY', dexs.block_time) as date) as block_date, 
+    {{ var('safe_cast') }}(date_trunc('DAY', dexs.block_time) as date) as block_date, 
     dexs.block_time, 
     erc20a.symbol as token_bought_symbol, 
     erc20b.symbol as token_sold_symbol, 

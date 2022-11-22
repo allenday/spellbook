@@ -71,7 +71,7 @@ SELECT
     dt.dao_creator_tool, 
     dt.dao, 
     dt.dao_wallet_address, 
-    TRY_CAST(date_trunc('day', t.block_time) as DATE) as block_date, 
+    {{ var('safe_cast') }}(date_trunc('day', t.block_time) as DATE) as block_date, 
     t.block_time, 
     t.tx_type,
     COALESCE(er.symbol, t.token) as asset,

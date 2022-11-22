@@ -131,7 +131,7 @@ SELECT DISTINCT
   'ethereum' as blockchain,
   'opensea' as project,
   'v1' as version,
-  TRY_CAST(date_trunc('DAY', wa.call_block_time) AS date) AS block_date,
+  {{ var('safe_cast') }}(date_trunc('DAY', wa.call_block_time) AS date) AS block_date,
   tx.block_time,
   coalesce(token_id_erc_uncapped, wa.token_id) as token_id,
   tokens_nft.name AS collection,

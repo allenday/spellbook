@@ -1,16 +1,20 @@
 {{ config(
-	schema = 'pika_v2_optimism',
-	alias ='trades',
-	partition_by = ['block_date'],
-	materialized = 'incremental',
-	file_format = 'delta',
-	incremental_strategy = 'merge',
-	unique_key = ['block_time', 'project', 'version', 'tx_hash', 'evt_index'],
+    schema = 'pika_v2_optimism',
+    alias ='trades',
+    partition_by = {
+       'field': 'block_date',
+       'data_type': 'timestamp',
+       'granularity': 'day'
+    },
+    materialized = 'incremental',
+    file_format = 'delta',
+    incremental_strategy = 'merge',
+    unique_key = ['block_time', 'project', 'version', 'tx_hash', 'evt_index'],
     post_hook='{{ expose_spells(\'["optimism"]\',
                                 "project",
                                 "pika",
                                 \'["MSilb7", "drethereum", "rplust"]\') }}'
-	)
+    )
 }}
 
 {% set project_start_date = '2021-11-22' %}
@@ -136,7 +140,7 @@ perps AS (
 
 SELECT
 	'optimism' AS blockchain
-	,TRY_CAST(date_trunc('DAY', perps.block_time) AS date) AS block_date
+	,{{ var('safe_cast') }}(date_trunc('DAY', perps.block_time) AS date) AS block_date
 	,perps.block_time
 	,perps.virtual_asset
 	,perps.underlying_asset
