@@ -11,6 +11,14 @@
                                     \'["msilb7", "chuxinh"]\') }}'
     )
 }}
+{% if var('declare_values_with_unnest') %}
+{% set array_start = '[' %}
+{% set array_end = ']' %}
+{% else %}
+{% set array_start = 'ARRAY(' %}
+{% set array_end = ')' %}
+{% endif %}
+
 with eth_transfers as (
     select 
         r.from
@@ -49,11 +57,11 @@ with eth_transfers as (
         ,r.value
         ,r.value/1e18 as value_decimal
         ,r.evt_tx_hash as tx_hash
-        ,ARRAY(r.evt_index) as trace_address
+        ,{{ array_start }}r.evt_index{{ array_end }} as trace_address
         ,r.evt_block_time as tx_block_time
         ,r.evt_block_number as tx_block_number
         ,substring(t.data, 1, 10) as tx_method_id
-        ,r.evt_tx_hash || '-' || CAST(ARRAY(r.evt_index) AS STRING) as unique_transfer_id
+        ,r.evt_tx_hash || '-' || CAST({{ array_start }}r.evt_index{{ array_end }} AS STRING) as unique_transfer_id
     from {{ source('erc20_optimism', 'evt_transfer') }} as r
     join {{ source('optimism', 'transactions') }} as t 
         on r.evt_tx_hash = t.hash
