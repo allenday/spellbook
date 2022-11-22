@@ -5,9 +5,14 @@
 
 SELECT
   name, contract_address, standard
-FROM
-  (
-    VALUES
+
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<name STRING, contract_address STRING, standard STRING>
+{% else %}
+FROM (VALUES
+{% endif %}
+
     (CAST('Bomber Hero' AS string), CAST('0x30cc0553f6fa1faf6d7847891b9b36eb559dc618' AS string), CAST('erc721' AS string))
   ,(CAST('Metamon' AS string), CAST('0xf24bf668aa087990f1d40ababf841456e771913c' AS string), CAST('erc721' AS string))
   ,(CAST('Ranger' AS string), CAST('0xf31913a9c8efe7ce7f08a1c08757c166b572a937' AS string), CAST('erc721' AS string))
@@ -305,4 +310,9 @@ FROM
   ,(CAST('StarArk' AS string), CAST('0xd4fcaf215cf55828148d64677c58277177acf49e' AS string), CAST('erc721' AS string))
   ,(CAST('FateOrigin BOX NFT' AS string), CAST('0x8b0b26b97aa4b907dd8dfe71fd0b602d71bb7df4' AS string), CAST('erc721' AS string))
   ,(CAST('PAD Pack' AS string), CAST('0xf18b9cdd3083eb1d84ee3cdcca418923ceb5455d' AS string), CAST('erc721' AS string))
-    ) AS temp_table (name, contract_address, standard)
+
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (name, contract_address, standard)
+{% endif %}

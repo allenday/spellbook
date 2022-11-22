@@ -1,9 +1,17 @@
 {{config(alias='aztec_v2_contracts_ethereum')}}
 
+{% if var('declare_values_with_unnest') %}
+{% set array_start = '[' %}
+{% set array_end = ']' %}
+{% else %}
+{% set array_start = 'ARRAY(' %}
+{% set array_end = ')' %}
+{% endif %}
+
 with
   contract_labels as (
     SELECT
-      ARRAY('ethereum') as blockchain,
+      {{ array_start }}'ethereum'{{ array_end }} as blockchain,
       contract_address as address,
       description as name,
       contract_type as category,
@@ -21,9 +29,13 @@ with
           version,
           description,
           lower(contract_address) as contract_address
-        FROM
-          (
-            VALUES
+
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<protocol STRING, contract_type STRING, version STRING, description STRING, contract_address STRING>
+{% else %}
+FROM (VALUES
+{% endif %}
               (
                 'Aztec RollupProcessor',
                 'Rollup',
@@ -80,6 +92,9 @@ with
                 'ERC4626 Tokenized Vault',
                 '0x3578D6D5e1B4F07A48bb1c958CBfEc135bef7d98'
               )
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
           ) AS x (
             protocol,
             contract_type,
@@ -87,6 +102,7 @@ with
             description,
             contract_address
           )
+{% endif %}
       )
   )
 select

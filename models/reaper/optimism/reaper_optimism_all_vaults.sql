@@ -1,8 +1,13 @@
 {{config(alias='all_vaults')}}
 SELECT LOWER(contract_address) AS contract_address, symbol, decimals
-FROM
-(
-  VALUES 
+
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<contract_address STRING, symbol STRING, decimals INT64>
+{% else %}
+FROM (VALUES
+{% endif %}
+
   ('0x39FdE572a18448F8139b7788099F0a0740f51205','OATH', 18)
   ,('0x1891A76d191d5A24bcd06DeA4ACadF4b8aE4b583','rf-soUSDC', 18)   
   ,('0xD84D315f22565399ABFCb2b9C836955401C01A47','rf-soUSDT', 18)
@@ -63,4 +68,9 @@ FROM
   ,('0xC7670686529791d9C62eAa4D3B4745BB84a3a1CE', 'rfsAMM-jEUR-agEUR', 18)
   ,('0x56756c847B027a27703aaD58c732C041f4e5f033', 'rfvAMM-SONNE-USDC', 18)
   ,('0x6045E787688C7550bCc3dec551c54c57f13E6204', 'rfvAMM-BOND-WETH', 18)
+
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
 ) AS temp_table (contract_address, symbol, decimals)
+{% endif %}

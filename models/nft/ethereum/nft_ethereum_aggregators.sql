@@ -3,9 +3,14 @@
 SELECT
   contract_address,
   name
-FROM
-  (
-    VALUES
+
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<contract_address STRING, name STRING>
+{% else %}
+FROM (VALUES
+{% endif %}
+
       ('0x0a267cf51ef038fc00e71801f5a524aec06e4f07', 'Genie') -- Genie
     , ('0x2af4b707e1dce8fc345f38cfeeaa2421e54976d5', 'Genie') -- Genie 2
     , ('0xcdface5643b90ca4b3160dd2b5de80c1bf1cb088', 'Genie') -- Genie
@@ -38,4 +43,8 @@ FROM
     , ('0x2c45af926d5f62c5935278106800a03eb565778e', 'Rarible') -- Rarible
     , ('0x1ee3151cff01321059e3865214379b85c79ca984', 'Magic Eden') -- Magic Eden
     , ('0x141efc30c4093bc0f8204accb8afa6643fddecf2', 'Alpha Sharks') -- Alpha Sharks
-  ) AS temp_table (contract_address, name)
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
+) AS temp_table (contract_address, name)
+{% endif %}

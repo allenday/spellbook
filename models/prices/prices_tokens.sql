@@ -7,8 +7,15 @@
                                     \'["aalan3", "jeff-dude"]\') }}'
         )
 }}
-SELECT token_id, blockchain, symbol, LOWER(contract_address) as contract_address, decimals from (
-VALUES
+SELECT token_id, blockchain, symbol, LOWER(contract_address) as contract_address, decimals 
+
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<token_id STRING, blockchain STRING, symbol STRING, contract_address STRING, decimals INT64>
+{% else %}
+FROM (VALUES
+{% endif %}
+
     ("ada-cardano", null, "ADA", null, null),
     ("ae-aeternity", null, "AE", null, null),
     ("algo-algorand", null, "ALGO", null, null),
@@ -1665,5 +1672,8 @@ VALUES
     ("usdc-usd-coin", "solana", "USDC", "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", 6),
     ("usdt-tether", "solana", "USDT", "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", 6)
 
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
 ) as temp (token_id, blockchain, symbol, contract_address, decimals)
-
+{% endif %}
