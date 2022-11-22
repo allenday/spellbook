@@ -134,6 +134,8 @@ models:
       tags: ['ethereum','looksrare','trades']
     description: >
         LooksRare trades on Ethereum
+    column_types:
+      block_time: timestamp
     columns:
       - *blockchain
       - *project
