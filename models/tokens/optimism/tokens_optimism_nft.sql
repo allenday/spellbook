@@ -2,8 +2,14 @@
 
 SELECT
   LOWER(contract_address) AS contract_address, name, standard
-FROM
-  (VALUES 
+
+{% if var('declare_values_with_unnest') %}
+FROM UNNEST([
+STRUCT<contract_address STRING, name STRING, standard STRING>
+{% else %}
+FROM (VALUES
+{% endif %}
+
 ('0xb8df6cc3050cc02f967db1ee48330ba23276a492',	'OptiPunk', 'erc721')
 ,('0x52782699900df91b58ecd618e77847c5774dcd2e',	'Optimistic Bunnies', 'erc721')
 ,('0x006eb613cc586198003a119485594ecbbdf41230',	'OptimisticLoogies', 'erc721')
@@ -207,4 +213,8 @@ FROM
 ,('0x3e7e82fb003caa50930f288c165f8e895f02117b', 'Opti Azuki Club', 'erc721')
 ,('0x7e6ae1bc06e329826e50aeebe1ff1b62bca412d4', 'Optigladiator', 'erc721')
 
+{% if var('declare_values_with_unnest') %}
+])
+{% else %}
 ) as temp_table (contract_address, name, standard)
+{% endif %}

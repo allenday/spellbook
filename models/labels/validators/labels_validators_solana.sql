@@ -1,7 +1,7 @@
 {{config(alias='validators_solana')}}
 
 SELECT distinct
-    ARRAY('solana') as blockchain,
+    'solana' as blockchain,
     recipient AS address,
     'Solana Validator' as name,
     'validators' AS category,

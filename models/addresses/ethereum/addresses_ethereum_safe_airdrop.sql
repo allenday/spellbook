@@ -1,8 +1,13 @@
-{{ config(alias='safe_airdrop', materialized = 'table', file_format = 'delta',
-        post_hook='{{ expose_spells(\'["ethereum"]\',
-                                    "sector",
-                                    "addresses",
-                                    \'["springzh"]\') }}') }}
+{{ config(
+    alias='safe_airdrop', 
+    materialized = 'incremental', 
+    file_format = 'delta',
+    post_hook='{{ expose_spells(\'["ethereum"]\',
+                                "sector",
+                                "addresses",
+                                \'["springzh"]\') }}'
+    )
+}}
 
 SELECT address, token_amount
 FROM (

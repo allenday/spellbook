@@ -42,7 +42,7 @@ SELECT
     'withdraw' AS transaction_type,
     reserve AS token,
     user AS depositor,
-    to AS withdrawn_to,
+    `to` AS withdrawn_to,
     CAST(NULL AS STRING) AS liquidator,
     - amount AS amount,
     evt_tx_hash,

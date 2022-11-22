@@ -53,8 +53,8 @@ with
   sent_transfers as (
     select
       evt_tx_hash,
-      evt_tx_hash || '-' || evt_index || '-' || to as unique_tx_id,
-      to as wallet_address,
+      evt_tx_hash || '-' || evt_index || '-' || `to` as unique_tx_id,
+      `to` as wallet_address,
       contract_address as token_address,
       evt_block_time,
       id as tokenId,
@@ -63,8 +63,8 @@ with
     UNION ALL
     select
       evt_tx_hash,
-      evt_tx_hash || '-' || evt_index || '-' || to as unique_tx_id,
-      to as wallet_address,
+      evt_tx_hash || '-' || evt_index || '-' || `to` as unique_tx_id,
+      `to` as wallet_address,
       contract_address as token_address,
       evt_block_time,
       explode_id as tokenId,
@@ -76,8 +76,8 @@ with
   received_transfers as (
     select
       evt_tx_hash,
-      evt_tx_hash || '-' || evt_index || '-' || to as unique_tx_id,
-      from as wallet_address,
+      evt_tx_hash || '-' || evt_index || '-' || `to` as unique_tx_id,
+      `from` as wallet_address,
       contract_address as token_address,
       evt_block_time,
       id as tokenId,
@@ -86,8 +86,8 @@ with
     UNION ALL
     select
       evt_tx_hash,
-      evt_tx_hash || '-' || evt_index || '-' || to as unique_tx_id,
-      from as wallet_address,
+      evt_tx_hash || '-' || evt_index || '-' || `to` as unique_tx_id,
+      `from` as wallet_address,
       contract_address as token_address,
       evt_block_time,
       explode_id as tokenId,

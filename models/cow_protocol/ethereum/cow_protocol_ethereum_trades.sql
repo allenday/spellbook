@@ -1,11 +1,15 @@
 {{  config(
-        alias='trades',
-        materialized='incremental',
-        partition_by = ['block_date'],
-        unique_key = ['tx_hash', 'order_uid', 'evt_index'],
-        on_schema_change='sync_all_columns',
-        file_format ='delta',
-        incremental_strategy='merge'
+     alias='trades',
+     materialized='incremental',
+     partition_by = {
+       'field': 'block_date',
+       'data_type': 'timestamp',
+       'granularity': 'day'
+     },
+     unique_key = ['tx_hash', 'order_uid', 'evt_index'],
+     on_schema_change='sync_all_columns',
+     file_format ='delta',
+     incremental_strategy='merge'
     )
 }}
 
@@ -14,7 +18,7 @@ WITH
 -- First subquery joins buy and sell token prices from prices.usd.
 -- Also deducts fee from sell amount.
 trades_with_prices AS (
-    SELECT try_cast(date_trunc('day', evt_block_time) as date) as block_date,
+    SELECT {{ var('safe_cast') }}(date_trunc('day', evt_block_time) as date) as block_date,
            evt_block_time            as block_time,
            evt_tx_hash               as tx_hash,
            evt_index,
@@ -101,7 +105,7 @@ order_ids as (
              {% if is_incremental() %}
              where evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP - interval '1 week')
              {% endif %}
-                     sort by evt_index
+                     ORDER BY evt_index
          ) as _
     group by evt_tx_hash
 ),

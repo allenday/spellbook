@@ -21,7 +21,7 @@ with uniswap_v3_poolcreated as (
   select 
     explode(
       from_json(
-        '[
+        '''[
           {
             "oldAddress": "0x2e9c575206288f2219409289035facac0b670c2f",
             "newAddress": "0x03af20bdaaffb4cc0a521796a223f7d85e2aac31",
@@ -750,7 +750,7 @@ with uniswap_v3_poolcreated as (
             "token1": "0xe0BB0D3DE8c10976511e5030cA403dBf4c25165B",
             "fee": 10000
           }
-        ]','array<struct<oldAddress:string,newAddress:string,token0:string, token1:string, fee:int>>'
+        ]''','array<struct<oldAddress:string,newAddress:string,token0:string, token1:string, fee:int>>'
       )  
     )
 )
