@@ -1,6 +1,7 @@
 {{ config(
-        alias = 'chromie_squiggle'
-        )
+    alias = 'chromie_squiggle',
+    materialized = 'incremental'
+    )
 }}
 
 SELECT token_id, color_direction, color_spread, end_color, height, segments, spectrum, start_color, steps_between, squiggle_type, day_zero, harmonic

@@ -10,6 +10,11 @@ models:
       tags: ['ethereum','ens','ethereum_name_service','ethereumnameservice']
     description: >
         View expirations of ENS registrations
+    column_types:
+      min_expires: timestamp
+      max_expires: timestamp
+      min_evt_block_time: timestamp
+      max_evt_block_time: timestamp
     columns:
       - &label
         name: label
@@ -92,6 +97,9 @@ models:
       tags: ['ethereum','ens','ethereum_name_service','ethereumnameservice']
     description: >
         View ENS registry
+    column_types:
+      min_evt_block_time: timestamp
+      max_evt_block_time: timestamp
     columns:
       - *label
       - name: node

@@ -6,6 +6,8 @@ sources:
       warn_after: { count: 12, period: hour }
     tables:
       - name: creation_traces
+        config:
+          tags: ['optimism']
         loaded_at_field: block_time
         description: "Optimism creation traces"
         columns:

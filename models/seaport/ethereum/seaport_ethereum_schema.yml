@@ -86,6 +86,8 @@ models:
       tags: ['ethereum','seaport','transfers']
     description: >
         Seaport transfers on Ethereum
+    column_types:
+      block_time: timestamp
     columns:
       - *blockchain
       - &project

@@ -1,4 +1,8 @@
-{{ config( alias='bep20')}}
+{{ config(
+    alias='bep20',
+    materialized = 'incremental'
+    )
+}}
 
 SELECT LOWER(contract_address) AS contract_address, symbol, decimals
 {% if var('declare_values_with_unnest') %}

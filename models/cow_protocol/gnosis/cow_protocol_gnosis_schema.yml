@@ -7,7 +7,7 @@ models:
       project: cow_protocol
       contributors: bh2smith, gentrexha
     config:
-      tags: ['gnosis_chain','cow_protocol','solver']
+      tags: ['gnosis_chain','cow_protocol','solver','gnosis']
     description: >
       CoW Protocol solvers list on Gnosis Chain
     columns:

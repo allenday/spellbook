@@ -1,6 +1,10 @@
 {{ config(
         alias ='bep20_agg_hour',
-        partition_by = ['hour'],
+        partition_by = {
+           'field': 'hour',
+           'data_type': 'int64',
+           'range': { 'start': 0, 'end': 23, 'interval': 1 }
+        },
         materialized ='incremental',
         file_format ='delta',
         incremental_strategy='merge',

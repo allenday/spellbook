@@ -1,6 +1,10 @@
 {{ config(
     alias = 'events',
-    partition_by = ['block_date'],
+    partition_by = {
+       'field': 'block_date',
+       'data_type': 'timestamp',
+       'granularity': 'day'
+    },
     materialized = 'incremental',
     file_format = 'delta',
     incremental_strategy = 'merge',

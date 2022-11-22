@@ -1,6 +1,7 @@
 {{ config(
-        alias = 'terraforms'
-        )
+    alias = 'terraforms',
+    materialized = 'incremental'
+    )
 }}
 
 SELECT token_id, mode, chroma, biome, terraform_zone, x_coordinate, y_coordinate, terraform_level, question_marks, x_seed, y_seed, lith0, spine
