@@ -1,16 +1,20 @@
 {{ 
-    config(
-        materialized='incremental',
-        alias='safes',
-        partition_by = ['block_date'],
-        unique_key = ['block_date', 'address'],
-        on_schema_change='fail',
-        file_format ='delta',
-        incremental_strategy='merge',
-        post_hook='{{ expose_spells(\'["ethereum"]\',
-                                    "project",
-                                    "safe",
-                                    \'["sche"]\') }}'
+   config(
+    materialized='incremental',
+    alias='safes',
+    partition_by = {
+       'field': 'block_date',
+       'data_type': 'timestamp',
+       'granularity': 'day'
+    },
+    unique_key = ['block_date', 'address'],
+    on_schema_change='fail',
+    file_format ='delta',
+    incremental_strategy='merge',
+    post_hook='{{ expose_spells(\'["ethereum"]\',
+                                   "project",
+                                   "safe",
+                                   \'["sche"]\') }}'
     ) 
 }}
 
@@ -23,7 +27,7 @@ select
         when et.to = '0x34cfac646f301356faa8b21e94227e3583fe3f5f' then '1.1.1'
         when et.to = '0x6851d6fdfafd08c0295c392436245e5bc78b0185' then '1.2.0'
     end as creation_version,
-    try_cast(date_trunc('day', et.block_time) as date) as block_date,
+    {{ var('safe_cast') }}(date_trunc('day', et.block_time) as date) as block_date,
     et.block_time as creation_time,
     et.tx_hash
 from {{ source('ethereum', 'traces') }} et 
@@ -55,7 +59,7 @@ UNION ALL
     
 select contract_address as address, 
     '1.3.0' as creation_version, 
-    try_cast(date_trunc('day', evt_block_time) as date) as block_date,
+    {{ var('safe_cast') }}(date_trunc('day', evt_block_time) as date) as block_date,
     evt_block_time as creation_time, 
     evt_tx_hash as tx_hash
 from {{ source('gnosis_safe_ethereum', 'GnosisSafev1_3_0_evt_SafeSetup') }}

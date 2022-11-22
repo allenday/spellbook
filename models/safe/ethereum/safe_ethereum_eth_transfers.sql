@@ -16,7 +16,7 @@
 
 select 
     s.address,
-    try_cast(date_trunc('day', et.block_time) as date) as block_date,
+    {{ var('safe_cast') }}(date_trunc('day', et.block_time) as date) as block_date,
     et.block_time,
     -value as amount_raw,
     et.tx_hash,
@@ -39,7 +39,7 @@ UNION ALL
     
 select 
     s.address, 
-    try_cast(date_trunc('day', et.block_time) as date) as block_date,
+    {{ var('safe_cast') }}(date_trunc('day', et.block_time) as date) as block_date,
     et.block_time,
     value as amount_raw,
     et.tx_hash,
