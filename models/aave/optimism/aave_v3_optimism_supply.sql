@@ -4,7 +4,7 @@
     , post_hook='{{ expose_spells(\'["optimism"]\',
                                   "project",
                                   "aave_v3",
-                                  \'["batwayne", "chuxinh"]\') }}'
+                                  \'["batwayne", "chuxin"]\') }}'
   )
 }}
 
@@ -28,8 +28,8 @@ SELECT
     'deposit' AS transaction_type,
     reserve AS token,
     user AS depositor, 
-    NULL::string as withdrawn_to,
-    NULL::string AS liquidator,
+    CAST(NULL AS VARCHAR(5)) as withdrawn_to,
+    CAST(NULL AS VARCHAR(5)) AS liquidator,
     amount, 
     evt_tx_hash,
     evt_index,
@@ -43,7 +43,7 @@ SELECT
     reserve AS token,
     user AS depositor,
     to AS withdrawn_to,
-    NULL::string AS liquidator,
+    CAST(NULL AS VARCHAR(5)) AS liquidator,
     - amount AS amount,
     evt_tx_hash,
     evt_index,

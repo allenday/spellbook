@@ -4,7 +4,7 @@
     , post_hook='{{ expose_spells(\'["ethereum"]\',
                                   "project",
                                   "aave_v2",
-                                  \'["batwayne", "chuxinh"]\') }}'
+                                  \'["batwayne", "chuxin"]\') }}'
   )
 }}
 
@@ -33,8 +33,8 @@ SELECT
     END AS loan_type,
     reserve AS token,
     user AS borrower, 
-    NULL::string AS repayer,
-    NULL::string AS liquidator,
+    CAST(NULL AS VARCHAR(5)) AS repayer,
+    CAST(NULL AS VARCHAR(5)) AS liquidator,
     amount, 
     evt_tx_hash,
     evt_index,
@@ -49,7 +49,7 @@ SELECT
     reserve AS token,
     user AS borrower,
     repayer AS repayer,
-    NULL::string AS liquidator,
+    CAST(NULL AS VARCHAR(5)) AS liquidator,
     - amount AS amount,
     evt_tx_hash,
     evt_index,

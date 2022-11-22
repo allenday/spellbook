@@ -42,8 +42,8 @@ WITH rows AS (
         token_b_amount_raw,
         coalesce(
             usd_amount,
-            token_a_amount_raw / 10 ^ pa.decimals * pa.price,
-            token_b_amount_raw / 10 ^ pb.decimals * pb.price
+            token_a_amount_raw / 10 ^ (CASE token_a_address WHEN '\xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN 18 ELSE pa.decimals END) * (CASE token_a_address WHEN '\xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN pe.price ELSE pa.price END),
+            token_b_amount_raw / 10 ^ (CASE token_b_address WHEN '\xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN 18 ELSE pb.decimals END) * (CASE token_b_address WHEN '\xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN pe.price ELSE pb.price END)
         ) as usd_amount,
         token_a_address,
         token_b_address,
@@ -199,6 +199,28 @@ WITH rows AS (
         AND t.evt_block_time >= start_ts AND t.evt_block_time < end_ts
 
         UNION ALL
+        SELECT
+            t.evt_block_time AS block_time,
+            'Kyber' AS project,
+            'elastic' AS version,
+            'DEX' AS category,
+            t."sender" AS trader_a,
+            t."recipient" AS trader_b,
+            CASE WHEN "deltaQty0" < 0 THEN -1*"deltaQty0" ELSE "deltaQty0" END AS token_a_amount_raw,
+            CASE WHEN "deltaQty1" < 0 THEN -1*"deltaQty1" ELSE "deltaQty1" END AS token_b_amount_raw,
+            NULL::numeric AS usd_amount,
+            f.token0 AS token_a_address,
+            f.token1 AS token_b_address,
+            t.contract_address AS exchange_contract_address,
+            t.evt_tx_hash AS tx_hash,
+            NULL::integer[] AS trace_address,
+            t.evt_index
+        FROM
+            kyber."Elastic_Pool_evt_Swap" t
+        INNER JOIN kyber."Elastic_Factory_evt_PoolCreated" f ON f.pool = t.contract_address 
+        AND t.evt_block_time >= start_ts AND t.evt_block_time < end_ts
+
+        UNION ALL
 
         -- from Aggregator 
         SELECT
@@ -296,6 +318,10 @@ WITH rows AS (
         AND pb.contract_address = dexs.token_b_address
         AND pb.minute >= start_ts
         AND pb.minute < end_ts
+    LEFT JOIN prices.layer1_usd pe ON pe.minute = date_trunc('minute', dexs.block_time)
+        AND pe.symbol = 'ETH'
+        AND pe.minute >= start_ts
+        AND pe.minute < end_ts
     WHERE dexs.block_time >= start_ts
     AND dexs.block_time < end_ts
     ON CONFLICT DO NOTHING
