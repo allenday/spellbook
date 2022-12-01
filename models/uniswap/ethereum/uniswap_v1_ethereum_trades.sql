@@ -27,7 +27,7 @@ WITH dexs AS
         ,t.eth_sold AS token_sold_amount_raw
         ,NULL AS amount_usd
         ,f.token AS token_bought_address
-        ,'{{weth_address}}' AS token_sold_address --Using WETH for easier joining with USD price table
+        ,'{{ weth_address }}' AS token_sold_address --Using WETH for easier joining with USD price table
         ,t.contract_address AS project_contract_address
         ,t.evt_tx_hash AS tx_hash
         ,'' AS trace_address
@@ -50,7 +50,7 @@ WITH dexs AS
         ,t.eth_bought AS token_bought_amount_raw
         ,t.tokens_sold AS token_sold_amount_raw
         ,NULL AS amount_usd
-        ,'{{weth_address}}' AS token_bought_address --Using WETH for easier joining with USD price table
+        ,'{{ weth_address }}' AS token_bought_address --Using WETH for easier joining with USD price table
         ,f.token AS token_sold_address
         ,t.contract_address AS project_contract_address
         ,t.evt_tx_hash AS tx_hash

@@ -35,7 +35,7 @@ SELECT
         WHEN _borrowRateMode = '2' THEN 'variable'
     END AS loan_type,
     CASE
-        WHEN _reserve = '{{aave_mock_address}}' THEN '{{weth_address}}' --Using WETH instead of Aave "mock" address
+        WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' --Using WETH instead of Aave "mock" address
         ELSE _reserve
     END AS token,
     _user AS borrower,
@@ -53,7 +53,7 @@ SELECT
     'repay' AS transaction_type,
     NULL AS loan_type,
     CASE
-        WHEN _reserve = '{{aave_mock_address}}' THEN '{{weth_address}}' --Using WETH instead of Aave "mock" address
+        WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' --Using WETH instead of Aave "mock" address
         ELSE _reserve
     END AS token,
     _user AS borrower,
@@ -71,7 +71,7 @@ SELECT
     'borrow_liquidation' AS transaction_type,
     NULL AS loan_type,
     CASE
-        WHEN _reserve = '{{aave_mock_address}}' THEN '{{weth_address}}' --Using WETH instead of Aave "mock" address
+        WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' --Using WETH instead of Aave "mock" address
         ELSE _reserve
     END AS token,
     _user AS borrower,

@@ -120,11 +120,11 @@ SELECT
     t._fromAmount AS token_sold_amount_raw,
     CAST(NULL AS double) AS amount_usd,
     CASE
-        WHEN t._toToken = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN '{{weth_address}}'
+        WHEN t._toToken = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN '{{ weth_address }}'
         ELSE t._toToken
     END AS token_bought_address,
     CASE
-        WHEN t._fromToken = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN '{{weth_address}}'
+        WHEN t._fromToken = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN '{{ weth_address }}'
         ELSE t._fromToken
     END AS token_sold_address,
     t.contract_address AS project_contract_address,
@@ -145,11 +145,11 @@ SELECT
     t.sourceAmount AS token_sold_amount_raw,
     CAST(NULL AS double) AS amount_usd,
     CASE
-        WHEN t.targetToken = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN '{{weth_address}}'
+        WHEN t.targetToken = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN '{{ weth_address }}'
         ELSE t.targetToken
     END AS token_bought_address,
     CASE
-        WHEN t.sourceToken = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN '{{weth_address}}'
+        WHEN t.sourceToken = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN '{{ weth_address }}'
         ELSE t.sourceToken
     END AS token_sold_address,
     t.contract_address AS project_contract_address,

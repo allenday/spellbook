@@ -30,7 +30,7 @@ FROM (
     '1' AS version,
     'deposit' AS transaction_type,
     CASE
-        WHEN _reserve = '{{aave_mock_address}}' THEN '{{weth_address}}' --Using WETH instead of Aave "mock" address
+        WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' --Using WETH instead of Aave "mock" address
         ELSE _reserve
     END AS token,
     _user AS depositor,
@@ -47,7 +47,7 @@ SELECT
     '1' AS version,
     'withdraw' AS transaction_type,
     CASE
-        WHEN _reserve = '{{aave_mock_address}}' THEN '{{weth_address}}' --Using WETH instead of Aave "mock" address
+        WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' --Using WETH instead of Aave "mock" address
         ELSE _reserve
     END AS token,
     _user AS depositor,
@@ -64,7 +64,7 @@ SELECT
     '1' AS version,
     'deposit_liquidation' AS transaction_type,
     CASE
-        WHEN _reserve = '{{aave_mock_address}}' THEN '{{weth_address}}' --Using WETH instead of Aave "mock" address
+        WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' --Using WETH instead of Aave "mock" address
         ELSE _collateral
     END AS token,
     _user AS depositor,
