@@ -7,28 +7,28 @@
 
 WITH tornado_addresses AS (
 SELECT
-    lower(blockchain) as blockchain,
+    lower(blockchain) AS blockchain,
     tx_hash,
     depositor AS address,
-    'Depositor' as name
+    'Depositor' AS name
 FROM {{ ref('tornado_cash_deposits') }}
 UNION
 SELECT
-    lower(blockchain) as blockchain,
+    lower(blockchain) AS blockchain,
     tx_hash,
     recipient AS address,
-    'Recipient' as name
+    'Recipient' AS name
 FROM {{ ref('tornado_cash_withdrawals') }}
 )
 
 SELECT
-    collect_set(blockchain) as blockchain,
+    collect_set(blockchain) AS blockchain,
     address,
     'Tornado Cash ' || array_join(collect_set(name),' and ') AS name,
     'tornado_cash' AS category,
     'soispoke' AS contributor,
     'query' AS source,
-    timestamp('2022-10-01') as created_at,
-    now() as updated_at
+    timestamp('2022-10-01') AS created_at,
+    now() AS updated_at
 FROM tornado_addresses
 GROUP BY address

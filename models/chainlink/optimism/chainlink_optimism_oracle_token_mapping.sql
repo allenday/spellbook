@@ -9,7 +9,7 @@
 }}
 
 SELECT
-"optimism" as blockchain, feed_name, LOWER(proxy_address) AS proxy_address, LOWER(underlying_token_address) AS underlying_token_address, CAST( extra_decimals AS NUMERIC) AS extra_decimals
+"optimism" AS blockchain, feed_name, LOWER(proxy_address) AS proxy_address, LOWER(underlying_token_address) AS underlying_token_address, CAST( extra_decimals AS NUMERIC) AS extra_decimals
 
 FROM (values
 	 ("AAVE / USD", "0x338ed6787f463394D24813b297401B9F05a8C9d1", "0x76FB31fb4af56892A25e32cFC43De717950c9278", 0)

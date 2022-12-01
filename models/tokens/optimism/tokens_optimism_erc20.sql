@@ -1,8 +1,8 @@
 {{ config( alias='erc20', tags=['static'])}}
 
 SELECT LOWER(contract_address) AS contract_address, symbol, decimals
-  FROM (VALUES 
-  
+  FROM (VALUES
+
  ('0x4200000000000000000000000000000000000006', 'WETH', 18)
 ,('0xda10009cbd5d07dd0cecc66161fc93d7c9000da1', 'DAI', 18)
 ,('0x68f180fcce6836688e9084f035309e29bf0a2095', 'WBTC', 8)

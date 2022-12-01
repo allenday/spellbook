@@ -35,13 +35,13 @@ FROM (
         amount_usd,
         token_standard,
         trade_type,
-        number_of_items, --team-query cast as decimal: CAST(number_of_items AS DECIMAL(38,0)) AS number_of_items,
+        number_of_items, --team-query cast AS decimal: CAST(number_of_items AS DECIMAL(38,0)) AS number_of_items,
         trade_category,
         evt_type,
         seller,
         buyer,
         amount_original,
-        amount_raw, --team-query cast as decimal: CAST(amount_raw AS DECIMAL(38,0)) AS amount_raw,
+        amount_raw, --team-query cast AS decimal: CAST(amount_raw AS DECIMAL(38,0)) AS amount_raw,
         currency_symbol,
         currency_contract,
         nft_contract_address,
@@ -49,12 +49,12 @@ FROM (
         aggregator_name,
         aggregator_address,
         tx_hash,
-        block_number, --**not sure where** team-query cast as decimal: CAST(number_of_items AS DECIMAL(38,0)) AS number_of_items,
+        block_number, --**NOT sure where** team-query cast AS decimal: CAST(number_of_items AS DECIMAL(38,0)) AS number_of_items,
         tx_from,
         tx_to,
         unique_trade_id
     FROM {{ ref(model) }}
-    {% if not loop.last %}
+    {% if NOT loop.last %}
     UNION ALL
     {% endif %}
     {% endfor %}

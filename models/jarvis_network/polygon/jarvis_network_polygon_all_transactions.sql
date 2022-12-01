@@ -17,7 +17,7 @@
 
 SELECT  'polygon'                                             AS blockchain,
         evt_block_time,
-        try_cast(date_trunc('DAY', evt_block_time) as date)   AS block_date,
+        try_cast(date_trunc('DAY', evt_block_time) AS date)   AS block_date,
         action,
         user,
         recipient,
@@ -39,14 +39,14 @@ FROM
           user,
           recipient,
           am.jfiat_symbol                                       AS jfiat_token_symbol,
-          jfiat_token_amount/POWER(10,am.decimals)              AS jfiat_token_amount,
-          jfiat_collateral_symbol as collateral_symbol,
-          collateral_token_amount/POWER(10,cm.decimals)         AS collateral_token_amount,
-          net_collateral_amount/POWER(10,cm.decimals)           AS net_collateral_amount,
-          fee_amount/POWER(10,cm.decimals) as fee_amount,
-          collateral_token_amount/POWER(10,cm.decimals) * price AS collateral_token_amount_usd,
-          net_collateral_amount/POWER(10,cm.decimals) * price   AS net_collateral_amount_usd,
-          fee_amount/POWER(10,cm.decimals) * price              AS fee_amount_usd,
+          jfiat_token_amount / POWER(10,am.decimals)              AS jfiat_token_amount,
+          jfiat_collateral_symbol AS collateral_symbol,
+          collateral_token_amount / POWER(10,cm.decimals)         AS collateral_token_amount,
+          net_collateral_amount / POWER(10,cm.decimals)           AS net_collateral_amount,
+          fee_amount / POWER(10,cm.decimals) AS fee_amount,
+          collateral_token_amount / POWER(10,cm.decimals) * price AS collateral_token_amount_usd,
+          net_collateral_amount / POWER(10,cm.decimals) * price   AS net_collateral_amount_usd,
+          fee_amount / POWER(10,cm.decimals) * price              AS fee_amount_usd,
           evt_tx_hash,
           evt_index
   FROM
@@ -66,7 +66,7 @@ FROM
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE evt_block_time >= '{{ project_start_date }}'
     {% endif %}
 
@@ -87,7 +87,7 @@ FROM
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE evt_block_time >= '{{ project_start_date }}'
     {% endif %}
 
@@ -108,7 +108,7 @@ FROM
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE evt_block_time >= '{{ project_start_date }}'
     {% endif %}
 
@@ -129,7 +129,7 @@ FROM
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE evt_block_time >= '{{ project_start_date }}'
     {% endif %}
 
@@ -143,14 +143,14 @@ FROM
             numTokensSent                                         AS jfiat_token_amount,
             (feePaid * 1000)                                      AS collateral_token_amount,
             ((feePaid * 1000) - feePaid)                          AS net_collateral_amount,
-            feePaid as fee_amount,
+            feePaid AS fee_amount,
             evt_tx_hash,
             evt_index
     FROM {{ source('jarvis_network_polygon','SynthereumPoolOnChainPriceFeed_evt_Exchange') }}
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE evt_block_time >= '{{ project_start_date }}'
     {% endif %}
   ) x
@@ -162,7 +162,7 @@ FROM
       ON am.blockchain = pu.blockchain
       AND cm.jfiat_collateral_symbol = pu.symbol
       AND date_trunc('minute',x.evt_block_time) = pu.minute
-      {% if not is_incremental() %}
+      {% if NOT is_incremental() %}
       AND pu.minute >= '{{project_start_date}}'
       {% endif %}
       {% if is_incremental() %}

@@ -1,4 +1,4 @@
-{{ 
+{{
   config(
     alias='project_name_mappings',
     unique_key='dune_name',
@@ -6,10 +6,10 @@
                               "sector",
                               "contracts",
                               \'["msilb7", "chuxin"]\') }}'
-    )  
+    )
 }}
 
-select 
+SELECT
   dune_name
   ,mapped_name
 from (
@@ -37,7 +37,7 @@ from (
     ,('pika_perp', 'Pika Protocol')
     ,('dhedge_v2', 'Dhedge')
     ,('bitbtc', 'Bitbtc Protocol')
-    ,('teleportr', 'Teleportr/ Warp Speed')
+    ,('teleportr', 'Teleportr / Warp Speed')
     ,('balancer_v2', 'Beethoven X')
     ,('stargate', 'Stargate Finance')
     ,('quixotic_v5', 'Quix')
@@ -63,4 +63,4 @@ from (
     ,('opx_finance', 'OPX Finance')
     ,('pooltogether_v3', 'PoolTogether')
     ,('beethovenx', 'Beethoven X')
-    ) as temp_table (dune_name, mapped_name)
+    ) AS temp_table (dune_name, mapped_name)

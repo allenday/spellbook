@@ -30,7 +30,7 @@ with dexs AS (
             evt_index
         FROM
             {{ source('hashflow_avalanche_c', 'Pool_evt_Trade') }}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         WHERE evt_block_time >= '{{project_start_date}}'
         {% endif %}
         {% if is_incremental() %}
@@ -54,7 +54,7 @@ with dexs AS (
             evt_index
         FROM
             {{ source('hashflow_avalanche_c', 'Pool_evt_LzTrade') }}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         WHERE evt_block_time >= '{{project_start_date}}'
         {% endif %}
         {% if is_incremental() %}
@@ -97,7 +97,7 @@ SELECT
 FROM dexs
 INNER JOIN {{ source('avalanche_c', 'transactions') }} tx
     ON dexs.tx_hash = tx.hash
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -113,7 +113,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_bought
     ON p_bought.minute = date_trunc('minute', dexs.block_time)
     AND p_bought.contract_address = dexs.token_bought_address
     AND p_bought.blockchain = 'avalanche_c'
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -123,7 +123,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold
     ON p_sold.minute = date_trunc('minute', dexs.block_time)
     AND p_sold.contract_address = dexs.token_sold_address
     AND p_sold.blockchain = 'avalanche_c'
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}

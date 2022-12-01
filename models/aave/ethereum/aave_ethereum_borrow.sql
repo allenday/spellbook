@@ -8,7 +8,7 @@
 }}
 
 SELECT *
-FROM 
+FROM
 (
       SELECT
             version,
@@ -24,7 +24,7 @@ FROM
             evt_tx_hash,
             evt_index,
             evt_block_time,
-            evt_block_number  
+            evt_block_number
       FROM {{ ref('aave_v1_ethereum_borrow') }}
       UNION
       SELECT
@@ -41,7 +41,6 @@ FROM
             evt_tx_hash,
             evt_index,
             evt_block_time,
-            evt_block_number  
-      FROM {{ ref('aave_v2_ethereum_borrow') }} 
+            evt_block_number
+      FROM {{ ref('aave_v2_ethereum_borrow') }}
 )
-;

@@ -28,7 +28,7 @@ WITH dexs AS
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
-        cast(NULL as double) AS amount_usd,
+        cast(NULL AS double) AS amount_usd,
         evt_index
     FROM {{ source('airswap_ethereum', 'Light_evt_Swap')}} e
     {% if is_incremental() %}
@@ -49,7 +49,7 @@ WITH dexs AS
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
-        cast(NULL as double) AS amount_usd,
+        cast(NULL AS double) AS amount_usd,
         evt_index
     FROM {{ source('airswap_ethereum', 'swap_evt_Swap')}} e
     {% if is_incremental() %}
@@ -70,7 +70,7 @@ WITH dexs AS
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
-        cast(NULL as double) AS amount_usd,
+        cast(NULL AS double) AS amount_usd,
         evt_index
     FROM {{ source('airswap_ethereum', 'Swap_v3_evt_Swap')}} e
     {% if is_incremental() %}
@@ -88,11 +88,11 @@ SELECT
     ,case
         when lower(erc20a.symbol) > lower(erc20b.symbol) then concat(erc20b.symbol, '-', erc20a.symbol)
         else concat(erc20a.symbol, '-', erc20b.symbol)
-    end as token_pair
+    end AS token_pair
     ,dexs.token_bought_amount_raw / power(10, erc20a.decimals) AS token_bought_amount
     ,dexs.token_sold_amount_raw / power(10, erc20b.decimals) AS token_sold_amount
-    ,CAST(dexs.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw
-    ,CAST(dexs.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw
+    , CAST(dexs.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw
+    , CAST(dexs.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw
     ,coalesce(
         dexs.amount_usd
         ,(dexs.token_bought_amount_raw / power(10, p_bought.decimals)) * p_bought.price
@@ -111,7 +111,7 @@ SELECT
 FROM dexs
 INNER JOIN {{ source('ethereum', 'transactions') }} tx
     ON dexs.tx_hash = tx.hash
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -126,7 +126,7 @@ LEFT JOIN {{ ref('tokens_erc20') }} erc20b
 LEFT JOIN {{ source('prices', 'usd') }} p_bought
     ON p_bought.minute = date_trunc('minute', dexs.block_time)
     AND p_bought.contract_address = dexs.token_bought_address
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -136,7 +136,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_bought
 LEFT JOIN {{ source('prices', 'usd') }} p_sold
     ON p_sold.minute = date_trunc('minute', dexs.block_time)
     AND p_sold.contract_address = dexs.token_sold_address
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}

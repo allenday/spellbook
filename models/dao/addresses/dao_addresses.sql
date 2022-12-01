@@ -11,10 +11,10 @@
 
 SELECT * FROM {{ ref('dao_addresses_ethereum') }}
 
-UNION ALL 
+UNION ALL
 
 SELECT * FROM {{ ref('dao_addresses_gnosis') }}
 
-UNION ALL 
+UNION ALL
 
 SELECT * FROM {{ ref('dao_addresses_polygon') }}

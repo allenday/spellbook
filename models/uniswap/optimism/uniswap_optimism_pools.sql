@@ -10,17 +10,17 @@
                                     \'["msilb7", "chuxin"]\') }}'
   )
 }}
-with uniswap_v3_poolcreated as (
-  select 
+with uniswap_v3_poolcreated AS (
+  SELECT
     pool
     ,token0
     ,token1
     ,fee
-  from {{ source('uniswap_v3_optimism', 'factory_evt_poolcreated') }} 
+  from {{ source('uniswap_v3_optimism', 'factory_evt_poolcreated') }}
   group by 1, 2, 3, 4
 )
-,ovm1_legacy_pools_raw as (
-  select 
+,ovm1_legacy_pools_raw AS (
+  SELECT
     explode(
       from_json(
         '[
@@ -753,11 +753,11 @@ with uniswap_v3_poolcreated as (
             "fee": 10000
           }
         ]','array<struct<oldAddress:string,newAddress:string,token0:string, token1:string, fee:int>>'
-      )  
+      )
     )
 )
-select 
-  col.newAddress as pool
+SELECT
+  col.newAddress AS pool
   ,col.token0
   ,col.token1
   ,col.fee
@@ -765,6 +765,6 @@ from ovm1_legacy_pools_raw
 
 union
 
-select
-  * 
+SELECT
+  *
 from uniswap_v3_poolcreated

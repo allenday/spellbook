@@ -2,7 +2,7 @@
         alias = 'proof_grails_i'
         )
 }}
-select contract_address, project_id, project_id_base_value, collection_name, artist_name, grails_season, grail_id, art_collection_unique_id
+SELECT contract_address, project_id, project_id_base_value, collection_name, artist_name, grails_season, grail_id, art_collection_unique_id
 from (VALUES
         ('0xb6329bd2741c4e5e91e26c4e653db643e74b2b19', 0, 1, 'What do you "B"', 'Gary Vaynerchuk', 1, 1, '0xb6329bd2741c4e5e91e26c4e653db643e74b2b19-0')
         , ('0xb6329bd2741c4e5e91e26c4e653db643e74b2b19', 1, 1, 'What do you "B"', 'Gary Vaynerchuk', 1, 1, '0xb6329bd2741c4e5e91e26c4e653db643e74b2b19-1')
@@ -1041,6 +1041,6 @@ from (VALUES
         , ('0xb6329bd2741c4e5e91e26c4e653db643e74b2b19', 1034, 1, 'euphoria', 'Marlo', 1, 8, '0xb6329bd2741c4e5e91e26c4e653db643e74b2b19-1034')
         , ('0xb6329bd2741c4e5e91e26c4e653db643e74b2b19', 1035, 1, 'What do you "B"', 'Gary Vaynerchuk', 1, 1, '0xb6329bd2741c4e5e91e26c4e653db643e74b2b19-1035')
 
-) as temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, grails_season, grail_id, art_collection_unique_id)
+) AS temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, grails_season, grail_id, art_collection_unique_id)
 
-order by project_id asc 
+order by project_id asc

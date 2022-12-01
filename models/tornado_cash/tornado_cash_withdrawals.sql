@@ -33,7 +33,7 @@ FROM
         , 'classic' AS tornado_version
         , et.from AS tx_from
         , tc.nullifierHash AS nullifier
-        , tc.fee/POWER(10, 18) AS fee
+        , tc.fee / POWER(10, 18) AS fee
         , tc.relayer
         , tc.to AS recipient
         , tc.contract_address AS contract_address
@@ -48,13 +48,13 @@ FROM
         FROM {{ source('tornado_cash_ethereum','eth_evt_Withdrawal') }} tc
         INNER JOIN {{ source('ethereum','transactions') }} et
                 ON et.hash=tc.evt_tx_hash
-                {% if not is_incremental() %}
+                {% if NOT is_incremental() %}
                 AND et.block_time >= '{{ethereum_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}
                 AND et.block_time >= date_trunc("day", now() - interval '1 week')
                 {% endif %}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         WHERE tc.evt_block_time >= '{{ethereum_start_date}}'
         {% endif %}
         {% if is_incremental() %}
@@ -115,7 +115,7 @@ FROM
         , 'classic' AS tornado_version
         , et.from AS tx_from
         , tc.nullifierHash AS nullifier
-        , tc.fee/POWER(10, 18) AS fee
+        , tc.fee / POWER(10, 18) AS fee
         , tc.relayer
         , tc.to AS recipient
         , tc.contract_address AS contract_address
@@ -148,13 +148,13 @@ FROM
         FROM {{ source('tornado_cash_ethereum','erc20_evt_Withdrawal') }} tc
         INNER JOIN {{ source('ethereum','transactions') }} et
                 ON et.hash=tc.evt_tx_hash
-                {% if not is_incremental() %}
+                {% if NOT is_incremental() %}
                 AND et.block_time >= '{{eth_erc20_pt1_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}
                 AND et.block_time >= date_trunc("day", now() - interval '1 week')
                 {% endif %}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         WHERE tc.evt_block_time >= '{{eth_erc20_pt1_start_date}}'
         {% endif %}
         {% if is_incremental() %}
@@ -215,7 +215,7 @@ FROM
         , 'classic' AS tornado_version
         , et.from AS tx_from
         , tc.nullifierHash AS nullifier
-        , tc.fee/POWER(10, 18) AS fee
+        , tc.fee / POWER(10, 18) AS fee
         , tc.relayer
         , tc.to AS recipient
         , tc.contract_address AS contract_address
@@ -248,13 +248,13 @@ FROM
         FROM {{ source('tornado_cash_ethereum','ERC20Tornado_evt_Withdrawal') }} tc
         INNER JOIN {{ source('ethereum','transactions') }} et
                 ON et.hash=tc.evt_tx_hash
-                {% if not is_incremental() %}
+                {% if NOT is_incremental() %}
                 AND et.block_time >= '{{eth_erc20_pt2_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}
                 AND et.block_time >= date_trunc("day", now() - interval '1 week')
                 {% endif %}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         WHERE tc.evt_block_time >= '{{eth_erc20_pt2_start_date}}'
         {% endif %}
         {% if is_incremental() %}
@@ -271,7 +271,7 @@ FROM
         , 'classic' AS tornado_version
         , bt.from AS tx_from
         , tc.nullifierHash AS nullifier
-        , tc.fee/POWER(10, 18) AS fee
+        , tc.fee / POWER(10, 18) AS fee
         , tc.relayer
         , tc.to AS recipient
         , tc.contract_address AS contract_address
@@ -286,13 +286,13 @@ FROM
         FROM {{ source('tornado_cash_bnb','TornadoCashBNB_evt_Withdrawal') }} tc
         INNER JOIN {{ source('bnb','transactions') }} bt
                 ON bt.hash=tc.evt_tx_hash
-                {% if not is_incremental() %}
+                {% if NOT is_incremental() %}
                 AND bt.block_time >= '{{bnb_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}
                 AND bt.block_time >= date_trunc("day", now() - interval '1 week')
                 {% endif %}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         WHERE tc.evt_block_time >= '{{bnb_start_date}}'
         {% endif %}
         {% if is_incremental() %}
@@ -309,7 +309,7 @@ FROM
         , 'classic' AS tornado_version
         , gt.from AS tx_from
         , nullifierHash AS nullifier
-        , tc.fee/POWER(10, 18) AS fee
+        , tc.fee / POWER(10, 18) AS fee
         , tc.relayer
         , tc.to AS recipient
         , tc.contract_address AS contract_address
@@ -324,13 +324,13 @@ FROM
         FROM {{ source('tornado_cash_gnosis','eth_evt_Withdrawal') }} tc
         INNER JOIN {{ source('gnosis','transactions') }} gt
                 ON gt.hash=tc.evt_tx_hash
-                {% if not is_incremental() %}
+                {% if NOT is_incremental() %}
                 AND gt.block_time >= '{{gnosis_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}
                 AND gt.block_time >= date_trunc("day", now() - interval '1 week')
                 {% endif %}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         WHERE tc.evt_block_time >= '{{gnosis_start_date}}'
         {% endif %}
         {% if is_incremental() %}
@@ -347,7 +347,7 @@ FROM
         , 'classic' AS tornado_version
         , ot.from AS tx_from
         , tc.nullifierHash AS nullifier
-        , tc.fee/POWER(10, 18) AS fee
+        , tc.fee / POWER(10, 18) AS fee
         , tc.relayer
         , tc.to AS recipient
         , tc.contract_address AS contract_address
@@ -362,13 +362,13 @@ FROM
         FROM {{ source('tornado_cash_optimism','ETHTornado_evt_Withdrawal') }} tc
         INNER JOIN {{ source('optimism','transactions') }} ot
                 ON ot.hash=tc.evt_tx_hash
-                {% if not is_incremental() %}
+                {% if NOT is_incremental() %}
                 AND ot.block_time >= '{{optimism_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}
                 AND ot.block_time >= date_trunc("day", now() - interval '1 week')
                 {% endif %}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         WHERE tc.evt_block_time >= '{{optimism_start_date}}'
         {% endif %}
         {% if is_incremental() %}
@@ -385,7 +385,7 @@ FROM
         , 'classic' AS tornado_version
         , at.from AS tx_from
         , tc.nullifierHash AS nullifier
-        , tc.fee/POWER(10, 18) AS fee
+        , tc.fee / POWER(10, 18) AS fee
         , tc.relayer
         , tc.to AS recipient
         , tc.contract_address AS contract_address
@@ -399,13 +399,13 @@ FROM
         FROM {{ source('tornado_cash_avalanche_c','ETHTornado_evt_Withdrawal') }} tc
         INNER JOIN {{ source('avalanche_c','transactions') }} at
                 ON at.hash=tc.evt_tx_hash
-                {% if not is_incremental() %}
+                {% if NOT is_incremental() %}
                 AND at.block_time >= '{{avalanche_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}
                 AND at.block_time >= date_trunc("day", now() - interval '1 week')
                 {% endif %}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         WHERE tc.evt_block_time >= '{{avalanche_start_date}}'
         {% endif %}
         {% if is_incremental() %}
@@ -422,7 +422,7 @@ FROM
         , 'classic' AS tornado_version
         , at.from AS tx_from
         , tc.nullifierHash AS nullifier
-        , tc.fee/POWER(10, 18) AS fee
+        , tc.fee / POWER(10, 18) AS fee
         , tc.relayer
         , tc.to AS recipient
         , tc.contract_address AS contract_address
@@ -437,19 +437,19 @@ FROM
         FROM {{ source('tornado_cash_arbitrum','ETHTornado_evt_Withdrawal') }} tc
         INNER JOIN {{ source('arbitrum','transactions') }} at
                 ON at.hash=tc.evt_tx_hash
-                {% if not is_incremental() %}
+                {% if NOT is_incremental() %}
                 AND at.block_time >= '{{arbitrum_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}
                 AND at.block_time >= date_trunc("day", now() - interval '1 week')
                 {% endif %}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         WHERE tc.evt_block_time >= '{{arbitrum_start_date}}'
         {% endif %}
         {% if is_incremental() %}
         WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
-        
+
         UNION
 
         -- Polygon
@@ -460,7 +460,7 @@ FROM
         , 'classic' AS tornado_version
         , pt.from AS tx_from
         , tc.nullifierHash AS nullifier
-        , tc.fee/POWER(10, 18) AS fee
+        , tc.fee / POWER(10, 18) AS fee
         , tc.relayer
         , tc.to AS recipient
         , tc.contract_address AS contract_address
@@ -475,13 +475,13 @@ FROM
         FROM {{ source('tornado_cash_polygon','TornadoCashMatic_evt_Withdrawal') }} tc
         INNER JOIN {{ source('polygon','transactions') }} pt
                 ON pt.hash=tc.evt_tx_hash
-                {% if not is_incremental() %}
+                {% if NOT is_incremental() %}
                 AND pt.block_time >= '{{polygon_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}
                 AND pt.block_time >= date_trunc("day", now() - interval '1 week')
                 {% endif %}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         WHERE tc.evt_block_time >= '{{polygon_start_date}}'
         {% endif %}
         {% if is_incremental() %}

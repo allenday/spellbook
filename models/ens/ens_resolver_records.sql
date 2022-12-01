@@ -11,12 +11,12 @@
     )
 }}
 
-with resolver_records as (
-    select
-    a as address
+with resolver_records AS (
+    SELECT
+    a AS address
     ,node
-    ,evt_block_time as block_time
-    ,evt_tx_hash as tx_hash
+    ,evt_block_time AS block_time
+    ,evt_tx_hash AS tx_hash
     ,evt_index
     from {{ source('ethereumnameservice_ethereum','PublicResolver_evt_AddrChanged') }}
     {% if is_incremental() %}
@@ -24,7 +24,7 @@ with resolver_records as (
     {% endif %}
    )
 
-select
+SELECT
     n.name
     ,r.address
     ,r.node

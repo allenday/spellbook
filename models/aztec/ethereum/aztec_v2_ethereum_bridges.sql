@@ -7,10 +7,10 @@
                                 \'["Henrystats"]\') }}')
 }}
 
-WITH  
+WITH
 
-bridges_label (protocol, version, description, contract_address) as (
-        VALUES 
+bridges_label (protocol, version, description, contract_address) AS (
+        VALUES
             ('Aztec RollupProcessor', '1.0', 'Prod Aztec Rollup', '0xff1f2b4adb9df6fc8eafecdcbf96a2b351680455'),
             ('Element', '1.0', 'Prod Element Bridge', '0xaed181779a8aabd8ce996949853fea442c2cdb47'),
             ('Lido', '1.0', 'Prod Lido Bridge', '0x381abf150b53cc699f0dbbbef3c5c0d1fa4b3efd'),
@@ -20,34 +20,34 @@ bridges_label (protocol, version, description, contract_address) as (
             ('Aztec', '1.0', 'ERC4626 Tokenized Vault', '0x3578d6d5e1b4f07a48bb1c958cbfec135bef7d98'),
             ('Curve', '1.0', 'CurveStEth Bridge V2', '0xe09801da4c74e62fb42dfc8303a1c1bd68073d1a'),
             ('Uniswap', '1.0', 'UniswapDCABridge', '0x94679a39679ffe53b53b6a1187aa1c649a101321')
-), 
+),
 
-bridges_creation as (
-        SELECT 
-            bridgeAddress, 
-            'Bridge' as contract_type, 
-            AVG(bridgeGasLimit) as blank -- to get unique bridges 
-        FROM 
+bridges_creation AS (
+        SELECT
+            bridgeAddress,
+            'Bridge' AS contract_type,
+            AVG(bridgeGasLimit) AS blank -- to get unique bridges
+        FROM
         {{source('aztec_v2_ethereum', 'RollupProcessor_evt_BridgeAdded')}}
-        GROUP BY 1, 2 
-        
-        UNION 
-        
-        SELECT 
-            LOWER('0xFF1F2B4ADb9dF6FC8eAFecDcbF96A2B351680455') as bridgeAddress, 
-            'Rollup' as contract_type,
-            100 as blank 
+        GROUP BY 1, 2
+
+        UNION
+
+        SELECT
+            LOWER('0xFF1F2B4ADb9dF6FC8eAFecDcbF96A2B351680455') AS bridgeAddress,
+            'Rollup' AS contract_type,
+            100 AS blank
 )
 
-SELECT 
+SELECT
     bl.protocol,
     bl.version,
-    bl.description, 
+    bl.description,
     bc.contract_type,
-    bc.bridgeAddress as contract_address 
-FROM 
-bridges_creation bc 
-LEFT JOIN 
-bridges_label bl 
+    bc.bridgeAddress AS contract_address
+FROM
+bridges_creation bc
+LEFT JOIN
+bridges_label bl
     ON bl.contract_address = bc.bridgeAddress
 ;

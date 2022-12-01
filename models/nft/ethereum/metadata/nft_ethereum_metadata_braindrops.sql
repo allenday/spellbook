@@ -3,7 +3,7 @@
         )
 }}
 
-select contract_address, project_id, project_id_base_value, collection_name, artist_name, art_collection_unique_id
+SELECT contract_address, project_id, project_id_base_value, collection_name, artist_name, art_collection_unique_id
 from (VALUES
         ('0xdfde78d2baec499fe18f2be74b6c287eed9511d7', 1, 1000000, 'Brain Loops', 'Gene Kogan', '0xdfde78d2baec499fe18f2be74b6c287eed9511d7-1')
         , ('0xdfde78d2baec499fe18f2be74b6c287eed9511d7', 2, 1000000, 'podGANs', 'Pindar Van Arman', '0xdfde78d2baec499fe18f2be74b6c287eed9511d7-2')
@@ -21,6 +21,6 @@ from (VALUES
         , ('0xdfde78d2baec499fe18f2be74b6c287eed9511d7', 14, 1000000, 'miniPODs', 'Van Arman x Mindshift x ricky', '0xdfde78d2baec499fe18f2be74b6c287eed9511d7-14')
 
 
-) as temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, art_collection_unique_id)
+) AS temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, art_collection_unique_id)
 
-order by project_id asc 
+order by project_id asc

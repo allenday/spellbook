@@ -3,7 +3,7 @@
         alias='trades')
 }}
 
-SELECT 
+SELECT
       blockchain,
       project,
       version,

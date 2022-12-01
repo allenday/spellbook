@@ -10,7 +10,7 @@
                                     \'["aalan3", "jeff-dude"]\') }}'
         )
 }}
-SELECT token_id, blockchain, symbol, LOWER(contract_address) as contract_address, decimals from (
+SELECT token_id, blockchain, symbol, LOWER(contract_address) AS contract_address, decimals from (
 VALUES
     ("ada-cardano", null, "ADA", null, null),
     ("ae-aeternity", null, "AE", null, null),
@@ -1559,7 +1559,7 @@ VALUES
     ("usdc-usd-coin", "gnosis", "USDC", "0xddafbb505ad214d7b80b1f830fccc89b60fb7a83", 6),
     ("usdt-tether", "gnosis", "USDT", "0x4ecaba5870353805a9f068101a40e0f32ed605c6", 6),
     ("wbtc-wrapped-bitcoin", "gnosis", "WBTC", "0x8e5bbbb09ed1ebde8674cda39a0c169401db4252", 8),
-    --tokens not yet supported or are not active on coinpaprika are commented out
+    --tokens NOT yet supported or are not active on coinpaprika are commented out
     ("eth-ethereum", "optimism", "ETH", "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", 18),
     ("eth-ethereum", "optimism","ETH", "0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000",18),
     ("dai-dai", "optimism", "DAI", "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1", 18),
@@ -1680,4 +1680,4 @@ VALUES
     ("usdc-usd-coin", "solana", "USDC", "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", 6),
     ("usdt-tether", "solana", "USDT", "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", 6)
 
-) as temp (token_id, blockchain, symbol, contract_address, decimals)
+) AS temp (token_id, blockchain, symbol, contract_address, decimals)

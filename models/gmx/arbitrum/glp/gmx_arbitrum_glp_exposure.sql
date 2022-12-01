@@ -8,10 +8,9 @@
         )
 }}
 
-/*
-Exposure = (available_assets * current_price) + ((shorts_opened_notional/average_short_entry_price) * current_price)
-*/
-
+ / *
+Exposure = (available_assets * current_price) + ((shorts_opened_notional / average_short_entry_price) * current_price)
+* / 
 SELECT -- This query calculates the underlying directional exposure in GLP, i.e we remove market neutral positions in the GLP AUM (stablecoins and longs)
     minute,
     (wbtc_available_assets * wbtc_current_price) + COALESCE(((wbtc_shorts_outstanding_notional / wbtc_shorts_entry_price) * wbtc_current_price),0) AS wbtc_exposure, -- Removes null values derrived from 0 divided 0

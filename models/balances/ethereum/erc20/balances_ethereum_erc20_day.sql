@@ -8,13 +8,13 @@
 }}
 
 with
-    days as (
-        select
+    days AS (
+        SELECT
             explode(
                 sequence(
                     to_date('2015-01-01'), date_trunc('day', now()), interval 1 day
                 )
-            ) as day
+            ) AS day
     )
 
 , daily_balances as
@@ -29,13 +29,13 @@ with
     FROM {{ ref('transfers_ethereum_erc20_rolling_day') }})
 
 SELECT
-    'ethereum' as blockchain,
+    'ethereum' AS blockchain,
     d.day,
     b.wallet_address,
     b.token_address,
     b.amount_raw,
     b.amount,
-    b.amount * p.price as amount_usd,
+    b.amount * p.price AS amount_usd,
     b.symbol
 FROM daily_balances b
 INNER JOIN days d ON b.day <= d.day AND d.day < b.next_day
@@ -44,10 +44,10 @@ LEFT JOIN {{ source('prices', 'usd') }} p
     AND d.day = p.minute
     AND p.blockchain = 'ethereum'
 -- Removes rebase tokens from balances
-LEFT JOIN {{ ref('tokens_ethereum_rebase') }}  as r
+LEFT JOIN {{ ref('tokens_ethereum_rebase') }}  AS r
     ON b.token_address = r.contract_address
 -- Removes likely non-compliant tokens due to negative balances
-LEFT JOIN {{ ref('balances_ethereum_erc20_noncompliant') }}  as nc
+LEFT JOIN {{ ref('balances_ethereum_erc20_noncompliant') }}  AS nc
     ON b.token_address = nc.token_address
 WHERE r.contract_address is null
 and nc.token_address is null

@@ -7,14 +7,14 @@
                                     \'["chuxin"]\') }}'
   )
 }}
-select 
-  n.category as category
-  ,b.`remoteToken` as contract_address
+SELECT
+  n.category AS category
+  ,b.`remoteToken` AS contract_address
   ,n.name
   ,n.standard
   ,n.symbol
-  ,b.`localToken` as contract_address_l1
-from {{ source('optimism_ethereum','L1ERC721Bridge_evt_ERC721BridgeInitiated') }} as b 
-left join {{ ref('tokens_ethereum_nft')}} as n 
+  ,b.`localToken` AS contract_address_l1
+from {{ source('optimism_ethereum','L1ERC721Bridge_evt_ERC721BridgeInitiated') }} AS b
+LEFT JOIN {{ ref('tokens_ethereum_nft')}} AS n
   on n.contract_address = b.`localToken`
 group by 1, 2, 3, 4, 5, 6

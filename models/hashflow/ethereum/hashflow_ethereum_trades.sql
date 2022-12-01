@@ -14,8 +14,8 @@
 
 {% set project_start_date = '2021-04-28' %}
 
-with hashflow_trades as (
-    select *
+with hashflow_trades AS (
+    SELECT *
     from {{ ref('hashflow_ethereum_raw_trades') }}
     where fill_status is true -- successful trade
     {% if is_incremental() %}
@@ -23,8 +23,8 @@ with hashflow_trades as (
     {% endif %}
 ),
 
-ethereum_transactions as (
-    select *
+ethereum_transactions AS (
+    SELECT *
     from {{ source('ethereum', 'transactions') }}
     where block_time >= '{{ project_start_date }}'
     {% if is_incremental() %}
@@ -32,43 +32,43 @@ ethereum_transactions as (
     {% endif %}
 ),
 
-erc20_tokens as (
-    select *
+erc20_tokens AS (
+    SELECT *
     from {{ ref('tokens_erc20') }}
     where blockchain = 'ethereum'
 )
 
-select
+SELECT
     'ethereum' AS blockchain,
-    'hashflow' as project,
-    '1' as version,
+    'hashflow' AS project,
+    '1' AS version,
     block_date,
     hashflow_trades.block_time,
-    hashflow_trades.maker_symbol as token_bought_symbol,
-    hashflow_trades.taker_symbol as token_sold_symbol,
+    hashflow_trades.maker_symbol AS token_bought_symbol,
+    hashflow_trades.taker_symbol AS token_sold_symbol,
     case when lower(hashflow_trades.maker_symbol) > lower(hashflow_trades.taker_symbol)
             then concat(hashflow_trades.taker_symbol, '-', hashflow_trades.maker_symbol)
-        else concat(hashflow_trades.maker_symbol, '-', hashflow_trades.taker_symbol) end as token_pair,
-    hashflow_trades.maker_token_amount as token_bought_amount,
-    hashflow_trades.taker_token_amount as token_sold_amount,
-    CAST(hashflow_trades.maker_token_amount * power(10, erc20a.decimals) AS DECIMAL(38,0)) as token_bought_amount_raw,
-    CAST(hashflow_trades.taker_token_amount * power(10, erc20b.decimals) AS DECIMAL(38,0)) as token_sold_amount_raw,
+        else concat(hashflow_trades.maker_symbol, '-', hashflow_trades.taker_symbol) end AS token_pair,
+    hashflow_trades.maker_token_amount AS token_bought_amount,
+    hashflow_trades.taker_token_amount AS token_sold_amount,
+    CAST(hashflow_trades.maker_token_amount * power(10, erc20a.decimals) AS DECIMAL(38,0)) AS token_bought_amount_raw,
+    CAST(hashflow_trades.taker_token_amount * power(10, erc20b.decimals) AS DECIMAL(38,0)) AS token_sold_amount_raw,
     hashflow_trades.amount_usd,
-    hashflow_trades.maker_token as token_bought_address,
-    hashflow_trades.taker_token as token_sold_address,
-    hashflow_trades.trader as taker,
-    hashflow_trades.pool as maker,
-    hashflow_trades.router_contract as project_contract_address,
+    hashflow_trades.maker_token AS token_bought_address,
+    hashflow_trades.taker_token AS token_sold_address,
+    hashflow_trades.trader AS taker,
+    hashflow_trades.pool AS maker,
+    hashflow_trades.router_contract AS project_contract_address,
     hashflow_trades.tx_hash,
-    tx.from as tx_from,
-    tx.to as tx_to,
-    '' as trace_address,
-    case when hashflow_trades.composite_index <> -1 then hashflow_trades.composite_index end as evt_index
+    tx.from AS tx_from,
+    tx.to AS tx_to,
+    '' AS trace_address,
+    case when hashflow_trades.composite_index <> -1 then hashflow_trades.composite_index end AS evt_index
 from hashflow_trades
 inner join ethereum_transactions tx
     on hashflow_trades.tx_hash = tx.hash
-left join erc20_tokens erc20a
+LEFT JOIN erc20_tokens erc20a
     on erc20a.contract_address = hashflow_trades.maker_token
-left join erc20_tokens erc20b
+LEFT JOIN erc20_tokens erc20b
     on erc20b.contract_address = hashflow_trades.taker_token
 ;

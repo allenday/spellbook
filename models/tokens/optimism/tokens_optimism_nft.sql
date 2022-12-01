@@ -3,7 +3,7 @@
 SELECT
   LOWER(contract_address) AS contract_address, name, standard
 FROM
-  (VALUES 
+  (VALUES
 ('0xb8df6cc3050cc02f967db1ee48330ba23276a492',	'OptiPunk', 'erc721')
 ,('0x52782699900df91b58ecd618e77847c5774dcd2e',	'Optimistic Bunnies', 'erc721')
 ,('0x006eb613cc586198003a119485594ecbbdf41230',	'OptimisticLoogies', 'erc721')
@@ -103,7 +103,7 @@ FROM
 ,('0xaab7a7a301f19b8482d6c4942e0ef977d4361e42',	'Flekos', 'erc721')
 ,('0xc513f6c92a1b4726da5b24cb786fe2b8bd6464f3',	'Introducing Writing NFTs', 'erc721')
 ,('0x907bc276f2e855865887422353221c86a575fd1e',	'Cryptovania', 'erc721')
-,('0xc0cbf706fa55ea946d8fd9912e0f7f9d30fd3b0b',	'Co-ownership as a web3 social primitive', 'erc721')
+,('0xc0cbf706fa55ea946d8fd9912e0f7f9d30fd3b0b',	'Co-ownership AS a web3 social primitive', 'erc721')
 ,('0x51e5426ede4e2d4c2586371372313b5782387222',	'Apetimism', 'erc721')
 ,('0x9c7305eb78a432ced5c4d14cac27e8ed569a2e26',	'veNFT', 'erc721')
 ,('0x8e56343adafa62dac9c9a8ac8c742851b0fb8b03',	'Bored Town', 'erc721')
@@ -217,4 +217,4 @@ FROM
 ,('0xe4d6b73f6c45e759679852b80c4888a93727cc1d', 'Mangmoom', 'erc721')
 ,('0xdf711ae52f18f3b99ef544ee8e33c487ac68a88c', 'Torikos', 'erc721')
 
-) as temp_table (contract_address, name, standard)
+) AS temp_table (contract_address, name, standard)

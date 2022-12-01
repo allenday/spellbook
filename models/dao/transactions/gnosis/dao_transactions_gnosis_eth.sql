@@ -10,33 +10,33 @@
 
 {% set transactions_start_date = '2020-05-24' %}
 
-WITH 
+WITH
 
-dao_tmp as (
-        SELECT 
-            blockchain, 
-            dao_creator_tool, 
-            dao, 
+dao_tmp AS (
+        SELECT
+            blockchain,
+            dao_creator_tool,
+            dao,
             dao_wallet_address
-        FROM 
+        FROM
         {{ ref('dao_addresses_gnosis') }}
         WHERE dao_wallet_address IS NOT NULL
-), 
+),
 
-transactions as (
-        SELECT 
-            block_time, 
-            tx_hash, 
-            LOWER('0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') as token, 
-            value as value, 
-            to as dao_wallet_address, 
-            'tx-in' as tx_type, 
-            tx_index, 
-            from as address_interacted_with,
+transactions AS (
+        SELECT
+            block_time,
+            tx_hash,
+            LOWER('0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') AS token,
+            value AS value,
+            to AS dao_wallet_address,
+            'tx-in' AS tx_type,
+            tx_index,
+            from AS address_interacted_with,
             trace_address
-        FROM 
+        FROM
         {{ source('gnosis', 'traces') }}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         WHERE block_time >= '{{transactions_start_date}}'
         {% endif %}
         {% if is_incremental() %}
@@ -44,24 +44,24 @@ transactions as (
         {% endif %}
         AND to IN (SELECT dao_wallet_address FROM dao_tmp)
         AND (LOWER(call_type) NOT IN ('delegatecall', 'callcode', 'staticcall') or call_type IS NULL)
-        AND success = true 
-        AND CAST(value as decimal(38,0)) != 0 
+        AND success = true
+        AND CAST(value AS decimal(38,0)) != 0
 
-        UNION ALL 
+        UNION ALL
 
-        SELECT 
-            block_time, 
-            tx_hash, 
-            LOWER('0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') as token, 
-            value as value, 
-            from as dao_wallet_address, 
-            'tx_out' as tx_type, 
+        SELECT
+            block_time,
+            tx_hash,
+            LOWER('0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') AS token,
+            value AS value,
+            from AS dao_wallet_address,
+            'tx_out' AS tx_type,
             tx_index,
-            to as address_interacted_with,
+            to AS address_interacted_with,
             trace_address
-        FROM 
+        FROM
         {{ source('gnosis', 'traces') }}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         WHERE block_time >= '{{transactions_start_date}}'
         {% endif %}
         {% if is_incremental() %}
@@ -69,38 +69,38 @@ transactions as (
         {% endif %}
         AND from IN (SELECT dao_wallet_address FROM dao_tmp)
         AND (LOWER(call_type) NOT IN ('delegatecall', 'callcode', 'staticcall') or call_type IS NULL)
-        AND success = true 
-        AND CAST(value as decimal(38,0)) != 0 
+        AND success = true
+        AND CAST(value AS decimal(38,0)) != 0
 )
 
-SELECT 
+SELECT
     dt.blockchain,
-    dt.dao_creator_tool, 
-    dt.dao, 
-    dt.dao_wallet_address, 
-    TRY_CAST(date_trunc('day', t.block_time) as DATE) as block_date, 
-    t.block_time, 
+    dt.dao_creator_tool,
+    dt.dao,
+    dt.dao_wallet_address,
+    TRY_CAST(date_trunc('day', t.block_time) AS DATE) as block_date,
+    t.block_time,
     t.tx_type,
-    t.token as asset_contract_address,
-    'xDAI' as asset,
-    t.value as raw_value, 
-    t.value/POW(10, 18) as value, 
-    t.value/POW(10, 18) * p.price as usd_value, 
-    t.tx_hash, 
+    t.token AS asset_contract_address,
+    'xDAI' AS asset,
+    t.value AS raw_value,
+    t.value / POW(10, 18) AS value,
+    t.value / POW(10, 18) * p.price AS usd_value,
+    t.tx_hash,
     t.tx_index,
     t.address_interacted_with,
     t.trace_address
-FROM 
-transactions t 
-INNER JOIN 
-dao_tmp dt 
+FROM
+transactions t
+INNER JOIN
+dao_tmp dt
     ON t.dao_wallet_address = dt.dao_wallet_address
-LEFT JOIN 
-{{ source('prices', 'usd') }} p 
+LEFT JOIN
+{{ source('prices', 'usd') }} p
     ON p.minute = date_trunc('minute', t.block_time)
     AND p.symbol = 'WXDAI'
     AND p.blockchain = 'gnosis'
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p.minute >= '{{transactions_start_date}}'
     {% endif %}
     {% if is_incremental() %}

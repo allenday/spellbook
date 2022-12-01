@@ -1,15 +1,15 @@
 {{ config(schema='opensea_v3_ethereum'
-         ,alias='trades') 
+         ,alias='trades')
 }}
 
--- opensea.trades has the same columns as seaport.trades
--- only some specified zone_address are recognized as opensea's
--- project/version : opensea/v3
+-- opensea.trades has the same columns AS seaport.trades
+-- only some specified zone_address are recognized AS opensea's
+-- project / version : opensea/v3
 -- materialize : view
 
-select blockchain    
-      ,'opensea' as project
-      ,'v3' as version
+SELECT blockchain
+      ,'opensea' AS project
+      ,'v3' AS version
       ,block_date
       ,block_time
       ,seller
@@ -28,7 +28,7 @@ select blockchain
       ,currency_symbol
       ,currency_contract
       ,original_currency_contract
-      ,currency_decimals   
+      ,currency_decimals
       ,project_contract_address
       ,platform_fee_receive_address
       ,platform_fee_amount_raw

@@ -34,7 +34,7 @@ FROM
     {{ source ('optimism', 'logs') }}
     INNER JOIN registered_pools ON registered_pools.pool_address = logs.contract_address
 WHERE logs.topic1 = '{{ event_signature }}'
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND logs.block_time >= '{{ project_start_date }}'
     {% endif %}
     {% if is_incremental() %}

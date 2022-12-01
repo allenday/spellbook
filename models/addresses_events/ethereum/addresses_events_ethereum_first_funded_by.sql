@@ -33,7 +33,7 @@ JOIN
     AND et.block_time >= date_trunc('day', now() - interval '1 week')
     {% endif %}
     GROUP BY et.to
-) AS b 
+) AS b
 ON a.to = b.to
     AND a.block_number = b.first_block
 WHERE a.success

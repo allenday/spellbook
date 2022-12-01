@@ -8,13 +8,13 @@
 }}
 
 with
-    hours as (
-        select
+    hours AS (
+        SELECT
             explode(
                 sequence(
                     to_date('2015-01-01'), date_trunc('hour', now()), interval 1 hour
                 )
-            ) as hour
+            ) AS hour
     )
 
 , daily_balances as
@@ -27,12 +27,12 @@ with
     FROM {{ ref('transfers_ethereum_erc721_rolling_hour') }})
 
 SELECT distinct
-    'ethereum' as blockchain,
+    'ethereum' AS blockchain,
     d.hour,
     b.wallet_address,
     b.token_address,
     b.tokenId,
-    nft_tokens.name as collection
+    nft_tokens.name AS collection
 FROM daily_balances b
 INNER JOIN hours d ON b.hour <= d.hour AND d.hour < b.next_hour
 LEFT JOIN {{ ref('tokens_nft') }} nft_tokens ON nft_tokens.contract_address = b.token_address

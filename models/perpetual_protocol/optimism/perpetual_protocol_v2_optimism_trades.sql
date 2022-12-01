@@ -20,9 +20,9 @@ WITH perps AS (
 		p.evt_block_time AS block_time
 		,p.baseToken
 		,pp.pool AS market_address
-		,ABS(p.exchangedPositionNotional)/1e18 AS volume_usd
-		,p.fee/1e18 AS fee_usd
-		,MAX(co.output_0)/1e6 AS margin_usd
+		,ABS(p.exchangedPositionNotional) / 1e18 AS volume_usd
+		,p.fee / 1e18 AS fee_usd
+		,MAX(co.output_0) / 1e6 AS margin_usd
 
 		,CASE
 		WHEN CAST(p.exchangedPositionSize AS DOUBLE) > 0 THEN 'long'
@@ -76,7 +76,7 @@ LEFT JOIN {{ ref('tokens_optimism_erc20') }} AS e
 	ON perps.baseToken = e.contract_address
 INNER JOIN {{ source('optimism', 'transactions') }} AS tx
 	ON perps.tx_hash = tx.hash
-	{% if not is_incremental() %}
+	{% if NOT is_incremental() %}
 	AND tx.block_time >= '{{project_start_date}}'
 	{% endif %}
 	{% if is_incremental() %}

@@ -15,7 +15,7 @@
 
 
 SELECT
-    block_date as day,
+    block_date AS day,
     CASE
       WHEN trade_category = 'Sell' THEN buyer
       ELSE seller
@@ -40,7 +40,7 @@ SELECT
       END
     ) AS nft_change_trading
 FROM {{ ref('sudoswap_ethereum_events') }}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE block_date >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}

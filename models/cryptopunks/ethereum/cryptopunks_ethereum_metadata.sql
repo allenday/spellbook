@@ -8,7 +8,7 @@
         )
 }}
 
-select punk_id, punk_type, attribute_count, attribute_list
+SELECT punk_id, punk_type, attribute_count, attribute_list
 from ( VALUES
         ('0','Female','3',array('Green Eye Shadow','Earring','Blonde Bob')),
         ('1','Male','2',array('Smile','Mohawk')),
@@ -10010,4 +10010,4 @@ from ( VALUES
         ('9997','Zombie','2',array('Front Beard','Cap Forward')),
         ('9998','Female','3',array('Wild White Hair','Black Lipstick','Clown Eyes Green')),
         ('9999','Female','2',array('Mohawk','Nerd Glasses'))
-) as temp_table ( punk_id, punk_type, attribute_count, attribute_list)
+) AS temp_table ( punk_id, punk_type, attribute_count, attribute_list)

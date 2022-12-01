@@ -5,34 +5,34 @@
                                     \'["bh2smith", "gentrexha"]\') }}'
 )}}
 
--- Find the PoC Query here: https://dune.com/queries/1399494
+-- Find the PoC Query here: https: / /dune.com/queries/1399494
 WITH
 -- Aggregate the solver added and removed events into a single table
--- with true/false for adds/removes respectively
-solver_activation_events as (
-    select solver, evt_block_number, evt_index, True as activated
+-- with true / false for adds/removes respectively
+solver_activation_events AS (
+    SELECT solver, evt_block_number, evt_index, True AS activated
     from {{ source('gnosis_protocol_v2_gnosis', 'GPv2AllowListAuthentication_evt_SolverAdded') }}
     union
-    select solver, evt_block_number, evt_index, False as activated
+    SELECT solver, evt_block_number, evt_index, False AS activated
     from {{ source('gnosis_protocol_v2_gnosis', 'GPv2AllowListAuthentication_evt_SolverRemoved') }}
 ),
 -- Sorting by (evt_block_number, evt_index) allows us to pick the most recent activation status of each unique solver
-ranked_solver_events as (
-    select
-        rank() over (partition by solver order by evt_block_number desc, evt_index desc) as rk,
+ranked_solver_events AS (
+    SELECT
+        rank() over (partition by solver order by evt_block_number desc, evt_index desc) AS rk,
         solver,
         evt_block_number,
         evt_index,
-        activated as active
+        activated AS active
     from solver_activation_events
 ),
-registered_solvers as (
-    select solver, active
+registered_solvers AS (
+    SELECT solver, active
     from ranked_solver_events
     where rk = 1
 ),
 -- Manually inserting environment and name for each "known" solver
-known_solver_metadata (address, environment, name) as (
+known_solver_metadata (address, environment, name) AS (
     SELECT *
     FROM (VALUES ('0xd8da60bDe22461D7Aa11540C338dC56a0E546b0D', 'barn', 'Legacy'),
                  ('0xe66EB17F8679f90cCc0ed9A05c23f267cAef421E', 'barn', 'Naive'),
@@ -55,12 +55,12 @@ known_solver_metadata (address, environment, name) as (
                  ('0x68dEE65bB88d919463495E5CeA9870a81f1e9413', 'service', 'Withdraw'),
                  ('0xa03be496e67ec29bc62f01a428683d7f9c204930', 'service', 'Withdraw'),
                  ('0x7524942F9283FBFa8F17b05CC0a9cBde397d25b3', 'test', 'Test 1')
-         ) as _
+         ) AS _
 )
 -- Combining the metadata with current activation status for final table
-select solver as address,
-      case when environment is not null then environment else 'new' end as environment,
-      case when name is not null then name else 'Uncatalogued' end      as name,
+SELECT solver AS address,
+      case when environment is NOT null then environment else 'new' end AS environment,
+      case when name is NOT null then name else 'Uncatalogued' end      AS name,
       active
 from registered_solvers
     left outer join known_solver_metadata on solver = lower(address);

@@ -38,7 +38,7 @@ FROM (
         trace_address,
         evt_index
     FROM {{ ref(dex_model) }}
-    {% if not loop.last %}
+    {% if NOT loop.last %}
     UNION ALL
     {% endif %}
     {% endfor %}

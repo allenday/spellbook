@@ -29,7 +29,7 @@ WITH conversions AS (
     {% if is_incremental() %}
     WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE t.evt_block_time >= '{{project_start_date}}'
     {% endif %}
 
@@ -48,7 +48,7 @@ WITH conversions AS (
     {% if is_incremental() %}
     WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE t.evt_block_time >= '{{project_start_date}}'
     {% endif %}
 
@@ -67,7 +67,7 @@ WITH conversions AS (
     {% if is_incremental() %}
     WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE t.evt_block_time >= '{{project_start_date}}'
     {% endif %}
 
@@ -86,7 +86,7 @@ WITH conversions AS (
     {% if is_incremental() %}
     WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE t.evt_block_time >= '{{project_start_date}}'
     {% endif %}
 
@@ -105,7 +105,7 @@ WITH conversions AS (
     {% if is_incremental() %}
     WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE t.evt_block_time >= '{{project_start_date}}'
     {% endif %}
 ),
@@ -118,7 +118,7 @@ SELECT
     '' AS maker,
     t._toAmount AS token_bought_amount_raw,
     t._fromAmount AS token_sold_amount_raw,
-    CAST(NULL as double) AS amount_usd,
+    CAST(NULL AS double) AS amount_usd,
     CASE
         WHEN t._toToken = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN '{{weth_address}}'
         ELSE t._toToken
@@ -143,7 +143,7 @@ SELECT
     '' AS maker,
     t.targetAmount AS token_bought_amount_raw,
     t.sourceAmount AS token_sold_amount_raw,
-    CAST(NULL as double) AS amount_usd,
+    CAST(NULL AS double) AS amount_usd,
     CASE
         WHEN t.targetToken = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN '{{weth_address}}'
         ELSE t.targetToken
@@ -160,7 +160,7 @@ FROM {{ source('bancor3_ethereum', 'BancorNetwork_evt_TokensTraded') }} t
     {% if is_incremental() %}
     WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE t.evt_block_time >= '{{project_start_date}}'
     {% endif %}
 )
@@ -176,7 +176,7 @@ FROM {{ source('bancor3_ethereum', 'BancorNetwork_evt_TokensTraded') }} t
     case
         when lower(erc20a.symbol) > lower(erc20b.symbol) then concat(erc20b.symbol, '-', erc20a.symbol)
         else concat(erc20a.symbol, '-', erc20b.symbol)
-    end as token_pair,
+    end AS token_pair,
     dexs.token_bought_amount_raw / power(10, erc20a.decimals) AS token_bought_amount,
     dexs.token_sold_amount_raw / power(10, erc20b.decimals) AS token_sold_amount,
     CAST(dexs.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw,
@@ -200,7 +200,7 @@ FROM
     dexs
 INNER JOIN {{ source('ethereum', 'transactions') }} tx
     ON tx.hash = dexs.tx_hash
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -216,7 +216,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_bought
     ON p_bought.minute = date_trunc('minute', dexs.block_time)
     AND p_bought.contract_address = dexs.token_bought_address
     AND p_bought.blockchain = 'ethereum'
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -226,7 +226,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold
     ON p_sold.minute = date_trunc('minute', dexs.block_time)
     AND p_sold.contract_address = dexs.token_sold_address
     AND p_sold.blockchain = 'ethereum'
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}

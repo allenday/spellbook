@@ -7,11 +7,11 @@
 ) }}
 
 SELECT
-    symbol, 
-    contract_address, 
-    decimals, 
-    underlying_token_address, 
-    underlying_decimals, 
+    symbol,
+    contract_address,
+    decimals,
+    underlying_token_address,
+    underlying_decimals,
     underlying_symbol
 FROM
     (
@@ -25,10 +25,10 @@ FROM
         ('iSNX', '0xe724ffa5d30782499086682c8362cb3673bf69ae', 8, '0x8700daec35af8ff88c16bdf0418774cb3d7599b4', 18, 'SNX'),
         ('iSUSD', '0x04f0fd3cd03b17a3e5921c0170ca6dd3952841ca', 8, '0x8c6f28f2f1a3c87f0f938b96d27520d9751ec8d9', 18, 'sUSD')
     ) AS temp_table (
-        symbol, 
-        contract_address, 
-        decimals, 
-        underlying_token_address, 
-        underlying_decimals, 
+        symbol,
+        contract_address,
+        decimals,
+        underlying_token_address,
+        underlying_decimals,
         underlying_symbol
     )

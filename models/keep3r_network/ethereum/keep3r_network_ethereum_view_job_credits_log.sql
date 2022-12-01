@@ -15,7 +15,7 @@ WITH work_evt AS (
         _job AS job,
         _keeper AS keeper,
         _credit AS token,
-        cast(_amount as DOUBLE) / 1e18 AS amount
+        cast(_amount AS DOUBLE) / 1e18 AS amount
     FROM
         (
             SELECT

@@ -14,28 +14,28 @@
 
 
 WITH
-  finalized as (
-    select *
+  finalized AS (
+    SELECT *
     FROM {{ source('prices', 'usd') }}
     where minute <= now() - interval {{lookback_interval}}
 )
 
-, unfinalized as (
-    select *,
-        lead(minute) over (partition by blockchain,contract_address,decimals,symbol order by minute asc) as next_update_minute
+, unfinalized AS (
+    SELECT *,
+        lead(minute) over (partition by blockchain,contract_address,decimals,symbol order by minute asc) AS next_update_minute
     FROM {{ source('prices', 'usd') }}
     where minute > now() - interval {{lookback_interval}}
 )
 
-, timeseries as (
-    select explode(sequence(
+, timeseries AS (
+    SELECT explode(sequence(
         date_trunc('minute', now() - interval {{lookback_interval}})
         ,date_trunc('minute', now())
-        ,interval 1 minute)) as minute
+        ,interval 1 minute)) AS minute
 )
 
-, forward_fill as (
-    select
+, forward_fill AS (
+    SELECT
     t.minute
     ,blockchain
     ,contract_address
@@ -43,7 +43,7 @@ WITH
     ,symbol
     ,price
     from timeseries t
-    left join unfinalized p
+    LEFT JOIN unfinalized p
     ON t.minute >= p.minute and (p.next_update_minute is null OR t.minute < p.next_update_minute) -- perform forward fill
 )
 

@@ -51,7 +51,7 @@ FROM (
         tx_to,
         unique_trade_id
     FROM {{ ref(model) }}
-    {% if not loop.last %}
+    {% if NOT loop.last %}
     UNION ALL
     {% endif %}
     {% endfor %}

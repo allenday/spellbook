@@ -6,11 +6,11 @@ SELECT
     CASE WHEN size(trace_address) = 1 then array(3::bigint) -- for single row join
     WHEN size(trace_address) = 2 then array(trace_address[0])
     WHEN size(trace_address) = 3 then array(trace_address[0], trace_address[1])
-    END as trace_address,
+    END AS trace_address,
     tx_hash,
     SUM(value) AS fees,
     to,
-    'ETH' as fee_currency_symbol
+    'ETH' AS fee_currency_symbol
 FROM  {{ source('ethereum', 'traces') }} source_fees
 WHERE
 FROM IN ('0x7be8076f4ea4a4ad08075c2508e481d6c946d12b','0x7f268357a8c2552623316e2562d90e642bb538e5')
@@ -20,12 +20,12 @@ GROUP BY 1,2,3,5,6
 UNION ALL
 
 SELECT
-    evt_block_time as block_time,
-    array(3::bigint) as trace_address,
-    evt_tx_hash as tx_hash,
+    evt_block_time AS block_time,
+    array(3::bigint) AS trace_address,
+    evt_tx_hash AS tx_hash,
     SUM(value) AS fees,
     to,
-    erc20.symbol as fee_currency_symbol
+    erc20.symbol AS fee_currency_symbol
    FROM {{ source('erc20_ethereum', 'evt_transfer') }} erc
    LEFT JOIN  {{ ref('tokens_erc20') }} erc20 ON erc20.contract_address =  erc.contract_address and erc20.blockchain = 'ethereum'
    WHERE to = '0x5b3256965e7c3cf26e11fcaf296dfc8807c01073'

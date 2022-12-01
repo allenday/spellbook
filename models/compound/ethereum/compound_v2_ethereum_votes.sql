@@ -19,28 +19,28 @@
 {% set dao_name = 'DAO: Compound' %}
 {% set dao_address = '0xc0da02939e1441f497fd74f78ce7decb17b66529' %}
 
-WITH cte_sum_votes as 
-(SELECT sum(votes/1e18) as sum_votes, 
+WITH cte_sum_votes as
+(SELECT sum(votes / 1e18) AS sum_votes,
         proposalId
 FROM {{ source('compound_v2_ethereum', 'GovernorBravoDelegate_evt_VoteCast') }}
 GROUP BY proposalId)
 
-SELECT 
-    '{{blockchain}}' as blockchain,
-    '{{project}}' as project,
-    '{{project_version}}' as version,
-    vc.evt_block_time as block_time,
+SELECT
+    '{{blockchain}}' AS blockchain,
+    '{{project}}' AS project,
+    '{{project_version}}' AS version,
+    vc.evt_block_time AS block_time,
     date_trunc('DAY', vc.evt_block_time) AS block_date,
-    vc.evt_tx_hash as tx_hash,
-    '{{dao_name}}' as dao_name,
-    '{{dao_address}}' as dao_address,
-    vc.proposalId as proposal_id,
-    vc.votes/1e18 as votes,
-    (votes/1e18) * (100) / (csv.sum_votes) as votes_share,
-    p.symbol as token_symbol,
-    p.contract_address as token_address, 
-    vc.votes/1e18 * p.price as votes_value_usd,
-    vc.voter as voter_address,
+    vc.evt_tx_hash AS tx_hash,
+    '{{dao_name}}' AS dao_name,
+    '{{dao_address}}' AS dao_address,
+    vc.proposalId AS proposal_id,
+    vc.votes / 1e18 AS votes,
+    (votes / 1e18) * (100) / (csv.sum_votes) AS votes_share,
+    p.symbol AS token_symbol,
+    p.contract_address AS token_address,
+    vc.votes / 1e18 * p.price AS votes_value_usd,
+    vc.voter AS voter_address,
     CASE WHEN vc.support = 0 THEN 'against'
          WHEN vc.support = 1 THEN 'for'
          WHEN vc.support = 2 THEN 'abstain'
@@ -55,5 +55,5 @@ LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', evt
     AND p.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 {% if is_incremental() %}
-WHERE evt_block_time > (select max(block_time) from {{ this }})
+WHERE evt_block_time > (SELECT max(block_time) from {{ this }})
 {% endif %}

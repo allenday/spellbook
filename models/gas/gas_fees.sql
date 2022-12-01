@@ -24,7 +24,7 @@ FROM (
         block_time,
         block_date,
         tx_hash,
-        tx_sender, 
+        tx_sender,
         tx_receiver,
         native_token_symbol,
         tx_amount_native,
@@ -41,7 +41,7 @@ FROM (
         gas_usage_percent,
         transaction_type
     FROM {{ ref(gas_model) }}
-    {% if not loop.last %}
+    {% if NOT loop.last %}
     UNION
     {% endif %}
     {% endfor %}

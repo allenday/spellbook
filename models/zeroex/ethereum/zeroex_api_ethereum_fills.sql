@@ -16,10 +16,10 @@
 {% set zeroex_v3_start_date = '2019-12-01' %}
 {% set zeroex_v4_start_date = '2021-01-06' %}
 
--- Test Query here: https://dune.com/queries/1330551
+-- Test Query here: https: / /dune.com/queries/1330551
 WITH zeroex_tx AS (
     SELECT tx_hash,
-           max(affiliate_address) as affiliate_address
+           max(affiliate_address) AS affiliate_address
     FROM (
 
         SELECT v3.evt_tx_hash AS tx_hash,
@@ -40,7 +40,7 @@ WITH zeroex_tx AS (
             {% if is_incremental() %}
             AND evt_block_time >= date_trunc('day', now() - interval '1 week')
             {% endif %}
-            {% if not is_incremental() %}
+            {% if NOT is_incremental() %}
             AND evt_block_time >= '{{zeroex_v3_start_date}}'
             {% endif %}
 
@@ -59,11 +59,11 @@ WITH zeroex_tx AS (
         FROM {{ source('ethereum', 'traces') }} tr
         WHERE tr.to IN (
                 -- exchange contract
-                '0x61935cbdd02287b511119ddb11aeb42f1593b7ef', 
+                '0x61935cbdd02287b511119ddb11aeb42f1593b7ef',
                 -- forwarder addresses
                 '0x6958f5e95332d93d21af0d7b9ca85b8212fee0a5',
                 '0x4aa817c6f383c8e8ae77301d18ce48efb16fd2be',
-                '0x4ef40d1bf0983899892946830abf99eca2dbc5ce', 
+                '0x4ef40d1bf0983899892946830abf99eca2dbc5ce',
                 -- exchange proxy
                 '0xdef1c0ded9bec7f1a1670819833240f027b25eff'
                 )
@@ -71,11 +71,11 @@ WITH zeroex_tx AS (
                         POSITION('869584cd' IN INPUT) <> 0
                         OR POSITION('fbc019a7' IN INPUT) <> 0
                     )
-                
+
                 {% if is_incremental() %}
-                AND block_time >= date_trunc('day', now() - interval '1 week') 
+                AND block_time >= date_trunc('day', now() - interval '1 week')
                 {% endif %}
-                {% if not is_incremental() %}
+                {% if NOT is_incremental() %}
                 AND block_time >= '{{zeroex_v3_start_date}}'
                 {% endif %}
     ) temp
@@ -83,7 +83,7 @@ WITH zeroex_tx AS (
 
 ),
 v3_fills_no_bridge AS (
-    SELECT 
+    SELECT
             fills.evt_tx_hash                                                          AS tx_hash,
             fills.evt_index,
             fills.contract_address,
@@ -107,13 +107,13 @@ v3_fills_no_bridge AS (
         {% if is_incremental() %}
          AND evt_block_time >= date_trunc('day', now() - interval '1 week')
         {% endif %}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
          AND evt_block_time >= '{{zeroex_v3_start_date}}'
         {% endif %}
 
 ),
 v4_rfq_fills_no_bridge AS (
-    SELECT 
+    SELECT
             fills.evt_tx_hash               AS tx_hash,
             fills.evt_index,
             fills.contract_address,
@@ -134,12 +134,12 @@ v4_rfq_fills_no_bridge AS (
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc('day', now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE evt_block_time >= '{{zeroex_v4_start_date}}'
     {% endif %}
 ),
 v4_limit_fills_no_bridge AS (
-    SELECT 
+    SELECT
             fills.evt_tx_hash AS tx_hash,
             fills.evt_index,
             fills.contract_address,
@@ -160,12 +160,12 @@ v4_limit_fills_no_bridge AS (
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc('day', now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE evt_block_time >= '{{zeroex_v4_start_date}}'
     {% endif %}
 ),
 otc_fills AS (
-    SELECT 
+    SELECT
             fills.evt_tx_hash               AS tx_hash,
             fills.evt_index,
             fills.contract_address,
@@ -186,13 +186,13 @@ otc_fills AS (
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc('day', now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE evt_block_time >= '{{zeroex_v4_start_date}}'
     {% endif %}
 
 ),
 ERC20BridgeTransfer AS (
-    SELECT 
+    SELECT
             logs.tx_hash,
             INDEX                                   AS evt_index,
             logs.contract_address,
@@ -214,13 +214,13 @@ ERC20BridgeTransfer AS (
     {% if is_incremental() %}
     AND block_time >= date_trunc('day', now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND block_time >= '{{zeroex_v3_start_date}}'
     {% endif %}
 
 ),
 BridgeFill AS (
-    SELECT 
+    SELECT
             logs.tx_hash,
             INDEX                                           AS evt_index,
             logs.contract_address,
@@ -243,12 +243,12 @@ BridgeFill AS (
         {% if is_incremental() %}
         AND block_time >= date_trunc('day', now() - interval '1 week')
         {% endif %}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         AND block_time >= '{{zeroex_v4_start_date}}'
         {% endif %}
 ),
 NewBridgeFill AS (
-    SELECT 
+    SELECT
             logs.tx_hash,
             INDEX                                           AS evt_index,
             logs.contract_address,
@@ -271,12 +271,12 @@ NewBridgeFill AS (
         {% if is_incremental() %}
         AND block_time >= date_trunc('day', now() - interval '1 week')
         {% endif %}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         AND block_time >= '{{zeroex_v4_start_date}}'
         {% endif %}
 ),
 direct_PLP AS (
-    SELECT 
+    SELECT
             plp.evt_tx_hash,
             plp.evt_index               AS evt_index,
             plp.contract_address,
@@ -297,13 +297,13 @@ direct_PLP AS (
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc('day', now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE evt_block_time >= '{{zeroex_v3_start_date}}'
     {% endif %}
 
 ),
 direct_uniswapv2 AS (
-    SELECT 
+    SELECT
             swap.evt_tx_hash AS tx_hash,
             swap.evt_index,
             swap.contract_address,
@@ -338,13 +338,13 @@ direct_uniswapv2 AS (
         {% if is_incremental() %}
         AND swap.evt_block_time >= date_trunc('day', now() - interval '1 week')
         {% endif %}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         AND swap.evt_block_time >= '{{zeroex_v3_start_date}}'
         {% endif %}
 
 ),
 direct_sushiswap AS (
-    SELECT 
+    SELECT
             swap.evt_tx_hash AS tx_hash,
             swap.evt_index,
             swap.contract_address,
@@ -379,12 +379,12 @@ direct_sushiswap AS (
         {% if is_incremental() %}
         AND swap.evt_block_time >= date_trunc('day', now() - interval '1 week')
         {% endif %}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         AND swap.evt_block_time >= '{{zeroex_v3_start_date}}'
         {% endif %}
 ),
 direct_uniswapv3 AS (
-    SELECT 
+    SELECT
             swap.evt_tx_hash                                                                        AS tx_hash,
             swap.evt_index,
             swap.contract_address,
@@ -411,7 +411,7 @@ direct_uniswapv3 AS (
         {% if is_incremental() %}
         AND swap.evt_block_time >= date_trunc('day', now() - interval '1 week')
         {% endif %}
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         AND swap.evt_block_time >= '{{zeroex_v4_start_date}}'
         {% endif %}
 
@@ -441,7 +441,7 @@ all_tx AS (
     FROM otc_fills
 )
 
-SELECT 
+SELECT
         all_tx.tx_hash,
         all_tx.evt_index,
         all_tx.contract_address,
@@ -469,7 +469,7 @@ INNER JOIN {{ source('ethereum', 'transactions')}} tx ON all_tx.tx_hash = tx.has
 {% if is_incremental() %}
 AND tx.block_time >= date_trunc('day', now() - interval '1 week')
 {% endif %}
-{% if not is_incremental() %}
+{% if NOT is_incremental() %}
 AND tx.block_time >= '{{zeroex_v3_start_date}}'
 {% endif %}
 
@@ -483,7 +483,7 @@ AND tp.blockchain = 'ethereum'
 {% if is_incremental() %}
 AND tp.minute >= date_trunc('day', now() - interval '1 week')
 {% endif %}
-{% if not is_incremental() %}
+{% if NOT is_incremental() %}
 AND tp.minute >= '{{zeroex_v3_start_date}}'
 {% endif %}
 
@@ -497,6 +497,6 @@ AND mp.blockchain = 'ethereum'
 {% if is_incremental() %}
 AND mp.minute >= date_trunc('day', now() - interval '1 week')
 {% endif %}
-{% if not is_incremental() %}
+{% if NOT is_incremental() %}
 AND mp.minute >= '{{zeroex_v3_start_date}}'
 {% endif %}

@@ -34,9 +34,9 @@ WITH element_txs AS (
         {% if is_incremental() %}
         WHERE ee.evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
-        
+
         UNION ALL
-        
+
         -- Avalanche ERC721 Buys
         SELECT 'avalanche_c' AS blockchain
         , 'element' AS project
@@ -61,9 +61,9 @@ WITH element_txs AS (
         {% if is_incremental() %}
         WHERE ee.evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
-        
+
         UNION ALL
-        
+
         -- Avalanche ERC1155 Sells
         SELECT 'avalanche_c' AS blockchain
         , 'element' AS project
@@ -88,9 +88,9 @@ WITH element_txs AS (
         {% if is_incremental() %}
         WHERE ee.evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
-        
+
         UNION ALL
-        
+
         -- Avalanche ERC1155 Buys
         SELECT 'avalanche_c' AS blockchain
         , 'element' AS project
@@ -116,7 +116,7 @@ WITH element_txs AS (
         WHERE ee.evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
         )
-    
+
 SELECT alet.blockchain
 , alet.project
 , alet.version
@@ -124,7 +124,7 @@ SELECT alet.blockchain
 , date_trunc('day', alet.block_time) AS block_date
 , alet.token_id
 , ava_nft_tokens.name AS collection
-, alet.amount_raw/POWER(10, ava_erc20_tokens.decimals)*prices.price AS amount_usd
+, alet.amount_raw / POWER(10, ava_erc20_tokens.decimals)*prices.price AS amount_usd
 , alet.token_standard
 , CASE WHEN agg.name IS NOT NULL THEN 'Bundle Trade' ELSE 'Single Item Trade' END AS trade_type
 , CAST(alet.number_of_items AS DECIMAL(38,0)) AS number_of_items
@@ -132,7 +132,7 @@ SELECT alet.blockchain
 , 'Trade' AS evt_type
 , alet.seller
 , alet.buyer
-, alet.amount_raw/POWER(10, ava_erc20_tokens.decimals) AS amount_original
+, alet.amount_raw / POWER(10, ava_erc20_tokens.decimals) AS amount_original
 , alet.amount_raw
 , COALESCE(alet.currency_symbol, ava_erc20_tokens.symbol) AS currency_symbol
 , alet.currency_contract

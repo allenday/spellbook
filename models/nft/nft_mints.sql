@@ -35,7 +35,7 @@ WITH project_mints AS (
         tx_from,
         tx_to,
         unique_trade_id
-    FROM {{ ref('opensea_mints') }} 
+    FROM {{ ref('opensea_mints') }}
     UNION ALL
     SELECT
         blockchain,

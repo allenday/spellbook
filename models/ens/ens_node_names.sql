@@ -15,13 +15,13 @@
 -- we do a little sketchy event matching to get the node <> name relationships
 -- basically this takes the last AddrChanged event in the same tx preceding a NameRegistred event to link the node and the name
 -- ONLY works for base ENS names (.eth , no subdomains)
-with registrations as (
-    select
-        label as label_hash
-        ,name as label_name
-        ,evt_block_number as block_number
-        ,evt_block_time as block_time
-        ,evt_tx_hash as tx_hash
+with registrations AS (
+    SELECT
+        label AS label_hash
+        ,name AS label_name
+        ,evt_block_number AS block_number
+        ,evt_block_time AS block_time
+        ,evt_tx_hash AS tx_hash
         ,evt_index
     from {{ ref('ens_view_registrations') }}
     {% if is_incremental() %}
@@ -29,13 +29,13 @@ with registrations as (
     {% endif %}
 )
 
-,node_info as (
-    select
-        a as address
+,node_info AS (
+    SELECT
+        a AS address
         ,node
-        ,evt_block_number as block_number
-        ,evt_block_time as block_time
-        ,evt_tx_hash as tx_hash
+        ,evt_block_number AS block_number
+        ,evt_block_time AS block_time
+        ,evt_tx_hash AS tx_hash
         ,evt_index
     from {{ source('ethereumnameservice_ethereum','PublicResolver_evt_AddrChanged') }}
     {% if is_incremental() %}
@@ -44,17 +44,17 @@ with registrations as (
 )
 
 -- here's the sketchy matching
-, matching as (
-    select *
+, matching AS (
+    SELECT *
     from (
-        select *
-        ,row_number() over (partition by node order by block_time desc, evt_index desc) as ordering2
+        SELECT *
+        ,row_number() over (partition by node order by block_time desc, evt_index desc) AS ordering2
         from (
-            select
+            SELECT
             r.*
             ,n.address
             ,n.node
-            ,row_number() over (partition by r.tx_hash order by (r.evt_index - n.evt_index) asc) as ordering
+            ,row_number() over (partition by r.tx_hash order by (r.evt_index - n.evt_index) asc) AS ordering
             from registrations r
             inner join node_info n
             ON r.block_number = n.block_number
@@ -66,12 +66,12 @@ with registrations as (
     where ordering2 = 1
 )
 
-select
+SELECT
     node
-    ,concat(label_name,'.eth') as name
+    ,concat(label_name,'.eth') AS name
     ,label_name
     ,label_hash
-    ,address as initial_address
+    ,address AS initial_address
     ,tx_hash
     ,block_number
     ,block_time

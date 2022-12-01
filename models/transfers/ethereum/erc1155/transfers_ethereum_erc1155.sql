@@ -4,15 +4,15 @@ with
   erc1155_ids_batch AS (
     SELECT
       *,
-      explode(ids) as explode_id,
+      explode(ids) AS explode_id,
       evt_tx_hash || '-' || cast(
         row_number() OVER (
           PARTITION BY evt_tx_hash,
           ids
           ORDER BY
             ids
-        ) as string
-      ) as unique_transfer_id
+        ) AS string
+      ) AS unique_transfer_id
     FROM {{source('erc1155_ethereum', 'evt_transferbatch')}}
   ),
 
@@ -21,15 +21,15 @@ with
       *,
       explode(
         values
-      ) as explode_value,
+      ) AS explode_value,
       evt_tx_hash || '-' || cast(
         row_number() OVER (
           PARTITION BY evt_tx_hash,
           ids
           ORDER BY
             ids
-        ) as string
-      ) as unique_transfer_id
+        ) AS string
+      ) AS unique_transfer_id
     FROM {{source('erc1155_ethereum', 'evt_transferbatch')}}
   ),
 
@@ -47,52 +47,52 @@ with
       JOIN erc1155_values_batch ON erc1155_ids_batch.unique_transfer_id = erc1155_values_batch.unique_transfer_id
   ),
 
-  sent_transfers as (
-    select
+  sent_transfers AS (
+    SELECT
       evt_tx_hash,
-      evt_tx_hash || '-' || evt_index || '-' || to as unique_tx_id,
-      to as wallet_address,
-      contract_address as token_address,
+      evt_tx_hash || '-' || evt_index || '-' || to AS unique_tx_id,
+      to AS wallet_address,
+      contract_address AS token_address,
       evt_block_time,
-      id as tokenId,
-      value as amount
+      id AS tokenId,
+      value AS amount
     FROM {{source('erc1155_ethereum', 'evt_transfersingle')}} single
     UNION ALL
-    select
+    SELECT
       evt_tx_hash,
-      evt_tx_hash || '-' || evt_index || '-' || to as unique_tx_id,
-      to as wallet_address,
-      contract_address as token_address,
+      evt_tx_hash || '-' || evt_index || '-' || to AS unique_tx_id,
+      to AS wallet_address,
+      contract_address AS token_address,
       evt_block_time,
-      explode_id as tokenId,
-      explode_value as amount
+      explode_id AS tokenId,
+      explode_value AS amount
     FROM erc1155_transfers_batch
   ),
 
-  received_transfers as (
-    select
+  received_transfers AS (
+    SELECT
       evt_tx_hash,
-      evt_tx_hash || '-' || evt_index || '-' || to as unique_tx_id,
-      from as wallet_address,
-      contract_address as token_address,
+      evt_tx_hash || '-' || evt_index || '-' || to AS unique_tx_id,
+      from AS wallet_address,
+      contract_address AS token_address,
       evt_block_time,
-      id as tokenId,
-      - value as amount
+      id AS tokenId,
+      - value AS amount
     FROM {{source('erc1155_ethereum', 'evt_transfersingle')}}
     UNION ALL
-    select
+    SELECT
       evt_tx_hash,
-      evt_tx_hash || '-' || evt_index || '-' || to as unique_tx_id,
-      from as wallet_address,
-      contract_address as token_address,
+      evt_tx_hash || '-' || evt_index || '-' || to AS unique_tx_id,
+      from AS wallet_address,
+      contract_address AS token_address,
       evt_block_time,
-      explode_id as tokenId,
-      - explode_value as amount
+      explode_id AS tokenId,
+      - explode_value AS amount
     FROM erc1155_transfers_batch
   )
-    
-select 'ethereum' as blockchain, wallet_address, token_address, evt_block_time, tokenId, amount, evt_tx_hash, unique_tx_id
+
+SELECT 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, tokenId, amount, evt_tx_hash, unique_tx_id
 from sent_transfers
 union all
-select 'ethereum' as blockchain, wallet_address, token_address, evt_block_time, tokenId, amount, evt_tx_hash, unique_tx_id
+SELECT 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, tokenId, amount, evt_tx_hash, unique_tx_id
 from received_transfers

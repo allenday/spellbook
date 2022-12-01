@@ -67,13 +67,13 @@ WITH dexs AS
             WHEN bought_id = 1 THEN '{{usdc_ethereum_token}}'
             WHEN bought_id = 2 THEN '{{usdt_ethereum_token}}'
             WHEN bought_id = 3 THEN '{{proxy_susd_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{dai_ethereum_token}}'
             WHEN sold_id = 1 THEN '{{usdc_ethereum_token}}'
             WHEN sold_id = 2 THEN '{{usdt_ethereum_token}}'
             WHEN sold_id = 3 THEN '{{proxy_susd_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -99,13 +99,13 @@ WITH dexs AS
             WHEN bought_id = 1 THEN '{{usdc_ethereum_token}}'
             WHEN bought_id = 2 THEN '{{usdt_ethereum_token}}'
             WHEN bought_id = 3 THEN '{{proxy_susd_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{dai_ethereum_token}}'
             WHEN sold_id = 1 THEN '{{usdc_ethereum_token}}'
             WHEN sold_id = 2 THEN '{{usdt_ethereum_token}}'
             WHEN sold_id = 3 THEN '{{proxy_susd_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -128,11 +128,11 @@ WITH dexs AS
         CASE
             WHEN bought_id = 0 THEN '{{ysusd_token}}'
             WHEN bought_id = 1 THEN '{{ycrv_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{ysusd_token}}'
             WHEN sold_id = 1 THEN '{{ycrv_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -155,11 +155,11 @@ WITH dexs AS
         CASE
             WHEN bought_id = 0 THEN '{{ysusd_token}}'
             WHEN bought_id = 1 THEN '{{ycrv_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{ysusd_token}}'
             WHEN sold_id = 1 THEN '{{ycrv_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -182,11 +182,11 @@ WITH dexs AS
         CASE
             WHEN bought_id = 0 THEN '{{cdai_token}}'
             WHEN bought_id = 1 THEN '{{cusdc_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{cdai_token}}'
             WHEN sold_id = 1 THEN '{{cusdc_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -209,11 +209,11 @@ WITH dexs AS
         CASE
             WHEN bought_id = 0 THEN '{{cdai_token}}'
             WHEN bought_id = 1 THEN '{{cusdc_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{cdai_token}}'
             WHEN sold_id = 1 THEN '{{cusdc_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -236,11 +236,11 @@ WITH dexs AS
         CASE
             WHEN bought_id = 0 THEN '{{dai_ethereum_token}}'
             WHEN bought_id = 1 THEN '{{usdc_ethereum_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{dai_ethereum_token}}'
             WHEN sold_id = 1 THEN '{{usdc_ethereum_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -263,11 +263,11 @@ WITH dexs AS
         CASE
             WHEN bought_id = 0 THEN '{{cdai_token}}'
             WHEN bought_id = 1 THEN '{{cusdc_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{cdai_token}}'
             WHEN sold_id = 1 THEN '{{cusdc_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -290,11 +290,11 @@ WITH dexs AS
         CASE
             WHEN bought_id = 0 THEN '{{dai_ethereum_token}}'
             WHEN bought_id = 1 THEN '{{usdc_ethereum_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{dai_ethereum_token}}'
             WHEN sold_id = 1 THEN '{{usdc_ethereum_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -318,12 +318,12 @@ WITH dexs AS
             WHEN bought_id = 0 THEN '{{cdai_token}}'
             WHEN bought_id = 1 THEN '{{cusdc_token}}'
             WHEN bought_id = 2 THEN '{{usdt_ethereum_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{cdai_token}}'
             WHEN sold_id = 1 THEN '{{cusdc_token}}'
             WHEN sold_id = 2 THEN '{{usdt_ethereum_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -347,12 +347,12 @@ WITH dexs AS
             WHEN bought_id = 0 THEN '{{dai_ethereum_token}}'
             WHEN bought_id = 1 THEN '{{usdc_ethereum_token}}'
             WHEN bought_id = 2 THEN '{{usdt_ethereum_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{dai_ethereum_token}}'
             WHEN sold_id = 1 THEN '{{usdc_ethereum_token}}'
             WHEN sold_id = 2 THEN '{{usdt_ethereum_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -377,13 +377,13 @@ WITH dexs AS
             WHEN bought_id = 1 THEN '{{yusdc_token}}'
             WHEN bought_id = 2 THEN '{{yusdt_token}}'
             WHEN bought_id = 3 THEN '{{ytusd_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{ydai_token}}'
             WHEN sold_id = 1 THEN '{{yusdc_token}}'
             WHEN sold_id = 2 THEN '{{yusdt_token}}'
             WHEN sold_id = 3 THEN '{{ytusd_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -408,13 +408,13 @@ WITH dexs AS
             WHEN bought_id = 1 THEN '{{usdc_ethereum_token}}'
             WHEN bought_id = 2 THEN '{{usdt_ethereum_token}}'
             WHEN bought_id = 3 THEN '{{tusd_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{dai_ethereum_token}}'
             WHEN sold_id = 1 THEN '{{usdc_ethereum_token}}'
             WHEN sold_id = 2 THEN '{{usdt_ethereum_token}}'
             WHEN sold_id = 3 THEN '{{tusd_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -439,13 +439,13 @@ WITH dexs AS
             WHEN bought_id = 1 THEN '{{yusdc_token3}}'
             WHEN bought_id = 2 THEN '{{yusdt_token3}}'
             WHEN bought_id = 3 THEN '{{ybusd_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{ydai_token3}}'
             WHEN sold_id = 1 THEN '{{yusdc_token3}}'
             WHEN sold_id = 2 THEN '{{yusdt_token3}}'
             WHEN sold_id = 3 THEN '{{ybusd_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -470,13 +470,13 @@ WITH dexs AS
             WHEN bought_id = 1 THEN '{{usdc_ethereum_token}}'
             WHEN bought_id = 2 THEN '{{usdt_ethereum_token}}'
             WHEN bought_id = 3 THEN '{{busd_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{dai_ethereum_token}}'
             WHEN sold_id = 1 THEN '{{usdc_ethereum_token}}'
             WHEN sold_id = 2 THEN '{{usdt_ethereum_token}}'
             WHEN sold_id = 3 THEN '{{busd_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -501,13 +501,13 @@ WITH dexs AS
             WHEN bought_id = 1 THEN '{{ycusdc_token3}}'
             WHEN bought_id = 2 THEN '{{ycusdt_token3}}'
             WHEN bought_id = 3 THEN '{{usdp_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{ycdai_token}}'
             WHEN sold_id = 1 THEN '{{ycusdc_token3}}'
             WHEN sold_id = 2 THEN '{{ycusdt_token3}}'
             WHEN sold_id = 3 THEN '{{usdp_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -532,13 +532,13 @@ WITH dexs AS
             WHEN bought_id = 1 THEN '{{usdc_ethereum_token}}'
             WHEN bought_id = 2 THEN '{{usdt_ethereum_token}}'
             WHEN bought_id = 3 THEN '{{usdp_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{dai_ethereum_token}}'
             WHEN sold_id = 1 THEN '{{usdc_ethereum_token}}'
             WHEN sold_id = 2 THEN '{{usdt_ethereum_token}}'
             WHEN sold_id = 3 THEN '{{usdp_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -561,11 +561,11 @@ WITH dexs AS
         CASE
             WHEN bought_id = 0 THEN '{{renBTC_ethereum_token}}'
             WHEN bought_id = 1 THEN '{{wbtc_ethereum_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{renBTC_ethereum_token}}'
             WHEN sold_id = 1 THEN '{{wbtc_ethereum_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -589,12 +589,12 @@ WITH dexs AS
             WHEN bought_id = 0 THEN '{{renBTC_ethereum_token}}'
             WHEN bought_id = 1 THEN '{{wbtc_ethereum_token}}'
             WHEN bought_id = 2 THEN '{{sBTC_ethereum_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{renBTC_ethereum_token}}'
             WHEN sold_id = 1 THEN '{{wbtc_ethereum_token}}'
             WHEN sold_id = 2 THEN '{{sBTC_ethereum_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -618,12 +618,12 @@ WITH dexs AS
             --change address back to renBTC's, right now Dune only tracks WBTC price
             WHEN bought_id = 0 THEN '{{sBTC_ethereum_token}}'
             WHEN bought_id = 1 THEN '{{wbtc_ethereum_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             --change address back to renBTC's, right now Dune only tracks WBTC price
             WHEN sold_id = 0 THEN '{{sBTC_ethereum_token}}'
             WHEN sold_id = 1 THEN '{{wbtc_ethereum_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -647,12 +647,12 @@ WITH dexs AS
             WHEN bought_id = 0 THEN '{{dai_ethereum_token}}'
             WHEN bought_id = 1 THEN '{{usdc_ethereum_token}}'
             WHEN bought_id = 2 THEN '{{usdt_ethereum_token}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{dai_ethereum_token}}'
             WHEN sold_id = 1 THEN '{{usdc_ethereum_token}}'
             WHEN sold_id = 2 THEN '{{usdt_ethereum_token}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -675,11 +675,11 @@ WITH dexs AS
         CASE
             WHEN bought_id = 0 THEN '{{weth_contract}}'
             WHEN bought_id = 1 THEN '{{steth_contract}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{weth_contract}}'
             WHEN sold_id = 1 THEN '{{steth_contract}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -703,12 +703,12 @@ WITH dexs AS
             WHEN bought_id = 0 THEN '{{usdt_ethereum_token}}'
             WHEN bought_id = 1 THEN '{{wbtc_ethereum_token}}'
             WHEN bought_id = 2 THEN '{{weth_contract}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{usdt_ethereum_token}}'
             WHEN sold_id = 1 THEN '{{wbtc_ethereum_token}}'
             WHEN sold_id = 2 THEN '{{weth_contract}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
@@ -732,17 +732,17 @@ WITH dexs AS
             WHEN bought_id = 0 THEN '{{usdt_ethereum_token}}'
             WHEN bought_id = 1 THEN '{{wbtc_ethereum_token}}'
             WHEN bought_id = 2 THEN '{{weth_contract}}'
-        END as token_bought_address,
+        END AS token_bought_address,
         CASE
             WHEN sold_id = 0 THEN '{{usdt_ethereum_token}}'
             WHEN sold_id = 1 THEN '{{wbtc_ethereum_token}}'
             WHEN sold_id = 2 THEN '{{weth_contract}}'
-        END as token_sold_address,
+        END AS token_sold_address,
         contract_address AS project_contract_address,
         evt_tx_hash AS tx_hash,
         '' AS trace_address,
         evt_index
-    FROM {{ source('curvefi_ethereum', 'tricrypto2_swap_evt_TokenExchange') }}   
+    FROM {{ source('curvefi_ethereum', 'tricrypto2_swap_evt_TokenExchange') }}
         {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -759,11 +759,11 @@ SELECT
     ,case
         when lower(erc20a.symbol) > lower(erc20b.symbol) then concat(erc20b.symbol, '-', erc20a.symbol)
         else concat(erc20a.symbol, '-', erc20b.symbol)
-    end as token_pair
+    end AS token_pair
     ,dexs.token_bought_amount_raw / power(10, erc20a.decimals) AS token_bought_amount
     ,dexs.token_sold_amount_raw / power(10, erc20b.decimals) AS token_sold_amount
-    ,CAST(dexs.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw
-    ,CAST(dexs.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw
+    , CAST(dexs.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw
+    , CAST(dexs.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw
     ,coalesce(
         dexs.amount_usd
         ,(dexs.token_bought_amount_raw / power(10, p_bought.decimals)) * p_bought.price
@@ -782,8 +782,8 @@ SELECT
 FROM dexs
 INNER JOIN {{ source('ethereum', 'transactions') }} tx
     ON tx.hash = dexs.tx_hash
-    {% if not is_incremental() %}
-    -- The date below is derrived from `select min(evt_block_time) from uniswap_ethereum.Factory_evt_NewExchange;`
+    {% if NOT is_incremental() %}
+    -- The date below is derrived from `SELECT min(evt_block_time) from uniswap_ethereum.Factory_evt_NewExchange;`
     -- If dexs above is changed then this will also need to be changed.
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
@@ -795,8 +795,8 @@ LEFT JOIN {{ ref('tokens_ethereum_erc20') }} erc20b ON erc20b.contract_address =
 LEFT JOIN {{ source('prices', 'usd') }} p_bought ON p_bought.minute = date_trunc('minute', dexs.block_time)
     AND p_bought.contract_address = dexs.token_bought_address
     AND p_bought.blockchain = 'ethereum'
-    {% if not is_incremental() %}
-    -- The date below is derrived from `select min(evt_block_time) from uniswap_ethereum.Factory_evt_NewExchange;`
+    {% if NOT is_incremental() %}
+    -- The date below is derrived from `SELECT min(evt_block_time) from uniswap_ethereum.Factory_evt_NewExchange;`
     -- If dexs above is changed then this will also need to be changed.
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
@@ -806,8 +806,8 @@ LEFT JOIN {{ source('prices', 'usd') }} p_bought ON p_bought.minute = date_trunc
 LEFT JOIN {{ source('prices', 'usd') }} p_sold ON p_sold.minute = date_trunc('minute', dexs.block_time)
     AND p_sold.contract_address = dexs.token_sold_address
     AND p_sold.blockchain = 'ethereum'
-    {% if not is_incremental() %}
-    -- The date below is derrived from `select min(evt_block_time) from uniswap_ethereum.Factory_evt_NewExchange;`
+    {% if NOT is_incremental() %}
+    -- The date below is derrived from `SELECT min(evt_block_time) from uniswap_ethereum.Factory_evt_NewExchange;`
     -- If dexs above is changed then this will also need to be changed.
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}

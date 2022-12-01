@@ -23,7 +23,7 @@ fraxswap_dex AS (
         ,''                                                                 AS maker
         ,CASE WHEN t.amount0Out = 0 THEN t.amount1Out ELSE t.amount0Out END AS token_bought_amount_raw
         ,CASE WHEN t.amount0In = 0 THEN t.amount1In ELSE t.amount0In END    AS token_sold_amount_raw
-        ,cast(NULL as double)                                               AS amount_usd
+        ,cast(NULL AS double)                                               AS amount_usd
         ,CASE WHEN t.amount0Out = 0 THEN p.token1 ELSE p.token0 END         AS token_bought_address
         ,CASE WHEN t.amount0In = 0 THEN p.token1 ELSE p.token0 END          AS token_sold_address
         ,t.contract_address                                                 AS project_contract_address
@@ -54,8 +54,8 @@ SELECT
      END                                                                AS token_pair
     ,fraxswap_dex.token_bought_amount_raw / power(10, erc20a.decimals)  AS token_bought_amount
     ,fraxswap_dex.token_sold_amount_raw / power(10, erc20b.decimals)    AS token_sold_amount
-    ,CAST(fraxswap_dex.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw
-    ,CAST(fraxswap_dex.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw
+    , CAST(fraxswap_dex.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw
+    , CAST(fraxswap_dex.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw
     ,coalesce(fraxswap_dex.amount_usd
             ,(fraxswap_dex.token_bought_amount_raw / power(10, p_bought.decimals)) * p_bought.price
             ,(fraxswap_dex.token_sold_amount_raw / power(10, p_sold.decimals)) * p_sold.price

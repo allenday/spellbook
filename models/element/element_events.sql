@@ -56,7 +56,7 @@ FROM (
         royalty_fee_currency_symbol,
         unique_trade_id
     FROM {{ ref(model) }}
-    {% if not loop.last %}
+    {% if NOT loop.last %}
     UNION ALL
     {% endif %}
     {% endfor %}

@@ -20,7 +20,7 @@ WITH sushiswap_dex AS (
             sender                                                       AS maker,
             CASE WHEN amount0Out = 0 THEN amount1Out ELSE amount0Out END AS token_bought_amount_raw,
             CASE WHEN amount0In = 0 THEN amount1In ELSE amount0In END    AS token_sold_amount_raw,
-            cast(NULL as double)                                         AS amount_usd,
+            cast(NULL AS double)                                         AS amount_usd,
             CASE WHEN amount0Out = 0 THEN token1 ELSE token0 END         AS token_bought_address,
             CASE WHEN amount0In = 0 THEN token1 ELSE token0 END          AS token_sold_address,
             t.contract_address                                           AS project_contract_address,
@@ -71,7 +71,7 @@ SELECT
 FROM sushiswap_dex
 INNER JOIN {{ source('gnosis', 'transactions') }} tx
     ON sushiswap_dex.tx_hash = tx.hash
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND tx.block_time >= '{{project_start_date}}'
     {% else %}
     AND tx.block_time >= date_trunc("day", now() - interval '1 week')
@@ -86,7 +86,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_bought
     ON p_bought.minute = date_trunc('minute', sushiswap_dex.block_time)
     AND p_bought.contract_address = sushiswap_dex.token_bought_address
     AND p_bought.blockchain = 'gnosis'
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p_bought.minute >= '{{project_start_date}}'
     {% else %}
     AND p_bought.minute >= date_trunc("day", now() - interval '1 week')
@@ -95,7 +95,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold
     ON p_sold.minute = date_trunc('minute', sushiswap_dex.block_time)
     AND p_sold.contract_address = sushiswap_dex.token_sold_address
     AND p_sold.blockchain = 'gnosis'
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p_sold.minute >= '{{project_start_date}}'
     {% else %}
     AND p_sold.minute >= date_trunc("day", now() - interval '1 week')

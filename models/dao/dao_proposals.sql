@@ -37,7 +37,7 @@ FROM (
         status,
         description
     FROM {{ ref(dao_model) }}
-    {% if not loop.last %}
+    {% if NOT loop.last %}
     UNION ALL
     {% endif %}
     {% endfor %}

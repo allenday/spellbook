@@ -17,14 +17,14 @@
 
 
 SELECT
-    'optimism' as blockchain
+    'optimism' AS blockchain
     , c.block_time
     , c.block_date
     , c.feed_name
     , c.oracle_price
     , c.proxy_address
     , c.aggregator_address
-    , COALESCE(o.underlying_token_address, 'n/a') AS underlying_token_address
+    , COALESCE(o.underlying_token_address, 'n / a') AS underlying_token_address
     , c.oracle_price / POWER(10 , o.extra_decimals) AS underlying_token_price
 FROM
 (
@@ -34,9 +34,9 @@ FROM
 	    , cfa.feed_name
 	    , AVG(
             conv( --handle for multiple updates in the same block
-            substring(l.topic2,3,64) 
+            substring(l.topic2,3,64)
             ,16,10)
-            / POWER(10, cfa.decimals)
+ / POWER(10, cfa.decimals)
             ) AS oracle_price
 	    , cfa.proxy_address
         , cfa.aggregator_address
@@ -44,7 +44,7 @@ FROM
 	INNER JOIN {{ ref('chainlink_optimism_oracle_addresses') }} cfa
 	    ON l.contract_address = cfa.aggregator_address
 	WHERE l.topic1 = '{{answer_updated}}'
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         AND l.block_time >= '{{project_start_date}}'
         {% endif %}
         {% if is_incremental() %}

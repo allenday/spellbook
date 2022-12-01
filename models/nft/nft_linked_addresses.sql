@@ -12,58 +12,58 @@
     )
 }}
 
-with nft_trade_address as (
-    select distinct blockchain, buyer as address_a, seller as address_b
+with nft_trade_address AS (
+    SELECT distinct blockchain, buyer AS address_a, seller as address_b
     from {{ ref('nft_trades') }}
-    where buyer is not null
-        and seller is not null
-        and blockchain is not null
+    where buyer is NOT null
+        and seller is NOT null
+        and blockchain is NOT null
     {% if is_incremental() %}
     and block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
     union all
 
-    select distinct blockchain, seller as address_a, buyer as address_b
+    SELECT distinct blockchain, seller AS address_a, buyer as address_b
     from {{ ref('nft_trades') }}
-    where buyer is not null
-        and seller is not null
-        and blockchain is not null
+    where buyer is NOT null
+        and seller is NOT null
+        and blockchain is NOT null
     {% if is_incremental() %}
     and block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 ),
 
-linked_address_nft_trade as (
-    select blockchain,
+linked_address_nft_trade AS (
+    SELECT blockchain,
         address_a,
         address_b,
-        count(*) as cnt
+        count(*) AS cnt
     from nft_trade_address
     group by 1, 2, 3
     having count(*) > 1
 ),
 
-linked_address_sorted as (
+linked_address_sorted AS (
     -- Normalize linked addresses to master address
-    select blockchain,
-        (case when address_a > address_b then address_b else address_a end) as master_address,
-        address_a as alternative_address
+    SELECT blockchain,
+        (case when address_a > address_b then address_b else address_a end) AS master_address,
+        address_a AS alternative_address
     from linked_address_nft_trade
     union
-    select blockchain,
-        (case when address_a > address_b then address_b else address_a end) as master_address,
-        address_b as alternative_address
+    SELECT blockchain,
+        (case when address_a > address_b then address_b else address_a end) AS master_address,
+        address_b AS alternative_address
     from linked_address_nft_trade
 ),
 
-linked_address_sorted_row_num as (
-    select blockchain, master_address, alternative_address,
-        master_address || '-' || alternative_address as linked_address_id,
-        row_number() over (partition by blockchain, alternative_address order by master_address) as row_num
+linked_address_sorted_row_num AS (
+    SELECT blockchain, master_address, alternative_address,
+        master_address || '-' || alternative_address AS linked_address_id,
+        row_number() over (partition by blockchain, alternative_address order by master_address) AS row_num
     from linked_address_sorted
 )
 
-select blockchain,
+SELECT blockchain,
     master_address,
     alternative_address,
     linked_address_id

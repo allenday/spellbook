@@ -14,9 +14,9 @@
 }}
 
 WITH
--- Find the PoC Query here: https://dune.com/queries/1290518
-batch_counts as (
-    select try_cast(date_trunc('day', s.evt_block_time) as date) as block_date,
+-- Find the PoC Query here: https: / /dune.com/queries/1290518
+batch_counts AS (
+    SELECT try_cast(date_trunc('day', s.evt_block_time) AS date) as block_date,
            s.evt_block_time,
            s.evt_tx_hash,
            solver,
@@ -27,9 +27,9 @@ batch_counts as (
                     and selector != '0x095ea7b3' -- approval
                        then 1
                    else 0
-                end)                                                as dex_swaps,
-           sum(case when selector = '0x2e1a7d4d' then 1 else 0 end) as unwraps,
-           sum(case when selector = '0x095ea7b3' then 1 else 0 end) as token_approvals
+                end)                                                AS dex_swaps,
+           sum(case when selector = '0x2e1a7d4d' then 1 else 0 end) AS unwraps,
+           sum(case when selector = '0x095ea7b3' then 1 else 0 end) AS token_approvals
     from {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Settlement') }} s
         left outer join {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Interaction') }} i
             on i.evt_tx_hash = s.evt_tx_hash
@@ -44,15 +44,15 @@ batch_counts as (
     group by s.evt_tx_hash, solver, s.evt_block_time, name
 ),
 
-batch_values as (
-    select
+batch_values AS (
+    SELECT
         tx_hash,
-        count(*)        as num_trades,
-        sum(usd_value)  as batch_value,
-        sum(fee_usd)    as fee_value,
-        price           as eth_price
+        count(*)        AS num_trades,
+        sum(usd_value)  AS batch_value,
+        sum(fee_usd)    AS fee_value,
+        price           AS eth_price
     from {{ ref('cow_protocol_ethereum_trades') }}
-        left outer join {{ source('prices', 'usd') }} as p
+        left outer join {{ source('prices', 'usd') }} AS p
             on p.contract_address = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
             and p.minute = date_trunc('minute', block_time)
             and blockchain = 'ethereum'
@@ -62,10 +62,10 @@ batch_values as (
     group by tx_hash, price
 ),
 
-combined_batch_info as (
-    select
+combined_batch_info AS (
+    SELECT
         block_date,
-        evt_block_time                                 as block_time,
+        evt_block_time                                 AS block_time,
         num_trades,
         CASE
             WHEN (
@@ -75,21 +75,21 @@ combined_batch_info as (
                OR name = 'Legacy'
               )
                THEN (
-                select count(*)
+                SELECT count(*)
                 from {{ ref('dex_trades') }}
                 where tx_hash = evt_tx_hash
                 and blockchain = 'ethereum'
               )
             ELSE dex_swaps
-        END                                              as dex_swaps,
+        END                                              AS dex_swaps,
         batch_value,
-        solver                                           as solver_address,
-        evt_tx_hash                                      as tx_hash,
+        solver                                           AS solver_address,
+        evt_tx_hash                                      AS tx_hash,
         gas_price,
         gas_used,
-        (gas_price * gas_used * eth_price) / pow(10, 18) as tx_cost_usd,
+        (gas_price * gas_used * eth_price) / pow(10, 18) AS tx_cost_usd,
         fee_value,
-        length(data)::decimal / 1024                     as call_data_size,
+        length(data)::decimal / 1024                     AS call_data_size,
         unwraps,
         token_approvals
     from batch_counts b
@@ -103,4 +103,4 @@ combined_batch_info as (
     where num_trades > 0 --! Exclude Withdraw Batches
 )
 
-select * from combined_batch_info
+SELECT * from combined_batch_info

@@ -8,7 +8,7 @@
   )
 }}
 
-SELECT "optimism" as blockchain, feed_name, CAST(decimals AS numeric) AS decimals, LOWER(proxy_address) AS proxy_address, LOWER(aggregator_address) AS aggregator_address
+SELECT "optimism" AS blockchain, feed_name, CAST(decimals AS numeric) AS decimals, LOWER(proxy_address) AS proxy_address, LOWER(aggregator_address) AS aggregator_address
 
 FROM (values
         ("AAVE / USD",8,"0x338ed6787f463394d24813b297401b9f05a8c9d1","0x81cc0c227bf9bfb8088b14755dfca65f7892203b")

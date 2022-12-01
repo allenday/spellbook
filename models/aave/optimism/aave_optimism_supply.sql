@@ -8,13 +8,13 @@
 }}
 
 SELECT *
-FROM 
+FROM
 (
-      SELECT 
+      SELECT
             version,
             transaction_type,
             symbol,
-            token_address, 
+            token_address,
             depositor,
             withdrawn_to,
             liquidator,
@@ -23,10 +23,9 @@ FROM
             evt_tx_hash,
             evt_index,
             evt_block_time,
-            evt_block_number 
+            evt_block_number
       FROM {{ ref('aave_v3_optimism_supply') }}
-      /*
+ / *
       UNION ALL
-      < add new version as needed
-      */
-)
+      < add new version AS needed
+      * / )

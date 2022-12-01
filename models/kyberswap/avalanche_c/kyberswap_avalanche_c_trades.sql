@@ -23,7 +23,7 @@ kyberswap_dex AS (
         ,''                                                                 AS maker
         ,CASE WHEN t.amount0Out = 0 THEN t.amount1Out ELSE t.amount0Out END AS token_bought_amount_raw
         ,CASE WHEN t.amount0In = 0 THEN t.amount1In ELSE t.amount0In END    AS token_sold_amount_raw
-        ,cast(NULL as double)                                               AS amount_usd
+        ,cast(NULL AS double)                                               AS amount_usd
         ,CASE WHEN t.amount0Out = 0 THEN p.token1 ELSE p.token0 END         AS token_bought_address
         ,CASE WHEN t.amount0In = 0 THEN p.token1 ELSE p.token0 END          AS token_sold_address
         ,t.contract_address                                                 AS project_contract_address
@@ -41,7 +41,7 @@ kyberswap_dex AS (
 
     UNION ALL
 
-    -- https://docs.kyberswap.com/contract/implement-a-swap
+    -- https: / /docs.kyberswap.com/contract/implement-a-swap
     -- deltaQty0 and deltaQty1, Negative numbers represent the sold amount, and positive numbers represent the buy amount
     SELECT
         t.evt_block_time                                                               AS block_time
@@ -49,7 +49,7 @@ kyberswap_dex AS (
         ,t.recipient                                                                   AS maker
         ,if(startswith(t.deltaQty0, '-'), t.deltaQty1, t.deltaQty0)                    AS token_bought_amount_raw
         ,replace(if(startswith(t.deltaQty0, '-'), t.deltaQty0, t.deltaQty1), '-', '')  AS token_sold_amount_raw
-        ,cast(NULL as double)                                                          AS amount_usd
+        ,cast(NULL AS double)                                                          AS amount_usd
         ,if(startswith(t.deltaQty0, '-'), p.token1, p.token0)                          AS token_bought_address
         ,if(startswith(t.deltaQty0, '-'), p.token0, p.token1)                          AS token_sold_address
         ,t.contract_address                                                            AS project_contract_address
@@ -73,7 +73,7 @@ kyberswap_dex AS (
         ,''                                                                AS maker
         ,returnAmount                                                      AS token_bought_amount_raw
         ,spentAmount                                                       AS token_sold_amount_raw
-        ,cast(NULL as double)                                              AS amount_usd
+        ,cast(NULL AS double)                                              AS amount_usd
         ,dstToken                                                          AS token_bought_address
         ,srcToken                                                          AS token_sold_address
         ,contract_address                                                  AS project_contract_address
@@ -96,7 +96,7 @@ kyberswap_dex AS (
         ,''                                                                AS maker
         ,returnAmount                                                      AS token_bought_amount_raw
         ,spentAmount                                                       AS token_sold_amount_raw
-        ,cast(NULL as double)                                              AS amount_usd
+        ,cast(NULL AS double)                                              AS amount_usd
         ,dstToken                                                          AS token_bought_address
         ,srcToken                                                          AS token_sold_address
         ,contract_address                                                  AS project_contract_address
@@ -126,8 +126,8 @@ SELECT
      END                                                                  AS token_pair
     ,kyberswap_dex.token_bought_amount_raw / power(10, erc20a.decimals)   AS token_bought_amount
     ,kyberswap_dex.token_sold_amount_raw / power(10, erc20b.decimals)     AS token_sold_amount
-    ,CAST(kyberswap_dex.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw
-    ,CAST(kyberswap_dex.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw
+    , CAST(kyberswap_dex.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw
+    , CAST(kyberswap_dex.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw
     ,coalesce(kyberswap_dex.amount_usd
             ,(kyberswap_dex.token_bought_amount_raw / power(10, p_bought.decimals)) * p_bought.price
             ,(kyberswap_dex.token_sold_amount_raw / power(10, p_sold.decimals)) * p_sold.price

@@ -7,15 +7,14 @@
         )
 }}
 
-/*
+ / *
 list of models using old generic test, due to multiple versions in one model:
     - curvefi_trades
     - airswap_ethereum_trades
     - dodo_ethereum_trades
     - bancor_ethereum_trades
     - mstable_ethereum_trades
-*/
-
+* / 
 {% set dex_trade_models = [
 'uniswap_trades'
 ,'sushiswap_trades'
@@ -38,7 +37,7 @@ list of models using old generic test, due to multiple versions in one model:
 ,'mstable_ethereum_trades'
 ,'zigzag_trades'
 ,'gmx_trades'
-,'biswap_bnb_trades' 
+,'biswap_bnb_trades'
 ] %}
 
 
@@ -70,7 +69,7 @@ FROM (
         trace_address,
         evt_index
     FROM {{ ref(dex_model) }}
-    {% if not loop.last %}
+    {% if NOT loop.last %}
     UNION ALL
     {% endif %}
     {% endfor %}

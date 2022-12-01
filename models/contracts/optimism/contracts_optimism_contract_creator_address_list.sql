@@ -1,4 +1,4 @@
-{{ 
+{{
   config(
     alias='contract_creator_address_list',
     unique_key='creator_address',
@@ -6,15 +6,15 @@
                               "sector",
                               "contracts",
                               \'["msilb7", "chuxin"]\') }}'
-    )  
+    )
 }}
 
 SELECT *
 FROM (
-  select 
-    lower(creator_address) as creator_address
+  SELECT
+    lower(creator_address) AS creator_address
     ,contract_project
-  from 
+  from
       (values
       ('0x932607335869cff6349ef450e74c83a3b871a9ff', 'Lyra V1')
       ,('0x41a742d0cb523b0c313518309ade763fb609da25', 'Lyra V1')
@@ -364,7 +364,7 @@ FROM (
       ,('0xcd526ee406bc8349ba8135758cee11fa3aaa59a0', 'OPX Finance')
       ,('0x4023ef3aaa0669FaAf3A712626F4D8cCc3eAF2e5', 'Pickle Finance')
 
-  ) as temp_table (creator_address, contract_project)
+  ) AS temp_table (creator_address, contract_project)
 
 ) f
 

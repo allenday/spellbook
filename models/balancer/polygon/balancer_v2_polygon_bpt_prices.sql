@@ -21,15 +21,15 @@ WITH bpt_trades AS (
     FROM (
         SELECT
             t.evt_block_time AS block_time,
-            CASE 
+            CASE
                 WHEN t.tokenIn = SUBSTRING(t.poolId, 0, 42) THEN t.tokenIn
                 ELSE t.tokenOut
             END AS bpt_address,
-            CASE 
+            CASE
                 WHEN t.tokenIn = SUBSTRING(t.poolId, 0, 42) THEN t.amountIn
                 ELSE t.amountOut
             END AS bpt_amount_raw,
-            CASE 
+            CASE
                 WHEN t.tokenIn = SUBSTRING(t.poolId, 0, 42) THEN t.tokenOut
                 ELSE t.tokenIn
             END AS token_address,
@@ -59,7 +59,7 @@ bpt_estimated_prices AS (
 )
 
 SELECT
-    date_trunc('hour', block_time) as hour,
+    date_trunc('hour', block_time) AS hour,
     bpt_address AS contract_address,
     PERCENTILE(price, 0.5) AS median_price
 FROM bpt_estimated_prices

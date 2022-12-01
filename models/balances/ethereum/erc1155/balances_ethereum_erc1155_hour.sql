@@ -8,13 +8,13 @@
 }}
 
 with
-    hours as (
-        select
+    hours AS (
+        SELECT
             explode(
                 sequence(
                     to_date('2015-01-01'), date_trunc('hour', now()), interval 1 hour
                 )
-            ) as hour
+            ) AS hour
     )
 
 , hourly_balances as
@@ -28,14 +28,14 @@ with
     FROM {{ ref('transfers_ethereum_erc1155_rolling_hour') }})
 
 SELECT
-    'ethereum' as blockchain,
+    'ethereum' AS blockchain,
     d.hour,
     b.wallet_address,
     b.token_address,
     b.tokenId,
     b.amount,
-    nft_tokens.name as collection,
-    nft_tokens.category as category
+    nft_tokens.name AS collection,
+    nft_tokens.category AS category
 FROM hourly_balances b
 INNER JOIN hours d ON b.hour <= d.hour AND d.hour < b.next_hour
 LEFT JOIN {{ ref('tokens_nft') }} nft_tokens ON nft_tokens.contract_address = b.token_address

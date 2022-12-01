@@ -30,7 +30,7 @@ WITH
       {{ source('erc721_ethereum','evt_transfer') }} et
       INNER JOIN pools p ON p.nft_contract_address = et.contract_address
       AND (et.to = p.pool_address OR et.from = p.pool_address)
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE et.evt_block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -41,17 +41,17 @@ WITH
   ),
 
   eth_deltas AS (
-  select
+  SELECT
   day
   , pool_address
-  , coalesce(sum(eth_balance_in),0) - coalesce(sum(eth_balance_out),0) as eth_balance_change
+  , coalesce(sum(eth_balance_in),0) - coalesce(sum(eth_balance_out),0) AS eth_balance_change
   from(
-    select * from (
+    SELECT * from (
         SELECT
           date_trunc('day',tr.block_time) AS day
           , pool_address
-          , SUM(tr.value/1e18) AS eth_balance_in
-          , 0 as eth_balance_out
+          , SUM(tr.value / 1e18) AS eth_balance_in
+          , 0 AS eth_balance_out
         FROM
           {{ source('ethereum','traces') }} tr
           INNER JOIN pools pc ON pc.pool_address = tr.to
@@ -61,7 +61,7 @@ WITH
             tr.call_type NOT IN ('delegatecall', 'callcode', 'staticcall')
             OR tr.call_type IS null
           )
-          {% if not is_incremental() %}
+          {% if NOT is_incremental() %}
           AND tr.block_time > '{{project_start_date}}'
           {% endif %}
           {% if is_incremental() %}
@@ -71,12 +71,12 @@ WITH
           1,2
     ) foo
     union all
-    select * from (
+    SELECT * from (
         SELECT
           date_trunc('day',tr.block_time) AS day
           , pool_address
           , 0 AS eth_balance_in
-          , SUM(tr.value/1e18) as eth_balance_out
+          , SUM(tr.value / 1e18) AS eth_balance_out
         FROM
           {{ source('ethereum','traces') }} tr
           INNER JOIN pools pc ON pc.pool_address = tr.from
@@ -86,7 +86,7 @@ WITH
             tr.call_type NOT IN ('delegatecall', 'callcode', 'staticcall')
             OR tr.call_type IS null
           )
-          {% if not is_incremental() %}
+          {% if NOT is_incremental() %}
           AND tr.block_time > '{{project_start_date}}'
           {% endif %}
           {% if is_incremental() %}
@@ -100,10 +100,10 @@ WITH
   )
 
 SELECT
-    COALESCE(e.day, n.day) as day,
-    COALESCE(e.pool_address,n.pool_address) as pool_address,
-    COALESCE(e.eth_balance_change, 0) as eth_balance_change,
-    COALESCE(n.nft_balance_change,0) as nft_balance_change
+    COALESCE(e.day, n.day) AS day,
+    COALESCE(e.pool_address,n.pool_address) AS pool_address,
+    COALESCE(e.eth_balance_change, 0) AS eth_balance_change,
+    COALESCE(n.nft_balance_change,0) AS nft_balance_change
 FROM eth_deltas e
 FULL JOIN erc721_deltas n
     ON e.day = n.day

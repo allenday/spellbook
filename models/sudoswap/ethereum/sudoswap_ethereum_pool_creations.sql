@@ -27,25 +27,25 @@ WITH
         WHEN lower(_bondingCurve) = '{{exponential_bonding_address}}' THEN 'exponential'
         WHEN lower(_bondingCurve) = '{{xyk_bonding_address}}' THEN 'xyk'
         ELSE 'other'
-      END as bonding_curve,
+      END AS bonding_curve,
       CASE
         WHEN _poolType = 0 THEN 'token'
         WHEN _poolType = 1 THEN 'nft'
         WHEN _poolType = 2 THEN 'trade'
       END AS pool_type,
       _spotPrice / 1e18 AS spot_price,
-      _delta / 1e18 as delta,
+      _delta / 1e18 AS delta,
       _fee AS pool_fee,
       coalesce(cardinality(_initialNFTIDs),0) AS initial_nft_balance,
       coalesce(tx.value / 1e18,0) AS initial_eth_balance,
-      contract_address as pool_factory,
+      contract_address AS pool_factory,
       call_block_time AS creation_block_time,
-      call_tx_hash as creation_tx_hash
+      call_tx_hash AS creation_tx_hash
     FROM
       {{ source('sudo_amm_ethereum','LSSVMPairFactory_call_createPairETH') }} cre
       INNER JOIN {{ source('ethereum','transactions') }} tx ON tx.block_time = cre.call_block_time
         AND tx.hash = cre.call_tx_hash
-        {% if not is_incremental() %}
+        {% if NOT is_incremental() %}
         AND tx.block_time >= '{{project_start_date}}'
         {% endif %}
         {% if is_incremental() %}

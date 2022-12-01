@@ -20,7 +20,7 @@ WITH positions AS (
 		positionId
 		,user AS user
 		,productId
-		,CAST(isLong AS VARCHAR(5)) AS isLong
+		, CAST(isLong AS VARCHAR(5)) AS isLong
 		,price
 		,oraclePrice
 		,margin
@@ -64,7 +64,7 @@ WITH positions AS (
 perps AS (
 	SELECT
 		evt_block_time AS block_time
-		
+
 		,CASE
 		WHEN productId = 1 OR productId = 16 THEN 'ETH'
 		WHEN productId = 2 OR productId = 17 THEN 'BTC'
@@ -112,11 +112,11 @@ perps AS (
 		WHEN productId = 12 OR productId = 26 THEN 'UNI-USD'
 		ELSE CONCAT ('product_id_', productId)
 		END AS market
-		
+
 		,contract_address AS market_address
-		,(margin/1e8) * (leverage/1e8) AS volume_usd
-		,fee/1e8 AS fee_usd
-		,margin/1e8 AS margin_usd
+		,(margin / 1e8) * (leverage/1e8) AS volume_usd
+		,fee / 1e8 AS fee_usd
+		,margin / 1e8 AS margin_usd
 
 		,CASE
 		WHEN isLong = 'true' THEN 'long'
@@ -157,7 +157,7 @@ SELECT
 FROM perps
 INNER JOIN {{ source('optimism', 'transactions') }} AS tx
 	ON perps.tx_hash = tx.hash
-	{% if not is_incremental() %}
+	{% if NOT is_incremental() %}
 	AND tx.block_time >= '{{project_start_date}}'
 	{% endif %}
 	{% if is_incremental() %}

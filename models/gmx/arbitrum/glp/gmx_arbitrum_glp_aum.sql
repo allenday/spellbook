@@ -8,11 +8,10 @@
         )
 }}
 
-/*
+ / *
 Stablecoin holings AUM = poolAmounts * current_price
 Directional holdings AUM = (available_assets * current_price) + (longs) + (current_price - average_short_entry_price) * (shorts_opened_notional / current_price)
-*/
-
+* / 
 SELECT -- This query calculates the AUM of each component of GLP
     minute,
     frax_available_assets * frax_current_price AS frax_aum,

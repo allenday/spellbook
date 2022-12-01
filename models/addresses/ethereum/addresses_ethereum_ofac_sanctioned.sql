@@ -3,10 +3,10 @@
                                     "sector",
                                     "addresses",
                                     \'["hildobby"]\') }}')}}
-    
+
     SELECT address, protocol, description, blockchain, currency_contract, currency_symbol
     FROM (VALUES
-    -- Source: https://home.treasury.gov/policy-issues/financial-sanctions/recent-actions/20220808
+    -- Source: https: / /home.treasury.gov/policy-issues/financial-sanctions/recent-actions/20220808
       ('0x8589427373d6d84e98730d7795d8f6f8731fda16', 'Tornado Cash', 'Donate', 'ethereum', '0x0000000000000000000000000000000000000000', 'ETH')
     , ('0x722122df12d4e14e13ac3b6895a86e84145b6967', 'Tornado Cash', 'Proxy', 'ethereum', '0x0000000000000000000000000000000000000000', 'ETH')
     , ('0xdd4c48c0b24039969fc16d1cdf626eab821d3384', 'Tornado Cash', 'Gitcoin Grant', 'ethereum', '0x0000000000000000000000000000000000000000', 'ETH')

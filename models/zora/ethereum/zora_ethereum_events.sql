@@ -317,8 +317,8 @@ SELECT distinct 'ethereum' AS blockchain
     , zt.block_number
     , zt.token_id
     , nft.name AS collection
-    , CASE WHEN zt.currency_contract='0x0000000000000000000000000000000000000000' THEN zt.amount_raw/POWER(10, 18)*pu.price
-        ELSE zt.amount_raw/POWER(10, pu.decimals)*pu.price END AS amount_usd
+    , CASE WHEN zt.currency_contract='0x0000000000000000000000000000000000000000' THEN zt.amount_raw / POWER(10, 18)*pu.price
+        ELSE zt.amount_raw / POWER(10, pu.decimals)*pu.price END AS amount_usd
     , CASE WHEN erc721.evt_index IS NOT NULL THEN 'erc721' ELSE 'erc1155' END AS token_standard
     , CASE WHEN agg.name IS NOT NULL THEN 'Bundle Trade' ELSE 'Single Item Trade' END AS trade_type
     , CAST(1 AS DECIMAL(38,0)) AS number_of_items
@@ -326,8 +326,8 @@ SELECT distinct 'ethereum' AS blockchain
     , 'Trade' AS evt_type
     , zt.seller
     , zt.buyer
-    , CASE WHEN zt.currency_contract='0x0000000000000000000000000000000000000000' THEN zt.amount_raw/POWER(10, 18)
-        ELSE zt.amount_raw/POWER(10, pu.decimals) END AS amount_original
+    , CASE WHEN zt.currency_contract='0x0000000000000000000000000000000000000000' THEN zt.amount_raw / POWER(10, 18)
+        ELSE zt.amount_raw / POWER(10, pu.decimals) END AS amount_original
     , zt.amount_raw
     , CASE WHEN zt.currency_contract='0x0000000000000000000000000000000000000000' THEN 'ETH'
         ELSE pu.symbol END AS currency_symbol
@@ -345,11 +345,11 @@ SELECT distinct 'ethereum' AS blockchain
     , 0 AS platform_fee_amount_usd
     , CAST(0 AS DOUBLE) AS platform_fee_percentage
     , CAST(SUM(zt.royalty_fee_amount_raw) AS DOUBLE) AS royalty_fee_amount_raw
-    , CASE WHEN zt.currency_contract='0x0000000000000000000000000000000000000000' THEN COALESCE(SUM(zt.royalty_fee_amount_raw)/POWER(10, 18), 0)
-        ELSE COALESCE(SUM(zt.royalty_fee_amount_raw)/POWER(10, pu.decimals), 0) END AS royalty_fee_amount
-    , CASE WHEN zt.currency_contract='0x0000000000000000000000000000000000000000' THEN COALESCE(SUM(zt.royalty_fee_amount_raw)/POWER(10, 18)*pu.price, 0)
-        ELSE COALESCE(SUM(zt.royalty_fee_amount_raw)/POWER(10, pu.decimals)*pu.price, 0) END AS royalty_fee_amount_usd
-    , CAST(COALESCE(100.0*SUM(zt.royalty_fee_amount_raw)/zt.amount_raw, 0) AS DOUBLE) AS royalty_fee_percentage
+    , CASE WHEN zt.currency_contract='0x0000000000000000000000000000000000000000' THEN COALESCE(SUM(zt.royalty_fee_amount_raw) / POWER(10, 18), 0)
+        ELSE COALESCE(SUM(zt.royalty_fee_amount_raw) / POWER(10, pu.decimals), 0) END AS royalty_fee_amount
+    , CASE WHEN zt.currency_contract='0x0000000000000000000000000000000000000000' THEN COALESCE(SUM(zt.royalty_fee_amount_raw) / POWER(10, 18)*pu.price, 0)
+        ELSE COALESCE(SUM(zt.royalty_fee_amount_raw) / POWER(10, pu.decimals)*pu.price, 0) END AS royalty_fee_amount_usd
+    , CAST(COALESCE(100.0*SUM(zt.royalty_fee_amount_raw) / zt.amount_raw, 0) AS DOUBLE) AS royalty_fee_percentage
     , FIRST(zt.royalty_fee_receive_address) AS royalty_fee_receive_address
     , CASE WHEN zt.currency_contract='0x0000000000000000000000000000000000000000' THEN 'ETH'
         ELSE pu.symbol END AS royalty_fee_currency_symbol

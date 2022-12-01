@@ -4,7 +4,7 @@
                                     "labels",
                                     \'["hildobby"]\') }}')}}
 
--- Source: https://etherscan.io/accounts/label/mev-bot
+-- Source: https: / /etherscan.io/accounts/label/mev-bot
 
 SELECT blockchain, address, name, category, contributor, source, created_at, updated_at
 FROM (VALUES

@@ -7,34 +7,34 @@
                                 \'["Henrystats"]\') }}')
 }}
 
-WITH 
+WITH
 
-assets_added as (
+assets_added AS (
         SELECT
-            0 as asset_id,
-            '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' as asset_address,
-            null as asset_gas_limit,
-            null as date_added
+            0 AS asset_id,
+            '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' AS asset_address,
+            null AS asset_gas_limit,
+            null AS date_added
 
         UNION
-        
-        SELECT 
-            assetId as asset_id,
-            assetAddress as asset_address,
-            assetGasLimit as asset_gas_limit,
-            evt_block_time as date_added
-        FROM 
+
+        SELECT
+            assetId AS asset_id,
+            assetAddress AS asset_address,
+            assetGasLimit AS asset_gas_limit,
+            evt_block_time AS date_added
+        FROM
         {{source('aztec_v2_ethereum', 'RollupProcessor_evt_AssetAdded')}}
 )
 
-SELECT 
+SELECT
     a.*,
     t.symbol,
     t.decimals
-FROM 
+FROM
 assets_added a
 LEFT JOIN
-{{ ref('tokens_erc20') }} t 
+{{ ref('tokens_erc20') }} t
     ON a.asset_address = t.contract_address
     AND t.blockchain = 'ethereum'
 ;

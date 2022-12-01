@@ -8,8 +8,8 @@
         )
 }}
 
-with original_holders as (
-    select address, original_count
+with original_holders AS (
+    SELECT address, original_count
     from (VALUES
         ('0xc352b534e8b987e036a93539fd6897f53488e56a', 1020)
         , ('0x00d7c902fbbcd3c9db2da80a439c94486c50eb81', 1005)
@@ -298,57 +298,57 @@ with original_holders as (
         , ('0xfcdca17445b446f2efd9a6234883e1756e937adb', 1)
         , ('0xff6492f6d2a2d1194061751c6b350e4fa5ff34f2', 1)
         , ('0xffdd93414a062d534d9262def0461939c471d52e', 1)
-     ) as temp_table (address, original_count)
+     ) AS temp_table (address, original_count)
 )
-, transfers as (
-    select  to_date('2017-06-22', 'yyyy-MM-dd') as day
-            , address as wallet 
-            , sum(original_count) as punk_balance 
+, transfers AS (
+    SELECT  to_date('2017-06-22', 'yyyy-MM-dd') AS day
+            , address AS wallet
+            , sum(original_count) AS punk_balance
     from original_holders
     group by 1,2
-    
-    union all 
-    
-    select  date_trunc('day',evt_block_time) as day 
-            , `from` as wallet
-            , count(*)*-1.0 as punk_balance
+
+    union all
+
+    SELECT  date_trunc('day',evt_block_time) AS day
+            , `from` AS wallet
+            , count(*)*-1.0 AS punk_balance
     from {{ source('erc20_ethereum','evt_transfer') }}
     where contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks
     group by 1,2
-    
-    union all 
-    
-    select  date_trunc('day',evt_block_time) as day 
-            , `to` as wallet
-            , count(*) as punk_balance
+
+    union all
+
+    SELECT  date_trunc('day',evt_block_time) AS day
+            , `to` AS wallet
+            , count(*) AS punk_balance
     from {{ source('erc20_ethereum','evt_transfer') }}
     where contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks
     group by 1,2
 )
-, punk_transfer_summary as (
-    select  day
+, punk_transfer_summary AS (
+    SELECT  day
             , wallet
-            , sum(punk_balance) as daily_transfer_sum
-    from transfers 
+            , sum(punk_balance) AS daily_transfer_sum
+    from transfers
     group by day, wallet
 )
-, base_data as (
-    with all_days  as (select explode(sequence(to_date('2017-06-22'), to_date(now()), interval 1 day)) as day)
-    , all_wallets as (select distinct wallet from punk_transfer_summary)
-    
-    select  day
+, base_data AS (
+    with all_days  AS (SELECT explode(sequence(to_date('2017-06-22'), to_date(now()), interval 1 day)) as day)
+    , all_wallets AS (SELECT distinct wallet from punk_transfer_summary)
+
+    SELECT  day
             , wallet
     from all_days full outer join all_wallets on true
 )
-, combined_table as (
-    select base_data.day
+, combined_table AS (
+    SELECT base_data.day
             , base_data.wallet
-            , sum(coalesce(daily_transfer_sum,0)) over (partition by base_data.wallet order by base_data.day) as holding
+            , sum(coalesce(daily_transfer_sum,0)) over (partition by base_data.wallet order by base_data.day) AS holding
     from base_data
-    left join punk_transfer_summary on base_data.day = punk_transfer_summary.day and base_data.wallet = punk_transfer_summary.wallet 
+    LEFT JOIN punk_transfer_summary on base_data.day = punk_transfer_summary.day and base_data.wallet = punk_transfer_summary.wallet
 )
-    
-select day
-        , count(wallet) filter (where holding > 0) as unique_wallets
+
+SELECT day
+        , count(wallet) filter (where holding > 0) AS unique_wallets
 from combined_table
 group by 1

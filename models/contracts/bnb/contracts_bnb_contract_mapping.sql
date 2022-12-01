@@ -8,8 +8,8 @@
         )
 }}
 
-select
-  lower(contract_address) as contract_address
+SELECT
+  lower(contract_address) AS contract_address
   ,project_name
   ,project_type
 from
@@ -967,7 +967,7 @@ from
   ,('0x758fb037a375f17c7e195cc634d77da4f554255b', 'Dvision Network', 'NFT')
   ,('0x96a1dee27d4981d98ff9ec95e7f6d45b373118b0', 'EasySwap', 'Dexs')
   ,('0xf6bff5215a844e5b3ec79b0645ba467bd14416a4', 'EasySwap', 'Dexs')
-  ,('0x375483cfa7fc18f6b455e005d835a8335fbdbb1f', 'https://docs.ellipsis.finance/deployment-links', 'Tooling')
+  ,('0x375483cfa7fc18f6b455e005d835a8335fbdbb1f', 'https: / /docs.ellipsis.finance/deployment-links', 'Tooling')
   ,('0xacd7b3d9c10e97d0efa418903c0c7669e702e4c0', 'Eleven Finance', 'Others')
   ,('0xcce949de564fe60e7f96c85e55177f8b9e4cf61b', 'Ellipsis', 'DEX')
   ,('0x0bc3a8239b0a63e945ea1bd6722ba747b9557e56', 'Ellipsis', 'DEX')
@@ -8399,7 +8399,7 @@ from
   ,('0x74a734319ae0a20cbb49958bd8c65cc8b167a35a', 'Cake Monster', 'Defi')
   ,('0x66c36f3bbf68d9bd4da9ad116e56932552a70187', 'Cake Monster', 'Defi')
   ,('0x73052f51b68d974d2ed6cec7b9e817adac168168', 'Calo Outdoor / Indoor', 'NFT')
-  ,('0x7ba1b6075304c3f3b6d3117a044dd3a90b1deb97', 'Metasens/PetaRush', 'Gaming')
+  ,('0x7ba1b6075304c3f3b6d3117a044dd3a90b1deb97', 'Metasens / PetaRush', 'Gaming')
   ,('0x61bdb6121610c6b07ef77c67e616430654e8695d', 'Drunk Robots', 'Gaming')
   ,('0xedfd362fe1dc66c45822b973e6400da1a68c9a7a', 'Drunk Robots', 'Gaming')
   ,('0xa6071ff3a45c4e87655d00d1b28bcc0b9e91cba6', 'Drunk Robots', 'Gaming')
@@ -9336,5 +9336,5 @@ from
   ,('0x717926326fab42c12e7d6102e2cd6c43683aa1ae', 'Ado.Network', 'Others')
   ,('0xfb6bd0c00bd348125a1f6edc36e4b7ff5dbddfba', 'Krystal', 'Others')
   ,('0x681255e12fcd81c3e5c0c324353025b7c98521c4', 'Krystal', 'Others')
-) as temp_table (contract_address,project_name,project_type)
+) AS temp_table (contract_address,project_name,project_type)
 ;

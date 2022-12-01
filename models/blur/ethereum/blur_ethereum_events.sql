@@ -34,11 +34,11 @@ SELECT
         ELSE 'Offer Accepted'
         END AS trade_category
     , get_json_object(bm.buy, '$.price') AS amount_raw
-    , CASE WHEN get_json_object(bm.buy, '$.paymentToken')='0x0000000000000000000000000000000000000000' THEN get_json_object(bm.buy, '$.price')/POWER(10, 18)
-        ELSE get_json_object(bm.buy, '$.price')/POWER(10, pu.decimals)
+    , CASE WHEN get_json_object(bm.buy, '$.paymentToken')='0x0000000000000000000000000000000000000000' THEN get_json_object(bm.buy, '$.price') / POWER(10, 18)
+        ELSE get_json_object(bm.buy, '$.price') / POWER(10, pu.decimals)
         END AS amount_original
-    , CASE WHEN get_json_object(bm.buy, '$.paymentToken')='0x0000000000000000000000000000000000000000' THEN pu.price*get_json_object(bm.buy, '$.price')/POWER(10, 18)
-        ELSE pu.price*get_json_object(bm.buy, '$.price')/POWER(10, pu.decimals)
+    , CASE WHEN get_json_object(bm.buy, '$.paymentToken')='0x0000000000000000000000000000000000000000' THEN pu.price*get_json_object(bm.buy, '$.price') / POWER(10, 18)
+        ELSE pu.price*get_json_object(bm.buy, '$.price') / POWER(10, pu.decimals)
         END AS amount_usd
     , CASE WHEN get_json_object(bm.buy, '$.paymentToken')='0x0000000000000000000000000000000000000000' THEN 'ETH'
         ELSE pu.symbol
@@ -57,14 +57,14 @@ SELECT
     , 0 AS platform_fee_amount
     , 0 AS platform_fee_amount_usd
     , CAST(0 AS DOUBLE) AS platform_fee_percentage
-    , COALESCE(get_json_object(bm.buy, '$.price')*get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.rate')/10000, 0) AS royalty_fee_amount_raw
-    , CASE WHEN get_json_object(bm.buy, '$.paymentToken')='0x0000000000000000000000000000000000000000' THEN COALESCE(get_json_object(bm.buy, '$.price')/POWER(10, 18)*get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.rate')/10000, 0)
-        ELSE COALESCE(get_json_object(bm.buy, '$.price')/POWER(10, pu.decimals)*get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.rate')/10000, 0)
+    , COALESCE(get_json_object(bm.buy, '$.price')*get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.rate') / 10000, 0) AS royalty_fee_amount_raw
+    , CASE WHEN get_json_object(bm.buy, '$.paymentToken')='0x0000000000000000000000000000000000000000' THEN COALESCE(get_json_object(bm.buy, '$.price') / POWER(10, 18)*get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.rate')/10000, 0)
+        ELSE COALESCE(get_json_object(bm.buy, '$.price') / POWER(10, pu.decimals)*get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.rate')/10000, 0)
         END AS royalty_fee_amount
-    , CASE WHEN get_json_object(bm.buy, '$.paymentToken')='0x0000000000000000000000000000000000000000' THEN COALESCE(pu.price*get_json_object(bm.buy, '$.price')/POWER(10, 18)*get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.rate')/10000, 0)
-        ELSE COALESCE(pu.price*get_json_object(bm.buy, '$.price')/POWER(10, pu.decimals)*get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.rate')/10000, 0)
+    , CASE WHEN get_json_object(bm.buy, '$.paymentToken')='0x0000000000000000000000000000000000000000' THEN COALESCE(pu.price*get_json_object(bm.buy, '$.price') / POWER(10, 18)*get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.rate')/10000, 0)
+        ELSE COALESCE(pu.price*get_json_object(bm.buy, '$.price') / POWER(10, pu.decimals)*get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.rate')/10000, 0)
         END AS royalty_fee_amount_usd
-    , CAST(COALESCE(get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.rate')/100, 0) AS DOUBLE) AS royalty_fee_percentage
+    , CAST(COALESCE(get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.rate') / 100, 0) AS DOUBLE) AS royalty_fee_percentage
     , get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.recipient') AS royalty_fee_receive_address
     , CASE WHEN get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.recipient') IS NOT NULL AND get_json_object(bm.buy, '$.paymentToken')='0x0000000000000000000000000000000000000000' THEN 'ETH'
         WHEN get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.recipient') IS NOT NULL THEN pu.symbol
@@ -73,7 +73,7 @@ SELECT
 FROM {{ source('blur_ethereum','BlurExchange_evt_OrdersMatched') }} bm
 JOIN {{ source('ethereum','transactions') }} et ON et.block_time=bm.evt_block_time
     AND et.hash=bm.evt_tx_hash
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND et.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -84,7 +84,7 @@ LEFT JOIN {{ source('prices','usd') }} pu ON pu.blockchain='ethereum'
     AND pu.minute=date_trunc('minute', bm.evt_block_time)
     AND (pu.contract_address=get_json_object(bm.buy, '$.paymentToken')
         OR (pu.contract_address='0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' AND get_json_object(bm.buy, '$.paymentToken')='0x0000000000000000000000000000000000000000'))
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND pu.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -96,7 +96,7 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} erct ON erct.block_time=bm.evt_blo
     AND erct.tx_hash=bm.evt_tx_hash
     AND get_json_object(bm.buy, '$.tokenId')=erct.token_id
     AND erct.from=get_json_object(bm.sell, '$.trader')
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND erct.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -108,7 +108,7 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} buyer_fix ON buyer_fix.block_time=
     AND get_json_object(bm.buy, '$.tokenId')=buyer_fix.token_id
     AND get_json_object(bm.buy, '$.trader')=agg.contract_address
     AND buyer_fix.from=agg.contract_address
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND buyer_fix.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -120,7 +120,7 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} seller_fix ON seller_fix.block_tim
     AND get_json_object(bm.buy, '$.tokenId')=seller_fix.token_id
     AND get_json_object(bm.sell, '$.trader')=agg.contract_address
     AND seller_fix.to=agg.contract_address
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND seller_fix.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}

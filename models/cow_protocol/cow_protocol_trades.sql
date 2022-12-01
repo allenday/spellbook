@@ -35,8 +35,7 @@ FROM
             evt_index,
             'cow_protocol' ||'-'|| tx_hash ||'-'|| order_uid || evt_index AS unique_trade_id
         FROM {{ ref('cow_protocol_ethereum_trades') }}
-        /*
+ / *
         UNION
         <add future chains here>
-        */
-)
+        * / )

@@ -27,10 +27,10 @@ WITH aggregator_routed_x2y2_txs AS (
     , agg.contract_address AS aggregator_address
     , inv.evt_tx_hash AS tx_hash
     , prof.evt_index
-    , COALESCE(get_json_object(inv.item, '$.price')*get_json_object(get_json_object(inv.detail, '$.fees[0]'), '$.percentage')/1e6, 0) AS platform_fee_amount_raw
-    , COALESCE(get_json_object(get_json_object(inv.detail, '$.fees[0]'), '$.percentage')/1e6, 0) AS platform_fee_percentage
-    , COALESCE(get_json_object(inv.item, '$.price')*get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.percentage')/1e6, 0) AS royalty_fee_amount_raw
-    , COALESCE(get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.percentage')/1e6, 0) AS royalty_fee_percentage
+    , COALESCE(get_json_object(inv.item, '$.price')*get_json_object(get_json_object(inv.detail, '$.fees[0]'), '$.percentage') / 1e6, 0) AS platform_fee_amount_raw
+    , COALESCE(get_json_object(get_json_object(inv.detail, '$.fees[0]'), '$.percentage') / 1e6, 0) AS platform_fee_percentage
+    , COALESCE(get_json_object(inv.item, '$.price')*get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.percentage') / 1e6, 0) AS royalty_fee_amount_raw
+    , COALESCE(get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.percentage') / 1e6, 0) AS royalty_fee_percentage
     , get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.to') AS royalty_fee_receive_address
     FROM {{ source('x2y2_ethereum','X2Y2_r1_evt_EvProfit') }} prof
     INNER JOIN {{ source('x2y2_ethereum','X2Y2_r1_evt_EvInventory') }} inv  ON inv.evt_block_time=prof.evt_block_time
@@ -59,10 +59,10 @@ WITH aggregator_routed_x2y2_txs AS (
     , NULL AS aggregator_address
     , inv.evt_tx_hash AS tx_hash
     , prof.evt_index
-    , COALESCE(get_json_object(inv.item, '$.price')*get_json_object(get_json_object(inv.detail, '$.fees[0]'), '$.percentage')/1e6, 0) AS platform_fee_amount_raw
-    , COALESCE(get_json_object(get_json_object(inv.detail, '$.fees[0]'), '$.percentage')/1e6, 0) AS platform_fee_percentage
-    , COALESCE(get_json_object(inv.item, '$.price')*get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.percentage')/1e6, 0) AS royalty_fee_amount_raw
-    , COALESCE(get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.percentage')/1e6, 0) AS royalty_fee_percentage
+    , COALESCE(get_json_object(inv.item, '$.price')*get_json_object(get_json_object(inv.detail, '$.fees[0]'), '$.percentage') / 1e6, 0) AS platform_fee_amount_raw
+    , COALESCE(get_json_object(get_json_object(inv.detail, '$.fees[0]'), '$.percentage') / 1e6, 0) AS platform_fee_percentage
+    , COALESCE(get_json_object(inv.item, '$.price')*get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.percentage') / 1e6, 0) AS royalty_fee_amount_raw
+    , COALESCE(get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.percentage') / 1e6, 0) AS royalty_fee_percentage
     , get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.to') AS royalty_fee_receive_address
     FROM  {{ source('x2y2_ethereum','X2Y2_r1_evt_EvProfit') }} prof
     INNER JOIN {{ source('x2y2_ethereum','X2Y2_r1_evt_EvInventory') }} inv  ON inv.evt_block_time=prof.evt_block_time
@@ -153,8 +153,8 @@ SELECT 'ethereum' AS blockchain
 , txs.block_number
 , txs.token_id
 , txs.collection
-, CASE WHEN currency_contract='0x0000000000000000000000000000000000000000' THEN pu.price*txs.amount_raw/POWER(10, 18)
-    ELSE pu.price*txs.amount_raw/POWER(10, pu.decimals)
+, CASE WHEN currency_contract='0x0000000000000000000000000000000000000000' THEN pu.price*txs.amount_raw / POWER(10, 18)
+    ELSE pu.price*txs.amount_raw / POWER(10, pu.decimals)
     END AS amount_usd
 , CASE WHEN erct.evt_block_time IS NOT NULL THEN 'erc721'
     ELSE 'erc1155'
@@ -169,8 +169,8 @@ SELECT 'ethereum' AS blockchain
 , CASE WHEN txs.buyer=txs.aggregator_address AND erct2.to IS NOT NULL THEN erct2.to
     WHEN txs.buyer=txs.aggregator_address AND erct3.to IS NOT NULL THEN erct3.to
     ELSE txs.buyer END AS buyer
-, CASE WHEN currency_contract='0x0000000000000000000000000000000000000000' THEN txs.amount_raw/POWER(10, 18)
-    ELSE txs.amount_raw/POWER(10, pu.decimals)
+, CASE WHEN currency_contract='0x0000000000000000000000000000000000000000' THEN txs.amount_raw / POWER(10, 18)
+    ELSE txs.amount_raw / POWER(10, pu.decimals)
     END AS amount_original
 , txs.amount_raw
 , CASE WHEN currency_contract='0x0000000000000000000000000000000000000000' THEN 'ETH'
@@ -188,19 +188,19 @@ SELECT 'ethereum' AS blockchain
 , et.`from` AS tx_from
 , et.`to` AS tx_to
 , platform_fee_amount_raw
-, CASE WHEN currency_contract='0x0000000000000000000000000000000000000000' THEN platform_fee_amount_raw/POWER(10, 18)
-    ELSE platform_fee_amount_raw/POWER(10, pu.decimals)
+, CASE WHEN currency_contract='0x0000000000000000000000000000000000000000' THEN platform_fee_amount_raw / POWER(10, 18)
+    ELSE platform_fee_amount_raw / POWER(10, pu.decimals)
     END AS platform_fee_amount
-, CASE WHEN currency_contract='0x0000000000000000000000000000000000000000' THEN pu.price*platform_fee_amount_raw/POWER(10, 18)
-    ELSE pu.price*platform_fee_amount_raw/POWER(10, pu.decimals)
+, CASE WHEN currency_contract='0x0000000000000000000000000000000000000000' THEN pu.price*platform_fee_amount_raw / POWER(10, 18)
+    ELSE pu.price*platform_fee_amount_raw / POWER(10, pu.decimals)
     END AS platform_fee_amount_usd
 , CAST(platform_fee_percentage*100 AS DOUBLE) AS platform_fee_percentage
 , royalty_fee_amount_raw
-, CASE WHEN currency_contract='0x0000000000000000000000000000000000000000' THEN royalty_fee_amount_raw/POWER(10, 18)
-    ELSE royalty_fee_amount_raw/POWER(10, pu.decimals)
+, CASE WHEN currency_contract='0x0000000000000000000000000000000000000000' THEN royalty_fee_amount_raw / POWER(10, 18)
+    ELSE royalty_fee_amount_raw / POWER(10, pu.decimals)
     END AS royalty_fee_amount
-, CASE WHEN currency_contract='0x0000000000000000000000000000000000000000' THEN pu.price*royalty_fee_amount_raw/POWER(10, 18)
-    ELSE pu.price*royalty_fee_amount_raw/POWER(10, pu.decimals)
+, CASE WHEN currency_contract='0x0000000000000000000000000000000000000000' THEN pu.price*royalty_fee_amount_raw / POWER(10, 18)
+    ELSE pu.price*royalty_fee_amount_raw / POWER(10, pu.decimals)
     END AS royalty_fee_amount_usd
 , CAST(royalty_fee_percentage*100 AS DOUBLE) AS royalty_fee_percentage
 , royalty_fee_receive_address

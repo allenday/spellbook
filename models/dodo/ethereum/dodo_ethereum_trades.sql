@@ -12,12 +12,12 @@
                                     \'["scoffie"]\') }}'
 )
 }}
-    
+
 -- The first dodo contracted was deployed on '2020-08-10 13:19' from the query
---select min(evt_block_time) from dodo_ethereum.DODO_evt_BuyBaseToken;
+--SELECT min(evt_block_time) from dodo_ethereum.DODO_evt_BuyBaseToken;
 {% set project_start_date = '2020-08-10' %}
 
-WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_symbol, base_token_address, quote_token_address) AS 
+WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_symbol, base_token_address, quote_token_address) AS
 (
     VALUES
     (lower('0x75c23271661d9d143dcb617222bc4bec783eff34'), 'WETH', 'USDC', lower('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'), lower('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48')),
@@ -37,7 +37,7 @@ WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_
     (lower('0x3058ef90929cb8180174d74c507176cca6835d73'), 'DAI', 'USDT',  lower('0x6b175474e89094c44da98b954eedeac495271d0f'), lower('0xdac17f958d2ee523a2206206994597c13d831ec7')),
     (lower('0xd84820f0e66187c4f3245e1fe5ccc40655dbacc9'), 'sUSD', 'USDT', lower('0x57ab1ec28d129707052df4df418d58a2d46d5f51'), lower('0xdac17f958d2ee523a2206206994597c13d831ec7'))
 )
-, dexs AS 
+, dexs AS
 (
     -- dodo v1 sell
         SELECT
@@ -48,7 +48,7 @@ WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_
             '' AS maker,
             s.payBase AS token_bought_amount_raw,
             s.receiveQuote AS token_sold_amount_raw,
-            cast(NULL as double) AS amount_usd,
+            cast(NULL AS double) AS amount_usd,
             m.base_token_address AS token_bought_address,
             m.quote_token_address AS token_sold_address,
             s.contract_address AS project_contract_address,
@@ -63,7 +63,7 @@ WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_
         {% if is_incremental() %}
         AND s.evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
-    
+
          UNION ALL
 
         -- dodo v1 buy
@@ -75,7 +75,7 @@ WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_
             '' AS maker,
             b.receiveBase AS token_bought_amount_raw,
             b.payQuote AS token_sold_amount_raw,
-            cast(NULL as double) AS amount_usd,
+            cast(NULL AS double) AS amount_usd,
             m.base_token_address AS token_bought_address,
             m.quote_token_address AS token_sold_address,
             b.contract_address AS project_contract_address,
@@ -102,7 +102,7 @@ WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_
             '' AS maker,
             fromAmount AS token_bought_amount_raw,
             returnAmount AS token_sold_amount_raw,
-            cast(NULL as double) AS amount_usd,
+            cast(NULL AS double) AS amount_usd,
             fromToken AS token_bought_address,
             toToken AS token_sold_address,
             contract_address AS project_contract_address,
@@ -126,7 +126,7 @@ WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_
             '' AS maker,
             fromAmount AS token_bought_amount_raw,
             returnAmount AS token_sold_amount_raw,
-            cast(NULL as double) AS amount_usd,
+            cast(NULL AS double) AS amount_usd,
             fromToken AS token_bought_address,
             toToken AS token_sold_address,
             contract_address AS project_contract_address,
@@ -150,7 +150,7 @@ WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_
             '' AS maker,
             fromAmount AS token_bought_amount_raw,
             returnAmount AS token_sold_amount_raw,
-            cast(NULL as double) AS amount_usd,
+            cast(NULL AS double) AS amount_usd,
             fromToken AS token_bought_address,
             toToken AS token_sold_address,
             contract_address AS project_contract_address,
@@ -174,7 +174,7 @@ WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_
             receiver AS maker,
             fromAmount AS token_bought_amount_raw,
             toAmount AS token_sold_amount_raw,
-            cast(NULL as double) AS amount_usd,
+            cast(NULL AS double) AS amount_usd,
             fromToken AS token_bought_address,
             toToken AS token_sold_address,
             contract_address AS project_contract_address,
@@ -199,7 +199,7 @@ WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_
             receiver AS maker,
             fromAmount AS token_bought_amount_raw,
             toAmount AS token_sold_amount_raw,
-            cast(NULL as double)  AS amount_usd,
+            cast(NULL AS double)  AS amount_usd,
             fromToken AS token_bought_address,
             toToken AS token_sold_address,
             contract_address AS project_contract_address,
@@ -224,7 +224,7 @@ WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_
             receiver AS maker,
             fromAmount AS token_bought_amount_raw,
             toAmount AS token_sold_amount_raw,
-            cast(NULL as double) AS amount_usd,
+            cast(NULL AS double) AS amount_usd,
             fromToken AS token_bought_address,
             toToken AS token_sold_address,
             contract_address AS project_contract_address,
@@ -249,16 +249,16 @@ SELECT
     ,case
         when lower(erc20a.symbol) > lower(erc20b.symbol) then concat(erc20b.symbol, '-', erc20a.symbol)
         else concat(erc20a.symbol, '-', erc20b.symbol)
-    end as token_pair
+    end AS token_pair
     ,dexs.token_bought_amount_raw / power(10, erc20a.decimals) AS token_bought_amount
     ,dexs.token_sold_amount_raw / power(10, erc20b.decimals) AS token_sold_amount
-    ,CAST(dexs.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw
-    ,CAST(dexs.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw
+    , CAST(dexs.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw
+    , CAST(dexs.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw
     ,coalesce(
         dexs.amount_usd
         ,(dexs.token_bought_amount_raw / power(10, (CASE dexs.token_bought_address WHEN '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN 18 ELSE p_bought.decimals END))) * (CASE dexs.token_bought_address WHEN '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN  p_eth.price ELSE p_bought.price END)
         ,(dexs.token_sold_amount_raw / power(10, (CASE dexs.token_sold_address WHEN '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN 18 ELSE p_sold.decimals END))) * (CASE dexs.token_sold_address WHEN '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN  p_eth.price ELSE p_sold.price END)
-    ) as amount_usd
+    ) AS amount_usd
     ,dexs.token_bought_address
     ,dexs.token_sold_address
     ,coalesce(dexs.taker, tx.from) AS taker -- subqueries rely on this COALESCE to avoid redundant joins with the transactions table
@@ -272,7 +272,7 @@ SELECT
 FROM dexs
 INNER JOIN {{ source('ethereum', 'transactions')}} tx
     ON dexs.tx_hash = tx.hash
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -288,7 +288,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_bought
     ON p_bought.minute = date_trunc('minute', dexs.block_time)
     AND p_bought.contract_address = dexs.token_bought_address
     AND p_bought.blockchain = 'ethereum'
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -298,7 +298,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold
     ON p_sold.minute = date_trunc('minute', dexs.block_time)
     AND p_sold.contract_address = dexs.token_sold_address
     AND p_sold.blockchain = 'ethereum'
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -308,7 +308,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_eth
     ON p_eth.minute = date_trunc('minute', dexs.block_time)
     AND p_eth.blockchain is null
     AND p_eth.symbol = 'ETH'
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p_eth.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}

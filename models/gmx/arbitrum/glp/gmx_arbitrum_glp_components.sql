@@ -16,11 +16,10 @@ WITH minute AS  -- This CTE generates a series of minute values
     SELECT explode(sequence(TIMESTAMP '2021-08-31 08:13', CURRENT_TIMESTAMP, INTERVAL 1 minute)) AS minute -- 2021-08-31 08:13 is the timestamp of the first vault transaction
     ) ,
 
-/*
+ / *
 poolAmounts are the amount of supported tokens that are located in the GMX vault.
-https://arbiscan.io/address/0x489ee077994B6658eAfA855C308275EAd8097C4A
-*/
-
+https: / /arbiscan.io/address/0x489ee077994B6658eAfA855C308275EAd8097C4A
+* / 
 glp_frax_poolAmounts AS -- This CTE returns the average amount of FRAX tokens in the pool for a designated minute
     (
     SELECT -- This query averages the amount of FRAX tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -58,7 +57,7 @@ glp_usdt_poolAmounts AS -- This CTE returns the average amount of USDT tokens in
         ) a
     GROUP BY a.minute
     ) ,
-    
+
 glp_wbtc_poolAmounts AS -- This CTE returns the average amount of WBTC tokens in the pool for a designated minute
     (
     SELECT -- This query averages the amount of WBTC tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -77,7 +76,7 @@ glp_wbtc_poolAmounts AS -- This CTE returns the average amount of WBTC tokens in
         ) a
     GROUP BY a.minute
     ) ,
-    
+
 glp_usdc_poolAmounts AS -- This CTE returns the average amount of USDC tokens in the pool for a designated minute
     (
     SELECT -- This query averages the amount of USDC tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -96,7 +95,7 @@ glp_usdc_poolAmounts AS -- This CTE returns the average amount of USDC tokens in
         ) a
     GROUP BY a.minute
     ) ,
-    
+
 glp_uni_poolAmounts AS -- This CTE returns the average amount of UNI tokens in the pool for a designated minute
     (
     SELECT -- This query averages the amount of UNI tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -173,11 +172,10 @@ glp_dai_poolAmounts AS -- This CTE returns the average amount of DAI tokens in t
     GROUP BY a.minute
     ) ,
 
-/*
+ / *
 reservedAmounts are the amount of supported tokens that are reserved to cover long positions on the supported tokens.
-FRAX, USDT, USDC and DAI are not included as you cannot open shorts on those tokens.
-*/
-
+FRAX, USDT, USDC and DAI are NOT included AS you cannot open shorts on those tokens.
+* / 
 glp_wbtc_reservedAmounts AS -- This CTE returns the average amount of reserved WBTC tokens in the pool for a designated minute
     (
     SELECT -- This query averages the amount of reserved WBTC tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -215,7 +213,7 @@ glp_uni_reservedAmounts AS -- This CTE returns the average amount of reserved UN
         ) a
     GROUP BY a.minute
     ) ,
-    
+
 glp_link_reservedAmounts AS -- This CTE returns the average amount of reserved LINK tokens in the pool for a designated minute
     (
     SELECT -- This query averages the amount of reserved LINK tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -234,7 +232,7 @@ glp_link_reservedAmounts AS -- This CTE returns the average amount of reserved L
         ) a
     GROUP BY a.minute
     ) ,
-    
+
 glp_weth_reservedAmounts AS -- This CTE returns the average amount of reserved WETH tokens in the pool for a designated minute
     (
     SELECT
@@ -254,12 +252,11 @@ glp_weth_reservedAmounts AS -- This CTE returns the average amount of reserved W
     GROUP BY a.minute
     ) ,
 
-/*
+ / *
 guaranteedUSD are the total value of the long positions valued at the time of position entry.
-This is because as soon as a long position opens, the asset's USD value (that's currently in the pool) effectively gets locked in.
-FRAX, USDT, USDC and DAI are not included as you cannot open shorts on those tokens.
-*/
-
+This is because AS soon as a long position opens, the asset's USD value (that's currently in the pool) effectively gets locked in.
+FRAX, USDT, USDC and DAI are NOT included AS you cannot open shorts on those tokens.
+* / 
 glp_wbtc_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against WBTC tokens in the pool for a designated minute
     (
     SELECT
@@ -297,7 +294,7 @@ glp_uni_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against U
             ) a
         GROUP BY a.minute
     ) ,
-    
+
 glp_link_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against LINK tokens in the pool for a designated minute
     (
     SELECT -- This query averages the amount of guaranteed USD against LINK tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -316,7 +313,7 @@ glp_link_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against 
             ) a
         GROUP BY a.minute
     ) ,
-    
+
 glp_weth_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against WETH tokens in the pool for a designated minute
     (
     SELECT -- This query averages the amount of guaranteed USD against WETH tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -336,10 +333,9 @@ glp_weth_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against 
         GROUP BY a.minute
     ) ,
 
-/*
+ / *
 getMaxPrice returns the maximum price of a supported token in the vault from the vault price feed contract.
-*/
-
+* / 
 glp_frax_getMaxPrice AS -- This CTE returns the maximum price of FRAX tokens in the pool for a designated minute
     (
     SELECT -- This query averages the maximum price of FRAX tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -349,7 +345,7 @@ glp_frax_getMaxPrice AS -- This CTE returns the maximum price of FRAX tokens in 
             (
             SELECT -- This subquery truncates the block time to a minute and fetches maximum price of FRAX tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0x17fc002b466eec40dae837fc4be5c67993ddbd6f' -- FRAX Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -368,7 +364,7 @@ glp_usdt_getMaxPrice AS -- This CTE returns the maximum price of USDT tokens in 
             (
             SELECT -- This subquery truncates the block time to a minute and fetches maximum price of USDT tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9' -- USDT Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -377,7 +373,7 @@ glp_usdt_getMaxPrice AS -- This CTE returns the maximum price of USDT tokens in 
             ) a
         GROUP BY a.minute
     ) ,
-    
+
 glp_wbtc_getMaxPrice AS -- This CTE returns the maximum price of WBTC tokens in the pool for a designated minute
     (
     SELECT -- This query averages the maximum price of WBTC tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -387,7 +383,7 @@ glp_wbtc_getMaxPrice AS -- This CTE returns the maximum price of WBTC tokens in 
             (
             SELECT -- This subquery truncates the block time to a minute and fetches maximum price of WBTC tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f' -- WBTC Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -406,7 +402,7 @@ glp_usdc_getMaxPrice AS -- This CTE returns the maximum price of USDC tokens in 
             (
             SELECT -- This subquery truncates the block time to a minute and fetches maximum price of USDC tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8' -- USDC Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -415,7 +411,7 @@ glp_usdc_getMaxPrice AS -- This CTE returns the maximum price of USDC tokens in 
             ) a
         GROUP BY a.minute
     ) ,
-    
+
 glp_uni_getMaxPrice AS -- This CTE returns the maximum price of UNI tokens in the pool for a designated minute
     (
     SELECT -- This query averages the maximum price of UNI tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -425,7 +421,7 @@ glp_uni_getMaxPrice AS -- This CTE returns the maximum price of UNI tokens in th
             (
             SELECT -- This subquery truncates the block time to a minute and fetches maximum price of UNI tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0' -- UNI Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -444,7 +440,7 @@ glp_link_getMaxPrice AS -- This CTE returns the maximum price of LINK tokens in 
             (
             SELECT -- This subquery truncates the block time to a minute and fetches maximum price of LINK tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0xf97f4df75117a78c1a5a0dbb814af92458539fb4' -- LINK Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -453,7 +449,7 @@ glp_link_getMaxPrice AS -- This CTE returns the maximum price of LINK tokens in 
             ) a
         GROUP BY a.minute
     ) ,
-    
+
 glp_weth_getMaxPrice AS -- This CTE returns the maximum price of WETH tokens in the pool for a designated minute
     (
     SELECT -- This query averages the maximum price of WETH tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -463,7 +459,7 @@ glp_weth_getMaxPrice AS -- This CTE returns the maximum price of WETH tokens in 
             (
             SELECT -- This subquery truncates the block time to a minute and fetches maximum price of WETH tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0x82af49447d8a07e3bd95bd0d56f35241523fbab1' -- WETH Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -482,7 +478,7 @@ glp_dai_getMaxPrice AS -- This CTE returns the maximum price of DAI tokens in th
             (
             SELECT -- This subquery truncates the block time to a minute and fetches maximum price of DAI tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1' -- DAI Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -492,10 +488,9 @@ glp_dai_getMaxPrice AS -- This CTE returns the maximum price of DAI tokens in th
         GROUP BY a.minute
     ) ,
 
-/*
+ / *
 getMinPrice returns the maximum price of a supported token in the vault from the vault price feed contract.
-*/
-
+* / 
 glp_frax_getMinPrice AS -- This CTE returns the minimum price of FRAX tokens in the pool for a designated minute
     (
     SELECT -- This query averages the minimum price of FRAX tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -505,7 +500,7 @@ glp_frax_getMinPrice AS -- This CTE returns the minimum price of FRAX tokens in 
             (
             SELECT -- This subquery truncates the block time to a minute and fetches minimum price of FRAX tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0x17fc002b466eec40dae837fc4be5c67993ddbd6f' -- FRAX Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -524,7 +519,7 @@ glp_usdt_getMinPrice AS -- This CTE returns the minimum price of USDT tokens in 
             (
             SELECT -- This subquery truncates the block time to a minute and fetches minimum price of USDT tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9' -- USDT Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -533,7 +528,7 @@ glp_usdt_getMinPrice AS -- This CTE returns the minimum price of USDT tokens in 
             ) a
         GROUP BY a.minute
     ) ,
-    
+
 glp_wbtc_getMinPrice AS -- This CTE returns the minimum price of WBTC tokens in the pool for a designated minute
     (
     SELECT -- This query averages the minimum price of WBTC tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -543,7 +538,7 @@ glp_wbtc_getMinPrice AS -- This CTE returns the minimum price of WBTC tokens in 
             (
             SELECT -- This subquery truncates the block time to a minute and fetches minimum price of WBTC tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f' -- WBTC Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -552,7 +547,7 @@ glp_wbtc_getMinPrice AS -- This CTE returns the minimum price of WBTC tokens in 
             ) a
         GROUP BY a.minute
     ) ,
-    
+
 glp_usdc_getMinPrice AS -- This CTE returns the minimum price of USDC tokens in the pool for a designated minute
     (
     SELECT -- This query averages the minimum price of USDC tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -562,7 +557,7 @@ glp_usdc_getMinPrice AS -- This CTE returns the minimum price of USDC tokens in 
             (
             SELECT -- This subquery truncates the block time to a minute and fetches minimum price of USDC tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8' -- USDC Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -571,7 +566,7 @@ glp_usdc_getMinPrice AS -- This CTE returns the minimum price of USDC tokens in 
             ) a
         GROUP BY a.minute
     ) ,
-    
+
 glp_uni_getMinPrice AS -- This CTE returns the minimum price of UNI tokens in the pool for a designated minute
     (
     SELECT -- This query averages the minimum price of UNI tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -581,7 +576,7 @@ glp_uni_getMinPrice AS -- This CTE returns the minimum price of UNI tokens in th
             (
             SELECT -- This subquery truncates the block time to a minute and fetches minimum price of UNI tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0' -- UNI Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -590,7 +585,7 @@ glp_uni_getMinPrice AS -- This CTE returns the minimum price of UNI tokens in th
             ) a
         GROUP BY a.minute
     ) ,
-    
+
 glp_link_getMinPrice AS -- This CTE returns the minimum price of LINK tokens in the pool for a designated minute
     (
     SELECT -- This query averages the minimum price of LINK tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -600,7 +595,7 @@ glp_link_getMinPrice AS -- This CTE returns the minimum price of LINK tokens in 
             (
             SELECT -- This subquery truncates the block time to a minute and fetches minimum price of LINK tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0xf97f4df75117a78c1a5a0dbb814af92458539fb4' -- LINK Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -609,7 +604,7 @@ glp_link_getMinPrice AS -- This CTE returns the minimum price of LINK tokens in 
             ) a
         GROUP BY a.minute
     ) ,
-    
+
 glp_weth_getMinPrice AS -- This CTE returns the minimum price of WETH tokens in the pool for a designated minute
     (
     SELECT -- This query averages the minimum price of WETH tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -619,7 +614,7 @@ glp_weth_getMinPrice AS -- This CTE returns the minimum price of WETH tokens in 
             (
             SELECT -- This subquery truncates the block time to a minute and fetches minimum price of WETH tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0x82af49447d8a07e3bd95bd0d56f35241523fbab1' -- WETH Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -628,7 +623,7 @@ glp_weth_getMinPrice AS -- This CTE returns the minimum price of WETH tokens in 
             ) a
         GROUP BY a.minute
     ) ,
-    
+
 glp_dai_getMinPrice AS -- This CTE returns the minimum price of DAI tokens in the pool for a designated minute
     (
     SELECT -- This query averages the minimum price of DAI tokens in the pool if more than one transaction is reccorded for a designated minute
@@ -638,7 +633,7 @@ glp_dai_getMinPrice AS -- This CTE returns the minimum price of DAI tokens in th
             (
             SELECT -- This subquery truncates the block time to a minute and fetches minimum price of DAI tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
-                output_0/1e18 AS amount
+                output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1' -- DAI Arbitrum Smart Contract
             {% if is_incremental() %}
@@ -648,11 +643,10 @@ glp_dai_getMinPrice AS -- This CTE returns the minimum price of DAI tokens in th
         GROUP BY a.minute
     ) ,
 
-/*
+ / *
 globalShortAveragePrices returns the volume weighted average price of all shorts.
-FRAX, USDT, USDC and DAI are not included as you cannot open shorts on those tokens.
-*/
-
+FRAX, USDT, USDC and DAI are NOT included AS you cannot open shorts on those tokens.
+* / 
 glp_wbtc_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all WBTC shorts for a designated minute
     (
     SELECT -- This query averages the volume weighted average price of all WBTC shorts if more than one transaction is reccorded for a designated minute
@@ -690,7 +684,7 @@ glp_uni_globalShortAveragePrices AS -- This CTE returns volume weighted average 
         ) a
     GROUP BY a.minute
     ) ,
-    
+
 glp_link_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all LINK shorts for a designated minute
     (
     SELECT -- This query averages the volume weighted average price of all LINK shorts if more than one transaction is reccorded for a designated minute
@@ -709,7 +703,7 @@ glp_link_globalShortAveragePrices AS -- This CTE returns volume weighted average
         ) a
     GROUP BY a.minute
     ) ,
-    
+
 glp_weth_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all WETH shorts for a designated minute
     (
     SELECT -- This query averages the volume weighted average price of all WETH shorts if more than one transaction is reccorded for a designated minute
@@ -729,11 +723,10 @@ glp_weth_globalShortAveragePrices AS -- This CTE returns volume weighted average
     GROUP BY a.minute
     ) ,
 
-/*
+ / *
 globalShortSizes returns the sum of all shorts reported in the asset currency.
-FRAX, USDT, USDC and DAI are not included as you cannot open shorts on those tokens.
-*/
-
+FRAX, USDT, USDC and DAI are NOT included AS you cannot open shorts on those tokens.
+* / 
 glp_wbtc_globalShortSizes AS -- This CTE returns average sum of all WBTC shorts for a designated minute
     (
     SELECT -- This query averages sum of all WBTC shorts if more than one transaction is reccorded for a designated minute
@@ -771,7 +764,7 @@ glp_uni_globalShortSizes AS -- This CTE returns average sum of all UNI shorts fo
         ) a
     GROUP BY a.minute
     ) ,
-    
+
 glp_link_globalShortSizes AS -- This CTE returns average sum of all LINK shorts for a designated minute
     (
     SELECT -- This query averages sum of all LINK shorts if more than one transaction is reccorded for a designated minute
@@ -790,7 +783,7 @@ glp_link_globalShortSizes AS -- This CTE returns average sum of all LINK shorts 
         ) a
     GROUP BY a.minute
     ) ,
-    
+
 glp_weth_globalShortSizes AS -- This CTE returns average sum of all WETH shorts for a designated minute
     (
     SELECT -- This query averages sum of all WETH shorts if more than one transaction is reccorded for a designated minute
@@ -812,55 +805,55 @@ glp_weth_globalShortSizes AS -- This CTE returns average sum of all WETH shorts 
 
 SELECT  -- This subquery collates calculates the value of each components required to derrive AUM data
     y.minute,
-    
-    y.frax_poolAmounts/1e18 AS frax_available_assets, -- FRAX Pool Amounts - Decimal Places 18
-    (0.5 * ((y.frax_getMaxPrice + y.frax_getMinPrice) + ABS(y.frax_getMaxPrice - y.frax_getMinPrice)))/1e12 AS frax_current_price, -- Current Price as MAX(getMaxPrice,getMinPrice) - Decimal Places 12
-    
-    y.usdt_poolAmounts/1e6 AS usdt_available_assets, -- USDT Pool Amounts - Decimal Places 6
-    (0.5 * ((y.usdt_getMaxPrice + y.usdt_getMinPrice) + ABS(y.usdt_getMaxPrice - y.usdt_getMinPrice)))/1e12 AS usdt_current_price, -- Current Price as MAX(getMaxPrice,getMinPrice) - Decimal Places 12
-    
-    (y.wbtc_poolAmounts - y.wbtc_reservedAmounts)/1e8 AS wbtc_available_assets, -- WBTC Available Assets - Decimal Places 8
-    y.wbtc_guaranteedUsd/1e30 AS wbtc_longs, --USDG Decimal Places 30
-    (0.5 * ((y.wbtc_getMaxPrice + y.wbtc_getMinPrice) + ABS(y.wbtc_getMaxPrice - y.wbtc_getMinPrice)))/1e12 AS wbtc_current_price, -- Current Price as MAX(getMaxPrice,getMinPrice) - Decimal Places 12
-    y.wbtc_globalShortAveragePrices/1e30 AS wbtc_shorts_entry_price, -- Average Short entry price - Decimal Places 30
-    y.wbtc_globalShortSizes/1e30 AS wbtc_shorts_outstanding_notional, -- Shorts Opened Notional - Decimal Places 30
-    
-    y.usdc_poolAmounts/1e6 AS usdc_available_assets, -- USDC Pool Amounts - Decimal Places 6
-    (0.5 * ((y.usdc_getMaxPrice + y.usdc_getMinPrice) + ABS(y.usdc_getMaxPrice - y.usdc_getMinPrice)))/1e12 AS usdc_current_price, -- Current Price as MAX(getMaxPrice,getMinPrice) - Decimal Places 12
-    
-    (y.uni_poolAmounts - y.uni_reservedAmounts)/1e18 AS uni_available_assets, -- UNI Available Assets - Decimal Places 8
-    y.uni_guaranteedUsd/1e30 AS uni_longs, --USDG Decimal Places 30
-    (0.5 * ((y.uni_getMaxPrice + y.uni_getMinPrice) + ABS(y.uni_getMaxPrice - y.uni_getMinPrice)))/1e12 AS uni_current_price, -- Current Price as MAX(getMaxPrice,getMinPrice) - Decimal Places 12
-    y.uni_globalShortAveragePrices/1e30 AS uni_shorts_entry_price, -- Average Short entry price - Decimal Places 30
-    y.uni_globalShortSizes/1e30 AS uni_shorts_outstanding_notional, -- Shorts Opened Notional - Decimal Places 30
-    
-    (y.link_poolAmounts - y.link_reservedAmounts)/1e18 AS link_available_assets, -- UNI Available Assets - Decimal Places 8
-    y.link_guaranteedUsd/1e30 AS link_longs, --USDG Decimal Places 30
-    (0.5 * ((y.link_getMaxPrice + y.link_getMinPrice) + ABS(y.link_getMaxPrice - y.link_getMinPrice)))/1e12 AS link_current_price, -- Current Price as MAX(getMaxPrice,getMinPrice) - Decimal Places 12
-    y.link_globalShortAveragePrices/1e30 AS link_shorts_entry_price, -- Average Short entry price - Decimal Places 30
-    y.link_globalShortSizes/1e30 AS link_shorts_outstanding_notional, -- Shorts Opened Notional - Decimal Places 30
-    
-    (y.weth_poolAmounts - y.weth_reservedAmounts)/1e18 AS weth_available_assets, -- WETH Available Assets - Decimal Places 18
-    y.weth_guaranteedUsd/1e30 AS weth_longs, --USDG Decimal Places 30
-    (0.5 * ((y.weth_getMaxPrice + y.weth_getMinPrice) + ABS(y.weth_getMaxPrice - y.weth_getMinPrice)))/1e12 AS weth_current_price, -- Current Price as MAX(getMaxPrice,getMinPrice) - Decimal Places 12
-    y.weth_globalShortAveragePrices/1e30 AS weth_shorts_entry_price, -- Average Short entry price - Decimal Places 30
-    y.weth_globalShortSizes/1e30 AS weth_shorts_outstanding_notional, -- Shorts Opened Notional - Decimal Places 30
-    
-    y.dai_poolAmounts/1e18 AS dai_available_assets, -- DAI Pool Amounts - Decimal Places 18
-    (0.5 * ((y.dai_getMaxPrice + y.dai_getMinPrice) + ABS(y.dai_getMaxPrice - y.dai_getMinPrice)))/1e12 AS dai_current_price -- Current Price as MAX(getMaxPrice,getMinPrice) - Decimal Places 12
+
+    y.frax_poolAmounts / 1e18 AS frax_available_assets, -- FRAX Pool Amounts - Decimal Places 18
+    (0.5 * ((y.frax_getMaxPrice + y.frax_getMinPrice) + ABS(y.frax_getMaxPrice - y.frax_getMinPrice))) / 1e12 AS frax_current_price, -- Current Price AS MAX(getMaxPrice,getMinPrice) - Decimal Places 12
+
+    y.usdt_poolAmounts / 1e6 AS usdt_available_assets, -- USDT Pool Amounts - Decimal Places 6
+    (0.5 * ((y.usdt_getMaxPrice + y.usdt_getMinPrice) + ABS(y.usdt_getMaxPrice - y.usdt_getMinPrice))) / 1e12 AS usdt_current_price, -- Current Price AS MAX(getMaxPrice,getMinPrice) - Decimal Places 12
+
+    (y.wbtc_poolAmounts - y.wbtc_reservedAmounts) / 1e8 AS wbtc_available_assets, -- WBTC Available Assets - Decimal Places 8
+    y.wbtc_guaranteedUsd / 1e30 AS wbtc_longs, --USDG Decimal Places 30
+    (0.5 * ((y.wbtc_getMaxPrice + y.wbtc_getMinPrice) + ABS(y.wbtc_getMaxPrice - y.wbtc_getMinPrice))) / 1e12 AS wbtc_current_price, -- Current Price AS MAX(getMaxPrice,getMinPrice) - Decimal Places 12
+    y.wbtc_globalShortAveragePrices / 1e30 AS wbtc_shorts_entry_price, -- Average Short entry price - Decimal Places 30
+    y.wbtc_globalShortSizes / 1e30 AS wbtc_shorts_outstanding_notional, -- Shorts Opened Notional - Decimal Places 30
+
+    y.usdc_poolAmounts / 1e6 AS usdc_available_assets, -- USDC Pool Amounts - Decimal Places 6
+    (0.5 * ((y.usdc_getMaxPrice + y.usdc_getMinPrice) + ABS(y.usdc_getMaxPrice - y.usdc_getMinPrice))) / 1e12 AS usdc_current_price, -- Current Price AS MAX(getMaxPrice,getMinPrice) - Decimal Places 12
+
+    (y.uni_poolAmounts - y.uni_reservedAmounts) / 1e18 AS uni_available_assets, -- UNI Available Assets - Decimal Places 8
+    y.uni_guaranteedUsd / 1e30 AS uni_longs, --USDG Decimal Places 30
+    (0.5 * ((y.uni_getMaxPrice + y.uni_getMinPrice) + ABS(y.uni_getMaxPrice - y.uni_getMinPrice))) / 1e12 AS uni_current_price, -- Current Price AS MAX(getMaxPrice,getMinPrice) - Decimal Places 12
+    y.uni_globalShortAveragePrices / 1e30 AS uni_shorts_entry_price, -- Average Short entry price - Decimal Places 30
+    y.uni_globalShortSizes / 1e30 AS uni_shorts_outstanding_notional, -- Shorts Opened Notional - Decimal Places 30
+
+    (y.link_poolAmounts - y.link_reservedAmounts) / 1e18 AS link_available_assets, -- UNI Available Assets - Decimal Places 8
+    y.link_guaranteedUsd / 1e30 AS link_longs, --USDG Decimal Places 30
+    (0.5 * ((y.link_getMaxPrice + y.link_getMinPrice) + ABS(y.link_getMaxPrice - y.link_getMinPrice))) / 1e12 AS link_current_price, -- Current Price AS MAX(getMaxPrice,getMinPrice) - Decimal Places 12
+    y.link_globalShortAveragePrices / 1e30 AS link_shorts_entry_price, -- Average Short entry price - Decimal Places 30
+    y.link_globalShortSizes / 1e30 AS link_shorts_outstanding_notional, -- Shorts Opened Notional - Decimal Places 30
+
+    (y.weth_poolAmounts - y.weth_reservedAmounts) / 1e18 AS weth_available_assets, -- WETH Available Assets - Decimal Places 18
+    y.weth_guaranteedUsd / 1e30 AS weth_longs, --USDG Decimal Places 30
+    (0.5 * ((y.weth_getMaxPrice + y.weth_getMinPrice) + ABS(y.weth_getMaxPrice - y.weth_getMinPrice))) / 1e12 AS weth_current_price, -- Current Price AS MAX(getMaxPrice,getMinPrice) - Decimal Places 12
+    y.weth_globalShortAveragePrices / 1e30 AS weth_shorts_entry_price, -- Average Short entry price - Decimal Places 30
+    y.weth_globalShortSizes / 1e30 AS weth_shorts_outstanding_notional, -- Shorts Opened Notional - Decimal Places 30
+
+    y.dai_poolAmounts / 1e18 AS dai_available_assets, -- DAI Pool Amounts - Decimal Places 18
+    (0.5 * ((y.dai_getMaxPrice + y.dai_getMinPrice) + ABS(y.dai_getMaxPrice - y.dai_getMinPrice))) / 1e12 AS dai_current_price -- Current Price AS MAX(getMaxPrice,getMinPrice) - Decimal Places 12
 FROM
     (
     SELECT -- This subquery removes null values
         x.minute,
-        
+
         COALESCE(x.frax_poolAmounts,0) AS frax_poolAmounts,
         COALESCE(x.frax_getMaxPrice,0) AS frax_getMaxPrice,
         COALESCE(x.frax_getMinPrice,0) AS frax_getMinPrice,
-        
+
         COALESCE(x.usdt_poolAmounts,0) AS usdt_poolAmounts,
         COALESCE(x.usdt_getMaxPrice,0) AS usdt_getMaxPrice,
         COALESCE(x.usdt_getMinPrice,0) AS usdt_getMinPrice,
-        
+
         COALESCE(x.wbtc_poolAmounts,0) AS wbtc_poolAmounts,
         COALESCE(x.wbtc_reservedAmounts,0) AS wbtc_reservedAmounts,
         COALESCE(x.wbtc_guaranteedUsd,0) AS wbtc_guaranteedUsd,
@@ -868,11 +861,11 @@ FROM
         COALESCE(x.wbtc_getMinPrice,0) AS wbtc_getMinPrice,
         COALESCE(x.wbtc_globalShortAveragePrices,0) AS wbtc_globalShortAveragePrices,
         COALESCE(x.wbtc_globalShortSizes,0) AS wbtc_globalShortSizes,
-        
+
         COALESCE(x.usdc_poolAmounts,0) AS usdc_poolAmounts,
         COALESCE(x.usdc_getMaxPrice,0) AS usdc_getMaxPrice,
         COALESCE(x.usdc_getMinPrice,0) AS usdc_getMinPrice,
-        
+
         COALESCE(x.uni_poolAmounts,0) AS uni_poolAmounts,
         COALESCE(x.uni_reservedAmounts,0) AS uni_reservedAmounts,
         COALESCE(x.uni_guaranteedUsd,0) AS uni_guaranteedUsd,
@@ -880,7 +873,7 @@ FROM
         COALESCE(x.uni_getMinPrice,0) AS uni_getMinPrice,
         COALESCE(x.uni_globalShortAveragePrices,0) AS uni_globalShortAveragePrices,
         COALESCE(x.uni_globalShortSizes,0) AS uni_globalShortSizes,
-        
+
         COALESCE(x.link_poolAmounts,0) AS link_poolAmounts,
         COALESCE(x.link_reservedAmounts,0) AS link_reservedAmounts,
         COALESCE(x.link_guaranteedUsd,0) AS link_guaranteedUsd,
@@ -888,7 +881,7 @@ FROM
         COALESCE(x.link_getMinPrice,0) AS link_getMinPrice,
         COALESCE(x.link_globalShortAveragePrices,0) AS link_globalShortAveragePrices,
         COALESCE(x.link_globalShortSizes,0) AS link_globalShortSizes,
-        
+
         COALESCE(x.weth_poolAmounts,0) AS weth_poolAmounts,
         COALESCE(x.weth_reservedAmounts,0) AS weth_reservedAmounts,
         COALESCE(x.weth_guaranteedUsd,0) AS weth_guaranteedUsd,
@@ -896,7 +889,7 @@ FROM
         COALESCE(x.weth_getMinPrice,0) AS weth_getMinPrice,
         COALESCE(x.weth_globalShortAveragePrices,0) AS weth_globalShortAveragePrices,
         COALESCE(x.weth_globalShortSizes,0) AS weth_globalShortSizes,
-        
+
         COALESCE(x.dai_poolAmounts,0) AS dai_poolAmounts,
         COALESCE(x.dai_getMaxPrice,0) AS dai_getMaxPrice,
         COALESCE(x.dai_getMinPrice,0) AS dai_getMinPrice
@@ -904,15 +897,15 @@ FROM
         (
         SELECT -- This subquery collates all the data extracted from the vault contract functions, joins them to the minute series, and uses last data to extrapolate over null values
             a.minute,
-            
+
             last(b1.amount, true) OVER (ORDER BY a.minute ASC) AS frax_poolAmounts,
             last(b2.price, true) OVER (ORDER BY a.minute ASC) AS frax_getMaxPrice,
             last(b3.price, true) OVER (ORDER BY a.minute ASC) AS frax_getMinPrice,
-            
+
             last(c1.amount, true) OVER (ORDER BY a.minute ASC) AS usdt_poolAmounts,
             last(c2.price, true) OVER (ORDER BY a.minute ASC) AS usdt_getMaxPrice,
             last(c3.price, true) OVER (ORDER BY a.minute ASC) AS usdt_getMinPrice,
-            
+
             last(d1.amount, true) OVER (ORDER BY a.minute ASC) AS wbtc_poolAmounts,
             last(d2.amount, true) OVER (ORDER BY a.minute ASC) AS wbtc_reservedAmounts,
             last(d3.amount, true) OVER (ORDER BY a.minute ASC) AS wbtc_guaranteedUsd,
@@ -920,11 +913,11 @@ FROM
             last(d5.price, true) OVER (ORDER BY a.minute ASC) AS wbtc_getMinPrice,
             last(d6.price, true) OVER (ORDER BY a.minute ASC) AS wbtc_globalShortAveragePrices,
             last(d7.amount, true) OVER (ORDER BY a.minute ASC) AS wbtc_globalShortSizes,
-            
+
             last(e1.amount, true) OVER (ORDER BY a.minute ASC) AS usdc_poolAmounts,
             last(e2.price, true) OVER (ORDER BY a.minute ASC) AS usdc_getMaxPrice,
             last(e3.price, true) OVER (ORDER BY a.minute ASC) AS usdc_getMinPrice,
-            
+
             last(f1.amount, true) OVER (ORDER BY a.minute ASC) AS uni_poolAmounts,
             last(f2.amount, true) OVER (ORDER BY a.minute ASC) AS uni_reservedAmounts,
             last(f3.amount, true) OVER (ORDER BY a.minute ASC) AS uni_guaranteedUsd,
@@ -932,7 +925,7 @@ FROM
             last(f5.price, true) OVER (ORDER BY a.minute ASC) AS uni_getMinPrice,
             last(f6.price, true) OVER (ORDER BY a.minute ASC) AS uni_globalShortAveragePrices,
             last(f7.amount, true) OVER (ORDER BY a.minute ASC) AS uni_globalShortSizes,
-            
+
             last(g1.amount, true) OVER (ORDER BY a.minute ASC) AS link_poolAmounts,
             last(g2.amount, true) OVER (ORDER BY a.minute ASC) AS link_reservedAmounts,
             last(g3.amount, true) OVER (ORDER BY a.minute ASC) AS link_guaranteedUsd,
@@ -940,7 +933,7 @@ FROM
             last(g5.price, true) OVER (ORDER BY a.minute ASC) AS link_getMinPrice,
             last(g6.price, true) OVER (ORDER BY a.minute ASC) AS link_globalShortAveragePrices,
             last(g7.amount, true) OVER (ORDER BY a.minute ASC) AS link_globalShortSizes,
-            
+
             last(h1.amount, true) OVER (ORDER BY a.minute ASC) AS weth_poolAmounts,
             last(h2.amount, true) OVER (ORDER BY a.minute ASC) AS weth_reservedAmounts,
             last(h3.amount, true) OVER (ORDER BY a.minute ASC) AS weth_guaranteedUsd,
@@ -948,27 +941,27 @@ FROM
             last(h5.price, true) OVER (ORDER BY a.minute ASC) AS weth_getMinPrice,
             last(h6.price, true) OVER (ORDER BY a.minute ASC) AS weth_globalShortAveragePrices,
             last(h7.amount, true) OVER (ORDER BY a.minute ASC) AS weth_globalShortSizes,
-            
+
             last(i1.amount, true) OVER (ORDER BY a.minute ASC) AS dai_poolAmounts,
             last(i2.price, true) OVER (ORDER BY a.minute ASC) AS dai_getMaxPrice,
             last(i3.price, true) OVER (ORDER BY a.minute ASC) AS dai_getMinPrice
-            
+
         FROM minute a
-        
+
         LEFT JOIN glp_frax_poolAmounts b1
             ON a.minute = b1.minute
         LEFT JOIN glp_frax_getMaxPrice b2
             ON a.minute = b2.minute
         LEFT JOIN glp_frax_getMinPrice b3
             ON a.minute = b3.minute
-        
+
         LEFT JOIN glp_usdt_poolAmounts c1
             ON a.minute = c1.minute
         LEFT JOIN glp_usdt_getMaxPrice c2
             ON a.minute = c2.minute
         LEFT JOIN glp_usdt_getMinPrice c3
             ON a.minute = c3.minute
-        
+
         LEFT JOIN glp_wbtc_poolAmounts d1
             ON a.minute = d1.minute
         LEFT JOIN glp_wbtc_reservedAmounts d2
@@ -983,14 +976,14 @@ FROM
             ON a.minute = d6.minute
         LEFT JOIN glp_wbtc_globalShortSizes d7
             ON a.minute = d7.minute
-        
+
         LEFT JOIN glp_usdc_poolAmounts e1
             ON a.minute = e1.minute
         LEFT JOIN glp_usdc_getMaxPrice e2
             ON a.minute = e2.minute
         LEFT JOIN glp_usdc_getMinPrice e3
             ON a.minute = e3.minute
-        
+
         LEFT JOIN glp_uni_poolAmounts f1
             ON a.minute = f1.minute
         LEFT JOIN glp_uni_reservedAmounts f2
@@ -1005,7 +998,7 @@ FROM
             ON a.minute = f6.minute
         LEFT JOIN glp_uni_globalShortSizes f7
             ON a.minute = f7.minute
-        
+
         LEFT JOIN glp_link_poolAmounts g1
             ON a.minute = g1.minute
         LEFT JOIN glp_link_reservedAmounts g2
@@ -1020,7 +1013,7 @@ FROM
             ON a.minute = g6.minute
         LEFT JOIN glp_link_globalShortSizes g7
             ON a.minute = g7.minute
-        
+
         LEFT JOIN glp_weth_poolAmounts h1
             ON a.minute = h1.minute
         LEFT JOIN glp_weth_reservedAmounts h2
@@ -1035,7 +1028,7 @@ FROM
             ON a.minute = h6.minute
         LEFT JOIN glp_weth_globalShortSizes h7
             ON a.minute = h7.minute
-        
+
         LEFT JOIN glp_dai_poolAmounts i1
             ON a.minute = i1.minute
         LEFT JOIN glp_dai_getMaxPrice i2

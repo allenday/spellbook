@@ -7,7 +7,7 @@
     )
 }}
 
-select
+SELECT
     name
     ,address
     ,node
@@ -15,9 +15,9 @@ select
     ,tx_hash
     ,evt_index
 from(
-     select
+     SELECT
      *
-    ,row_number() over (partition by node order by block_time desc, evt_index desc) as ordering
+    ,row_number() over (partition by node order by block_time desc, evt_index desc) AS ordering
     from {{ ref('ens_resolver_records')}}
 ) f
 where ordering = 1

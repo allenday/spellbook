@@ -12,7 +12,7 @@
     )
 }}
 
-{% set project_start_date = '2021-05-22' %}     -- select min(evt_block_time) from biswap_bnb.BiswapPair_evt_Swap
+{% set project_start_date = '2021-05-22' %}     -- SELECT min(evt_block_time) from biswap_bnb.BiswapPair_evt_Swap
 
 WITH biswap_dex AS (
     SELECT  t.evt_block_time                                             AS block_time,
@@ -20,7 +20,7 @@ WITH biswap_dex AS (
             sender                                                       AS maker,
             CASE WHEN amount0Out = 0 THEN amount1Out ELSE amount0Out END AS token_bought_amount_raw,
             CASE WHEN amount0In = 0 THEN amount1In ELSE amount0In END    AS token_sold_amount_raw,
-            cast(NULL as double)                                         AS amount_usd,
+            cast(NULL AS double)                                         AS amount_usd,
             CASE WHEN amount0Out = 0 THEN token1 ELSE token0 END         AS token_bought_address,
             CASE WHEN amount0In = 0 THEN token1 ELSE token0 END          AS token_sold_address,
             t.contract_address                                           AS project_contract_address,
@@ -33,7 +33,7 @@ WITH biswap_dex AS (
     {% if is_incremental() %}
     WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     WHERE t.evt_block_time >= '{{ project_start_date }}'
     {% endif %}
 )
@@ -74,7 +74,7 @@ INNER JOIN {{ source('bnb', 'transactions') }} tx
     {% if is_incremental() %}
     AND tx.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} erc20a
@@ -90,7 +90,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_bought
     {% if is_incremental() %}
     AND p_bought.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p_sold
@@ -100,7 +100,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold
     {% if is_incremental() %}
     AND p_sold.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
 ;

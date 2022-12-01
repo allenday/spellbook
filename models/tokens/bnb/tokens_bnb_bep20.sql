@@ -1,8 +1,8 @@
 {{ config( alias='bep20', tags=['static'])}}
 
 SELECT LOWER(contract_address) AS contract_address, symbol, decimals
-  FROM (VALUES 
-  
+  FROM (VALUES
+
 ('0x111111111117dc0aa78b770fa6a738034120c302', '1INCH', 18)
 ,('0xfb6115445bff7b52feb98650c87f44907e58f802', 'AAVE', 18)
 ,('0x3ee2200efb3400fabb9aacf31297cbdd1d435d47', 'ADA', 18)
@@ -5519,5 +5519,5 @@ SELECT LOWER(contract_address) AS contract_address, symbol, decimals
 ,('0x79F3bb5534b8f060b37b3e5deA032a39412F6B10', 'USDEX-USDC', 18)
 ,('0x65D83463fC023bffbd8aC9a1a2E1037F4bbdB399', 'dexSHARE-BNB', 18)
 ,('0x01B279a06F5F26bD3F469A3E730097184973FC8a', 'dexIRA-BNB', 18)
-  
+
 ) AS temp_table (contract_address, symbol, decimals)

@@ -4,7 +4,7 @@
                                     "addresses",
                                     \'["hildobby"]\') }}')}}
 
--- Source: https://etherscan.io/accounts/label/mev-bot
+-- Source: https: / /etherscan.io/accounts/label/mev-bot
 
 SELECT address
 FROM (VALUES

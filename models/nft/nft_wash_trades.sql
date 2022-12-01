@@ -34,11 +34,11 @@ SELECT nftt.blockchain
     , filter_funding_seller.first_funded_by AS seller_first_funded_by
     , CASE WHEN nftt.buyer=nftt.seller
         THEN true
-        ELSE false 
+        ELSE false
         END AS same_buyer_seller
     , CASE WHEN COUNT(distinct filter_baf.block_number) > 0
         THEN true
-        ELSE false 
+        ELSE false
         END AS back_and_forth_trade
     , CASE WHEN COUNT(distinct filter_bought_3x.block_number) > 2
         THEN true

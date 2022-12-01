@@ -3,7 +3,7 @@
         )
 }}
 
-select contract_address, project_id, project_id_base_value, collection_name, artist_name, mirage_project_name, art_collection_unique_id
+SELECT contract_address, project_id, project_id_base_value, collection_name, artist_name, mirage_project_name, art_collection_unique_id
 from (VALUES
         ('0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5', 1, 10000, 'Ebbs and Flows: Our Universe', 'Roope Rainisto & SOMNAI', 'Otherwhere', '0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5-1')
         , ('0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5', 2, 10000, 'Ebbs and Flows: Our Universe', 'Roope Rainisto & SOMNAI', 'ANIMA', '0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5-2')
@@ -17,6 +17,6 @@ from (VALUES
         , ('0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5', 10, 10000, 'AI Art is Not Art', 'Claire Silver', 'Page', '0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5-10')
         , ('0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5', 11, 10000, 'Abstract (ART)chitecture', 'MrHabMo', 'Esquisse', '0xb7ec7bbd2d2193b47027247fc666fb342d23c4b5-11')
 
-) as temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, mirage_project_name, art_collection_unique_id)
-    
-order by project_id asc 
+) AS temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, mirage_project_name, art_collection_unique_id)
+
+order by project_id asc

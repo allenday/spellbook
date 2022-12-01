@@ -35,8 +35,7 @@ FROM
             evt_index,
             unique_trade_id
         FROM {{ ref('cow_protocol_trades') }}
-        /*
+ / *
         UNION
         <add future protocols here>
-        */
-    )
+        * /     )

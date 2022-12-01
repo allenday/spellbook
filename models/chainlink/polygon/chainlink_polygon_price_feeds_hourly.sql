@@ -24,9 +24,9 @@ WITH gs AS (
     FROM (
         SELECT explode(
                 sequence(
-                        DATE_TRUNC('hour', 
-                        {% if not is_incremental() %}
-                            cast('{{project_start_date}}' as date)
+                        DATE_TRUNC('hour',
+                        {% if NOT is_incremental() %}
+                            cast('{{project_start_date}}' AS date)
                         {% endif %}
                         {% if is_incremental() %}
                             date_trunc('hour', now() - interval '1 week')
@@ -35,7 +35,7 @@ WITH gs AS (
                         DATE_TRUNC('hour', NOW()),
                         interval '1 hour'
                         )
-            ) AS hr, 
+            ) AS hr,
                 feed_name,
                 proxy_address,
                 aggregator_address
@@ -59,15 +59,15 @@ FROM (
         proxy_address,
         aggregator_address,
         underlying_token_address,
-        first_value(oracle_price_avg) 
+        first_value(oracle_price_avg)
             OVER (
-                PARTITION BY feed_name, 
+                PARTITION BY feed_name,
                              proxy_address,
                              aggregator_address,
                              underlying_token_address,
-                             grp 
+                             grp
                 ORDER BY hr)                                AS oracle_price_avg,
-        first_value(underlying_token_price_avg) 
+        first_value(underlying_token_price_avg)
             OVER (
                 PARTITION BY feed_name,
                              proxy_address,
@@ -85,7 +85,7 @@ FROM (
             oracle_price_avg,
             underlying_token_address,
             underlying_token_price_avg,
-            count(oracle_price_avg) 
+            count(oracle_price_avg)
                 OVER (
                     PARTITION BY feed_name,
                                  proxy_address,
@@ -106,7 +106,7 @@ FROM (
                  AND gs.proxy_address = f.proxy_address
                  AND gs.aggregator_address = f.aggregator_address
             WHERE
-                {% if not is_incremental() %}
+                {% if NOT is_incremental() %}
                 gs.hr >= '{{project_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}

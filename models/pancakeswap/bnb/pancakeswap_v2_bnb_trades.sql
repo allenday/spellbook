@@ -24,7 +24,7 @@ WITH dexs AS
         ''                                                                              AS maker,
         CASE WHEN amount0Out = '0' THEN amount1Out ELSE amount0Out END                  AS token_bought_amount_raw,
         CASE WHEN amount0In = '0' OR amount1Out = '0' THEN amount1In ELSE amount0In END AS token_sold_amount_raw,
-        cast(NULL as double)                                                            AS amount_usd,
+        cast(NULL AS double)                                                            AS amount_usd,
         CASE WHEN amount0Out = '0' THEN f.token1 ELSE f.token0 END                      AS token_bought_address,
         CASE WHEN amount0In = '0' OR amount1Out = '0' THEN f.token1 ELSE f.token0 END   AS token_sold_address,
         t.contract_address                                                              AS project_contract_address,
@@ -74,7 +74,7 @@ SELECT
 FROM dexs
 INNER JOIN {{ source('bnb', 'transactions') }} tx
     ON tx.hash = dexs.tx_hash
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -90,7 +90,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_bought
     ON p_bought.minute = date_trunc('minute', dexs.block_time)
     AND p_bought.contract_address = dexs.token_bought_address
     AND p_bought.blockchain = 'bnb'
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -100,7 +100,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold
     ON p_sold.minute = date_trunc('minute', dexs.block_time)
     AND p_sold.contract_address = dexs.token_sold_address
     AND p_sold.blockchain = 'bnb'
-    {% if not is_incremental() %}
+    {% if NOT is_incremental() %}
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}

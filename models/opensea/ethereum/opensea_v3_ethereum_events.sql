@@ -1,14 +1,14 @@
 {{ config(schema='opensea_v3_ethereum'
-         ,alias='events') 
+         ,alias='events')
 }}
 
--- opensea.events is compose of mint, burn, and trades. 
+-- opensea.events is compose of mint, burn, and trades.
 -- but now there are only trades.
 -- materialize : view
 
-select blockchain    
-      ,'opensea' as project
-      ,'v3' as version
+SELECT blockchain
+      ,'opensea' AS project
+      ,'v3' AS version
       ,block_date
       ,block_time
       ,seller
@@ -27,7 +27,7 @@ select blockchain
       ,currency_symbol
       ,currency_contract
       ,original_currency_contract
-      ,currency_decimals   
+      ,currency_decimals
       ,project_contract_address
       ,platform_fee_receive_address
       ,platform_fee_amount_raw

@@ -8,7 +8,7 @@
 }}
 
 SELECT *
-FROM 
+FROM
 (
       SELECT
             reserve,
@@ -18,9 +18,7 @@ FROM
             stable_borrow_apy,
             variable_borrow_apy
       FROM {{ ref('aave_v2_ethereum_interest_rates') }}
-      /*
+ / *
       UNION ALL
-      < add new version as needed
-      */
-)
-;
+      < add new version AS needed
+      * / )

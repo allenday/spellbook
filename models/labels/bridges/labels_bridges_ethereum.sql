@@ -6,7 +6,7 @@
 
 SELECT blockchain, address, name, category, contributor, source, created_at, updated_at
 FROM (VALUES
-    -- Binance, Source: https://etherscan.io/accounts/label/binance
+    -- Binance, Source: https: / /etherscan.io/accounts/label/binance
     	(array('ethereum'), '0x8ed95d1746bf1e4dab58d8ed4724f1ef95b20db0', '0x: Erc20 Bridge Proxy', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())
     , (array('ethereum'), '0x0ac2d6f5f5afc669d3ca38f830dad2b4f238ad3f', '0x: Eth2Dai Bridge', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())
     , (array('ethereum'), '0xa6baaed2053058a3c8f11e0c7a9716304454b09e', '0x: Uniswap Bridge', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())
@@ -80,7 +80,7 @@ FROM (VALUES
     , (array('ethereum'), '0x5fdcca53617f4d2b9134b29090c87d01058e27e9', 'Immutable X: Bridge', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())
     , (array('ethereum'), '0x37acfef331e6063c8507c2a69c97b4f78c770a5a', 'InstaDapp: Maker Compound Bridge', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())
     , (array('ethereum'), '0x3307c46a1e9633025d2e89658c7502a683585450', 'iSwap: Ethereum Bridge', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())
-    , (array('ethereum'), '0x5a1d63d3e1303e89503f2a1ecb553328f148909d', 'Jointer: JNTR/e <> JNTR Bridge', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())
+    , (array('ethereum'), '0x5a1d63d3e1303e89503f2a1ecb553328f148909d', 'Jointer: JNTR / e <> JNTR Bridge', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())
     , (array('ethereum'), '0xf86fd6735f88d5b6aa709b357ad5be22cedf1a05', 'Layer2Finance: Rollup Chain', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())
     , (array('ethereum'), '0x66a71dcef29a0ffbdbe3c6a460a3b5bc225cd675', 'LayerZero: Ethereum Endpoint', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())
     , (array('ethereum'), '0x014f808b7d4b6f58be5fef88002d5028cd0ed14b', 'Lition: Token Bridge', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())

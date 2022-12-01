@@ -4,7 +4,7 @@
         )
 }}
 
-SELECT 
+SELECT
       blockchain,
       project,
       version,

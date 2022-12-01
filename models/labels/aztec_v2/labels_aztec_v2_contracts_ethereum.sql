@@ -1,16 +1,16 @@
 {{config(alias='aztec_v2_contracts_ethereum')}}
 
 with
-  contract_labels as (
+  contract_labels AS (
     SELECT
-      array('ethereum') as blockchain,
-      contract_address as address,
-      description as name,
-      contract_type as category,
-      'jackiep00' as contributor,
-      'wizard' as source,
-      date('2022-09-19') as created_at,
-      now() as updated_at,
+      array('ethereum') AS blockchain,
+      contract_address AS address,
+      description AS name,
+      contract_type AS category,
+      'jackiep00' AS contributor,
+      'wizard' AS source,
+      date('2022-09-19') AS created_at,
+      now() AS updated_at,
       version,
       protocol
     from
@@ -20,7 +20,7 @@ with
           contract_type,
           version,
           description,
-          lower(contract_address) as contract_address
+          lower(contract_address) AS contract_address
         FROM
           (
             VALUES
@@ -89,9 +89,9 @@ with
           )
       )
   )
-select
+SELECT
   c.*,
-  t.`from` as contract_creator
+  t.`from` AS contract_creator
 from
   contract_labels c
   inner join ethereum.traces t on t.type = 'create'

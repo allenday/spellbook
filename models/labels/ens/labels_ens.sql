@@ -9,25 +9,25 @@
 }}
 
 
--- as default label, take the ENS reverse record or the latest resolver record
+-- AS default label, take the ENS reverse record or the latest resolver record
 SELECT *
 FROM (
        SELECT
-       array('ethereum') as blockchain,
-       coalesce(rev.address, res.address) as address,
-       coalesce(rev.name, res.name) as name,
-       'ENS' as category,
-       '0xRob' as contributor,
+       array('ethereum') AS blockchain,
+       coalesce(rev.address, res.address) AS address,
+       coalesce(rev.name, res.name) AS name,
+       'ENS' AS category,
+       '0xRob' AS contributor,
        'query' AS source,
-       date('2022-10-06') as created_at,
-       now() as modified_at
+       date('2022-10-06') AS created_at,
+       now() AS modified_at
     FROM (
-        select *
+        SELECT *
         from (
-            select
+            SELECT
                 address,
                  name
-                 ,row_number() over (partition by address order by block_time asc) as ordering
+                 ,row_number() over (partition by address order by block_time asc) AS ordering
             from {{ ref('ens_resolver_latest') }}
         ) where ordering = 1
     ) res
@@ -37,23 +37,23 @@ FROM (
 
 -- For now, we want to limit the amount of ENS labels to 1
 --UNION
---SELECT array('ethereum') as blockchain,
+--SELECT array('ethereum') AS blockchain,
 --       address,
 --       name,
---       'ENS resolver' as category,
---       '0xRob' as contributor,
+--       'ENS resolver' AS category,
+--       '0xRob' AS contributor,
 --       'query' AS source,
---       date('2022-10-06') as created_at,
---       now() as modified_at
+--       date('2022-10-06') AS created_at,
+--       now() AS modified_at
 --FROM {{ ref('ens_resolver_latest') }}
 --UNION
---SELECT array('ethereum') as blockchain,
+--SELECT array('ethereum') AS blockchain,
 --       address,
 --       name,
---       'ENS reverse' as category,
---       '0xRob' as contributor,
+--       'ENS reverse' AS category,
+--       '0xRob' AS contributor,
 --       'query' AS source,
---       date('2022-10-06') as created_at,
---       now() as modified_at
+--       date('2022-10-06') AS created_at,
+--       now() AS modified_at
 --FROM {{ ref('ens_reverse_latest') }}
 

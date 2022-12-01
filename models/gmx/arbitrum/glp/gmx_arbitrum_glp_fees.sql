@@ -13,13 +13,12 @@ WITH minute AS  -- This CTE generates a series of minute values
     SELECT explode(sequence(TIMESTAMP '2021-08-31 08:13', CURRENT_TIMESTAMP, INTERVAL 1 minute)) AS minute -- 2021-08-31 08:13 is the timestamp of the first vault transaction
     ) ,
 
-/*
+ / *
 GLP fees accrued to the Fee GLP contract and can be claimed by invoking function_claim()
-The Fee GLP contract can be found here: https://arbiscan.io/address/0x4e971a87900b931ff39d1aad67697f49835400b6
-*/
-
+The Fee GLP contract can be found here: https: / /arbiscan.io/address/0x4e971a87900b931ff39d1aad67697f49835400b6
+* / 
 fglp_balances AS -- This CTE returns the accuals of WETH tokens in the Fee GLP contract in a designated minute
-    (    
+    (
     SELECT -- This subquery aggregates the cumulative balance of WETH tokens in the Fee GLP contract over the minute series
         b.minute,
         b.weth_transfer_value,
@@ -54,14 +53,14 @@ FROM
         b.weth_transfer_value AS fees_weth_generated,
         last(b.weth_cum_balance, true) OVER (ORDER BY a.minute ASC) AS fees_weth_cumulative, -- extrapolation
         last(c.weth_current_price, true) OVER (ORDER BY a.minute ASC) AS weth_current_price -- extrapolation necessary for missing values arising from in data table syncing speed
-    FROM minute a    
+    FROM minute a
     LEFT JOIN
         (
         SELECT
             minute,
             weth_transfer_value,
             weth_cum_balance
-        FROM fglp_balances 
+        FROM fglp_balances
         ) b
         ON a.minute = b.minute
     LEFT JOIN
@@ -70,6 +69,6 @@ FROM
             minute,
             weth_current_price
         FROM {{ref('gmx_arbitrum_glp_components')}}
-        ) c 
+        ) c
         ON a.minute = c.minute
     ) x

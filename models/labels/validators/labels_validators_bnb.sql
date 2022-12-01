@@ -4,9 +4,9 @@
                                     "labels",
                                     \'["soispoke"]\') }}')}}
 
-SELECT blockchain, lower(address) as address, name, category, contributor, source, created_at, updated_at
+SELECT blockchain, lower(address) AS address, name, category, contributor, source, created_at, updated_at
 FROM (VALUES
-    -- Binance, Source: https://etherscan.io/accounts/label/binance
+    -- Binance, Source: https: / /etherscan.io/accounts/label/binance
     (array('bnb'),'0xAAcF6a8119F7e11623b5A43DA638e91F669A130f', 'BNB Validator: Neptune', 'validators', 'soispoke', 'static', timestamp('2022-10-07'), now()),
     (array('bnb'),'0x70F657164e5b75689b64B7fd1fA275F334f28e18', 'BNB Validator: BscScan', 'validators', 'soispoke', 'static', timestamp('2022-10-07'), now()),
     (array('bnb'),'0x3f349bBaFEc1551819B8be1EfEA2fC46cA749aA1', 'BNB Validator: Legend II', 'validators', 'soispoke', 'static', timestamp('2022-10-07'), now()),

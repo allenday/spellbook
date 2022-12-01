@@ -1,6 +1,6 @@
 {{
     config(
-        alias='sandwich_attackers', 
+        alias='sandwich_attackers',
         post_hook='{{ expose_spells(\'["ethereum"]\', "sector", "labels", \'["alexth"]\') }}'
     )
 }}

@@ -8,13 +8,13 @@
 }}
 
 with
-    days as (
-        select
+    days AS (
+        SELECT
             explode(
                 sequence(
                     to_date('2015-01-01'), date_trunc('day', now()), interval 1 day
                 )
-            ) as day
+            ) AS day
     )
 
 , daily_balances as
@@ -27,12 +27,12 @@ with
     FROM {{ ref('transfers_ethereum_erc721_rolling_day') }})
 
 SELECT distinct
-    'ethereum' as blockchain,
+    'ethereum' AS blockchain,
     d.day,
     b.wallet_address,
     b.token_address,
     b.tokenId,
-    nft_tokens.name as collection
+    nft_tokens.name AS collection
 FROM daily_balances b
 INNER JOIN days d ON b.day <= d.day AND d.day < b.next_day
 LEFT JOIN {{ ref('tokens_nft') }} nft_tokens ON nft_tokens.contract_address = b.token_address

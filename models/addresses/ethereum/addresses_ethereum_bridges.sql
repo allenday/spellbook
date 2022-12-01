@@ -4,7 +4,7 @@
           "addresses",
           \'["hildobby","msilb7"]\') }}') }}
 
-SELECT lower(address) as address, bridge_name, description
+SELECT lower(address) AS address, bridge_name, description
 FROM (VALUES ("0x8ed95d1746bf1e4dab58d8ed4724f1ef95b20db0", "0x", "Erc20 Bridge Proxy")
   ,("0x0ac2d6f5f5afc669d3ca38f830dad2b4f238ad3f", "0x", "Eth2Dai Bridge")
   ,("0xa6baaed2053058a3c8f11e0c7a9716304454b09e", "0x", "Uniswap Bridge")
@@ -49,7 +49,7 @@ FROM (VALUES ("0x8ed95d1746bf1e4dab58d8ed4724f1ef95b20db0", "0x", "Erc20 Bridge 
   ,("0x74af8a878317e0f6e72e302fbcdf5f3009186398", "Counterstake", "Bridge")
   ,("0x4add6ab943e7908bb51e7878755d0ca322c898d6", "Counterstake", "USDC Bridge")
   ,("0x3be8a7d4aa3e9b723a718e1b83fe8a8b5c37871c", "Counterstake", "WBTC Bridge")
-  ,("0x43de2d77bf8027e25dbd179b491e8d64f38398aa", "deBridgeGate", cast(NULL as string))
+  ,("0x43de2d77bf8027e25dbd179b491e8d64f38398aa", "deBridgeGate", cast(NULL AS string))
   ,("0x5d22045daceab03b158031ecb7d9d06fad24609b", "DeversiFi", "Bridge")
   ,("0xd54f502e184b6b739d7d27a6410a67dc462d69c8", "dYdX", "L2 Perpetual Smart Contract")
   ,("0x9280e0ffdfae4ec895fdf4d4978c9e1b869eb774", "Evo DeFi", "Bridge")
@@ -57,7 +57,7 @@ FROM (VALUES ("0x8ed95d1746bf1e4dab58d8ed4724f1ef95b20db0", "0x", "Erc20 Bridge 
   ,("0x6880f6fd960d1581c2730a451a22eed1081cfd72", "Fuel", "Bridge")
   ,("0x3014ca10b91cb3d0ad85fef7a3cb95bcac9c0f79", "Fuse", "Native Bridge")
   ,("0x30f938fed5de6e06a9a7cd2ac3517131c317b1e7", "Giveth", "Trace Bridge")
-  ,("0x75ace7a086ea0fb1a79e43cc6331ad053d8c67cb", "Gluon Network", cast(NULL as string))
+  ,("0x75ace7a086ea0fb1a79e43cc6331ad053d8c67cb", "Gluon Network", cast(NULL AS string))
   ,("0x88ad09518695c6c3712ac10a214be5109a655671", "Gnosis Chain", "Omni Bridge")
   ,("0x4aa42145aa6ebf72e164c9bbc74fbd3788045016", "Gnosis Chain", "xDai Bridge")
   ,("0xa4108aa1ec4967f8b52220a4f7e94a8201f2d906", "Gravity Bridge", "Bridge")
@@ -79,7 +79,7 @@ FROM (VALUES ("0x8ed95d1746bf1e4dab58d8ed4724f1ef95b20db0", "0x", "Erc20 Bridge 
   ,("0x5fdcca53617f4d2b9134b29090c87d01058e27e9", "Immutable X", "Bridge")
   ,("0x37acfef331e6063c8507c2a69c97b4f78c770a5a", "InstaDapp", "Maker Compound Bridge")
   ,("0x3307c46a1e9633025d2e89658c7502a683585450", "iSwap", "Ethereum Bridge")
-  ,("0x5a1d63d3e1303e89503f2a1ecb553328f148909d", "Jointer", "JNTR/e <> JNTR Bridge")
+  ,("0x5a1d63d3e1303e89503f2a1ecb553328f148909d", "Jointer", "JNTR / e <> JNTR Bridge")
   ,("0xf86fd6735f88d5b6aa709b357ad5be22cedf1a05", "Layer2Finance", "Rollup Chain")
   ,("0x66a71dcef29a0ffbdbe3c6a460a3b5bc225cd675", "LayerZero", "Ethereum Endpoint")
   ,("0x014f808b7d4b6f58be5fef88002d5028cd0ed14b", "Lition", "Token Bridge")

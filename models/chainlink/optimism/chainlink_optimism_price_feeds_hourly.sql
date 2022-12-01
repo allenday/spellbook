@@ -27,8 +27,8 @@ WITH gs AS (
         SELECT
             explode(
                 sequence(
-                    DATE_TRUNC('hour', 
-                    {% if not is_incremental() %}
+                    DATE_TRUNC('hour',
+                    {% if NOT is_incremental() %}
                         '{{project_start_date}}'::date
                     {% endif %}
                     {% if is_incremental() %}
@@ -49,7 +49,7 @@ WITH gs AS (
 )
 
 SELECT
-    'optimism' as blockchain
+    'optimism' AS blockchain
     , hour
     , DATE_TRUNC('day',hour) AS block_date
     , feed_name
@@ -96,7 +96,7 @@ FROM
                 AND gs.proxy_address = f.proxy_address
                 AND gs.aggregator_address = f.aggregator_address
             WHERE
-                {% if not is_incremental() %}
+                {% if NOT is_incremental() %}
                 gs.hr >= '{{project_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}
