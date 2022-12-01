@@ -15,7 +15,7 @@ WITH  -- dune query here https: / /dune.com/queries/1433654
 get_zodiac_wallets AS ( -- getting the gnosis safes created using zodiac's reality.eth module
         SELECT
             block_time AS created_block_time,
-            TRY_CAST(date_trunc('day', block_time) AS DATE) as created_date,
+            TRY_CAST(date_trunc('day', block_time) AS DATE) AS created_date,
             CONCAT('0x', RIGHT(topic3, 40)) AS dao
         FROM
         {{ source('ethereum', 'logs') }}
@@ -34,7 +34,7 @@ SELECT
     dao,
     dao AS dao_wallet_address,
     MIN(created_block_time) AS created_block_time,
-    MIN(created_date) AS created_date -- using this to get the created date as the first time the module was set up, it's possible to disable and renable a module.
+    MIN(created_date) AS created_date -- using this to get the created date AS the first time the module was set up, it's possible to disable and renable a module.
 FROM
 get_zodiac_wallets
 GROUP BY 1, 2, 3, 4

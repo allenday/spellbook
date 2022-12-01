@@ -18,7 +18,7 @@
 {% set dao_name = 'DAO: ENS' %}
 {% set dao_address = '0x323a76393544d5ecca80cd6ef2a560c6a395b7e3' %}
 
-WITH cte_sum_votes as
+WITH cte_sum_votes AS
 (SELECT sum(weight / 1e18) AS sum_votes,
         proposalId
 FROM {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_VoteCast') }}
@@ -27,7 +27,7 @@ GROUP BY proposalId)
 SELECT
     '{{blockchain}}' AS blockchain,
     '{{project}}' AS project,
-    cast(NULL AS string) as version,
+    cast(NULL AS string) AS version,
     vc.evt_block_time AS block_time,
     date_trunc('DAY', vc.evt_block_time) AS block_date,
     vc.evt_tx_hash AS tx_hash,

@@ -209,7 +209,7 @@ with source_ethereum_transactions AS (
 )
 ,iv_trades AS (
   SELECT a.*
-          ,try_cast(date_trunc('day', a.block_time) AS date) as block_date
+          ,try_cast(date_trunc('day', a.block_time) AS date) AS block_date
           ,n.name AS nft_token_name
           ,t.`from` AS tx_from
           ,t.`to` AS tx_to

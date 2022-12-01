@@ -71,7 +71,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{ust_wormhole_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_avalanche_c_token}}'
@@ -101,7 +101,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{mim_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdt_e_avalanche_c_token}}'
@@ -131,7 +131,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{aave_dai_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{aave_usdc_avalanche_c_token}}'
@@ -161,7 +161,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{dai_e_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_e_avalanche_c_token}}'
@@ -191,7 +191,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{dai_e_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_avalanche_c_token}}'
@@ -221,7 +221,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{agEUR_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{jEUR_avalanche_c_token}}'
@@ -249,7 +249,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{arUSD_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_avalanche_c_token}}'
@@ -279,7 +279,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{av3CRV_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{aave_wbtc_avalanche_c_token}}'
@@ -309,7 +309,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{dai_e_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_avalanche_c_token}}'
@@ -339,7 +339,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{axlUSDC_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_avalanche_c_token}}'
@@ -367,7 +367,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{axlUSDC_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_e_avalanche_c_token}}'
@@ -395,7 +395,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{blizz_dai_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{blizz_usdc_avalanche_c_token}}'
@@ -425,7 +425,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{dd_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_e_avalanche_c_token}}'
@@ -453,7 +453,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{debridge_usdc_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -485,7 +485,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{defrost_h20_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{av3CRV_avalanche_c_token}}'
@@ -513,7 +513,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{defrost_h20_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -545,7 +545,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{eEUR_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{jEUR_avalanche_c_token}}'
@@ -573,7 +573,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{frax_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{av3CRV_guage_avalanche_c_token}}'
@@ -601,7 +601,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{frax_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -633,7 +633,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{fusd_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{mim_avalanche_c_token}}'
@@ -661,7 +661,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{fusd_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_e_avalanche_c_token}}'
@@ -689,7 +689,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{wavax_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{ankr_aAVAXb_avalanche_c_token}}'
@@ -717,7 +717,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{mai_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{av3CRV_avalanche_c_token}}'
@@ -745,7 +745,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{mai_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -777,7 +777,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{mim_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{av3CRV_avalanche_c_token}}'
@@ -805,7 +805,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{mim_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -837,7 +837,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{moremoney_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{av3CRV_avalanche_c_token}}'
@@ -865,7 +865,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{moremoney_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -897,7 +897,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{nxusd_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -929,7 +929,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{aave_wbtc_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{renBTC_avalanche_c_token}}'
@@ -957,7 +957,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{wbtc_e_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{renBTC_avalanche_c_token}}'
@@ -985,7 +985,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{usdl_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -1017,7 +1017,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{usdc_e_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{ust_wormhole_avalanche_c_token}}'
@@ -1045,7 +1045,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{usdc_e_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_avalanche_c_token}}'
@@ -1073,7 +1073,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{usds_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -1105,7 +1105,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL AS double) as amount_usd,
+            CAST(NULL AS double) AS amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{yusd_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_avalanche_c_token}}'
@@ -1130,7 +1130,7 @@ SELECT
     'avalanche_c' AS blockchain,
     'curve' AS project,
     '2' AS version,
-    TRY_CAST(date_trunc('DAY', dexs.block_time) AS date) as block_date,
+    TRY_CAST(date_trunc('DAY', dexs.block_time) AS date) AS block_date,
     dexs.block_time,
     erc20a.symbol AS token_bought_symbol,
     erc20b.symbol AS token_sold_symbol,

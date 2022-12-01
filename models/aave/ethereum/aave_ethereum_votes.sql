@@ -18,7 +18,7 @@
 {% set dao_name = 'DAO: AAVE' %}
 {% set dao_address = '0xec568fffba86c094cf06b22134b23074dfe2252c' %}
 
-WITH cte_sum_votes as
+WITH cte_sum_votes AS
 (SELECT sum(votingPower / 1e18) AS sum_votes,
         id
 FROM {{ source('aave_ethereum', 'AaveGovernanceV2_evt_VoteEmitted') }}
@@ -27,7 +27,7 @@ GROUP BY id)
 SELECT
     '{{blockchain}}' AS blockchain,
     '{{project}}' AS project,
-    cast(NULL AS string) as version,
+    cast(NULL AS string) AS version,
     vc.evt_block_time AS block_time,
     date_trunc('DAY', vc.evt_block_time) AS block_date,
     vc.evt_tx_hash AS tx_hash,
@@ -44,7 +44,7 @@ SELECT
          WHEN vc.support = 1 THEN 'for'
          WHEN vc.support = 2 THEN 'abstain'
          END AS support,
-    cast(NULL AS string) as reason
+    cast(NULL AS string) AS reason
 FROM {{ source('aave_ethereum', 'AaveGovernanceV2_evt_VoteEmitted') }} vc
 LEFT JOIN cte_sum_votes csv ON vc.id = csv.id
 LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', evt_block_time)

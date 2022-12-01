@@ -254,7 +254,7 @@ glp_weth_reservedAmounts AS -- This CTE returns the average amount of reserved W
 
  / *
 guaranteedUSD are the total value of the long positions valued at the time of position entry.
-This is because AS soon as a long position opens, the asset's USD value (that's currently in the pool) effectively gets locked in.
+This is because AS soon AS a long position opens, the asset's USD value (that's currently in the pool) effectively gets locked in.
 FRAX, USDT, USDC and DAI are NOT included AS you cannot open shorts on those tokens.
 * / 
 glp_wbtc_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against WBTC tokens in the pool for a designated minute

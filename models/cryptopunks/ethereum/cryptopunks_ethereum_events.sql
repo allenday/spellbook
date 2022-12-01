@@ -130,14 +130,14 @@ SELECT  "ethereum" AS blockchain
         , a.evt_tx_hash AS tx_hash
         , tx.`from` AS tx_from
         , tx.`to` AS tx_to
-        , cast(0 AS double) as platform_fee_amount_raw
-        , cast(0 AS double) as platform_fee_amount
-        , cast(0 AS double) as platform_fee_amount_usd
-        , cast(0 AS double) as platform_fee_percentage
-        , cast(0 AS double) as royalty_fee_amount_raw
-        , cast(0 AS double) as royalty_fee_amount
-        , cast(0 AS double) as royalty_fee_amount_usd
-        , cast(0 AS double) as royalty_fee_percentage
+        , cast(0 AS double) AS platform_fee_amount_raw
+        , cast(0 AS double) AS platform_fee_amount
+        , cast(0 AS double) AS platform_fee_amount_usd
+        , cast(0 AS double) AS platform_fee_percentage
+        , cast(0 AS double) AS royalty_fee_amount_raw
+        , cast(0 AS double) AS royalty_fee_amount
+        , cast(0 AS double) AS royalty_fee_amount_usd
+        , cast(0 AS double) AS royalty_fee_percentage
         , '' AS royalty_fee_receive_address
         , '' AS royalty_fee_currency_symbol
         , "cryptopunks" || '-' || a.evt_tx_hash || '-' || a.punk_id || '-' ||  a.from_address || '-' || a.evt_index || '-' || "" AS unique_trade_id

@@ -13,7 +13,7 @@
 }}
 
 with nft_trade_address AS (
-    SELECT distinct blockchain, buyer AS address_a, seller as address_b
+    SELECT distinct blockchain, buyer AS address_a, seller AS address_b
     from {{ ref('nft_trades') }}
     where buyer is NOT null
         and seller is NOT null
@@ -23,7 +23,7 @@ with nft_trade_address AS (
     {% endif %}
     union all
 
-    SELECT distinct blockchain, seller AS address_a, buyer as address_b
+    SELECT distinct blockchain, seller AS address_a, buyer AS address_b
     from {{ ref('nft_trades') }}
     where buyer is NOT null
         and seller is NOT null

@@ -131,7 +131,7 @@ SELECT
     ,er.amount_raw / power(10, t1.decimals) * p1.price AS amount_usd
     ,'erc721' AS token_standard
     ,'Single Item Trade' AS trade_type
-    ,cast(1 AS bigint) as number_of_items
+    ,cast(1 AS bigint) AS number_of_items
     ,'Buy' AS trade_category
     ,'Trade' AS evt_type
     ,er.seller

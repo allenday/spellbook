@@ -19,7 +19,7 @@
 {% set dao_name = 'DAO: Uniswap' %}
 {% set dao_address = '0x408ed6354d4973f66138c91495f2f2fcbd8724c3' %}
 
-WITH cte_sum_votes as
+WITH cte_sum_votes AS
 (SELECT sum(votes / 1e18) AS sum_votes,
         proposalId
 FROM {{ source('uniswap_v3_ethereum', 'GovernorBravoDelegate_evt_VoteCast') }}

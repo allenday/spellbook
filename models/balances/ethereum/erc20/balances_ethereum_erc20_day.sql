@@ -17,7 +17,7 @@ with
             ) AS day
     )
 
-, daily_balances as
+, daily_balances AS
  (SELECT
     wallet_address,
     token_address,

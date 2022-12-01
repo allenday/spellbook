@@ -40,7 +40,7 @@ GROUP BY id)
 SELECT DISTINCT
     '{{blockchain}}' AS blockchain,
     '{{project}}' AS project,
-    cast(NULL AS string) as version,
+    cast(NULL AS string) AS version,
     pcr.evt_block_time AS created_at,
     date_trunc('DAY', pcr.evt_block_time) AS block_date,
     pcr.evt_tx_hash AS tx_hash, -- Proposal Created tx hash
@@ -62,7 +62,7 @@ SELECT DISTINCT
          WHEN pcr.startBlock < pcr.evt_block_number < pcr.endBlock THEN 'Active'
          WHEN now() > pqu.evt_block_time AND startBlock > pcr.evt_block_number THEN 'Queued'
          ELSE 'Defeated' END AS status,
-    cast(NULL AS string) as description
+    cast(NULL AS string) AS description
 FROM  {{ source('aave_ethereum', 'AaveGovernanceV2_evt_ProposalCreated') }} pcr
 LEFT JOIN cte_sum_votes csv ON csv.id = pcr.id
 LEFT JOIN {{ source('aave_ethereum', 'AaveGovernanceV2_evt_ProposalCanceled') }} pca ON pca.id = pcr.id

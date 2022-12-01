@@ -70,8 +70,8 @@ ethereum_logs AS (
 
 new_router AS (
     SELECT
-        cast(coalesce(l.evt_index, -1) AS int) as composite_index,
-        cast(get_json_object(quote,'$.flag') AS string) as source,
+        cast(coalesce(l.evt_index, -1) AS int) AS composite_index,
+        cast(get_json_object(quote,'$.flag') AS string) AS source,
         t.call_block_time AS block_time,
         t.call_tx_hash AS tx_hash,
         t.call_success AS fill_status,
@@ -86,16 +86,16 @@ new_router AS (
         case when get_json_object(quote,'$.baseToken') = '0x0000000000000000000000000000000000000000' then 'ETH'
             else tp.symbol end AS taker_symbol,
         case when l.evt_tx_hash is NOT null then l.`quoteTokenAmount` / power(10, mp.decimals)
-            else cast(get_json_object(quote,'$.maxQuoteTokenAmount') AS float) / power(10,mp.decimals) end  as maker_token_amount,
+            else cast(get_json_object(quote,'$.maxQuoteTokenAmount') AS float) / power(10,mp.decimals) end  AS maker_token_amount,
         case when l.evt_tx_hash is NOT null then l.`baseTokenAmount` / power(10, tp.decimals)
-            else cast(get_json_object(quote,'$.maxBaseTokenAmount') AS float) / power(10,tp.decimals) end  as taker_token_amount,
+            else cast(get_json_object(quote,'$.maxBaseTokenAmount') AS float) / power(10,tp.decimals) end  AS taker_token_amount,
         case when l.evt_tx_hash is NOT null
             then coalesce(
                         l.`baseTokenAmount` / power(10, tp.decimals) * tp.price,
                         `quoteTokenAmount` / power(10, mp.decimals) * mp.price)
             else coalesce(
                     cast(get_json_object(quote,'$.maxBaseTokenAmount') AS float) / power(10, tp.decimals) * tp.price,
-                    cast(get_json_object(quote,'$.maxQuoteTokenAmount') AS float) / power(10, mp.decimals) * mp.price) end as amount_usd
+                    cast(get_json_object(quote,'$.maxQuoteTokenAmount') AS float) / power(10, mp.decimals) * mp.price) end AS amount_usd
     from {{ source('hashflow_ethereum', 'router_call_tradesinglehop') }} t
     inner join ethereum_transactions tx on tx.hash = t.call_tx_hash
     LEFT JOIN hashflow_pool_evt_trade l on l.txid = ('0x' || substring(get_json_object(quote,'$.txid') from 3))
@@ -119,8 +119,8 @@ event_decoding_legacy_router AS (
         substring(`data`, 33, 32) AS tx_id,
         substring(`data`, 109, 20) AS maker_token,
         substring(`data`, 77, 20) AS taker_token,
-        cast(conv(substring(`data`, 173, 20), 16, 10) AS decimal) as maker_token_amount,
-        cast(conv(substring(`data`, 141, 20), 16, 10) AS decimal) as taker_token_amount
+        cast(conv(substring(`data`, 173, 20), 16, 10) AS decimal) AS maker_token_amount,
+        cast(conv(substring(`data`, 141, 20), 16, 10) AS decimal) AS taker_token_amount
     from ethereum_logs
     where topic1 ='0x8cf3dec1929508e5677d7db003124e74802bfba7250a572205a9986d86ca9f1e' -- trade0()
 
@@ -133,15 +133,15 @@ event_decoding_legacy_router AS (
         substring(`data`, 65, 32) AS tx_id,
         substring(`data`, 141, 20) AS maker_token,
         substring(`data`, 109, 20) AS taker_token,
-        cast(conv(substring(`data`, 205, 20), 16, 10) AS decimal) as maker_token_amount,
-        cast(conv(substring(`data`, 173, 20), 16, 10) AS decimal) as taker_token_amount
+        cast(conv(substring(`data`, 205, 20), 16, 10) AS decimal) AS maker_token_amount,
+        cast(conv(substring(`data`, 173, 20), 16, 10) AS decimal) AS taker_token_amount
     from ethereum_logs l
     where topic1 ='0xb709ddcc6550418e9b89df1f4938071eeaa3f6376309904c77e15d46b16066f5' -- trade()
 ),
 
 legacy_router_w_integration AS (
     SELECT
-        cast(coalesce(l.evt_index, -1) AS int) as composite_index,
+        cast(coalesce(l.evt_index, -1) AS int) AS composite_index,
         substring(input, 324, 1) AS source,
         t.block_time,
         t.tx_hash,
@@ -149,7 +149,7 @@ legacy_router_w_integration AS (
         substring(t.input, 1, 4) AS method_id,
         t.to AS router_contract,
         substring(t.input, 17, 20) AS pool,
-        tx.from AS trader, -- adjusted to use tx sender due to integration, was substring(t.input, 49, 20) as trader,
+        tx.from AS trader, -- adjusted to use tx sender due to integration, was substring(t.input, 49, 20) AS trader,
         maker_token,
         taker_token,
         case when substring(input, 113, 20) = '0x0000000000000000000000000000000000000000' then 'ETH'
@@ -181,7 +181,7 @@ legacy_router_w_integration AS (
     union all
 
     SELECT
-        cast(coalesce(l.evt_index, -1) AS int) as composite_index,
+        cast(coalesce(l.evt_index, -1) AS int) AS composite_index,
         substring(input, 484, 1) AS source,
         t.block_time,
         t.tx_hash,
@@ -238,13 +238,13 @@ legacy_routers AS (
             else e.symbol end AS taker_symbol,
         case when substring(input, 1, 4) = '0xc7f6b19d'
                 then cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / power(10, e.decimals)
-            else cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / 1e18 end as maker_token_amount,
+            else cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / 1e18 end AS maker_token_amount,
         case when substring(input, 1, 4) = '0xc7f6b19d'
                 then cast(conv(substring(input, 113, 20), 16, 10) AS decimal) / 1e18
-            else cast(conv(substring(input, 113, 20), 16, 10) AS decimal) / power(10,e.decimals) end as taker_token_amount,
+            else cast(conv(substring(input, 113, 20), 16, 10) AS decimal) / power(10,e.decimals) end AS taker_token_amount,
         case when substring(input, 1, 4) = '0xc7f6b19d'
                 then cast(conv(substring(input, 113, 20), 16, 10) AS decimal) / 1e18 * price
-            else cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / 1e18 * price end as amount_usd
+            else cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / 1e18 * price end AS amount_usd
     from ethereum_traces t
     LEFT JOIN prices_usd p on minute = date_trunc('minute', t.block_time)
     LEFT JOIN erc20_tokens e on e.contract_address = substring(input, 81, 20)
@@ -268,11 +268,11 @@ legacy_routers AS (
             substring(input, 81, 20) AS taker_token,
             mp.symbol AS maker_symbol,
             tp.symbol AS taker_symbol,
-            cast(conv(substring(input, 177, 20), 16, 10) AS decimal) / power(10, mp.decimals)  as maker_token_amount,
-            cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / power(10, tp.decimals)  as taker_token_amount,
+            cast(conv(substring(input, 177, 20), 16, 10) AS decimal) / power(10, mp.decimals)  AS maker_token_amount,
+            cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / power(10, tp.decimals)  AS taker_token_amount,
             coalesce(
                 cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / power(10, tp.decimals) * tp.price,
-                cast(conv(substring(input, 177, 20), 16, 10) AS decimal) / power(10, mp.decimals) * mp.price) as amount_usd
+                cast(conv(substring(input, 177, 20), 16, 10) AS decimal) / power(10, mp.decimals) * mp.price) AS amount_usd
     from ethereum_traces t
     LEFT JOIN prices_usd tp on tp.minute = date_trunc('minute', t.block_time) and tp.contract_address = substring(input, 81, 20)
     LEFT JOIN prices_usd mp on mp.minute = date_trunc('minute', t.block_time) and mp.contract_address = substring(input, 113, 20)
@@ -300,13 +300,13 @@ legacy_routers AS (
             else e.symbol end AS taker_symbol,
         case when substring(input, 1, 4) = '0xe43d9733'
                 then cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / power(10,e.decimals)
-            else cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / 1e18 end as maker_token_amount,
+            else cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / 1e18 end AS maker_token_amount,
         case when substring(input, 1, 4) = '0xe43d9733'
                 then cast(conv(substring(input, 113, 20), 16, 10) AS decimal) / 1e18
-            else cast(conv(substring(input, 113, 20), 16, 10) AS decimal) / power(10,e.decimals) end as taker_token_amount,
+            else cast(conv(substring(input, 113, 20), 16, 10) AS decimal) / power(10,e.decimals) end AS taker_token_amount,
         case when substring(input, 1, 4) = '0xe43d9733'
                 then cast(conv(substring(input, 113, 20), 16, 10) AS decimal) / 1e18 * price
-            else cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / 1e18 * price end as amount_usd
+            else cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / 1e18 * price end AS amount_usd
     from ethereum_traces t
     LEFT JOIN prices_usd p on minute = date_trunc('minute', t.block_time)
     LEFT JOIN erc20_tokens e on e.contract_address = substring(input, 81, 20)
@@ -327,7 +327,7 @@ new_pool AS (
         tx.hash AS tx_hash,
         true AS fill_status, -- without call we are only logging successful fills
         null AS method_id, -- without call we don't have function call info
-        tx.to AS router_contract, -- taking top level contract called in tx as router, NOT necessarily HF contract
+        tx.to AS router_contract, -- taking top level contract called in tx AS router, NOT necessarily HF contract
         l.pool AS pool,
         tx.from AS trader,
         l.`quoteToken` AS maker_token,

@@ -14,7 +14,7 @@ WITH
 -- First subquery joins buy and sell token prices from prices.usd
 -- Also deducts fee from sell amount
 trades_with_prices AS (
-    SELECT try_cast(date_trunc('day', evt_block_time) AS date) as block_date,
+    SELECT try_cast(date_trunc('day', evt_block_time) AS date) AS block_date,
            evt_block_time            AS block_time,
            evt_tx_hash               AS tx_hash,
            evt_index,

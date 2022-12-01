@@ -203,7 +203,7 @@ LEFT JOIN {{ source('prices', 'usd') }} pu ON pu.minute=date_trunc('minute', t.b
 LEFT JOIN {{ source('ethereum','traces') }} ett ON ett.block_time=t.block_time
     AND ett.tx_hash=t.tx_hash
     AND ett.from = t.project_contract_address
-    AND cast(ett.value AS string) = cast(t.royalty_fee_amount_raw as string)
+    AND cast(ett.value AS string) = cast(t.royalty_fee_amount_raw AS string)
     AND ett.to!=t.project_contract_address
     AND t.royalty_fee_amount / t.amount_original < 0.5
     and ett.success = true

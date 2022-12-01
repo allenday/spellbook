@@ -16,7 +16,7 @@
 
 SELECT
     s.address,
-    try_cast(date_trunc('day', et.block_time) AS date) as block_date,
+    try_cast(date_trunc('day', et.block_time) AS date) AS block_date,
     et.block_time,
     -et.value AS amount_raw,
     et.tx_hash,
@@ -39,7 +39,7 @@ union all
 
 SELECT
     s.address,
-    try_cast(date_trunc('day', et.block_time) AS date) as block_date,
+    try_cast(date_trunc('day', et.block_time) AS date) AS block_date,
     et.block_time,
     et.value AS amount_raw,
     et.tx_hash,

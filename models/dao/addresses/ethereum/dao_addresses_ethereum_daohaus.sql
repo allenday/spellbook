@@ -17,7 +17,7 @@ WITH  -- dune query here - https: / /dune.com/queries/1433790
 get_daohaus_molochs AS ( -- molochs are daos and this is getting a list of molochs created through daohaus
         SELECT
             block_time AS created_block_time,
-            TRY_CAST(date_trunc('day', block_time) AS DATE) as created_date,
+            TRY_CAST(date_trunc('day', block_time) AS DATE) AS created_date,
             CONCAT('0x', RIGHT(topic2, 40)) AS moloch
         FROM
         {{ source('ethereum', 'logs') }}
@@ -72,7 +72,7 @@ mapped_wallets AS (
         FROM
         get_daohaus_wallets
 
-        UNION -- molochs are wallet addresses AS well so using a union here since there'll be duplicates as i'm unioning the moloch addresses & minion addresses
+        UNION -- molochs are wallet addresses AS well so using a union here since there'll be duplicates AS i'm unioning the moloch addresses & minion addresses
 
         SELECT
             'ethereum' AS blockchain,

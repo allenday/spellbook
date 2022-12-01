@@ -211,7 +211,7 @@ with p1_call AS (
                 when royalty_amount > 0 then t1.symbol
           end AS royalty_fee_currency_symbol
           ,a.tx_hash || '-' || a.nft_token_id || '-' || a.original_amount::string || '-' ||  concat('0x',substr(seller,3,40)) || '-' ||
-          order_type_id::string || '-' || cast(row_number () over (partition by a.tx_hash order by sub_idx) as
+          order_type_id::string || '-' || cast(row_number () over (partition by a.tx_hash order by sub_idx) AS
           string) AS unique_trade_id,
           a.zone
       from p1_txn_level a
@@ -435,14 +435,14 @@ with p1_call AS (
           ,a.evt_royalty_amount / power(10,t1.decimals) AS royalty_fee_amount
           ,a.evt_royalty_amount / power(10,t1.decimals) * p1.price AS royalty_fee_amount_usd
           ,(a.evt_royalty_amount / a.attempt_amount * 100)::string  AS royalty_fee_percentage
-          ,case when evt_royalty_amount > 0 then concat('0x',substr(evt_royalty_recipient,3,40)) end as
+          ,case when evt_royalty_amount > 0 then concat('0x',substr(evt_royalty_recipient,3,40)) end AS
           royalty_fee_receive_address
           ,case when evt_royalty_amount > 0 and concat('0x',substr(a.evt_royalty_token,3,40)) =
           '0x0000000000000000000000000000000000000000' then 'ETH'
                 when evt_royalty_amount > 0 then t1.symbol
           end AS royalty_fee_currency_symbol
           ,a.tx_hash || '-' || a.nft_token_id || '-' || a.attempt_amount::string || '-' ||  concat('0x',substr(seller,3,40)) || '-' ||
-          cast(row_number () over (partition by a.tx_hash order by sub_idx) as
+          cast(row_number () over (partition by a.tx_hash order by sub_idx) AS
           string) AS unique_trade_id,
           a.zone
       from p2_transfer_level a
@@ -501,7 +501,7 @@ with p1_call AS (
             {% endif %}
             )
 
-,p3_call AS (SELECT 'order' as main_type
+,p3_call AS (SELECT 'order' AS main_type
           ,call_tx_hash AS tx_hash
           ,call_block_time AS block_time
           ,call_block_number AS block_number
@@ -692,14 +692,14 @@ with p1_call AS (
           ,a.royalty_amount / power(10,t1.decimals) AS royalty_fee_amount
           ,a.royalty_amount / power(10,t1.decimals) * p1.price AS royalty_fee_amount_usd
           ,(a.royalty_amount / a.attempt_amount * 100)::string  AS royalty_fee_percentage
-          ,case when royalty_amount > 0 then royalty_receive_address end as
+          ,case when royalty_amount > 0 then royalty_receive_address end AS
           royalty_fee_receive_address
           ,case when royalty_amount > 0 and a.original_currency_contract =
           '0x0000000000000000000000000000000000000000' then 'ETH'
           when royalty_amount > 0 then t1.symbol
           end AS royalty_fee_currency_symbol
           ,a.tx_hash || '-' || a.attempt_amount::string || '-' || a.nft_token_id || '-' ||  concat('0x',substr(seller,3,40)) || '-' ||
-          order_type_id::string || '-' || cast(row_number () over (partition by a.tx_hash order by sub_idx) as
+          order_type_id::string || '-' || cast(row_number () over (partition by a.tx_hash order by sub_idx) AS
           string) AS unique_trade_id,
           a.zone
       from p3_txn_level a
@@ -759,7 +759,7 @@ with p1_call AS (
             {% endif %}
             )
 
-,p4_call AS (SELECT 'match_orders' as main_type
+,p4_call AS (SELECT 'match_orders' AS main_type
           ,'match_orders' AS sub_type
           ,idx AS sub_idx
           ,get_json_object(get_json_object(c.orders[0], "$.parameters"), "$.zone") AS zone
@@ -924,13 +924,13 @@ with p1_call AS (
           ,a.evt_royalty_amount / power(10,t1.decimals) AS royalty_fee_amount
           ,a.evt_royalty_amount / power(10,t1.decimals) * p1.price AS royalty_fee_amount_usd
           ,(a.evt_royalty_amount / a.attempt_amount * 100)::string  AS royalty_fee_percentage
-          ,case when evt_royalty_amount > 0 then concat('0x',substr(evt_royalty_recipient,3,40)) end as
+          ,case when evt_royalty_amount > 0 then concat('0x',substr(evt_royalty_recipient,3,40)) end AS
           royalty_fee_receive_address
           ,case when evt_royalty_amount > 0 and concat('0x',substr(a.evt_royalty_token,3,40)) =
           '0x0000000000000000000000000000000000000000' then 'ETH'
                 when evt_royalty_amount > 0 then t1.symbol
           end AS royalty_fee_currency_symbol
-          ,a.tx_hash || '-' || a.nft_token_id || '-' || a.attempt_amount::string || '-' || concat('0x',substr(seller,3,40)) || '-' || cast(row_number () over (partition by a.tx_hash order by sub_idx) as
+          ,a.tx_hash || '-' || a.nft_token_id || '-' || a.attempt_amount::string || '-' || concat('0x',substr(seller,3,40)) || '-' || cast(row_number () over (partition by a.tx_hash order by sub_idx) AS
           string) AS unique_trade_id,
           a.zone
     from p4_transfer_level a

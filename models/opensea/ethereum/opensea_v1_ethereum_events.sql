@@ -65,7 +65,7 @@ AND call_block_time >= date_trunc("day", now() - interval '1 week')
 {% endif %}
 ),
 
-wyvern_all as
+wyvern_all AS
 (
 SELECT
   call_tx_hash,
@@ -96,7 +96,7 @@ SELECT
   {% endif %}
 ),
 
-erc_transfers as
+erc_transfers AS
 (SELECT evt_tx_hash,
         -- token_id_erc will be used for joining. It may be 'Token ID is larger than 64 bits and can NOT be displayed'
         -- token_id_erc_uncapped will be used for displaying the token_id after joining

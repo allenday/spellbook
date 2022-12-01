@@ -51,7 +51,7 @@ all_syndicate_daos AS (
         {% endif %}
 ),
 
-ownership_transferred AS ( -- whenever an investment club is created, the ownership can be transferred to another wallet, this happens often as ownership is transferred to a gnosis safe
+ownership_transferred AS ( -- whenever an investment club is created, the ownership can be transferred to another wallet, this happens often AS ownership is transferred to a gnosis safe
         SELECT
             contract_address AS dao,
             block_time,
@@ -97,7 +97,7 @@ SELECT
     dao,
     dao_wallet_address,
     created_block_time,
-    TRY_CAST(created_date AS DATE) as created_date
+    TRY_CAST(created_date AS DATE) AS created_date
 FROM syndicate_wallets
 WHERE dao_wallet_address NOT IN ('0xae6328c067bddfba4963e2a1f52baaf11a2e2588', '0x3902ab762a94b8088b71ee5c84bc3c7d2075646b', '0xc08bc955da8968327405642d65a7513ce5eb31ed') -- these are syndicate contract addresses, there's a transfer from 0x00...0000 to these addresses during set up so filtering to get rid of them.
 

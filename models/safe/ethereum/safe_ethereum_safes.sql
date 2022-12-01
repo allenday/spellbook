@@ -23,7 +23,7 @@ SELECT
         when et.to = '0x34cfac646f301356faa8b21e94227e3583fe3f5f' then '1.1.1'
         when et.to = '0x6851d6fdfafd08c0295c392436245e5bc78b0185' then '1.2.0'
     end AS creation_version,
-    try_cast(date_trunc('day', et.block_time) AS date) as block_date,
+    try_cast(date_trunc('day', et.block_time) AS date) AS block_date,
     et.block_time AS creation_time,
     et.tx_hash
 from {{ source('ethereum', 'traces') }} et
@@ -55,7 +55,7 @@ union all
 
 SELECT contract_address AS address,
     '1.3.0' AS creation_version,
-    try_cast(date_trunc('day', evt_block_time) AS date) as block_date,
+    try_cast(date_trunc('day', evt_block_time) AS date) AS block_date,
     evt_block_time AS creation_time,
     evt_tx_hash AS tx_hash
 from {{ source('gnosis_safe_ethereum', 'GnosisSafev1_3_0_evt_SafeSetup') }}

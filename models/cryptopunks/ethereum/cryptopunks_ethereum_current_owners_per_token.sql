@@ -10025,9 +10025,9 @@ from
     (
         SELECT  NULL AS `from`
                 , address AS `to`
-                , cast('2017-06-23 19:37:59' AS timestamp) as evt_block_time
-                , cast(3919418 AS int) as evt_block_number
-                , cast(1 AS int) as evt_index
+                , cast('2017-06-23 19:37:59' AS timestamp) AS evt_block_time
+                , cast(3919418 AS int) AS evt_block_number
+                , cast(1 AS int) AS evt_index
                 , punk_id
         from original_holders
 
@@ -10039,7 +10039,7 @@ from
                 , a.evt_block_number
                 , a.evt_index
                 , case when topic1 = '0x05af636b70da6819000c49f85b21fa82081c632069bb626f30932034099107d8' then cast(bytea2numeric_v2(substring(data from 3)) AS int)
-                    else cast(bytea2numeric_v2(substring(topic2 from 3)) AS int) end as punk_id
+                    else cast(bytea2numeric_v2(substring(topic2 from 3)) AS int) end AS punk_id
         from {{ source('erc20_ethereum','evt_transfer') }} a
         inner join {{ source('ethereum','logs') }} b on a.evt_tx_hash = b.tx_hash -- and topic1 = '0x58e5d5a525e3b40bc15abaa38b5882678db1ee68befd2f60bafe3a7fd06db9e3'
         where a.contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks contract

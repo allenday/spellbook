@@ -72,7 +72,7 @@ SELECT
     dt.dao_creator_tool,
     dt.dao,
     dt.dao_wallet_address,
-    TRY_CAST(date_trunc('day', t.block_time) AS DATE) as block_date,
+    TRY_CAST(date_trunc('day', t.block_time) AS DATE) AS block_date,
     t.block_time,
     t.tx_type,
     t.token AS asset_contract_address,

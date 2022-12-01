@@ -16,7 +16,7 @@
 
 {% set project_start_date = '2022-04-27' %}
 
-WITH dexs as
+WITH dexs AS
  (SELECT
             evt_block_time AS block_time
             ,'woofi' AS project

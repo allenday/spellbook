@@ -60,7 +60,7 @@ SELECT
     ad.dao,
     gw.dao_wallet_address,
     ad.created_block_time,
-    TRY_CAST(ad.created_date AS DATE) as created_date
+    TRY_CAST(ad.created_date AS DATE) AS created_date
 FROM
 aragon_daos ad
 LEFT JOIN

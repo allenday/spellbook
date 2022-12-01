@@ -17,7 +17,7 @@ with
             ) AS hour
     )
 
-, hourly_balances as
+, hourly_balances AS
  (SELECT
     wallet_address,
     token_address,
