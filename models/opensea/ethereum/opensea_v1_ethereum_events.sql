@@ -22,8 +22,8 @@ SELECT
         WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy, 1, 4)) THEN 'erc1155'
   END AS token_standard,
   addrs [0] AS project_contract_address,
-  CASE WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy, 1, 4)) THEN '0x'||SUBSTR(calldataBuy,163,40)
-        WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy, 1, 4)) THEN '0x'||SUBSTR(calldataBuy,163,40)
+  CASE WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy, 1, 4)) THEN '0x'||SUBSTR(calldataBuy,163, 40)
+        WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy, 1, 4)) THEN '0x'||SUBSTR(calldataBuy, 163, 40)
         WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy, 1, 4)) THEN addrs [4]
         WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy, 1, 4)) THEN addrs [4]
         END AS nft_contract_address,
@@ -45,12 +45,12 @@ SELECT
   THEN 'Token ID is larger than 64 bits AND can NOT be displayed'
   WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy, 1, 4)) AND length(ltrim('0', SUBSTR(calldataBuy, 139, 64))) > 16
   THEN 'Token ID is larger than 64 bits AND can NOT be displayed'
-  WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy, 1, 4)) THEN conv(SUBSTR(calldataBuy,203,64),16,10)::STRING
-  WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy, 1, 4)) THEN conv(SUBSTR(calldataBuy,203,64),16,10)::STRING
-  WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy, 1, 4)) THEN conv(SUBSTR(calldataBuy,139,64),16,10)::STRING
-  WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy, 1, 4)) THEN conv(SUBSTR(calldataBuy,139,64),16,10)::STRING
+  WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy, 1, 4)) THEN conv(SUBSTR(calldataBuy, 203, 64), 16, 10)::STRING
+  WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy, 1, 4)) THEN conv(SUBSTR(calldataBuy, 203, 64), 16, 10)::STRING
+  WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy, 1, 4)) THEN conv(SUBSTR(calldataBuy, 139, 64), 16, 10)::STRING
+  WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy, 1, 4)) THEN conv(SUBSTR(calldataBuy, 139, 64), 16, 10)::STRING
   END AS token_id,
-  CASE WHEN size(call_trace_address) = 0 THEN array(3::bigint) -- FOR bundle join
+  CASE WHEN size(call_trace_address) = 0 THEN array(3::bigint) -- FOR bundle JOIN
   ELSE call_trace_address
   END AS call_trace_address,
   addrs [6] AS currency_contract_original
@@ -226,4 +226,3 @@ LEFT JOIN {{ ref('tokens_erc20') }} erc20 ON erc20.contract_address = wa.currenc
       *
     FROM
       {{ ref('opensea_v1_ethereum_excluded_txns') }})
-;

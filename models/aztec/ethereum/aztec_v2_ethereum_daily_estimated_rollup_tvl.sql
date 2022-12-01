@@ -44,7 +44,7 @@ rollup_balance_changes AS (
     , b.token_address
     , b.balance
   FROM day_series d
-  inner join token_balances b
+  INNER JOIN token_balances b
         ON d.date >= b.date
         AND d.date < coalesce(b.next_date, CAST(NOW() AS date) + 1) -- if it's missing that means it's the last entry in the series
 )
@@ -115,7 +115,7 @@ rollup_balance_changes AS (
     , b.balance * COALESCE(p.price_usd, bb.eth_price) AS tvl_usd
     , b.balance * COALESCE(p.price_eth, 1) AS tvl_eth
   FROM token_balances_filled b
-  inner join token_prices p ON b.date = p.day AND b.token_address = p.token_address
+  INNER JOIN token_prices p ON b.date = p.day AND b.token_address = p.token_address
   LEFT JOIN token_prices bb ON b.date = bb.day AND b.token_address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' -- using this to get price FOR missing ETH token
 
 )

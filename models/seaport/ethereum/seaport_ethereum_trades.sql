@@ -234,7 +234,7 @@ with source_ethereum_transactions AS (
           ,agg.contract_address AS aggregator_address
           ,'seaport-' || tx_hash || '-' || evt_index || '-' || nft_contract_address || '-' || nft_token_id || '-' || sub_idx AS unique_trade_id
   FROM iv_nfts a
-  inner join source_ethereum_transactions t ON t.hash = a.tx_hash
+  INNER JOIN source_ethereum_transactions t ON t.hash = a.tx_hash
   LEFT JOIN ref_tokens_nft n ON n.contract_address = nft_contract_address
   LEFT JOIN ref_tokens_erc20 e ON e.contract_address = CASE WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_alternative_token_address}}'
                                                             ELSE a.token_contract_address

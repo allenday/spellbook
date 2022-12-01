@@ -101,9 +101,9 @@ WITH
             , tx.from AS tx_from
             , tx.to  AS tx_to
         FROM trade_events e
-        inner join token_events t
+        INNER JOIN token_events t
             ON e.block_number = t.block_number AND e.unique_trade_id = t.unique_trade_id
-        inner join {{ source('ethereum', 'transactions') }} tx
+        INNER JOIN {{ source('ethereum', 'transactions') }} tx
             ON e.block_number = tx.block_number AND e.tx_hash = tx.hash
             {% if is_incremental() %}
             AND tx.block_time >= date_trunc("day", now() - INTERVAL '1 week')

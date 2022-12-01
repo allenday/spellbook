@@ -33,7 +33,7 @@ SELECT
   , cr.contract_address
   , cr.trace_element
 FROM creates AS cr
-join {{ source('optimism', 'traces') }} AS sd
+JOIN {{ source('optimism', 'traces') }} AS sd
   ON cr.creation_tx_hash = sd.tx_hash
   AND cr.created_time = sd.block_time
   AND cr.trace_element = sd.trace_address[0]

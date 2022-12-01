@@ -57,7 +57,7 @@ with p1_call AS (
                where evt_block_time >= (SELECT max(block_time) FROM {{ this }})
                {% endif %}
             ) e
-          inner join p1_call c ON c.tx_hash = e.evt_tx_hash
+          INNER JOIN p1_call c ON c.tx_hash = e.evt_tx_hash
                       UNION ALL
     SELECT c.main_type
           ,c.tx_hash
@@ -81,7 +81,7 @@ with p1_call AS (
             where evt_block_time >= (SELECT max(block_time) FROM {{ this }})
             {% endif %}
             ) e
-        inner join p1_call c ON c.tx_hash = e.evt_tx_hash
+        INNER JOIN p1_call c ON c.tx_hash = e.evt_tx_hash
      )
 
 
@@ -215,7 +215,7 @@ with p1_call AS (
           STRING) AS unique_trade_id,
           a.zone
       FROM p1_txn_level a
-        inner join {{ source('ethereum', 'transactions') }} tx
+        INNER JOIN {{ source('ethereum', 'transactions') }} tx
             ON tx.hash = a.tx_hash
             {% if NOT is_incremental() %}
             AND tx.block_number > 14801608
@@ -345,7 +345,7 @@ with p1_call AS (
           ,get_json_object(consideration[2], "$.identifier") AS evt_royalty_identifier
           ,e.evt_index
       FROM p2_call c
-            inner join {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }} e
+            INNER JOIN {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }} e
             ON e.evt_tx_hash = c.tx_hash
             AND e.offerer = concat('0x',SUBSTR(c.offerer,3,40))
             AND get_json_object(e.offer[0], "$.token") = c.offer_token
@@ -446,7 +446,7 @@ with p1_call AS (
           STRING) AS unique_trade_id,
           a.zone
       FROM p2_transfer_level a
-        inner join {{ source('ethereum', 'transactions') }} tx
+        INNER JOIN {{ source('ethereum', 'transactions') }} tx
             ON tx.hash = a.tx_hash
             {% if NOT is_incremental() %}
             AND tx.block_number > 14801608
@@ -545,7 +545,7 @@ with p1_call AS (
         where evt_block_time >= (SELECT max(block_time) FROM {{ this }})
         {% endif %}
         ) e
-        inner join p3_call c ON c.tx_hash = e.evt_tx_hash
+        INNER JOIN p3_call c ON c.tx_hash = e.evt_tx_hash
         UNION ALL
         SELECT c.main_type
             ,c.tx_hash
@@ -569,7 +569,7 @@ with p1_call AS (
           where evt_block_time >= (SELECT max(block_time) FROM {{ this }})
           {% endif %}
           ) e
-        inner join p3_call c ON c.tx_hash = e.evt_tx_hash
+        INNER JOIN p3_call c ON c.tx_hash = e.evt_tx_hash
         )
 
 
@@ -703,7 +703,7 @@ with p1_call AS (
           STRING) AS unique_trade_id,
           a.zone
       FROM p3_txn_level a
-        inner join {{ source('ethereum', 'transactions') }} tx
+        INNER JOIN {{ source('ethereum', 'transactions') }} tx
             ON tx.hash = a.tx_hash
             {% if NOT is_incremental() %}
             AND tx.block_number > 14801608
@@ -934,7 +934,7 @@ with p1_call AS (
           STRING) AS unique_trade_id,
           a.zone
     FROM p4_transfer_level a
-    inner join {{ source('ethereum', 'transactions') }} tx
+    INNER JOIN {{ source('ethereum', 'transactions') }} tx
         ON tx.hash = a.tx_hash
         {% if NOT is_incremental() %}
         AND tx.block_number > 14801608

@@ -72,10 +72,10 @@ with cryptopunks_bids_and_sales AS (
             , a.evt_tx_hash
     FROM cryptopunks_bids_and_sales a
 
-    join {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_Transfer') }} b
+    JOIN {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_Transfer') }} b
     ON a.from_address = b.`FROM` AND a.evt_block_number = b.evt_block_number AND a.evt_index = (b.evt_index+1)
 
-    left outer join cryptopunks_bids_and_sales c
+    left outer JOIN cryptopunks_bids_and_sales c
     ON a.punk_id = c.punk_id AND c.event_type = "PunkBidEntered" AND c.punk_id_event_number < a.punk_id_event_number AND c.bid_from_address = b.`to`
 
     where a.sale_price = 0 AND a.to_address = '0x0000000000000000000000000000000000000000'
@@ -94,7 +94,7 @@ with cryptopunks_bids_and_sales AS (
             , a.evt_block_time
             , a.evt_tx_hash
     FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkBought') }} a
-    left outer join {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkTransfer') }} b
+    left outer JOIN {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkTransfer') }} b
     ON a.`punkIndex` = b.`punkIndex`
         AND a.`toAddress` = b.`FROM`
         AND b.`FROM` = '0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2'
@@ -147,7 +147,7 @@ FROM
     SELECT * FROM regular_sales
 ) a
 
-inner join {{ source('ethereum', 'transactions') }} tx ON a.evt_tx_hash = tx.hash
+INNER JOIN {{ source('ethereum', 'transactions') }} tx ON a.evt_tx_hash = tx.hash
 {% if is_incremental() %}
     AND tx.block_time >= date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}

@@ -100,8 +100,8 @@ with
         ,spot_price
         ,coalesce(t1.update_time, t2.update_time, t3.update_time) AS latest_update_time
     FROM latest_spot_price t1
-    full join latest_delta t2 ON t1.pool_address = t2.pool_address
-    full join latest_pool_fee t3 ON t1.pool_address = t3.pool_address or t2.pool_address = t3.pool_address
+    full JOIN latest_delta t2 ON t1.pool_address = t2.pool_address
+    full JOIN latest_pool_fee t3 ON t1.pool_address = t3.pool_address or t2.pool_address = t3.pool_address
 )
 
 , initial_settings AS (
@@ -132,7 +132,7 @@ with
         ,coalesce(t1.spot_price, t2.spot_price, t3.spot_price) AS spot_price
         ,coalesce(t1.latest_update_time,t3.creation_block_time) AS latest_update_time
         FROM latest_settings t1
-        full outer join initial_settings t3
+        full outer JOIN initial_settings t3
             ON t1.pool_address = t3.pool_address
         LEFT JOIN {{ this }} t2
             ON t1.pool_address = t2.pool_address

@@ -46,7 +46,7 @@ with iv_offer_consideration AS (
     FROM
     (
         SELECT *
-            ,posexplode(offer) AS (offer_idx, offer_item)
+            , posexplode(offer) AS (offer_idx, offer_item)
         FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }}
     )
     UNION ALL
@@ -96,7 +96,7 @@ with iv_offer_consideration AS (
         FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }}
     )
 )
-,iv_base_pairs AS (
+, iv_base_pairs AS (
     SELECT a.*
             , CASE WHEN offer_first_item_type = 'erc20' THEN 'offer accepted'
                 WHEN offer_first_item_type in ('erc721', 'erc1155') THEN 'buy'

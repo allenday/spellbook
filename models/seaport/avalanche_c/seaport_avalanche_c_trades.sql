@@ -235,7 +235,7 @@ with source_avalanche_c_transactions AS (
           ,agg.contract_address AS aggregator_address
           ,sub_idx
   FROM iv_nfts a
-  inner join source_avalanche_c_transactions t ON t.hash = a.tx_hash
+  INNER JOIN source_avalanche_c_transactions t ON t.hash = a.tx_hash
   LEFT JOIN ref_tokens_nft n ON n.contract_address = nft_contract_address
   LEFT JOIN ref_tokens_erc20 e ON e.contract_address = CASE WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_alternative_token_address}}'
                                                             ELSE a.token_contract_address

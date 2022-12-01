@@ -97,7 +97,7 @@ new_router AS (
                     cast(get_json_object(quote,'$.maxBaseTokenAmount') AS float) / power(10, tp.decimals) * tp.price,
                     cast(get_json_object(quote,'$.maxQuoteTokenAmount') AS float) / power(10, mp.decimals) * mp.price) END AS amount_usd
     FROM {{ source('hashflow_ethereum', 'router_call_tradesinglehop') }} t
-    inner join ethereum_transactions tx ON tx.hash = t.call_tx_hash
+    INNER JOIN ethereum_transactions tx ON tx.hash = t.call_tx_hash
     LEFT JOIN hashflow_pool_evt_trade l ON l.txid = ('0x' || SUBSTRING(get_json_object(quote,'$.txid') FROM 3))
     LEFT JOIN prices_usd tp ON tp.minute = date_trunc('minute', t.call_block_time)
         AND tp.contract_address =
@@ -163,8 +163,8 @@ legacy_router_w_integration AS (
                 taker_token_amount / power(10, tp.decimals) * tp.price,
                 maker_token_amount / power(10, mp.decimals) * mp.price) END AS amount_usd
     FROM ethereum_traces t
-    inner join ethereum_transactions tx ON tx.hash = t.tx_hash
-    LEFT JOIN event_decoding_legacy_router l ON l.tx_id = SUBSTRING(t.input, 325, 32) -- join ON tx_id 1:1, no dup
+    INNER JOIN ethereum_transactions tx ON tx.hash = t.tx_hash
+    LEFT JOIN event_decoding_legacy_router l ON l.tx_id = SUBSTRING(t.input, 325, 32) -- JOIN ON tx_id 1:1, no dup
     LEFT JOIN prices_usd tp ON tp.minute = date_trunc('minute', t.block_time)
         AND tp.contract_address =
             CASE WHEN SUBSTRING(input, 81, 20) = '0x0000000000000000000000000000000000000000'
@@ -203,7 +203,7 @@ legacy_router_w_integration AS (
                 taker_token_amount / power(10, tp.decimals) * tp.price,
                 maker_token_amount / power(10, mp.decimals) * mp.price) END AS amount_usd
     FROM ethereum_traces t
-    inner join ethereum_transactions tx ON tx.hash = t.tx_hash
+    INNER JOIN ethereum_transactions tx ON tx.hash = t.tx_hash
     LEFT JOIN event_decoding_legacy_router l ON l.tx_id = SUBSTRING(t.input, 485, 32)
     LEFT JOIN prices_usd tp ON tp.minute = date_trunc('minute', t.block_time)
         AND tp.contract_address =
@@ -322,7 +322,7 @@ new_pool AS (
     -- same trade event abi, effectively only FROM table hashflow.pool_evt_trade since 2022-04-09
     SELECT
         l.evt_index AS composite_index,
-        NULL AS source, -- no join ON call FOR this batch, refer to metabase FOR source info
+        NULL AS source, -- no JOIN ON call FOR this batch, refer to metabase FOR source info
         tx.block_time AS block_time,
         tx.hash AS tx_hash,
         true AS fill_status, -- without call we are only logging successful fills
@@ -342,7 +342,7 @@ new_pool AS (
                 l.`baseTokenAmount` / power(10, tp.decimals) * tp.price,
                 l.`quoteTokenAmount` / power(10, mp.decimals) * mp.price) AS amount_usd
     FROM hashflow_pool_evt_trade l
-    inner join ethereum_transactions tx ON tx.hash = l.evt_tx_hash
+    INNER JOIN ethereum_transactions tx ON tx.hash = l.evt_tx_hash
     LEFT JOIN prices_usd tp ON tp.minute = date_trunc('minute', tx.block_time)
         AND tp.contract_address =
             CASE WHEN l.`baseToken` = '0x0000000000000000000000000000000000000000'

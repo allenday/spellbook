@@ -137,7 +137,7 @@ uid_to_app_id AS (
         get_json_object(trades.col, '$.appData') AS app_data,
         get_json_object(trades.col, '$.receiver') AS receiver
     FROM reduced_order_ids order_ids
-             join trade_data trades
+             JOIN trade_data trades
                   ON evt_tx_hash = call_tx_hash
                       AND order_ids.pos = trades.pos
 ),

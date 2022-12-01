@@ -75,7 +75,7 @@ with base_level AS (
     bl.contract_address
     , t.symbol
   FROM base_level AS bl
-  join {{ ref('tokens_optimism_erc20') }} AS t
+  JOIN {{ ref('tokens_optimism_erc20') }} AS t
     ON bl.contract_address = t.contract_address
   GROUP BY 1, 2
 
@@ -85,7 +85,7 @@ with base_level AS (
     bl.contract_address
     , t.name AS symbol
   FROM base_level AS bl
-  join {{ ref('tokens_optimism_nft') }} AS t
+  JOIN {{ ref('tokens_optimism_nft') }} AS t
     ON bl.contract_address = t.contract_address
   GROUP BY 1, 2
 )

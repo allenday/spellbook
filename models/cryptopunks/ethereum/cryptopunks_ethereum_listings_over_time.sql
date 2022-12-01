@@ -67,7 +67,7 @@ with all_listings AS (
     SELECT  day
             , punk_id
     FROM all_days
-    full outer join all_punk_ids ON true
+    full outer JOIN all_punk_ids ON true
 )
 , all_punk_events AS (
     SELECT *
@@ -86,7 +86,7 @@ with all_listings AS (
             , a.punk_id
             , CASE WHEN event_type = 'Listing' THEN 'Active' ELSE 'Not Listed' END AS listed_bool
     FROM all_punk_events a
-    inner join (    SELECT date_trunc('day', evt_block_time) AS day
+    INNER JOIN (    SELECT date_trunc('day', evt_block_time) AS day
                             , punk_id
                             , max(punk_event_index) AS max_event
                     FROM all_punk_events
@@ -104,7 +104,7 @@ FROM
                 , a.punk_id
                 , listed_bool
         FROM base_data  a
-        left outer join aggregated_punk_on_off_data  b
+        left outer JOIN aggregated_punk_on_off_data  b
         ON a.day = b.day AND a.punk_id = b.punk_id
     ) c
 ) d

@@ -56,7 +56,7 @@ with registrations AS (
             , n.node
             , ROW_NUMBER() OVER (PARTITION BY r.tx_hash ORDER BY (r.evt_index - n.evt_index) ASC) AS ordering
             FROM registrations r
-            inner join node_info n
+            INNER JOIN node_info n
             ON r.block_number = n.block_number
             AND r.tx_hash = n.tx_hash
             AND r.evt_index > n.evt_index --register event comes after node event

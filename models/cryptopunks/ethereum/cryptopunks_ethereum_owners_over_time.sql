@@ -338,7 +338,7 @@ with original_holders AS (
 
     SELECT  day
             , wallet
-    FROM all_days full outer join all_wallets ON true
+    FROM all_days full outer JOIN all_wallets ON true
 )
 , combined_table AS (
     SELECT base_data.day

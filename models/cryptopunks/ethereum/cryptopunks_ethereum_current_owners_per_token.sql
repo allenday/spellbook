@@ -10041,7 +10041,7 @@ FROM
                 , CASE WHEN topic1 = '0x05af636b70da6819000c49f85b21fa82081c632069bb626f30932034099107d8' THEN cast(bytea2numeric_v2(SUBSTRING(data FROM 3)) AS int)
                     ELSE cast(bytea2numeric_v2(SUBSTRING(topic2 FROM 3)) AS int) END AS punk_id
         FROM {{ source('erc20_ethereum', 'evt_transfer') }} a
-        inner join {{ source('ethereum', 'logs') }} b ON a.evt_tx_hash = b.tx_hash -- AND topic1 = '0x58e5d5a525e3b40bc15abaa38b5882678db1ee68befd2f60bafe3a7fd06db9e3'
+        INNER JOIN {{ source('ethereum', 'logs') }} b ON a.evt_tx_hash = b.tx_hash -- AND topic1 = '0x58e5d5a525e3b40bc15abaa38b5882678db1ee68befd2f60bafe3a7fd06db9e3'
         where a.contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks contract
             AND topic1 in   (   '0xb0e0a660b4e50f26f0b7ce75c24655fc76cc66e3334a54ff410277229fa10bd4' -- PunkNoLongerForSale
                                 , '0x58e5d5a525e3b40bc15abaa38b5882678db1ee68befd2f60bafe3a7fd06db9e3' -- PunkBought

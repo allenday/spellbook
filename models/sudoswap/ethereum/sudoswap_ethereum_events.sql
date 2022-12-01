@@ -89,13 +89,13 @@ WITH
         ) s
     )
 
-    -- this join should be removed in the future WHEN more call trace info is added to the _call_ tables, we need the call_from field to track down the eth traces.
+    -- this JOIN should be removed in the future WHEN more call trace info is added to the _call_ tables, we need the call_from field to track down the eth traces.
     , swaps_with_calldata AS (
         SELECT s.*
         , tr.from AS call_from
         , CASE WHEN called_from_router = true THEN tr.from ELSE tr.to END AS project_contract_address -- either the router or the pool if called directly
         FROM swaps s
-        inner join {{ source('ethereum', 'traces') }} tr
+        INNER JOIN {{ source('ethereum', 'traces') }} tr
         ON tr.success AND s.call_block_number = tr.block_number AND s.call_tx_hash = tr.tx_hash AND s.call_trace_address = tr.trace_address
         {% if is_incremental() %}
         -- this filter will only be applied ON an incremental run. We only want to update with new swaps.

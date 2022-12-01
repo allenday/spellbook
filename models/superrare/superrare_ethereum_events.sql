@@ -200,7 +200,7 @@ with all_superrare_sales AS (
                 ELSE '' END AS auction_house_flag
             , ROW_NUMBER() OVER (PARTITION BY evt.contract_address, evt.tokenId ORDER BY evt.evt_block_time DESC) AS transaction_rank
     FROM {{ source('erc721_ethereum', 'evt_transfer') }} evt
-    inner join all_superrare_sales tsfa
+    INNER JOIN all_superrare_sales tsfa
         ON evt.contract_address = tsfa.contract_address
         AND evt.tokenId = tsfa.tokenId
         AND tsfa.seller = lower('0x8c9f364bf7a56ed058fc63ef81c6cf09c833e656')
@@ -312,7 +312,7 @@ SELECT
     END AS royalty_fee_currency_symbol,
     'superrare' || '-' || a.evt_tx_hash || '-' || CAST(a.tokenId AS VARCHAR(100)) || '-' || CAST(a.seller AS VARCHAR(100)) || '-' || COALESCE(a.contract_address) || '-' || 'Trade' AS unique_trade_id
 FROM all_superrare_sales a
-left outer join
+left outer JOIN
     (
         SELECT
             minute
@@ -325,26 +325,26 @@ left outer join
             {% endif %}
     ) ep
     ON date_trunc('minute', a.evt_block_time) = ep.minute
-left outer join rare_token_price_eth rp
+left outer JOIN rare_token_price_eth rp
     ON date_trunc('week', a.evt_block_time) = rp.week
-inner join {{ source('ethereum', 'transactions') }} t
+INNER JOIN {{ source('ethereum', 'transactions') }} t
     ON a.evt_tx_hash = t.hash
     {% if is_incremental() %}
     AND t.block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
-left outer join {{ source('erc721_ethereum', 'evt_transfer') }} evt ON evt.contract_address = a.contract_address
+left outer JOIN {{ source('erc721_ethereum', 'evt_transfer') }} evt ON evt.contract_address = a.contract_address
     AND evt.tokenId = a.tokenId
     AND evt.from = '0x0000000000000000000000000000000000000000'
     {% if is_incremental() %}
     AND evt.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
-left outer join {{ source('erc20_ethereum', 'evt_transfer') }} erc20 ON erc20.contract_address = a.contract_address
+left outer JOIN {{ source('erc20_ethereum', 'evt_transfer') }} erc20 ON erc20.contract_address = a.contract_address
     AND erc20.value = a.tokenId
     AND erc20.from = '0x0000000000000000000000000000000000000000'
     {% if is_incremental() %}
     AND erc20.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
-left outer join transfers_for_tokens_sold_from_auction po -- if sold FROM auction house previous owner
+left outer JOIN transfers_for_tokens_sold_from_auction po -- if sold FROM auction house previous owner
     ON a.evt_tx_hash = po.evt_tx_hash
 where (a.amount / 1e18) > 0
 ;

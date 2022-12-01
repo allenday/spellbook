@@ -3,7 +3,7 @@ alias='fees') }}
 
 SELECT
     block_time,
-    CASE WHEN size(trace_address) = 1 THEN array(3::bigint) -- FOR single row join
+    CASE WHEN size(trace_address) = 1 THEN array(3::bigint) -- FOR single row JOIN
     WHEN size(trace_address) = 2 THEN array(trace_address[0])
     WHEN size(trace_address) = 3 THEN array(trace_address[0], trace_address[1])
     END AS trace_address,

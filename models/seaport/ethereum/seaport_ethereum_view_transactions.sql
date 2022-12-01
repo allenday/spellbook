@@ -30,7 +30,7 @@ with iv_availadv AS (
              where call_success
             )
 )
-,iv_transfer_level_pre AS (
+, iv_transfer_level_pre AS (
     SELECT 'normal' AS main_type
           , 'offer' AS sub_type
           , rn + 1 AS sub_idx
@@ -69,7 +69,7 @@ with iv_availadv AS (
           , evt_block_number AS block_number
           , evt_index
       FROM (SELECT *
-                  ,posexplode(consideration) AS (rn, each_consideration)
+                  , posexplode(consideration) AS (rn, each_consideration)
               FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }} a
              where 1=1
               AND recipient != '0x0000000000000000000000000000000000000000'
@@ -91,13 +91,13 @@ with iv_availadv AS (
           , a.evt_block_number AS block_number
           , a.evt_index
      FROM (SELECT *
-                  ,posexplode(consideration) AS (rn, each_consideration)
+                  , posexplode(consideration) AS (rn, each_consideration)
               FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }} a
              where 1=1
                AND recipient = '0x0000000000000000000000000000000000000000'
            ) a
-          inner join  (SELECT *
-                              ,posexplode(offer) AS (rn, each_offer)
+          INNER JOIN  (SELECT *
+                              , posexplode(offer) AS (rn, each_offer)
                           FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }} a
                          where 1=1
                            AND recipient = '0x0000000000000000000000000000000000000000'

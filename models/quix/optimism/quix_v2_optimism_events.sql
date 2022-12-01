@@ -76,7 +76,7 @@ with events_raw AS (
       ,tr.value
       ,tr.to
     FROM events_raw AS er
-    join {{ ref('transfers_optimism_eth') }} AS tr
+    JOIN {{ ref('transfers_optimism_eth') }} AS tr
       ON er.tx_hash = tr.tx_hash
       AND er.block_number = tr.tx_block_number
       AND tr.value_decimal > 0
@@ -103,7 +103,7 @@ with events_raw AS (
       ,erc20.value
       ,erc20.to
     FROM events_raw AS er
-    join {{ source('erc20_optimism', 'evt_transfer') }} AS erc20
+    JOIN {{ source('erc20_optimism', 'evt_transfer') }} AS erc20
       ON er.tx_hash = erc20.evt_tx_hash
       AND er.block_number = erc20.evt_block_number
       AND erc20.value is NOT NULL
@@ -174,7 +174,7 @@ SELECT
             THEN 'ETH' ELSE t1.symbol END
         END AS royalty_fee_currency_symbol
 FROM events_raw AS er
-join {{ source('optimism', 'transactions') }} AS tx
+JOIN {{ source('optimism', 'transactions') }} AS tx
     ON er.tx_hash = tx.hash
     AND er.block_number = tx.block_number
     {% if NOT is_incremental() %}

@@ -32,7 +32,7 @@ with dexs AS (
             t.evt_index
         FROM
             {{ source('sushi_ethereum', 'Pair_evt_Swap') }} t
-            inner join {{ source('sushi_ethereum', 'Factory_evt_PairCreated') }} f
+            INNER JOIN {{ source('sushi_ethereum', 'Factory_evt_PairCreated') }} f
                 ON f.pair = t.contract_address
 )
 SELECT
@@ -67,7 +67,7 @@ SELECT
     dexs.trace_address,
     dexs.evt_index
 FROM dexs
-inner join {{ source('ethereum', 'transactions') }} tx
+INNER JOIN {{ source('ethereum', 'transactions') }} tx
     ON dexs.tx_hash = tx.hash
     {% if NOT is_incremental() %}
     AND tx.block_time >= '{{project_start_date}}'

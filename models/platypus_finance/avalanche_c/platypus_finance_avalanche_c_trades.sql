@@ -60,7 +60,7 @@ SELECT
 	, s.evt_index AS evt_index
 FROM
     {{ source('platypus_finance_avalanche_c', 'Pool_evt_Swap') }} s
-inner join {{ source('avalanche_c', 'transactions') }} tx
+INNER JOIN {{ source('avalanche_c', 'transactions') }} tx
     ON tx.hash = s.evt_tx_hash
     {% if NOT is_incremental() %}
     AND tx.block_time >= '{{project_start_date}}'

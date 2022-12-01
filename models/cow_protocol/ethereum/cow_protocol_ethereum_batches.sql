@@ -31,12 +31,12 @@ batch_counts AS (
            sum(CASE WHEN selector = '0x2e1a7d4d' THEN 1 ELSE 0 END) AS unwraps,
            sum(CASE WHEN selector = '0x095ea7b3' THEN 1 ELSE 0 END) AS token_approvals
     FROM {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Settlement') }} s
-        left outer join {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Interaction') }} i
+        left outer JOIN {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Interaction') }} i
             ON i.evt_tx_hash = s.evt_tx_hash
             {% if is_incremental() %}
             AND i.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
-        join cow_protocol_ethereum.solvers
+        JOIN cow_protocol_ethereum.solvers
             ON solver = address
     {% if is_incremental() %}
     WHERE s.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
@@ -52,7 +52,7 @@ batch_values AS (
         sum(fee_usd)    AS fee_value,
         price           AS eth_price
     FROM {{ ref('cow_protocol_ethereum_trades') }}
-        left outer join {{ source('prices', 'usd') }} AS p
+        left outer JOIN {{ source('prices', 'usd') }} AS p
             ON p.contract_address = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
             AND p.minute = date_trunc('minute', block_time)
             AND blockchain = 'ethereum'
@@ -93,9 +93,9 @@ combined_batch_info AS (
         unwraps,
         token_approvals
     FROM batch_counts b
-        join batch_values t
+        JOIN batch_values t
             ON b.evt_tx_hash = t.tx_hash
-        inner join {{ source('ethereum', 'transactions') }} tx
+        INNER JOIN {{ source('ethereum', 'transactions') }} tx
             ON evt_tx_hash = hash
             {% if is_incremental() %}
             AND block_time >= date_trunc("day", now() - INTERVAL '1 week')

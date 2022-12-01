@@ -26,7 +26,7 @@ with eth_transfers AS (
         ,SUBSTRING(t.data, 1, 10) AS tx_method_id
         ,r.tx_hash || '-' || r.trace_address::STRING AS unique_transfer_id
     FROM {{ source('optimism', 'traces') }} AS r
-    join {{ source('optimism', 'transactions') }} AS t
+    JOIN {{ source('optimism', 'transactions') }} AS t
         ON r.tx_hash = t.hash
     where
         (r.call_type NOT in ('delegatecall', 'callcode', 'staticcall') or r.call_type is NULL)
@@ -55,7 +55,7 @@ with eth_transfers AS (
         ,SUBSTRING(t.data, 1, 10) AS tx_method_id
         ,r.evt_tx_hash || '-' || array(r.evt_index)::STRING AS unique_transfer_id
     FROM {{ source('erc20_optimism', 'evt_transfer') }} AS r
-    join {{ source('optimism', 'transactions') }} AS t
+    JOIN {{ source('optimism', 'transactions') }} AS t
         ON r.evt_tx_hash = t.hash
     where
         r.contract_address = lower('0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000')
