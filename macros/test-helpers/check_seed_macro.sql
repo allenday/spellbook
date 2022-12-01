@@ -7,37 +7,37 @@
     with matched_records as (
         select
             {%- for column_name in seed_matching_columns %}
-            seed.{{column_name}} as seed_{{column_name}},
-            model_sample.{{column_name}} as model_{{column_name}},
+            seed.{{ column_name }} as seed_{{ column_name }},
+            model_sample.{{ column_name }} as model_{{ column_name }},
             {% endfor -%}
             {%- for column_name in seed_check_columns %}
-            seed.{{column_name}} as seed_{{column_name}},
-            model_sample.{{column_name}} as model_{{column_name}} {% if not loop.last %},{% endif %}
+            seed.{{ column_name }} as seed_{{ column_name }},
+            model_sample.{{ column_name }} as model_{{ column_name }} {% if not loop.last %},{% endif %}
             {% endfor -%}
-        from {{seed_file}} seed
+        from {{ seed_file }} seed
         left join (
             select
                 {%- for column_name in seed_matching_columns %}
-                model.{{column_name}},
+                model.{{ column_name }},
                 {% endfor -%}
                 {%- for column_name in seed_check_columns %}
-                model.{{column_name}} {% if not loop.last %},{% endif %}
+                model.{{ column_name }} {% if not loop.last %},{% endif %}
                 {% endfor -%}
-            from  {{seed_file}} seed
-            inner join {{model}} model
+            from  {{ seed_file }} seed
+            inner join {{ model }} model
                 ON 1=1
                     {%- for column_name in seed_matching_columns %}
-                    AND seed.{{column_name}} = model.{{column_name}}
+                    AND seed.{{ column_name }} = model.{{ column_name }}
                     {% endfor -%}
             ) model_sample
         ON 1=1
             {%- for column_name in seed_matching_columns %}
-            AND seed.{{column_name}} = model_sample.{{column_name}}
+            AND seed.{{ column_name }} = model_sample.{{ column_name }}
             {% endfor -%}
         WHERE 1=1
               {%- if filter is not none %}
                   {%- for col, val in filter.items() %}
-                      {% if val is not none %} AND seed.{{col}} = '{{val}}' {% endif %}
+                      {% if val is not none %} AND seed.{{ col }} = '{{ val }}' {% endif %}
                   {% endfor -%}
               {% endif -%}
     ),
@@ -46,15 +46,15 @@
     matching_count_test as (
         select
             'matched records count' as test_description,
-            count(model_{{seed_matching_columns[0]}}) as `result (model)`,
+            count(model_{{ seed_matching_columns[0] }}) as `result (model)`,
             1 as `expected (seed)`,
             {%- for column_name in seed_matching_columns %}
-            seed_{{column_name}} as {{column_name}}{% if not loop.last %},{% endif %}
+            seed_{{ column_name }} as {{ column_name }}{% if not loop.last %},{% endif %}
             {% endfor -%}
         from matched_records
         GROUP BY
             {%- for column_name in seed_matching_columns %}
-            seed_{{column_name}} {% if not loop.last %},{% endif %}
+            seed_{{ column_name }} {% if not loop.last %},{% endif %}
             {% endfor -%}
     ) ,
 
@@ -62,14 +62,14 @@
     (
         {%- for checked_column in seed_check_columns %}
         select
-            'equality test: {{checked_column}}' as test_description
+            'equality test: {{ checked_column }}' as test_description
             ,test.*
         from (
             select
-                model_{{checked_column}} as `result (model)`,
-                seed_{{checked_column}} as `expected (seed)`,
+                model_{{ checked_column }} as `result (model)`,
+                seed_{{ checked_column }} as `expected (seed)`,
                 {%- for column_name in seed_matching_columns %}
-                seed_{{column_name}} {% if not loop.last %},{% endif %}
+                seed_{{ column_name }} {% if not loop.last %},{% endif %}
                 {% endfor -%}
             from matched_records
         ) test
