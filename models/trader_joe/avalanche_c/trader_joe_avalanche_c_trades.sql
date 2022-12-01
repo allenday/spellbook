@@ -55,8 +55,8 @@ SELECT
     ,dexs.token_sold_amount_raw
     ,coalesce(
         dexs.amount_usd
-        ,(dexs.token_bought_amount_raw / power(10, p_bought.decimals)) * p_bought.price
-        ,(dexs.token_sold_amount_raw / power(10, p_sold.decimals)) * p_sold.price
+        , (dexs.token_bought_amount_raw / power(10, p_bought.decimals)) * p_bought.price
+        , (dexs.token_sold_amount_raw / power(10, p_sold.decimals)) * p_sold.price
     ) AS amount_usd
     ,dexs.token_bought_address
     ,dexs.token_sold_address

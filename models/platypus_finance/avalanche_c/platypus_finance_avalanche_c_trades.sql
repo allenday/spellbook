@@ -38,7 +38,7 @@ SELECT
 	, CAST(s.fromAmount AS DECIMAL(38,0)) AS token_sold_amount_raw
     , coalesce(
         (s.toAmount / power(10, prices_b.decimals)) * prices_b.price
-        ,(s.fromAmount / power(10, prices_s.decimals)) * prices_s.price
+        , (s.fromAmount / power(10, prices_s.decimals)) * prices_s.price
     ) AS amount_usd
 	, s.toToken AS token_bought_address
 	, s.fromToken AS token_sold_address

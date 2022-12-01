@@ -71,7 +71,7 @@ perps AS (
 		,ABS(s.tradeSize) / 1e18 * p.price AS volume_usd
 		,s.fee / 1e18 AS fee_usd
 		,s.margin / 1e18 AS margin_usd
-		,(ABS(s.tradeSize) / 1e18 * p.price) / (s.margin/1e18) AS leverage_ratio
+		, (ABS(s.tradeSize) / 1e18 * p.price) / (s.margin/1e18) AS leverage_ratio
 
 		,CASE
 		WHEN (CAST(s.margin AS DOUBLE) >= 0 AND CAST(s.size AS DOUBLE) = 0 AND CAST(s.tradeSize AS DOUBLE) < 0 AND s.size != s.tradeSize) THEN 'close'

@@ -57,8 +57,8 @@ SELECT
     , CAST(fraxswap_dex.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw
     , CAST(fraxswap_dex.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw
     ,coalesce(fraxswap_dex.amount_usd
-            ,(fraxswap_dex.token_bought_amount_raw / power(10, p_bought.decimals)) * p_bought.price
-            ,(fraxswap_dex.token_sold_amount_raw / power(10, p_sold.decimals)) * p_sold.price
+            , (fraxswap_dex.token_bought_amount_raw / power(10, p_bought.decimals)) * p_bought.price
+            , (fraxswap_dex.token_sold_amount_raw / power(10, p_sold.decimals)) * p_sold.price
      )                                                                  AS amount_usd
     ,fraxswap_dex.token_bought_address
     ,fraxswap_dex.token_sold_address

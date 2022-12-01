@@ -188,7 +188,7 @@ with iv_availadv AS (
                         when max(case when item_type in ('0','1') then item_type end) over (partition by tx_hash) = '0' then 'click buy now'
                         else 'offer accepted'
                   end AS category
-                  ,case when (item_type, sub_idx) in (('2',1),('3',1)) then True
+                  ,case when (item_type, sub_idx) in (('2',1), ('3',1)) then True
                         when main_type = 'advanced' AND sub_idx = 3 then True
                   end AS first_item
               FROM iv_transfer_level a

@@ -114,7 +114,7 @@ perps AS (
 		END AS market
 
 		,contract_address AS market_address
-		,(margin / 1e8) * (leverage/1e8) AS volume_usd
+		, (margin / 1e8) * (leverage/1e8) AS volume_usd
 		,fee / 1e8 AS fee_usd
 		,margin / 1e8 AS margin_usd
 

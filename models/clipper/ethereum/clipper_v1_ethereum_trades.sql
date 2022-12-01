@@ -54,7 +54,7 @@ SELECT
     , CAST(e.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw
     ,coalesce(
         (e.token_bought_amount_raw / power(10, p_bought.decimals)) * p_bought.price
-        ,(e.token_sold_amount_raw / power(10, p_sold.decimals)) * p_sold.price
+        , (e.token_sold_amount_raw / power(10, p_sold.decimals)) * p_sold.price
     ) AS amount_usd
     ,e.token_bought_address
     ,e.token_sold_address

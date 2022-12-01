@@ -94,8 +94,8 @@ with p1_call AS (
  / nft_transfer_count AS avg_original_amount
           ,sum(case when fee_royalty_yn = 'fee' then original_amount end) over (partition by tx_hash, evt_index) / nft_transfer_count AS avg_fee_amount
           ,sum(case when fee_royalty_yn = 'royalty' then original_amount end) over (partition by tx_hash, evt_index) / nft_transfer_count AS avg_royalty_amount
-          ,(max(case when fee_royalty_yn = 'fee' then receiver end) over (partition by tx_hash, evt_index)) AS avg_fee_receive_address
-          ,(max(case when fee_royalty_yn = 'royalty' then receiver end) over (partition by tx_hash, evt_index)) AS avg_royalty_receive_address
+          , (max(case when fee_royalty_yn = 'fee' then receiver end) over (partition by tx_hash, evt_index)) AS avg_fee_receive_address
+          , (max(case when fee_royalty_yn = 'royalty' then receiver end) over (partition by tx_hash, evt_index)) AS avg_royalty_receive_address
           ,a.*
       FROM (SELECT case when purchase_method = 'Offer Accepted' AND sub_type = 'consideration' AND fee_royalty_idx = 1 then 'fee'
                         when purchase_method = 'Offer Accepted' AND sub_type = 'consideration' AND fee_royalty_idx = 2 then 'royalty'
@@ -109,7 +109,7 @@ with p1_call AS (
                    end AS order_type
                   ,a.*
               FROM (SELECT (count(case when item_type in ('2','3') then 1 end) over (partition by tx_hash, evt_index)) AS nft_transfer_count
-                          ,(sum(case when item_type in ('0','1') then 1 end) over (partition by tx_hash, evt_index, sub_type order by sub_idx)) AS fee_royalty_idx
+                          , (sum(case when item_type in ('0','1') then 1 end) over (partition by tx_hash, evt_index, sub_type order by sub_idx)) AS fee_royalty_idx
                           ,case when max(case when (sub_type,sub_idx,item_type) in (('offer',0,'1')) then 1 else 0 end) over (partition by tx_hash) = 1 then 'Offer Accepted'
                                 else 'Buy'
                            end AS purchase_method
@@ -204,7 +204,7 @@ with p1_call AS (
           ,a.royalty_amount AS royalty_fee_amount_raw
           ,a.royalty_amount / power(10,t1.decimals) AS royalty_fee_amount
           ,a.royalty_amount / power(10,t1.decimals) * p1.price AS royalty_fee_amount_usd
-          ,(a.royalty_amount / a.original_amount * 100)::STRING  AS royalty_fee_percentage
+          , (a.royalty_amount / a.original_amount * 100)::STRING  AS royalty_fee_percentage
           ,a.royalty_receive_address AS royalty_fee_receive_address
           ,case when royalty_amount > 0 AND a.original_currency_contract =
           '0x0000000000000000000000000000000000000000' then 'ETH'
@@ -434,7 +434,7 @@ with p1_call AS (
           ,a.evt_royalty_amount AS royalty_fee_amount_raw
           ,a.evt_royalty_amount / power(10,t1.decimals) AS royalty_fee_amount
           ,a.evt_royalty_amount / power(10,t1.decimals) * p1.price AS royalty_fee_amount_usd
-          ,(a.evt_royalty_amount / a.attempt_amount * 100)::STRING  AS royalty_fee_percentage
+          , (a.evt_royalty_amount / a.attempt_amount * 100)::STRING  AS royalty_fee_percentage
           ,case when evt_royalty_amount > 0 then concat('0x',substr(evt_royalty_recipient,3,40)) end AS
           royalty_fee_receive_address
           ,case when evt_royalty_amount > 0 AND concat('0x',substr(a.evt_royalty_token,3,40)) =
@@ -582,8 +582,8 @@ with p1_call AS (
  / nft_transfer_count AS avg_original_amount
           ,sum(case when fee_royalty_yn = 'fee' then original_amount end) over (partition by tx_hash, evt_index) / nft_transfer_count AS avg_fee_amount
           ,sum(case when fee_royalty_yn = 'royalty' then original_amount end) over (partition by tx_hash, evt_index) / nft_transfer_count AS avg_royalty_amount
-          ,(max(case when fee_royalty_yn = 'fee' then receiver::STRING end) over (partition by tx_hash, evt_index)) AS avg_fee_receive_address
-          ,(max(case when fee_royalty_yn = 'royalty' then receiver::STRING end) over (partition by tx_hash, evt_index)) AS avg_royalty_receive_address
+          , (max(case when fee_royalty_yn = 'fee' then receiver::STRING end) over (partition by tx_hash, evt_index)) AS avg_fee_receive_address
+          , (max(case when fee_royalty_yn = 'royalty' then receiver::STRING end) over (partition by tx_hash, evt_index)) AS avg_royalty_receive_address
           ,a.*
       FROM (SELECT case when purchase_method = 'Offer Accepted' AND sub_type = 'consideration' AND fee_royalty_idx = 1 then 'fee'
                         when purchase_method = 'Offer Accepted' AND sub_type = 'consideration' AND fee_royalty_idx = 2 then 'royalty'
@@ -691,7 +691,7 @@ with p1_call AS (
           ,a.royalty_amount AS royalty_fee_amount_raw
           ,a.royalty_amount / power(10,t1.decimals) AS royalty_fee_amount
           ,a.royalty_amount / power(10,t1.decimals) * p1.price AS royalty_fee_amount_usd
-          ,(a.royalty_amount / a.attempt_amount * 100)::STRING  AS royalty_fee_percentage
+          , (a.royalty_amount / a.attempt_amount * 100)::STRING  AS royalty_fee_percentage
           ,case when royalty_amount > 0 then royalty_receive_address end AS
           royalty_fee_receive_address
           ,case when royalty_amount > 0 AND a.original_currency_contract =
@@ -923,7 +923,7 @@ with p1_call AS (
           ,a.evt_royalty_amount AS royalty_fee_amount_raw
           ,a.evt_royalty_amount / power(10,t1.decimals) AS royalty_fee_amount
           ,a.evt_royalty_amount / power(10,t1.decimals) * p1.price AS royalty_fee_amount_usd
-          ,(a.evt_royalty_amount / a.attempt_amount * 100)::STRING  AS royalty_fee_percentage
+          , (a.evt_royalty_amount / a.attempt_amount * 100)::STRING  AS royalty_fee_percentage
           ,case when evt_royalty_amount > 0 then concat('0x',substr(evt_royalty_recipient,3,40)) end AS
           royalty_fee_receive_address
           ,case when evt_royalty_amount > 0 AND concat('0x',substr(a.evt_royalty_token,3,40)) =

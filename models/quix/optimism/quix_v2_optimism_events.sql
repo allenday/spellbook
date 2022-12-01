@@ -167,7 +167,7 @@ SELECT
     ,tr.value AS royalty_fee_amount_raw
     ,tr.value / power(10, t1.decimals) AS royalty_fee_amount
     ,tr.value / power(10, t1.decimals) * p1.price AS royalty_fee_amount_usd
-    ,(tr.value / er.amount_raw * 100) AS royalty_fee_percentage
+    , (tr.value / er.amount_raw * 100) AS royalty_fee_percentage
     ,case when tr.value is NOT NULL then tr.to end AS royalty_fee_receive_address
     ,case when tr.value is NOT NULL
         then case when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
