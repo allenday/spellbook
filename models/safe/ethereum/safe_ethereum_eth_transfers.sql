@@ -28,7 +28,7 @@ join {{ ref('safe_ethereum_safes') }} s ON et.from = s.address
     AND (lower(et.call_type) NOT in ('delegatecall', 'callcode', 'staticcall') or et.call_type is NULL)
     AND cast(et.value AS decimal(38, 0)) > 0 -- value is of type STRING. exclude 0 value traces
 {% if NOT is_incremental() %}
-where et.block_time > '2018-11-24' -- for initial query optimisation
+where et.block_time > '2018-11-24' -- FOR initial query optimisation
 {% endif %}
 {% if is_incremental() %}
 -- to prevent potential counterfactual safe deployment issues we take a bigger interval
@@ -51,7 +51,7 @@ join {{ ref('safe_ethereum_safes') }} s ON et.to = s.address
     AND (lower(et.call_type) NOT in ('delegatecall', 'callcode', 'staticcall') or et.call_type is NULL)
     AND cast(et.value AS decimal(38, 0)) > 0 -- value is of type STRING. exclude 0 value traces
 {% if NOT is_incremental() %}
-where et.block_time > '2018-11-24' -- for initial query optimisation
+where et.block_time > '2018-11-24' -- FOR initial query optimisation
 {% endif %}
 {% if is_incremental() %}
 -- to prevent potential counterfactual safe deployment issues we take a bigger interval

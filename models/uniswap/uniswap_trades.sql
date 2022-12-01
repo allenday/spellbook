@@ -17,7 +17,7 @@
 
 SELECT *
 FROM (
-    {% for dex_model in uniswap_models %}
+    {% FOR dex_model in uniswap_models %}
     SELECT
         blockchain,
         project,

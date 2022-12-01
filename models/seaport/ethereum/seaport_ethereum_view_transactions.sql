@@ -259,10 +259,10 @@ with iv_availadv AS (
                 WHEN spc2.call_tx_hash is NOT NULL AND spc2.parameters:basicOrderType::integer between 16 AND 23 AND spc2.parameters:considerationIdentifier = a.nft_token_id THEN 'Individual Offer Accepted'
                 WHEN spc2.call_tx_hash is NOT NULL THEN 'Buy'
                 WHEN spc3.call_tx_hash is NOT NULL AND a.original_currency_contract = '0x0000000000000000000000000000000000000000' THEN 'Buy'
-                WHEN spc3.call_tx_hash is NOT NULL THEN 'Collection / Trait Offer Accepted' -- offer for collection
+                WHEN spc3.call_tx_hash is NOT NULL THEN 'Collection / Trait Offer Accepted' -- offer FOR collection
                 WHEN spc4.call_tx_hash is NOT NULL THEN 'Bulk Purchase' -- bundles of NFTs are purchased through aggregators or in a cart
                 WHEN spc5.call_tx_hash is NOT NULL THEN 'Bulk Purchase' -- bundles of NFTs are purchased through aggregators or in a cart
-                WHEN spc6.call_tx_hash is NOT NULL THEN 'Private Sale' -- sales for designated address
+                WHEN spc6.call_tx_hash is NOT NULL THEN 'Private Sale' -- sales FOR designated address
                 ELSE 'Buy'
            END AS order_type
 

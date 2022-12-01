@@ -12,7 +12,7 @@
 
 WITH  -- dune query here - https: / /dune.com/queries/1435985
 
--- this code follows the same logic AS dao_addresses_ethereum_aragon, Refer to that for comments ON code.
+-- this code follows the same logic AS dao_addresses_ethereum_aragon, Refer to that FOR comments ON code.
 
 aragon_daos AS (
         SELECT

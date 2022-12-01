@@ -181,11 +181,11 @@ WITH
                 LEFT JOIN asset_recipient_update aru ON swaps.call_block_time >= aru.evt_block_time AND swaps.contract_address = aru.contract_address
             ) a
         ) b
-        WHERE ordering = 1 --we want to keep the most recent pool_fee AND protocol fee for each individual call (trade)
+        WHERE ordering = 1 --we want to keep the most recent pool_fee AND protocol fee FOR each individual call (trade)
     )
 
     ,swaps_w_traces AS (
-        -- we traces to get NFT AND ETH transfer data because sudoswap doesn't emit any data in events for swaps, so we have to piece it together manually based ON trace_address.
+        -- we traces to get NFT AND ETH transfer data because sudoswap doesn't emit any data in events FOR swaps, so we have to piece it together manually based ON trace_address.
         SELECT
             sb.call_block_time
             , sb.call_block_number
@@ -213,7 +213,7 @@ WITH
             , sb.pool_fee
             , sb.protocolfee
             , project_contract_address
-            -- these 2 are used for matching the aggregator address, dropped later
+            -- these 2 are used FOR matching the aggregator address, dropped later
             , router_caller
             , call_from
         FROM swaps_w_fees sb
@@ -224,7 +224,7 @@ WITH
             AND tr.block_number = sb.call_block_number
             AND tr.tx_hash = sb.call_tx_hash
             AND (
-                (cardinality(call_trace_address) != 0 AND call_trace_address = slice(tr.trace_address,1,cardinality(call_trace_address))) --either a normal tx where trace address helps us narrow down which subtraces to look at for ETH transfers or NFT transfers.
+                (cardinality(call_trace_address) != 0 AND call_trace_address = slice(tr.trace_address,1,cardinality(call_trace_address))) --either a normal tx where trace address helps us narrow down which subtraces to look at FOR ETH transfers or NFT transfers.
                 OR cardinality(call_trace_address) = 0 -- In this CASE the swap function was called directly, all traces are thus subtraces of that call (like 0x34a52a94fce15c090cc16adbd6824948c731ecb19a39350633590a9cd163658b).
                 )
             {% if is_incremental() %}
@@ -237,7 +237,7 @@ WITH
     )
 
     ,swaps_cleaned AS (
-        --formatting swaps for sudoswap_ethereum_events defined schema
+        --formatting swaps FOR sudoswap_ethereum_events defined schema
         SELECT
             'ethereum' AS blockchain
             , 'sudoswap' AS project
@@ -266,7 +266,7 @@ WITH
             , nftcontractaddress AS nft_contract_address
             , project_contract_address -- This is either the router or the pool address if called directly
             , call_tx_hash AS tx_hash
-            , '' AS evt_index --we didn't use events in our CASE for decoding, so this will be NULL until we find a way to tie it together.
+            , '' AS evt_index --we didn't use events in our CASE FOR decoding, so this will be NULL until we find a way to tie it together.
             , protocol_fee_amount AS platform_fee_amount_raw
             , protocol_fee_amount / 1e18 AS platform_fee_amount
             , protocolfee AS platform_fee_percentage
@@ -281,7 +281,7 @@ WITH
             , NULL::STRING AS royalty_fee_receive_address
             , NULL::double AS royalty_fee_amount_usd
             , NULL::STRING AS royalty_fee_currency_symbol
-            -- these 2 are used for matching the aggregator address, dropped later
+            -- these 2 are used FOR matching the aggregator address, dropped later
             , router_caller
             , call_from
         FROM swaps_w_traces

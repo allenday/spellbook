@@ -24,7 +24,7 @@
 
 SELECT *
 FROM (
-    {% for model in nft_models %}
+    {% FOR model in nft_models %}
     SELECT
         blockchain,
         project,

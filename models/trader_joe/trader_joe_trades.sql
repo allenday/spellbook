@@ -14,7 +14,7 @@
 
 SELECT *
 FROM (
-    {% for dex_model in trader_joe_models %}
+    {% FOR dex_model in trader_joe_models %}
     SELECT
         blockchain,
         project,

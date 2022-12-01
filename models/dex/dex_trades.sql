@@ -43,7 +43,7 @@ list of models using old generic test, due to multiple versions in one model:
 
 SELECT *
 FROM (
-    {% for dex_model in dex_trade_models %}
+    {% FOR dex_model in dex_trade_models %}
     SELECT
         blockchain,
         project,

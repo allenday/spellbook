@@ -41,7 +41,7 @@ SELECT
     vc.votingPower / 1e18 * p.price AS votes_value_usd,
     vc.voter AS voter_address,
     CASE WHEN vc.support = 0 THEN 'against'
-         WHEN vc.support = 1 THEN 'for'
+         WHEN vc.support = 1 THEN 'FOR'
          WHEN vc.support = 2 THEN 'abstain'
          END AS support,
     cast(NULL AS STRING) AS reason

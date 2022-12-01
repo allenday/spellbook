@@ -86,7 +86,7 @@ with events_raw AS (
         ,er.project_contract_address
       )
       {% if NOT is_incremental() %}
-      -- smallest block number for source tables above
+      -- smallest block number FOR source tables above
       AND tr.tx_block_number >= '{{min_block_number}}'
       {% endif %}
       {% if is_incremental() %}
@@ -113,7 +113,7 @@ with events_raw AS (
         ,er.project_contract_address
       )
       {% if NOT is_incremental() %}
-      -- smallest block number for source tables above
+      -- smallest block number FOR source tables above
       AND erc20.evt_block_number >= '{{min_block_number}}'
       {% endif %}
       {% if is_incremental() %}
@@ -178,7 +178,7 @@ join {{ source('optimism', 'transactions') }} AS tx
     ON er.tx_hash = tx.hash
     AND er.block_number = tx.block_number
     {% if NOT is_incremental() %}
-    -- smallest block number for source tables above
+    -- smallest block number FOR source tables above
     AND tx.block_number >= '{{min_block_number}}'
     {% endif %}
     {% if is_incremental() %}
@@ -197,7 +197,7 @@ LEFT JOIN {{ source('erc721_optimism', 'evt_transfer') }} AS erct2
     AND erct2.tokenId=er.token_id
     AND erct2.from=er.buyer
     {% if NOT is_incremental() %}
-    -- smallest block number for source tables above
+    -- smallest block number FOR source tables above
     AND erct2.evt_block_number >= '{{min_block_number}}'
     {% endif %}
     {% if is_incremental() %}
@@ -208,7 +208,7 @@ LEFT JOIN {{ source('erc20_optimism', 'evt_transfer') }} AS erc20
     AND erc20.evt_tx_hash=er.tx_hash
     AND erc20.to=er.seller
     {% if NOT is_incremental() %}
-    -- smallest block number for source tables above
+    -- smallest block number FOR source tables above
     AND erc20.evt_block_number >= '{{min_block_number}}'
     {% endif %}
     {% if is_incremental() %}

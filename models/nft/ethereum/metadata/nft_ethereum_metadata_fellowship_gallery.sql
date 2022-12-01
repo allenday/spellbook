@@ -58,7 +58,7 @@ FROM (VALUES
         ('0x987f91abce9158fd86818808505c67842b9ed3eb', 'Uncrowded Fields', 'Pelle Cass', 'Foundation', 'https: / /foundation.app/collection/pcuf'),
         ('0xf38b61deb728f25358066370b07a7e9629e5804c', 'Pieter Hugo', 'Pieter Hugo', 'SuperRare', 'https: / /www.superrare.com/pieterhugo'),
         ('0xbdd090bb91638ec0972f5f34480c300a6825a15d', 'Prisca Munkeni Monnier', 'Prisca Munkeni Monnier', 'Foundation', 'https: / /foundation.app/collection/pmm'),
-        ('0x4f67a5572bb4bc0413acd99462c53afa0d733b09', 'Relief for Ukraine (SSU)', 'Stephen Shore', 'Foundation', 'https: / /foundation.app/collection/stephenshoreru'),
+        ('0x4f67a5572bb4bc0413acd99462c53afa0d733b09', 'Relief FOR Ukraine (SSU)', 'Stephen Shore', 'Foundation', 'https: / /foundation.app/collection/stephenshoreru'),
         ('0x28398a2c1459119efa3e6699e928612ea4909a13', 'Our Life in The Shadows', 'Tania Franco Klein', 'SuperRare', 'https: / /superrare.com/taniafrancoklein'),
         ('0x23e3f2ea133f2c80558e181c4f78f4da3bc7c477', 'House Hunting', 'Todd Hido', 'Foundation', 'https: / /foundation.app/collection/thhh'),
         ('0xb8c55c77b3617ef22a4f552f9a47503e021c6623', 'Roaming', 'Todd Hido', 'Foundation', 'https: / /foundation.app/collection/thr-00f3')

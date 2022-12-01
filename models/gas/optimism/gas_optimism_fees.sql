@@ -21,9 +21,9 @@ SELECT
      value / 1e18 * p.price AS tx_amount_usd,
      (l1_fee + (txns.gas_used * txns.gas_price)) / 1e18 AS tx_fee_native,
      (l1_fee + (txns.gas_used * txns.gas_price)) / 1e18 * p.price AS tx_fee_usd,
-     cast(NULL AS double) AS burned_native, -- Not applicable for L2s
-     cast(NULL AS double) AS burned_usd, -- Not applicable for L2s
-     cast(NULL AS STRING) AS validator, -- Not applicable for L2s
+     cast(NULL AS double) AS burned_native, -- Not applicable FOR L2s
+     cast(NULL AS double) AS burned_usd, -- Not applicable FOR L2s
+     cast(NULL AS STRING) AS validator, -- Not applicable FOR L2s
      txns.gas_price / 1e9 AS gas_price_gwei,
      txns.gas_price / 1e18 * p.price AS gas_price_usd,
      txns.gas_used AS gas_used,

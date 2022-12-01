@@ -14,7 +14,7 @@
 -- because we don't have the keccak namehash function available in v2
 -- we do a little sketchy event matching to get the node <> name relationships
 -- basically this takes the last AddrChanged event in the same tx preceding a NameRegistred event to link the node AND the name
--- ONLY works for base ENS names (.eth , no subdomains)
+-- ONLY works FOR base ENS names (.eth , no subdomains)
 with registrations AS (
     SELECT
         label AS label_hash

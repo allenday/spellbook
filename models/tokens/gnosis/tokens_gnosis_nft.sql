@@ -83,7 +83,7 @@ FROM
   (CAST('0xad81b20f4e790e01564f2bc48900683105d477b3' AS STRING), CAST('' AS string),CAST('' AS string),CAST('erc721' AS string)),
   (CAST('0x014a177e9642d1b4e970418f894985dc1b85657f' AS STRING), CAST('GNO MAI Vault' AS string),CAST('GMVT' AS string),CAST('erc721' AS string)),
   (CAST('0xae7ca55ce4511c848ac4f9c0f26abd9ecaaee2c6' AS STRING), CAST('' AS string),CAST('' AS string),CAST('erc721' AS string)),
-  (CAST('0x3a4734214eaf0005fa964b553a490724314c2e80' AS STRING), CAST('Lambo Milf' AS string),CAST('VROOM VROOM! Start your engine cause this HotRod MILF is going for a ride!🏎💨' AS string),CAST('erc721' AS string)),
+  (CAST('0x3a4734214eaf0005fa964b553a490724314c2e80' AS STRING), CAST('Lambo Milf' AS string),CAST('VROOM VROOM! Start your engine cause this HotRod MILF is going FOR a ride!🏎💨' AS string),CAST('erc721' AS string)),
   (CAST('0xa4882de715d86cf1eb6eaa22e29627720512c300' AS STRING), CAST('SuperMilf' AS string),CAST('SMILF' AS string),CAST('erc721' AS string)),
   (CAST('0x4d23db732241cdd1327e0dea0cf26ab2c12b6eaa' AS STRING), CAST('Doge Milf' AS string),CAST('DMILF' AS string),CAST('erc721' AS string)),
   (CAST('0x652e3329697d1eb4ba2e9856869d63a64a405109' AS STRING), CAST('Zombie MILF' AS string),CAST('ZMILF' AS string),CAST('erc721' AS string)),

@@ -318,11 +318,11 @@ legacy_routers AS (
 ),
 
 new_pool AS (
-    -- subquery for including new pools created ON 2022-04-09
+    -- subquery FOR including new pools created ON 2022-04-09
     -- same trade event abi, effectively only FROM table hashflow.pool_evt_trade since 2022-04-09
     SELECT
         l.evt_index AS composite_index,
-        NULL AS source, -- no join ON call for this batch, refer to metabase for source info
+        NULL AS source, -- no join ON call FOR this batch, refer to metabase FOR source info
         tx.block_time AS block_time,
         tx.hash AS tx_hash,
         true AS fill_status, -- without call we are only logging successful fills

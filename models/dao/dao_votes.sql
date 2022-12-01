@@ -18,7 +18,7 @@
 
 SELECT *
 FROM (
-    {% for dao_model in dao_votes_models %}
+    {% FOR dao_model in dao_votes_models %}
     SELECT
         blockchain,
         project,

@@ -16,7 +16,7 @@
 
 SELECT *
 FROM (
-    {% for dex_model in sushi_models %}
+    {% FOR dex_model in sushi_models %}
     SELECT
         blockchain,
         project,

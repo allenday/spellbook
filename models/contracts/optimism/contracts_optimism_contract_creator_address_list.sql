@@ -116,7 +116,7 @@ FROM (
       , ('0x8314125c8b68af2afd0d151eb4a551e88128a2ae', 'Thales')
       , ('0xde6d6f23aabbdc9469c8907ece7c379f98e4cb75', 'dForce')
       , ('0x1b5caa1d3a1582a438e4cd93ee7a7e0e4d5624fb', 'Uniswap V3')
-      , ('0xc73567e09e1774f6e9e5f1f9de7fd0c3c4ce94fa', 'NFT for my bro')
+      , ('0xc73567e09e1774f6e9e5f1f9de7fd0c3c4ce94fa', 'NFT FOR my bro')
       , ('0xa71405f7d11734f03f2616b93eaed22604c978bf', 'Mean Finance')
       , ('0x0f5b021bb7300a83b7ff74fe39b56908fc0929c3', 'The Cyber Inu')
       , ('0xfdd9c344a52ace735564f1dc1ec19bd507dd5037', 'TRDEFI')

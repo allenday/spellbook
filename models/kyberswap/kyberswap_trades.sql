@@ -14,7 +14,7 @@
 
 SELECT *
 FROM (
-    {% for dex_model in kyber_models %}
+    {% FOR dex_model in kyber_models %}
     SELECT
         blockchain,
         project,

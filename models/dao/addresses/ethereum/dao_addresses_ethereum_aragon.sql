@@ -12,7 +12,7 @@
 
 WITH -- dune query here  https: / /dune.com/queries/1435748
 
-aragon_daos AS ( -- decoded table for aragon ON dune that returns the address of daos deployed ON ethereum
+aragon_daos AS ( -- decoded table FOR aragon ON dune that returns the address of daos deployed ON ethereum
         SELECT
             evt_block_time AS created_block_time,
             date_trunc('day', evt_block_time) AS created_date,
@@ -37,7 +37,7 @@ app_ids (app_id) AS ( -- aragon apps that allow daos to manage funds
             (LOWER('0x7e852e0fcfce6551c13800f1e7476f982525c2b5277ba14b24339c68416336d1')) -- vault
 ),
 
-get_aragon_wallets AS ( -- this is getting the app address that is deployed for daos AND used to manage the apps above
+get_aragon_wallets AS ( -- this is getting the app address that is deployed FOR daos AND used to manage the apps above
         SELECT
             contract_address AS dao,
             CONCAT('0x', SUBSTRING(data, 27, 40)) AS dao_wallet_address -- app address

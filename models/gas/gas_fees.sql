@@ -17,7 +17,7 @@
 
 SELECT *
 FROM (
-    {% for gas_model in gas_fees_models %}
+    {% FOR gas_model in gas_fees_models %}
     SELECT
         blockchain,
         block_number,

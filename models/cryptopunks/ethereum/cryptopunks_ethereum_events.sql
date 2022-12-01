@@ -64,7 +64,7 @@ with cryptopunks_bids_and_sales AS (
     SELECT  "Offer Accepted" AS event_type
             , a.punk_id
             , max(c.bid_amount) AS sale_price -- max bid FROM buyer pre-sale
-            , b.`to` AS to_address -- for bids accepted, look up who the seller transferred to in the same block with 1 offset index
+            , b.`to` AS to_address -- FOR bids accepted, look up who the seller transferred to in the same block with 1 offset index
             , a.from_address
             , a.evt_block_number
             , a.evt_index

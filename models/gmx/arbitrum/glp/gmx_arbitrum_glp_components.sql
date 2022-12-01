@@ -20,9 +20,9 @@ WITH minute AS  -- This CTE generates a series of minute values
 poolAmounts are the amount of supported tokens that are located in the GMX vault.
 https: / /arbiscan.io/address/0x489ee077994B6658eAfA855C308275EAd8097C4A
 * / 
-glp_frax_poolAmounts AS -- This CTE returns the average amount of FRAX tokens in the pool for a designated minute
+glp_frax_poolAmounts AS -- This CTE returns the average amount of FRAX tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the amount of FRAX tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the amount of FRAX tokens in the pool if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
@@ -39,9 +39,9 @@ glp_frax_poolAmounts AS -- This CTE returns the average amount of FRAX tokens in
     GROUP BY a.minute
     ) ,
 
-glp_usdt_poolAmounts AS -- This CTE returns the average amount of USDT tokens in the pool for a designated minute
+glp_usdt_poolAmounts AS -- This CTE returns the average amount of USDT tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the amount of USDT tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the amount of USDT tokens in the pool if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
@@ -58,9 +58,9 @@ glp_usdt_poolAmounts AS -- This CTE returns the average amount of USDT tokens in
     GROUP BY a.minute
     ) ,
 
-glp_wbtc_poolAmounts AS -- This CTE returns the average amount of WBTC tokens in the pool for a designated minute
+glp_wbtc_poolAmounts AS -- This CTE returns the average amount of WBTC tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the amount of WBTC tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the amount of WBTC tokens in the pool if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
@@ -77,9 +77,9 @@ glp_wbtc_poolAmounts AS -- This CTE returns the average amount of WBTC tokens in
     GROUP BY a.minute
     ) ,
 
-glp_usdc_poolAmounts AS -- This CTE returns the average amount of USDC tokens in the pool for a designated minute
+glp_usdc_poolAmounts AS -- This CTE returns the average amount of USDC tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the amount of USDC tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the amount of USDC tokens in the pool if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
@@ -96,9 +96,9 @@ glp_usdc_poolAmounts AS -- This CTE returns the average amount of USDC tokens in
     GROUP BY a.minute
     ) ,
 
-glp_uni_poolAmounts AS -- This CTE returns the average amount of UNI tokens in the pool for a designated minute
+glp_uni_poolAmounts AS -- This CTE returns the average amount of UNI tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the amount of UNI tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the amount of UNI tokens in the pool if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
@@ -115,9 +115,9 @@ glp_uni_poolAmounts AS -- This CTE returns the average amount of UNI tokens in t
     GROUP BY a.minute
     ) ,
 
-glp_link_poolAmounts AS -- This CTE returns the average amount of LINK tokens in the pool for a designated minute
+glp_link_poolAmounts AS -- This CTE returns the average amount of LINK tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the amount of LINK tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the amount of LINK tokens in the pool if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
@@ -134,9 +134,9 @@ glp_link_poolAmounts AS -- This CTE returns the average amount of LINK tokens in
     GROUP BY a.minute
     ) ,
 
-glp_weth_poolAmounts AS -- This CTE returns the average amount of WETH tokens in the pool for a designated minute
+glp_weth_poolAmounts AS -- This CTE returns the average amount of WETH tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the amount of WETH tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the amount of WETH tokens in the pool if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
@@ -153,9 +153,9 @@ glp_weth_poolAmounts AS -- This CTE returns the average amount of WETH tokens in
     GROUP BY a.minute
     ) ,
 
-glp_dai_poolAmounts AS -- This CTE returns the average amount of DAI tokens in the pool for a designated minute
+glp_dai_poolAmounts AS -- This CTE returns the average amount of DAI tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the amount of DAI tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the amount of DAI tokens in the pool if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
@@ -176,9 +176,9 @@ glp_dai_poolAmounts AS -- This CTE returns the average amount of DAI tokens in t
 reservedAmounts are the amount of supported tokens that are reserved to cover long positions ON the supported tokens.
 FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts ON those tokens.
 * / 
-glp_wbtc_reservedAmounts AS -- This CTE returns the average amount of reserved WBTC tokens in the pool for a designated minute
+glp_wbtc_reservedAmounts AS -- This CTE returns the average amount of reserved WBTC tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the amount of reserved WBTC tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the amount of reserved WBTC tokens in the pool if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
@@ -195,9 +195,9 @@ glp_wbtc_reservedAmounts AS -- This CTE returns the average amount of reserved W
     GROUP BY a.minute
     ) ,
 
-glp_uni_reservedAmounts AS -- This CTE returns the average amount of reserved UNI tokens in the pool for a designated minute
+glp_uni_reservedAmounts AS -- This CTE returns the average amount of reserved UNI tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the amount of reserved UNI tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the amount of reserved UNI tokens in the pool if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
@@ -214,9 +214,9 @@ glp_uni_reservedAmounts AS -- This CTE returns the average amount of reserved UN
     GROUP BY a.minute
     ) ,
 
-glp_link_reservedAmounts AS -- This CTE returns the average amount of reserved LINK tokens in the pool for a designated minute
+glp_link_reservedAmounts AS -- This CTE returns the average amount of reserved LINK tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the amount of reserved LINK tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the amount of reserved LINK tokens in the pool if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
@@ -233,10 +233,10 @@ glp_link_reservedAmounts AS -- This CTE returns the average amount of reserved L
     GROUP BY a.minute
     ) ,
 
-glp_weth_reservedAmounts AS -- This CTE returns the average amount of reserved WETH tokens in the pool for a designated minute
+glp_weth_reservedAmounts AS -- This CTE returns the average amount of reserved WETH tokens in the pool FOR a designated minute
     (
     SELECT
-        a.minute, -- This query averages the amount of reserved WETH tokens in the pool if more than one transaction is reccorded for a designated minute
+        a.minute, -- This query averages the amount of reserved WETH tokens in the pool if more than one transaction is reccorded FOR a designated minute
         AVG(a.amount) AS amount
     FROM
         (
@@ -257,10 +257,10 @@ guaranteedUSD are the total value of the long positions valued at the time of po
 This is because AS soon AS a long position opens, the asset's USD value (that's currently in the pool) effectively gets locked in.
 FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts ON those tokens.
 * / 
-glp_wbtc_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against WBTC tokens in the pool for a designated minute
+glp_wbtc_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against WBTC tokens in the pool FOR a designated minute
     (
     SELECT
-            a.minute, -- This query averages the amount of guaranteed USD against WBTC tokens in the pool if more than one transaction is reccorded for a designated minute
+            a.minute, -- This query averages the amount of guaranteed USD against WBTC tokens in the pool if more than one transaction is reccorded FOR a designated minute
             AVG(a.amount) AS amount
         FROM
             (
@@ -276,9 +276,9 @@ glp_wbtc_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against 
         GROUP BY a.minute
     ) ,
 
-glp_uni_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against UNI tokens in the pool for a designated minute
+glp_uni_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against UNI tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the amount of guaranteed USD against UNI tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the amount of guaranteed USD against UNI tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS amount
         FROM
@@ -295,9 +295,9 @@ glp_uni_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against U
         GROUP BY a.minute
     ) ,
 
-glp_link_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against LINK tokens in the pool for a designated minute
+glp_link_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against LINK tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the amount of guaranteed USD against LINK tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the amount of guaranteed USD against LINK tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS amount
         FROM
@@ -314,9 +314,9 @@ glp_link_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against 
         GROUP BY a.minute
     ) ,
 
-glp_weth_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against WETH tokens in the pool for a designated minute
+glp_weth_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against WETH tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the amount of guaranteed USD against WETH tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the amount of guaranteed USD against WETH tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS amount
         FROM
@@ -336,9 +336,9 @@ glp_weth_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against 
  / *
 getMaxPrice returns the maximum price of a supported token in the vault FROM the vault price feed contract.
 * / 
-glp_frax_getMaxPrice AS -- This CTE returns the maximum price of FRAX tokens in the pool for a designated minute
+glp_frax_getMaxPrice AS -- This CTE returns the maximum price of FRAX tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the maximum price of FRAX tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the maximum price of FRAX tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -355,9 +355,9 @@ glp_frax_getMaxPrice AS -- This CTE returns the maximum price of FRAX tokens in 
         GROUP BY a.minute
     ) ,
 
-glp_usdt_getMaxPrice AS -- This CTE returns the maximum price of USDT tokens in the pool for a designated minute
+glp_usdt_getMaxPrice AS -- This CTE returns the maximum price of USDT tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the maximum price of USDT tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the maximum price of USDT tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -374,9 +374,9 @@ glp_usdt_getMaxPrice AS -- This CTE returns the maximum price of USDT tokens in 
         GROUP BY a.minute
     ) ,
 
-glp_wbtc_getMaxPrice AS -- This CTE returns the maximum price of WBTC tokens in the pool for a designated minute
+glp_wbtc_getMaxPrice AS -- This CTE returns the maximum price of WBTC tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the maximum price of WBTC tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the maximum price of WBTC tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -393,9 +393,9 @@ glp_wbtc_getMaxPrice AS -- This CTE returns the maximum price of WBTC tokens in 
         GROUP BY a.minute
     ) ,
 
-glp_usdc_getMaxPrice AS -- This CTE returns the maximum price of USDC tokens in the pool for a designated minute
+glp_usdc_getMaxPrice AS -- This CTE returns the maximum price of USDC tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the maximum price of USDC tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the maximum price of USDC tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -412,9 +412,9 @@ glp_usdc_getMaxPrice AS -- This CTE returns the maximum price of USDC tokens in 
         GROUP BY a.minute
     ) ,
 
-glp_uni_getMaxPrice AS -- This CTE returns the maximum price of UNI tokens in the pool for a designated minute
+glp_uni_getMaxPrice AS -- This CTE returns the maximum price of UNI tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the maximum price of UNI tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the maximum price of UNI tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -431,9 +431,9 @@ glp_uni_getMaxPrice AS -- This CTE returns the maximum price of UNI tokens in th
         GROUP BY a.minute
     ) ,
 
-glp_link_getMaxPrice AS -- This CTE returns the maximum price of LINK tokens in the pool for a designated minute
+glp_link_getMaxPrice AS -- This CTE returns the maximum price of LINK tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the maximum price of LINK tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the maximum price of LINK tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -450,9 +450,9 @@ glp_link_getMaxPrice AS -- This CTE returns the maximum price of LINK tokens in 
         GROUP BY a.minute
     ) ,
 
-glp_weth_getMaxPrice AS -- This CTE returns the maximum price of WETH tokens in the pool for a designated minute
+glp_weth_getMaxPrice AS -- This CTE returns the maximum price of WETH tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the maximum price of WETH tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the maximum price of WETH tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -469,9 +469,9 @@ glp_weth_getMaxPrice AS -- This CTE returns the maximum price of WETH tokens in 
         GROUP BY a.minute
     ) ,
 
-glp_dai_getMaxPrice AS -- This CTE returns the maximum price of DAI tokens in the pool for a designated minute
+glp_dai_getMaxPrice AS -- This CTE returns the maximum price of DAI tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the maximum price of DAI tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the maximum price of DAI tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -491,9 +491,9 @@ glp_dai_getMaxPrice AS -- This CTE returns the maximum price of DAI tokens in th
  / *
 getMinPrice returns the maximum price of a supported token in the vault FROM the vault price feed contract.
 * / 
-glp_frax_getMinPrice AS -- This CTE returns the minimum price of FRAX tokens in the pool for a designated minute
+glp_frax_getMinPrice AS -- This CTE returns the minimum price of FRAX tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the minimum price of FRAX tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the minimum price of FRAX tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -510,9 +510,9 @@ glp_frax_getMinPrice AS -- This CTE returns the minimum price of FRAX tokens in 
         GROUP BY a.minute
     ) ,
 
-glp_usdt_getMinPrice AS -- This CTE returns the minimum price of USDT tokens in the pool for a designated minute
+glp_usdt_getMinPrice AS -- This CTE returns the minimum price of USDT tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the minimum price of USDT tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the minimum price of USDT tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -529,9 +529,9 @@ glp_usdt_getMinPrice AS -- This CTE returns the minimum price of USDT tokens in 
         GROUP BY a.minute
     ) ,
 
-glp_wbtc_getMinPrice AS -- This CTE returns the minimum price of WBTC tokens in the pool for a designated minute
+glp_wbtc_getMinPrice AS -- This CTE returns the minimum price of WBTC tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the minimum price of WBTC tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the minimum price of WBTC tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -548,9 +548,9 @@ glp_wbtc_getMinPrice AS -- This CTE returns the minimum price of WBTC tokens in 
         GROUP BY a.minute
     ) ,
 
-glp_usdc_getMinPrice AS -- This CTE returns the minimum price of USDC tokens in the pool for a designated minute
+glp_usdc_getMinPrice AS -- This CTE returns the minimum price of USDC tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the minimum price of USDC tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the minimum price of USDC tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -567,9 +567,9 @@ glp_usdc_getMinPrice AS -- This CTE returns the minimum price of USDC tokens in 
         GROUP BY a.minute
     ) ,
 
-glp_uni_getMinPrice AS -- This CTE returns the minimum price of UNI tokens in the pool for a designated minute
+glp_uni_getMinPrice AS -- This CTE returns the minimum price of UNI tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the minimum price of UNI tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the minimum price of UNI tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -586,9 +586,9 @@ glp_uni_getMinPrice AS -- This CTE returns the minimum price of UNI tokens in th
         GROUP BY a.minute
     ) ,
 
-glp_link_getMinPrice AS -- This CTE returns the minimum price of LINK tokens in the pool for a designated minute
+glp_link_getMinPrice AS -- This CTE returns the minimum price of LINK tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the minimum price of LINK tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the minimum price of LINK tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -605,9 +605,9 @@ glp_link_getMinPrice AS -- This CTE returns the minimum price of LINK tokens in 
         GROUP BY a.minute
     ) ,
 
-glp_weth_getMinPrice AS -- This CTE returns the minimum price of WETH tokens in the pool for a designated minute
+glp_weth_getMinPrice AS -- This CTE returns the minimum price of WETH tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the minimum price of WETH tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the minimum price of WETH tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -624,9 +624,9 @@ glp_weth_getMinPrice AS -- This CTE returns the minimum price of WETH tokens in 
         GROUP BY a.minute
     ) ,
 
-glp_dai_getMinPrice AS -- This CTE returns the minimum price of DAI tokens in the pool for a designated minute
+glp_dai_getMinPrice AS -- This CTE returns the minimum price of DAI tokens in the pool FOR a designated minute
     (
-    SELECT -- This query averages the minimum price of DAI tokens in the pool if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the minimum price of DAI tokens in the pool if more than one transaction is reccorded FOR a designated minute
             a.minute,
             AVG(a.amount) AS price
         FROM
@@ -647,9 +647,9 @@ glp_dai_getMinPrice AS -- This CTE returns the minimum price of DAI tokens in th
 globalShortAveragePrices returns the volume weighted average price of all shorts.
 FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts ON those tokens.
 * / 
-glp_wbtc_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all WBTC shorts for a designated minute
+glp_wbtc_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all WBTC shorts FOR a designated minute
     (
-    SELECT -- This query averages the volume weighted average price of all WBTC shorts if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the volume weighted average price of all WBTC shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.price) AS price
     FROM
@@ -666,9 +666,9 @@ glp_wbtc_globalShortAveragePrices AS -- This CTE returns volume weighted average
     GROUP BY a.minute
     ) ,
 
-glp_uni_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all UNI shorts for a designated minute
+glp_uni_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all UNI shorts FOR a designated minute
     (
-    SELECT -- This query averages the volume weighted average price of all UNI shorts if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the volume weighted average price of all UNI shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.price) AS price
     FROM
@@ -685,9 +685,9 @@ glp_uni_globalShortAveragePrices AS -- This CTE returns volume weighted average 
     GROUP BY a.minute
     ) ,
 
-glp_link_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all LINK shorts for a designated minute
+glp_link_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all LINK shorts FOR a designated minute
     (
-    SELECT -- This query averages the volume weighted average price of all LINK shorts if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the volume weighted average price of all LINK shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.price) AS price
     FROM
@@ -704,9 +704,9 @@ glp_link_globalShortAveragePrices AS -- This CTE returns volume weighted average
     GROUP BY a.minute
     ) ,
 
-glp_weth_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all WETH shorts for a designated minute
+glp_weth_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all WETH shorts FOR a designated minute
     (
-    SELECT -- This query averages the volume weighted average price of all WETH shorts if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages the volume weighted average price of all WETH shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.price) AS price
     FROM
@@ -727,9 +727,9 @@ glp_weth_globalShortAveragePrices AS -- This CTE returns volume weighted average
 globalShortSizes returns the sum of all shorts reported in the asset currency.
 FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts ON those tokens.
 * / 
-glp_wbtc_globalShortSizes AS -- This CTE returns average sum of all WBTC shorts for a designated minute
+glp_wbtc_globalShortSizes AS -- This CTE returns average sum of all WBTC shorts FOR a designated minute
     (
-    SELECT -- This query averages sum of all WBTC shorts if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages sum of all WBTC shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
@@ -746,9 +746,9 @@ glp_wbtc_globalShortSizes AS -- This CTE returns average sum of all WBTC shorts 
     GROUP BY a.minute
     ) ,
 
-glp_uni_globalShortSizes AS -- This CTE returns average sum of all UNI shorts for a designated minute
+glp_uni_globalShortSizes AS -- This CTE returns average sum of all UNI shorts FOR a designated minute
     (
-    SELECT -- This query averages sum of all UNI shorts if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages sum of all UNI shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
@@ -765,9 +765,9 @@ glp_uni_globalShortSizes AS -- This CTE returns average sum of all UNI shorts fo
     GROUP BY a.minute
     ) ,
 
-glp_link_globalShortSizes AS -- This CTE returns average sum of all LINK shorts for a designated minute
+glp_link_globalShortSizes AS -- This CTE returns average sum of all LINK shorts FOR a designated minute
     (
-    SELECT -- This query averages sum of all LINK shorts if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages sum of all LINK shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
@@ -784,9 +784,9 @@ glp_link_globalShortSizes AS -- This CTE returns average sum of all LINK shorts 
     GROUP BY a.minute
     ) ,
 
-glp_weth_globalShortSizes AS -- This CTE returns average sum of all WETH shorts for a designated minute
+glp_weth_globalShortSizes AS -- This CTE returns average sum of all WETH shorts FOR a designated minute
     (
-    SELECT -- This query averages sum of all WETH shorts if more than one transaction is reccorded for a designated minute
+    SELECT -- This query averages sum of all WETH shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM

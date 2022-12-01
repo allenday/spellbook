@@ -16,7 +16,7 @@
 
 SELECT *
 FROM (
-    {% for model in element_models %}
+    {% FOR model in element_models %}
     SELECT
         blockchain,
         project,

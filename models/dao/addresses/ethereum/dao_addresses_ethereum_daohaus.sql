@@ -86,7 +86,7 @@ mapped_wallets AS (
 )
 
 SELECT
-    DISTINCT(mw.*) -- there are still duplicates so I'm using a distinct to filter for the duplicates
+    DISTINCT(mw.*) -- there are still duplicates so I'm using a distinct to filter FOR the duplicates
 FROM
 mapped_wallets mw
 WHERE dao_wallet_address IS NOT NULL

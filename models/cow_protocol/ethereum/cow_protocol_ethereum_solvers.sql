@@ -8,7 +8,7 @@
 -- Find the PoC Query here: https: / /dune.com/queries/1276806
 WITH
 -- Aggregate the solver added AND removed events into a single table
--- with true / false for adds/removes respectively
+-- with true / false FOR adds/removes respectively
 solver_activation_events AS (
     SELECT solver, evt_block_number, evt_index, True AS activated
     FROM {{ source('gnosis_protocol_v2_ethereum', 'GPv2AllowListAuthentication_evt_SolverAdded') }}
@@ -31,7 +31,7 @@ registered_solvers AS (
     FROM ranked_solver_events
     where rk = 1
 ),
--- Manually inserting environment AND name for each "known" solver
+-- Manually inserting environment AND name FOR each "known" solver
 known_solver_metadata (address, environment, name) AS (
     SELECT *
     FROM (VALUES ('0xf2d21ad3c88170d4ae52bbbeba80cb6078d276f4', 'prod', 'MIP'),
@@ -97,7 +97,7 @@ known_solver_metadata (address, environment, name) AS (
                  ('0x56d4ed5e49539ebb1366c7d6b8f2530f1e4fe753', 'test', 'Test Solver 2')
          ) AS _
 )
--- Combining the metadata with current activation status for final table
+-- Combining the metadata with current activation status FOR final table
 SELECT solver AS address,
       CASE WHEN environment is NOT NULL THEN environment ELSE 'new' END AS environment,
       CASE WHEN name is NOT NULL THEN name ELSE 'Uncatalogued' END      AS name,

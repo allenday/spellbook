@@ -90,7 +90,7 @@ with base_level AS (
   GROUP BY 1, 2
 )
 -- starting FROM 0
-{% for i in range(max_levels) -%}
+{% FOR i in range(max_levels) -%}
 , level{{i}} AS (
     SELECT
       {{i}} AS level
@@ -226,10 +226,10 @@ with base_level AS (
   GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
 )
 , cleanup AS (
---grab the first non-NULL value for each, i.e. if we have the contract via both contract mapping AND optimism.contracts
+--grab the first non-NULL value FOR each, i.e. if we have the contract via both contract mapping AND optimism.contracts
   SELECT
     contract_address
-    {% for col in cols %}
+    {% FOR col in cols %}
     , (array_agg({{ col }}) filter (where {{ col }} is NOT NULL))[0] AS {{ col }}
     {% endfor %}
   FROM get_contracts
@@ -261,7 +261,7 @@ SELECT
 FROM cleanup AS c
 LEFT JOIN {{ source('ovm1_optimism', 'contracts') }} AS ovm1c
   ON c.contract_address = ovm1c.contract_address --fill in any missing contract creators
-LEFT JOIN {{ ref('contracts_optimism_project_name_mappings') }} AS dnm -- fix names for decoded contracts
+LEFT JOIN {{ ref('contracts_optimism_project_name_mappings') }} AS dnm -- fix names FOR decoded contracts
   ON lower(c.contract_project) = lower(dnm.dune_name)
 LEFT JOIN {{ ref('contracts_optimism_contract_overrides') }} AS co --override contract maps
   ON lower(c.contract_address) = lower(co.contract_address)

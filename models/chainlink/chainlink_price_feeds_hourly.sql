@@ -14,7 +14,7 @@
 
 SELECT *
 FROM (
-    {% for model in chainlink_models %}
+    {% FOR model in chainlink_models %}
     SELECT
         blockchain,
         hour,

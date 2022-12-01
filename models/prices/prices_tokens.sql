@@ -184,7 +184,7 @@ VALUES
     ("farm-harvest-finance", "bnb", "FARM", "0x4b5c23cac08a567ecf0c1ffca8372a45a5d33743", 18),
     ("fetch-ai", "bnb", "FET", "0x031b41e504677879370e9dbcf937283a8691fa7f", 18),
     ("fil-filecoin", "bnb", "FIL", "0x0d8ce2a99bb6e3b7db580ed848240e4a0f9ae153", 18),
-    ("for-fortube", "bnb", "FOR", "0x658a109c5900bc6d2357c87549b651670e5b0539", 18),
+    ("FOR-fortube", "bnb", "FOR", "0x658a109c5900bc6d2357c87549b651670e5b0539", 18),
     ("frax-frax", "bnb", "FRAX", "0x29ced01c447166958605519f10dcf8b0255fb379", 18),
     ("ftm-fantom", "bnb", "FTM", "0xa4b6e76bba7413b9b4bd83f4e3aa63cc181d869f", 9),
     ("fxs-frax-share", "bnb", "FXS", "0xde2f075f6f14eb9d96755b24e416a53e736ca363", 18),

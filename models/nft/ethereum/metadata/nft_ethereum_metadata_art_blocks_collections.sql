@@ -236,7 +236,7 @@
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 232, 1000000, 'Jiometory No Compute', 'Samsy', 'Curated', '5', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-232') -- Jiometory No Compute - ジオメトリ ハ ケイサンサレマセン is full collection name - chracters NOT supported
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 233, 1000000, 'Chimera', 'mpkoz', 'Curated', '6', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-233')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 234, 1000000, 'The Wrapture', 'Dmitri Cherniak', 'Playground', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-234')
-        , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 235, 1000000, 'Maps for grief', 'Louis-André Labadie', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-235')
+        , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 235, 1000000, 'Maps FOR grief', 'Louis-André Labadie', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-235')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 236, 1000000, 'Summoning Ritual', 'PZS', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-236')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 237, 1000000, 'Time Squared', 'steen x n-e-o', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-237')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 238, 1000000, 'AlphaModica', 'Danooka', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-238')
@@ -343,7 +343,7 @@
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 343, 1000000, 'Balletic', 'Motus Art', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-343')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 344, 1000000, 'Glass', 'EDG', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-344')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 345, 1000000, '3 Minute Meditations', 'thetechnocratic', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-345')
-        , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 346, 1000000, '80s Pop Variety Pack - for experts only 🕹', 'Daniel Catt', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-346')
+        , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 346, 1000000, '80s Pop Variety Pack - FOR experts only 🕹', 'Daniel Catt', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-346')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 347, 1000000, 'Avalon', 'r0zk0', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-347')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 348, 1000000, 'CryptoCountries: The Unpublished Archives of a Mythical World Traveler', 'Michael G Devereux', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-348')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 349, 1000000, 'Totem of Taste', 'Hannah Yan', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-349')
@@ -364,7 +364,7 @@
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 366, 1000000, 'Sandaliya', 'Melissa Wiederrecht', 'Playground', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-366')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 367, 1000000, 'Fontana', 'Harvey Rayner', 'Curated', '8', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-367')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 368, 1000000, 'Primitives', 'Aranda\Lasch', 'Curated', '8', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-368')
-        , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 370, 1000000, 'Rectangles (for Herbert)', 'Jeff Davis', 'Playground', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-370')
+        , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 370, 1000000, 'Rectangles (FOR Herbert)', 'Jeff Davis', 'Playground', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-370')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 371, 1000000, 'JPEG', 'Jan Robert Leegte', 'Presents', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-371')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 373, 1000000, 'Intersections', 'Rafaël Rozendaal', 'Presents', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-373')
 

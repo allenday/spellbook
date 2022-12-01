@@ -33,7 +33,7 @@ FROM
         , DATE_TRUNC('day', l.block_time) AS block_date
 	    , cfa.feed_name
 	    , AVG(
-            conv( --handle for multiple updates in the same block
+            conv( --handle FOR multiple updates in the same block
             SUBSTRING(l.topic2,3,64)
             ,16,10)
  / POWER(10, cfa.decimals)

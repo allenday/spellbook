@@ -632,7 +632,7 @@ with p1_call AS (
           ,token_id AS nft_token_id
           ,nft_transfer_count
           ,original_amount AS nft_item_count
---         quickfix for Issue #1510 that results in double counting of fees
+--         quickfix FOR Issue #1510 that results in double counting of fees
 --        ,coalesce(avg_original_amount,0) + coalesce(avg_fee_amount,0) + coalesce(avg_royalty_amount,0) AS attempt_amount
           ,coalesce(avg_original_amount,0) AS attempt_amount
           ,0 AS revert_amount

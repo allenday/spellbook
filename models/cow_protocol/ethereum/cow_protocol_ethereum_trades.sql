@@ -93,7 +93,7 @@ trades_with_token_units AS (
                                     END)
 ),
 -- This, independent, aggregation defines a mapping of order_uid AND trade
--- TODO - create a view for the following block mapping uid to app_data
+-- TODO - create a view FOR the following block mapping uid to app_data
 order_ids AS (
     SELECT evt_tx_hash, collect_list(orderUid) AS order_ids
     FROM (  SELECT orderUid, evt_tx_hash, evt_index

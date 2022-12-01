@@ -45,7 +45,7 @@ where et.success = true
         )
     AND et.gas_used > 0  -- to ensure the setup call was successful
     {% if NOT is_incremental() %}
-    AND et.block_time > '2018-11-24' -- for initial query optimisation
+    AND et.block_time > '2018-11-24' -- FOR initial query optimisation
     {% endif %}
     {% if is_incremental() %}
     AND et.block_time > date_trunc("day", now() - interval '1 week')
@@ -60,7 +60,7 @@ SELECT contract_address AS address,
     evt_tx_hash AS tx_hash
 FROM {{ source('gnosis_safe_ethereum', 'GnosisSafev1_3_0_evt_SafeSetup') }}
 {% if NOT is_incremental() %}
-where evt_block_time > '2018-11-24' -- for initial query optimisation
+where evt_block_time > '2018-11-24' -- FOR initial query optimisation
 {% endif %}
 {% if is_incremental() %}
 where evt_block_time > date_trunc("day", now() - interval '1 week')

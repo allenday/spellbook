@@ -14,7 +14,7 @@
 
 SELECT *
 FROM (
-    {% for dex_model in hashflow_models %}
+    {% FOR dex_model in hashflow_models %}
     SELECT
         blockchain,
         project,

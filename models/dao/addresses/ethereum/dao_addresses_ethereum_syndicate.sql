@@ -12,7 +12,7 @@
 
 WITH -- dune query here  https: / /dune.com/queries/1479702
 
-syndicatev2_daos AS ( -- decoded event ON dune for syndicate v2, this returns investment clubs deployed ON syndicate v2
+syndicatev2_daos AS ( -- decoded event ON dune FOR syndicate v2, this returns investment clubs deployed ON syndicate v2
         SELECT
             evt_block_time AS block_time,
             tokenAddress AS dao

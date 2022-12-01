@@ -70,4 +70,4 @@ LEFT JOIN {{ ref('tokens_optimism_erc20') }} erc20
 LEFT JOIN {{ source('prices', 'usd') }} p
     ON p.minute = date_trunc('minute', deposit.evt_block_time)
     AND p.symbol = erc20.symbol
-    AND p.blockchain = 'ethereum' -- Using ETH tokens for USD prices AS price data is NOT available for OP tokens
+    AND p.blockchain = 'ethereum' -- Using ETH tokens FOR USD prices AS price data is NOT available FOR OP tokens

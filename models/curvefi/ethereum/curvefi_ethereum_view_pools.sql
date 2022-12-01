@@ -166,7 +166,7 @@ meta_pools_deployed AS (
             NULL AS VARCHAR(5)
         ) AS coin3,
         _coin AS undercoin0,
-        --Listing underlying coins for the ExchangeUnderlying function
+        --Listing underlying coins FOR the ExchangeUnderlying function
         CASE
             WHEN _base_pool = '{{curvefi_ethereum_DAI_USDC_USDT_pool_contract}}' THEN '{{DAI_ethereum_token}}'
             WHEN _base_pool = '{{curvefi_ethereum_sBTC_swap_contract}}' THEN '{{renBTC_ethereum_token}}'

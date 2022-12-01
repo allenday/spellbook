@@ -27,7 +27,7 @@ SELECT
         WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy,1,4)) THEN addrs [4]
         WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy,1,4)) THEN addrs [4]
         END AS nft_contract_address,
-  CASE -- Replace `ETH` with `WETH` for ERC20 lookup later
+  CASE -- Replace `ETH` with `WETH` FOR ERC20 lookup later
       WHEN addrs [6] = '0x0000000000000000000000000000000000000000' THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
       ELSE addrs [6]
   END AS currency_contract,
@@ -35,7 +35,7 @@ SELECT
   addrs[4] AS shared_storefront_address,
   addrs [1] AS buyer,
   addrs [8] AS seller,
-  -- Temporary fix for token ID until we implement a UDF equivalent for bytea2numeric that works for numbers higher than 64 bits
+  -- Temporary fix FOR token ID until we implement a UDF equivalent FOR bytea2numeric that works FOR numbers higher than 64 bits
   -- We check if token ID in hex is longer than 16, because 2**64 can be represented in hex with 16 digits (log_16(2**64) = 16).
   CASE WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy,1,4)) AND length(ltrim('0', SUBSTR(calldataBuy,203,64))) > 16
   THEN 'Token ID is larger than 64 bits AND can NOT be displayed'
@@ -50,7 +50,7 @@ SELECT
   WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy,1,4)) THEN conv(SUBSTR(calldataBuy,139,64),16,10)::STRING
   WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy,1,4)) THEN conv(SUBSTR(calldataBuy,139,64),16,10)::STRING
   END AS token_id,
-  CASE WHEN size(call_trace_address) = 0 THEN array(3::bigint) -- for bundle join
+  CASE WHEN size(call_trace_address) = 0 THEN array(3::bigint) -- FOR bundle join
   ELSE call_trace_address
   END AS call_trace_address,
   addrs [6] AS currency_contract_original
@@ -98,8 +98,8 @@ SELECT
 
 erc_transfers AS
 (SELECT evt_tx_hash,
-        -- token_id_erc will be used for joining. It may be 'Token ID is larger than 64 bits AND can NOT be displayed'
-        -- token_id_erc_uncapped will be used for displaying the token_id after joining
+        -- token_id_erc will be used FOR joining. It may be 'Token ID is larger than 64 bits AND can NOT be displayed'
+        -- token_id_erc_uncapped will be used FOR displaying the token_id after joining
         CASE WHEN length(id::STRING) > 64 THEN 'Token ID is larger than 64 bits AND can NOT be displayed' ELSE id::string END AS token_id_erc,
         id::STRING AS token_id_erc_uncapped,
         cardinality(collect_list(value)) AS count_erc,
@@ -113,8 +113,8 @@ erc_transfers AS
         GROUP BY evt_tx_hash,value,id,evt_index, erc1155.from, erc1155.to
             UNION ALL
 SELECT evt_tx_hash,
-        -- token_id_erc will be used for joining. It may be 'Token ID is larger than 64 bits AND can NOT be displayed'
-        -- token_id_erc_uncapped will be used for displaying the token_id after joining
+        -- token_id_erc will be used FOR joining. It may be 'Token ID is larger than 64 bits AND can NOT be displayed'
+        -- token_id_erc_uncapped will be used FOR displaying the token_id after joining
         CASE WHEN length(tokenId::STRING) > 64 THEN 'Token ID is larger than 64 bits AND can NOT be displayed' ELSE tokenId::string END AS token_id_erc,
 		tokenId::STRING AS token_id_erc_uncapped,
         COUNT(tokenId) AS count_erc,
@@ -143,7 +143,7 @@ SELECT DISTINCT
       WHEN agg.name is NULL AND erc_transfers.value_unique = 1 OR erc_transfers.count_erc = 1 THEN 'Single Item Trade'
       WHEN agg.name is NULL AND erc_transfers.value_unique > 1 OR erc_transfers.count_erc > 1 THEN 'Bundle Trade'
   ELSE wa.trade_type END AS trade_type,
-  -- Count number of items traded for different trade types AND erc standards
+  -- Count number of items traded FOR different trade types AND erc standards
   CASE WHEN agg.name is NULL AND erc_transfers.value_unique > 1 THEN erc_transfers.value_unique
       WHEN agg.name is NULL AND erc_transfers.value_unique is NULL AND erc_transfers.count_erc > 1 THEN erc_transfers.count_erc
       WHEN wa.trade_type = 'Single Item Trade' THEN cast(1 AS bigint)

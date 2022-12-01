@@ -133,7 +133,7 @@ with source_ethereum_transactions AS (
   FROM ref_seaport_ethereum_base_pairs a
   LEFT JOIN ref_seaport_ethereum_base_pairs b ON b.tx_hash = a.tx_hash
     AND b.evt_index = a.evt_index
-    AND b.block_time = a.block_time -- for performance
+    AND b.block_time = a.block_time -- FOR performance
     AND b.token_contract_address = a.token_contract_address
     AND b.token_id = a.token_id
     AND b.original_amount = a.original_amount
@@ -201,7 +201,7 @@ with source_ethereum_transactions AS (
         ,is_private
         ,sub_idx
   FROM iv_base_pairs_priv a
-  LEFT JOIN iv_volume b ON b.block_time = a.block_time  -- tx_hash AND evt_index is PK, but for performance, block_time is included
+  LEFT JOIN iv_volume b ON b.block_time = a.block_time  -- tx_hash AND evt_index is PK, but FOR performance, block_time is included
     AND b.tx_hash = a.tx_hash
     AND b.evt_index = a.evt_index
   where 1=1
