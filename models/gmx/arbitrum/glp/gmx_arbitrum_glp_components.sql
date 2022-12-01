@@ -27,7 +27,7 @@ glp_frax_poolAmounts AS -- This CTE returns the average amount of FRAX tokens in
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the amount of FRAX tokens in the pool
+        SELECT -- This subquery truncates the block time to a minute AND fetches the amount of FRAX tokens in the pool
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
@@ -46,7 +46,7 @@ glp_usdt_poolAmounts AS -- This CTE returns the average amount of USDT tokens in
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the amount of USDT tokens in the pool
+        SELECT -- This subquery truncates the block time to a minute AND fetches the amount of USDT tokens in the pool
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
@@ -65,7 +65,7 @@ glp_wbtc_poolAmounts AS -- This CTE returns the average amount of WBTC tokens in
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the amount of WBTC tokens in the pool
+        SELECT -- This subquery truncates the block time to a minute AND fetches the amount of WBTC tokens in the pool
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
@@ -84,7 +84,7 @@ glp_usdc_poolAmounts AS -- This CTE returns the average amount of USDC tokens in
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the amount of USDC tokens in the pool
+        SELECT -- This subquery truncates the block time to a minute AND fetches the amount of USDC tokens in the pool
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
@@ -103,7 +103,7 @@ glp_uni_poolAmounts AS -- This CTE returns the average amount of UNI tokens in t
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the amount of UNI tokens in the pool
+        SELECT -- This subquery truncates the block time to a minute AND fetches the amount of UNI tokens in the pool
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
@@ -122,7 +122,7 @@ glp_link_poolAmounts AS -- This CTE returns the average amount of LINK tokens in
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the amount of LINK tokens in the pool
+        SELECT -- This subquery truncates the block time to a minute AND fetches the amount of LINK tokens in the pool
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
@@ -141,7 +141,7 @@ glp_weth_poolAmounts AS -- This CTE returns the average amount of WETH tokens in
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the amount of WETH tokens in the pool
+        SELECT -- This subquery truncates the block time to a minute AND fetches the amount of WETH tokens in the pool
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
@@ -160,7 +160,7 @@ glp_dai_poolAmounts AS -- This CTE returns the average amount of DAI tokens in t
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the amount of DAI tokens in the pool
+        SELECT -- This subquery truncates the block time to a minute AND fetches the amount of DAI tokens in the pool
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
@@ -174,7 +174,7 @@ glp_dai_poolAmounts AS -- This CTE returns the average amount of DAI tokens in t
 
  / *
 reservedAmounts are the amount of supported tokens that are reserved to cover long positions on the supported tokens.
-FRAX, USDT, USDC and DAI are NOT included AS you cannot open shorts on those tokens.
+FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts on those tokens.
 * / 
 glp_wbtc_reservedAmounts AS -- This CTE returns the average amount of reserved WBTC tokens in the pool for a designated minute
     (
@@ -183,7 +183,7 @@ glp_wbtc_reservedAmounts AS -- This CTE returns the average amount of reserved W
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the amount of reserved WBTC tokens in the pool
+        SELECT -- This subquery truncates the block time to a minute AND fetches the amount of reserved WBTC tokens in the pool
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_reservedAmounts')}}
@@ -202,7 +202,7 @@ glp_uni_reservedAmounts AS -- This CTE returns the average amount of reserved UN
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the amount of reserved UNI tokens in the pool
+        SELECT -- This subquery truncates the block time to a minute AND fetches the amount of reserved UNI tokens in the pool
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_reservedAmounts')}}
@@ -221,7 +221,7 @@ glp_link_reservedAmounts AS -- This CTE returns the average amount of reserved L
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the amount of reserved LINK tokens in the pool
+        SELECT -- This subquery truncates the block time to a minute AND fetches the amount of reserved LINK tokens in the pool
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_reservedAmounts')}}
@@ -240,7 +240,7 @@ glp_weth_reservedAmounts AS -- This CTE returns the average amount of reserved W
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the amount of reserved WETH tokens in the pool
+        SELECT -- This subquery truncates the block time to a minute AND fetches the amount of reserved WETH tokens in the pool
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_reservedAmounts')}}
@@ -255,7 +255,7 @@ glp_weth_reservedAmounts AS -- This CTE returns the average amount of reserved W
  / *
 guaranteedUSD are the total value of the long positions valued at the time of position entry.
 This is because AS soon AS a long position opens, the asset's USD value (that's currently in the pool) effectively gets locked in.
-FRAX, USDT, USDC and DAI are NOT included AS you cannot open shorts on those tokens.
+FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts on those tokens.
 * / 
 glp_wbtc_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against WBTC tokens in the pool for a designated minute
     (
@@ -264,7 +264,7 @@ glp_wbtc_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against 
             AVG(a.amount) AS amount
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches the amount of guaranteed USD against WBTC tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches the amount of guaranteed USD against WBTC tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_guaranteedUsd')}}
@@ -283,7 +283,7 @@ glp_uni_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against U
             AVG(a.amount) AS amount
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches the amount of guaranteed USD against UNI tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches the amount of guaranteed USD against UNI tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_guaranteedUsd')}}
@@ -302,7 +302,7 @@ glp_link_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against 
             AVG(a.amount) AS amount
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches the amount of guaranteed USD against LINK tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches the amount of guaranteed USD against LINK tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_guaranteedUsd')}}
@@ -321,7 +321,7 @@ glp_weth_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against 
             AVG(a.amount) AS amount
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches the amount of guaranteed USD against WETH tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches the amount of guaranteed USD against WETH tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_guaranteedUsd')}}
@@ -343,7 +343,7 @@ glp_frax_getMaxPrice AS -- This CTE returns the maximum price of FRAX tokens in 
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches maximum price of FRAX tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches maximum price of FRAX tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
@@ -362,7 +362,7 @@ glp_usdt_getMaxPrice AS -- This CTE returns the maximum price of USDT tokens in 
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches maximum price of USDT tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches maximum price of USDT tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
@@ -381,7 +381,7 @@ glp_wbtc_getMaxPrice AS -- This CTE returns the maximum price of WBTC tokens in 
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches maximum price of WBTC tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches maximum price of WBTC tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
@@ -400,7 +400,7 @@ glp_usdc_getMaxPrice AS -- This CTE returns the maximum price of USDC tokens in 
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches maximum price of USDC tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches maximum price of USDC tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
@@ -419,7 +419,7 @@ glp_uni_getMaxPrice AS -- This CTE returns the maximum price of UNI tokens in th
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches maximum price of UNI tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches maximum price of UNI tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
@@ -438,7 +438,7 @@ glp_link_getMaxPrice AS -- This CTE returns the maximum price of LINK tokens in 
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches maximum price of LINK tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches maximum price of LINK tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
@@ -457,7 +457,7 @@ glp_weth_getMaxPrice AS -- This CTE returns the maximum price of WETH tokens in 
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches maximum price of WETH tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches maximum price of WETH tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
@@ -476,7 +476,7 @@ glp_dai_getMaxPrice AS -- This CTE returns the maximum price of DAI tokens in th
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches maximum price of DAI tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches maximum price of DAI tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
@@ -498,7 +498,7 @@ glp_frax_getMinPrice AS -- This CTE returns the minimum price of FRAX tokens in 
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches minimum price of FRAX tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches minimum price of FRAX tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
@@ -517,7 +517,7 @@ glp_usdt_getMinPrice AS -- This CTE returns the minimum price of USDT tokens in 
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches minimum price of USDT tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches minimum price of USDT tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
@@ -536,7 +536,7 @@ glp_wbtc_getMinPrice AS -- This CTE returns the minimum price of WBTC tokens in 
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches minimum price of WBTC tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches minimum price of WBTC tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
@@ -555,7 +555,7 @@ glp_usdc_getMinPrice AS -- This CTE returns the minimum price of USDC tokens in 
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches minimum price of USDC tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches minimum price of USDC tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
@@ -574,7 +574,7 @@ glp_uni_getMinPrice AS -- This CTE returns the minimum price of UNI tokens in th
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches minimum price of UNI tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches minimum price of UNI tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
@@ -593,7 +593,7 @@ glp_link_getMinPrice AS -- This CTE returns the minimum price of LINK tokens in 
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches minimum price of LINK tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches minimum price of LINK tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
@@ -612,7 +612,7 @@ glp_weth_getMinPrice AS -- This CTE returns the minimum price of WETH tokens in 
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches minimum price of WETH tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches minimum price of WETH tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
@@ -631,7 +631,7 @@ glp_dai_getMinPrice AS -- This CTE returns the minimum price of DAI tokens in th
             AVG(a.amount) AS price
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and fetches minimum price of DAI tokens in the pool
+            SELECT -- This subquery truncates the block time to a minute AND fetches minimum price of DAI tokens in the pool
                 date_trunc('minute', call_block_time) AS minute,
                 output_0 / 1e18 AS amount
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
@@ -645,7 +645,7 @@ glp_dai_getMinPrice AS -- This CTE returns the minimum price of DAI tokens in th
 
  / *
 globalShortAveragePrices returns the volume weighted average price of all shorts.
-FRAX, USDT, USDC and DAI are NOT included AS you cannot open shorts on those tokens.
+FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts on those tokens.
 * / 
 glp_wbtc_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all WBTC shorts for a designated minute
     (
@@ -654,7 +654,7 @@ glp_wbtc_globalShortAveragePrices AS -- This CTE returns volume weighted average
         AVG(a.price) AS price
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches volume weighted average price of all WBTC shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches volume weighted average price of all WBTC shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS price
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortAveragePrices')}}
@@ -673,7 +673,7 @@ glp_uni_globalShortAveragePrices AS -- This CTE returns volume weighted average 
         AVG(a.price) AS price
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches volume weighted average price of all UNI shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches volume weighted average price of all UNI shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS price
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortAveragePrices')}}
@@ -692,7 +692,7 @@ glp_link_globalShortAveragePrices AS -- This CTE returns volume weighted average
         AVG(a.price) AS price
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches volume weighted average price of all LINK shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches volume weighted average price of all LINK shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS price
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortAveragePrices')}}
@@ -711,7 +711,7 @@ glp_weth_globalShortAveragePrices AS -- This CTE returns volume weighted average
         AVG(a.price) AS price
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches volume weighted average price of all WETH shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches volume weighted average price of all WETH shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS price
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortAveragePrices')}}
@@ -725,7 +725,7 @@ glp_weth_globalShortAveragePrices AS -- This CTE returns volume weighted average
 
  / *
 globalShortSizes returns the sum of all shorts reported in the asset currency.
-FRAX, USDT, USDC and DAI are NOT included AS you cannot open shorts on those tokens.
+FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts on those tokens.
 * / 
 glp_wbtc_globalShortSizes AS -- This CTE returns average sum of all WBTC shorts for a designated minute
     (
@@ -734,7 +734,7 @@ glp_wbtc_globalShortSizes AS -- This CTE returns average sum of all WBTC shorts 
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the sum of all WBTC shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches the sum of all WBTC shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortSizes')}}
@@ -753,7 +753,7 @@ glp_uni_globalShortSizes AS -- This CTE returns average sum of all UNI shorts fo
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the sum of all UNI shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches the sum of all UNI shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortSizes')}}
@@ -772,7 +772,7 @@ glp_link_globalShortSizes AS -- This CTE returns average sum of all LINK shorts 
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the sum of all LINK shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches the sum of all LINK shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortSizes')}}
@@ -791,7 +791,7 @@ glp_weth_globalShortSizes AS -- This CTE returns average sum of all WETH shorts 
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute and fetches the sum of all WETH shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches the sum of all WETH shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortSizes')}}
@@ -895,7 +895,7 @@ FROM
         COALESCE(x.dai_getMinPrice,0) AS dai_getMinPrice
     FROM
         (
-        SELECT -- This subquery collates all the data extracted FROM the vault contract functions, joins them to the minute series, and uses last data to extrapolate over NULL values
+        SELECT -- This subquery collates all the data extracted FROM the vault contract functions, joins them to the minute series, AND uses last data to extrapolate over NULL values
             a.minute,
 
             last(b1.amount, true) OVER (ORDER BY a.minute ASC) AS frax_poolAmounts,

@@ -78,19 +78,19 @@ with events_raw AS (
     FROM events_raw AS er
     join {{ ref('transfers_optimism_eth') }} AS tr
       on er.tx_hash = tr.tx_hash
-      and er.block_number = tr.tx_block_number
-      and tr.value_decimal > 0
-      and tr.to NOT in (
+      AND er.block_number = tr.tx_block_number
+      AND tr.value_decimal > 0
+      AND tr.to NOT in (
         lower('{{quix_fee_address_address}}') --qx platform fee address
         ,er.seller
         ,er.project_contract_address
       )
       {% if NOT is_incremental() %}
       -- smallest block number for source tables above
-      and tr.tx_block_number >= '{{min_block_number}}'
+      AND tr.tx_block_number >= '{{min_block_number}}'
       {% endif %}
       {% if is_incremental() %}
-      and tr.tx_block_time >= date_trunc("day", now() - interval '1 week')
+      AND tr.tx_block_time >= date_trunc("day", now() - interval '1 week')
       {% endif %}
 
     union all
@@ -105,19 +105,19 @@ with events_raw AS (
     FROM events_raw AS er
     join {{ source('erc20_optimism','evt_transfer') }} AS erc20
       on er.tx_hash = erc20.evt_tx_hash
-      and er.block_number = erc20.evt_block_number
-      and erc20.value is NOT NULL
-      and erc20.to NOT in (
+      AND er.block_number = erc20.evt_block_number
+      AND erc20.value is NOT NULL
+      AND erc20.to NOT in (
         lower('{{quix_fee_address_address}}') --qx platform fee address
         ,er.seller
         ,er.project_contract_address
       )
       {% if NOT is_incremental() %}
       -- smallest block number for source tables above
-      and erc20.evt_block_number >= '{{min_block_number}}'
+      AND erc20.evt_block_number >= '{{min_block_number}}'
       {% endif %}
       {% if is_incremental() %}
-      and erc20.evt_block_time >= date_trunc("day", now() - interval '1 week')
+      AND erc20.evt_block_time >= date_trunc("day", now() - interval '1 week')
       {% endif %}
 )
 SELECT
@@ -176,43 +176,43 @@ SELECT
 FROM events_raw AS er
 join {{ source('optimism','transactions') }} AS tx
     on er.tx_hash = tx.hash
-    and er.block_number = tx.block_number
+    AND er.block_number = tx.block_number
     {% if NOT is_incremental() %}
     -- smallest block number for source tables above
-    and tx.block_number >= '{{min_block_number}}'
+    AND tx.block_number >= '{{min_block_number}}'
     {% endif %}
     {% if is_incremental() %}
-    and tx.block_time >= date_trunc("day", now() - interval '1 week')
+    AND tx.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ ref('nft_aggregators') }} AS agg
     on agg.contract_address = tx.to
-    and agg.blockchain = 'optimism'
+    AND agg.blockchain = 'optimism'
 LEFT JOIN {{ ref('tokens_nft') }} n
     on n.contract_address = er.nft_contract_address
-    and n.blockchain = 'optimism'
+    AND n.blockchain = 'optimism'
 LEFT JOIN {{ source('erc721_optimism','evt_transfer') }} AS erct2
     on erct2.evt_block_time=er.block_time
-    and er.nft_contract_address=erct2.contract_address
-    and erct2.evt_tx_hash=er.tx_hash
-    and erct2.tokenId=er.token_id
-    and erct2.FROM=er.buyer
+    AND er.nft_contract_address=erct2.contract_address
+    AND erct2.evt_tx_hash=er.tx_hash
+    AND erct2.tokenId=er.token_id
+    AND erct2.FROM=er.buyer
     {% if NOT is_incremental() %}
     -- smallest block number for source tables above
-    and erct2.evt_block_number >= '{{min_block_number}}'
+    AND erct2.evt_block_number >= '{{min_block_number}}'
     {% endif %}
     {% if is_incremental() %}
-    and erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('erc20_optimism','evt_transfer') }} AS erc20
     on erc20.evt_block_time=er.block_time
-    and erc20.evt_tx_hash=er.tx_hash
-    and erc20.to=er.seller
+    AND erc20.evt_tx_hash=er.tx_hash
+    AND erc20.to=er.seller
     {% if NOT is_incremental() %}
     -- smallest block number for source tables above
-    and erc20.evt_block_number >= '{{min_block_number}}'
+    AND erc20.evt_block_number >= '{{min_block_number}}'
     {% endif %}
     {% if is_incremental() %}
-    and erc20.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND erc20.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} AS t1
     on t1.contract_address =
@@ -220,19 +220,19 @@ LEFT JOIN {{ ref('tokens_erc20') }} AS t1
         then '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000'
         else erc20.contract_address
         end
-    and t1.blockchain = 'optimism'
+    AND t1.blockchain = 'optimism'
     LEFT JOIN {{ source('prices', 'usd') }} AS p1
     on p1.contract_address =
         case when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
         then '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000'
         else erc20.contract_address
         end
-    and p1.minute = date_trunc('minute', er.block_time)
-    and p1.blockchain = 'optimism'
+    AND p1.minute = date_trunc('minute', er.block_time)
+    AND p1.blockchain = 'optimism'
     {% if is_incremental() %}
-    and p1.minute >= date_trunc("day", now() - interval '1 week')
+    AND p1.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 LEFT JOIN transfers AS tr
     on tr.tx_hash = er.tx_hash
-    and tr.block_number = er.block_number
+    AND tr.block_number = er.block_number
 ;

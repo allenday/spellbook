@@ -102,9 +102,9 @@ WITH
             , tx.to  AS tx_to
         FROM trade_events e
         inner join token_events t
-            ON e.block_number = t.block_number and e.unique_trade_id = t.unique_trade_id
+            ON e.block_number = t.block_number AND e.unique_trade_id = t.unique_trade_id
         inner join {{ source('ethereum', 'transactions') }} tx
-            ON e.block_number = tx.block_number and e.tx_hash = tx.hash
+            ON e.block_number = tx.block_number AND e.tx_hash = tx.hash
             {% if is_incremental() %}
             AND tx.block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
@@ -147,9 +147,9 @@ WITH
             , rf.royalty_fee_receive_address
         FROM trades_with_nft_and_tx t
         LEFT JOIN platform_fees pf
-            ON t.block_number = pf.block_number and t.unique_trade_id = pf.unique_trade_id
+            ON t.block_number = pf.block_number AND t.unique_trade_id = pf.unique_trade_id
         LEFT JOIN royalty_fees rf
-            ON t.block_number = rf.block_number and t.unique_trade_id = rf.unique_trade_id
+            ON t.block_number = rf.block_number AND t.unique_trade_id = rf.unique_trade_id
 
     ),
 
@@ -232,20 +232,20 @@ SELECT
     , te.unique_trade_id
 FROM trades_enhanced te
 LEFT JOIN {{ ref('nft_ethereum_transfers') }} buyer_fix on buyer_fix.block_time=te.block_time
-    and te.nft_contract_address=buyer_fix.contract_address
-    and buyer_fix.tx_hash=te.tx_hash
-    and te.token_id=buyer_fix.token_id
-    and te.buyer=te.aggregator_address
-    and buyer_fix.FROM=te.aggregator_address
+    AND te.nft_contract_address=buyer_fix.contract_address
+    AND buyer_fix.tx_hash=te.tx_hash
+    AND te.token_id=buyer_fix.token_id
+    AND te.buyer=te.aggregator_address
+    AND buyer_fix.FROM=te.aggregator_address
     {% if is_incremental() %}
-    and buyer_fix.block_time >= date_trunc("day", now() - interval '1 week')
+    AND buyer_fix.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ ref('nft_ethereum_transfers') }} seller_fix on seller_fix.block_time=te.block_time
-    and te.nft_contract_address=seller_fix.contract_address
-    and seller_fix.tx_hash=te.tx_hash
-    and te.token_id=seller_fix.token_id
-    and te.seller=te.aggregator_address
-    and seller_fix.to=te.aggregator_address
+    AND te.nft_contract_address=seller_fix.contract_address
+    AND seller_fix.tx_hash=te.tx_hash
+    AND te.token_id=seller_fix.token_id
+    AND te.seller=te.aggregator_address
+    AND seller_fix.to=te.aggregator_address
     {% if is_incremental() %}
-    and seller_fix.block_time >= date_trunc("day", now() - interval '1 week')
+    AND seller_fix.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}

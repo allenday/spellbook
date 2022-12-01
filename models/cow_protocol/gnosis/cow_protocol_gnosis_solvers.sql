@@ -7,7 +7,7 @@
 
 -- Find the PoC Query here: https: / /dune.com/queries/1399494
 WITH
--- Aggregate the solver added and removed events into a single table
+-- Aggregate the solver added AND removed events into a single table
 -- with true / false for adds/removes respectively
 solver_activation_events AS (
     SELECT solver, evt_block_number, evt_index, True AS activated
@@ -31,7 +31,7 @@ registered_solvers AS (
     FROM ranked_solver_events
     where rk = 1
 ),
--- Manually inserting environment and name for each "known" solver
+-- Manually inserting environment AND name for each "known" solver
 known_solver_metadata (address, environment, name) AS (
     SELECT *
     FROM (VALUES ('0xd8da60bDe22461D7Aa11540C338dC56a0E546b0D', 'barn', 'Legacy'),

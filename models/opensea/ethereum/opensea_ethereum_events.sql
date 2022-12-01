@@ -54,7 +54,7 @@ FROM
                 ,collection
                 ,amount_usd
                 ,token_standard
-                ,case when trade_type <> 'Bundle Trade' and count(1) over (partition by tx_hash) > 1 then 'Bulk Purchase'
+                ,case when trade_type <> 'Bundle Trade' AND count(1) over (partition by tx_hash) > 1 then 'Bulk Purchase'
                       else trade_type
                  end AS trade_type
                 , CAST(number_of_items AS DECIMAL(38,0)) number_of_items

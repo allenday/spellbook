@@ -80,7 +80,7 @@ INNER JOIN {{ source('avalanche_c', 'transactions') }} tx
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} erc20a
     ON erc20a.contract_address = fraxswap_dex.token_bought_address
-    and erc20a.blockchain = 'avalanche_c'
+    AND erc20a.blockchain = 'avalanche_c'
 LEFT JOIN {{ ref('tokens_erc20') }} erc20b
     ON erc20b.contract_address = fraxswap_dex.token_sold_address
     AND erc20b.blockchain = 'avalanche_c'

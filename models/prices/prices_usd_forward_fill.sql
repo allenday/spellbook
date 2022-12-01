@@ -44,7 +44,7 @@ WITH
     ,price
     FROM timeseries t
     LEFT JOIN unfinalized p
-    ON t.minute >= p.minute and (p.next_update_minute is NULL OR t.minute < p.next_update_minute) -- perform forward fill
+    ON t.minute >= p.minute AND (p.next_update_minute is NULL OR t.minute < p.next_update_minute) -- perform forward fill
 )
 
 SELECT

@@ -22,7 +22,7 @@ FROM (VALUES
         ('0x39c7f19b6014ed56b8937a19d92a09875c279cb8','Hank Willis Thomas','Hank Willis Thomas','SuperRare','https: / /www.superrare.com/hwillisthomas'),
         ('0xfe19a176aecca6fe31b6acc5cacbbd0a3315f422','Jeffrey Millstein','Jeffrey Millstein','Foundation','https: / /foundation.app/collection/jma'),
         ('0x76a9ae4e5a2228456a4e9595281ad2731423f162','Raised by Wolves','Jim Goldberg','SuperRare','https: / /superrare.com/jimgoldberg'),
-        ('0xd91d6c723f0bcc1671052e1752a63fe572187d98','35mm Black and white','Joel Meyerowitz','Foundation','https: / /foundation.app/collection/jm35bw'),
+        ('0xd91d6c723f0bcc1671052e1752a63fe572187d98','35mm Black AND white','Joel Meyerowitz','Foundation','https: / /foundation.app/collection/jm35bw'),
         ('0x1b79b08e750e0feb89960266a41ce52a1fe379ec','Bay Sky','Joel Meyerowitz','Foundation','https: / /foundation.app/collection/jmbs'),
         ('0xc719f2a34a3368aa7c1155e4a99ed5b7707d5d9b','Between The Dog And The Wolf','Joel Meyerowitz','SuperRare','https: / /superrare.com/joelmeyerowitz'),
         ('0x77ebeea4b1062a773b042fa509410862c1182400','Early color 1962-63','Joel Meyerowitz','Foundation','https: / /foundation.app/collection/jmec'),

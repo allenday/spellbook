@@ -10,7 +10,7 @@ with
         distinct tx_hash
     FROM {{ ref('cow_protocol_ethereum_trades') }}
     where buy_token_address in (SELECT contract_address FROM {{ ref('tokens_ethereum_erc20_stablecoins') }})
-    and sell_token_address in (SELECT contract_address FROM {{ ref('tokens_ethereum_erc20_stablecoins') }})
+    AND sell_token_address in (SELECT contract_address FROM {{ ref('tokens_ethereum_erc20_stablecoins') }})
  )
 SELECT
   array("ethereum") AS blockchain,

@@ -38,13 +38,13 @@ SELECT
   -- Temporary fix for token ID until we implement a UDF equivalent for bytea2numeric that works for numbers higher than 64 bits
   -- We check if token ID in hex is longer than 16, because 2**64 can be represented in hex with 16 digits (log_16(2**64) = 16).
   CASE WHEN contains('0xfb16a595', substring(calldataBuy,1,4)) AND length(ltrim('0', substr(calldataBuy,203,64))) > 16
-  THEN 'Token ID is larger than 64 bits and can NOT be displayed'
+  THEN 'Token ID is larger than 64 bits AND can NOT be displayed'
   WHEN contains('0x96809f90', substring(calldataBuy,1,4)) AND length(ltrim('0', substr(calldataBuy,203,64))) > 16
-  THEN 'Token ID is larger than 64 bits and can NOT be displayed'
+  THEN 'Token ID is larger than 64 bits AND can NOT be displayed'
   WHEN contains('0x23b872dd', substring(calldataBuy,1,4)) AND length(ltrim('0', substr(calldataBuy,139,64))) > 16
-  THEN 'Token ID is larger than 64 bits and can NOT be displayed'
+  THEN 'Token ID is larger than 64 bits AND can NOT be displayed'
   WHEN contains('0xf242432a', substring(calldataBuy,1,4)) AND length(ltrim('0', substr(calldataBuy,139,64))) > 16
-  THEN 'Token ID is larger than 64 bits and can NOT be displayed'
+  THEN 'Token ID is larger than 64 bits AND can NOT be displayed'
   WHEN contains('0xfb16a595', substring(calldataBuy,1,4)) THEN conv(substr(calldataBuy,203,64),16,10)::STRING
   WHEN contains('0x96809f90', substring(calldataBuy,1,4)) THEN conv(substr(calldataBuy,203,64),16,10)::STRING
   WHEN contains('0x23b872dd', substring(calldataBuy,1,4)) THEN conv(substr(calldataBuy,139,64),16,10)::STRING
@@ -98,9 +98,9 @@ SELECT
 
 erc_transfers AS
 (SELECT evt_tx_hash,
-        -- token_id_erc will be used for joining. It may be 'Token ID is larger than 64 bits and can NOT be displayed'
+        -- token_id_erc will be used for joining. It may be 'Token ID is larger than 64 bits AND can NOT be displayed'
         -- token_id_erc_uncapped will be used for displaying the token_id after joining
-        CASE WHEN length(id::STRING) > 64 THEN 'Token ID is larger than 64 bits and can NOT be displayed' ELSE id::string END AS token_id_erc,
+        CASE WHEN length(id::STRING) > 64 THEN 'Token ID is larger than 64 bits AND can NOT be displayed' ELSE id::string END AS token_id_erc,
         id::STRING AS token_id_erc_uncapped,
         cardinality(collect_list(value)) AS count_erc,
         value AS value_unique,
@@ -113,9 +113,9 @@ erc_transfers AS
         GROUP BY evt_tx_hash,value,id,evt_index, erc1155.FROM, erc1155.to
             UNION ALL
 SELECT evt_tx_hash,
-        -- token_id_erc will be used for joining. It may be 'Token ID is larger than 64 bits and can NOT be displayed'
+        -- token_id_erc will be used for joining. It may be 'Token ID is larger than 64 bits AND can NOT be displayed'
         -- token_id_erc_uncapped will be used for displaying the token_id after joining
-        CASE WHEN length(tokenId::STRING) > 64 THEN 'Token ID is larger than 64 bits and can NOT be displayed' ELSE tokenId::string END AS token_id_erc,
+        CASE WHEN length(tokenId::STRING) > 64 THEN 'Token ID is larger than 64 bits AND can NOT be displayed' ELSE tokenId::string END AS token_id_erc,
 		tokenId::STRING AS token_id_erc_uncapped,
         COUNT(tokenId) AS count_erc,
         NULL AS value_unique,
@@ -143,7 +143,7 @@ SELECT DISTINCT
       WHEN agg.name is NULL AND erc_transfers.value_unique = 1 OR erc_transfers.count_erc = 1 THEN 'Single Item Trade'
       WHEN agg.name is NULL AND erc_transfers.value_unique > 1 OR erc_transfers.count_erc > 1 THEN 'Bundle Trade'
   ELSE wa.trade_type END AS trade_type,
-  -- Count number of items traded for different trade types and erc standards
+  -- Count number of items traded for different trade types AND erc standards
   CASE WHEN agg.name is NULL AND erc_transfers.value_unique > 1 THEN erc_transfers.value_unique
       WHEN agg.name is NULL AND erc_transfers.value_unique is NULL AND erc_transfers.count_erc > 1 THEN erc_transfers.count_erc
       WHEN wa.trade_type = 'Single Item Trade' THEN cast(1 AS bigint)
@@ -192,11 +192,11 @@ SELECT DISTINCT
 FROM wyvern_all wa
 INNER JOIN {{ source('ethereum','transactions') }} tx ON wa.call_tx_hash = tx.hash
     {% if is_incremental() %}
-    and tx.block_time >= date_trunc("day", now() - interval '1 week')
+    AND tx.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 LEFT JOIN erc_transfers ON erc_transfers.evt_tx_hash = wa.call_tx_hash AND (wa.token_id = erc_transfers.token_id_erc
 OR wa.token_id = NULL)
-LEFT JOIN {{ ref('tokens_nft') }} tokens_nft ON tokens_nft.contract_address = wa.nft_contract_address and tokens_nft.blockchain = 'ethereum'
+LEFT JOIN {{ ref('tokens_nft') }} tokens_nft ON tokens_nft.contract_address = wa.nft_contract_address AND tokens_nft.blockchain = 'ethereum'
 LEFT JOIN {{ ref('nft_aggregators') }} agg ON agg.contract_address = tx.to AND agg.blockchain = 'ethereum'
 LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_block_time=tx.block_time
     AND wa.nft_contract_address=erct2.contract_address
@@ -204,7 +204,7 @@ LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_bloc
     AND erct2.tokenId=coalesce(token_id_erc, wa.token_id)
     AND erct2.FROM=buyer
     {% if is_incremental() %}
-    and erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=tx.block_time
     AND wa.nft_contract_address=erct3.contract_address
@@ -212,7 +212,7 @@ LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.e
     AND erct3.id=coalesce(token_id_erc, wa.token_id)
     AND erct3.FROM=buyer
     {% if is_incremental() %}
-    and erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', tx.block_time)
     AND p.contract_address = wa.currency_contract
@@ -220,7 +220,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', tx.
     {% if is_incremental() %}
     AND p.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ ref('tokens_erc20') }} erc20 ON erc20.contract_address = wa.currency_contract and erc20.blockchain = 'ethereum'
+LEFT JOIN {{ ref('tokens_erc20') }} erc20 ON erc20.contract_address = wa.currency_contract AND erc20.blockchain = 'ethereum'
   WHERE wa.call_tx_hash NOT in (
     SELECT
       *

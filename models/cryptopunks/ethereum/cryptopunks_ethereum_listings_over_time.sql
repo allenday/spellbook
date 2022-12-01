@@ -92,7 +92,7 @@ with all_listings AS (
                     FROM all_punk_events
                     group by 1,2
                 ) b -- max event per punk per day
-    on date_trunc('day',a.evt_block_time) = b.day and a.punk_id = b.punk_id and a.punk_event_index = b.max_event
+    on date_trunc('day',a.evt_block_time) = b.day AND a.punk_id = b.punk_id AND a.punk_event_index = b.max_event
 )
 SELECT day
         , sum(case when bool_fill_in = 'Active' then 1 else 0 end) AS listed_count
@@ -105,7 +105,7 @@ FROM
                 , listed_bool
         FROM base_data  a
         left outer join aggregated_punk_on_off_data  b
-        on a.day = b.day and a.punk_id = b.punk_id
+        on a.day = b.day AND a.punk_id = b.punk_id
     ) c
 ) d
 group by 1

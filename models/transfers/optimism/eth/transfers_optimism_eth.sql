@@ -30,16 +30,16 @@ with eth_transfers AS (
         on r.tx_hash = t.hash
     where
         (r.call_type NOT in ('delegatecall', 'callcode', 'staticcall') or r.call_type is NULL)
-        and r.tx_success
-        and r.success
-        and r.value > 0
+        AND r.tx_success
+        AND r.success
+        AND r.value > 0
         {% if is_incremental() %} -- this filter will only be applied on an incremental run
-        and r.block_time >= date_trunc('day', now() - interval '1 week')
-        and t.block_time >= date_trunc('day', now() - interval '1 week')
+        AND r.block_time >= date_trunc('day', now() - interval '1 week')
+        AND t.block_time >= date_trunc('day', now() - interval '1 week')
         {% endif %}
 
     union all
-    --ETH Transfers FROM deposits and withdrawals are ERC20 transfers of the 'deadeadead' ETH token. These do NOT appear in traces.
+    --ETH Transfers FROM deposits AND withdrawals are ERC20 transfers of the 'deadeadead' ETH token. These do NOT appear in traces.
 
     SELECT
         r.FROM
@@ -59,11 +59,11 @@ with eth_transfers AS (
         on r.evt_tx_hash = t.hash
     where
         r.contract_address = lower('0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000')
-        and t.success
-        and r.value > 0
+        AND t.success
+        AND r.value > 0
         {% if is_incremental() %} -- this filter will only be applied on an incremental run
-        and r.evt_block_time >= date_trunc('day', now() - interval '1 week')
-        and t.block_time >= date_trunc('day', now() - interval '1 week')
+        AND r.evt_block_time >= date_trunc('day', now() - interval '1 week')
+        AND t.block_time >= date_trunc('day', now() - interval '1 week')
         {% endif %}
 )
 SELECT * FROM eth_transfers order by tx_block_time

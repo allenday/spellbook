@@ -23,7 +23,7 @@
     ie--
         a regular swap looks like--	sender <-> pool
         but Platypus allows--		sender -> pool -> receiver
-        here, receiver and sender can be identical (resulting in a regular swap), but don't have to be
+        here, receiver AND sender can be identical (resulting in a regular swap), but don't have to be
     As the receiver (ie the `to` address) ultimately receives the swapped tokens, we designate him / her AS taker
 * / 
 {% set project_start_date = '2021-11-26' %}
@@ -71,35 +71,35 @@ inner join {{ source('avalanche_c', 'transactions') }} tx
 -- bought tokens
 LEFT JOIN {{ ref('tokens_erc20') }} erc20_b
     on erc20_b.contract_address = s.toToken
-    and erc20_b.blockchain = 'avalanche_c'
+    AND erc20_b.blockchain = 'avalanche_c'
 -- sold tokens
 LEFT JOIN {{ ref('tokens_erc20') }} erc20_s
     on erc20_s.contract_address = s.fromToken
-    and erc20_s.blockchain = 'avalanche_c'
+    AND erc20_s.blockchain = 'avalanche_c'
 -- price of bought tokens
 LEFT JOIN {{ source('prices', 'usd') }} prices_b
     on prices_b.minute = date_trunc('minute', s.evt_block_time)
-    and prices_b.contract_address = s.toToken
-    and prices_b.blockchain = 'avalanche_c'
+    AND prices_b.contract_address = s.toToken
+    AND prices_b.blockchain = 'avalanche_c'
 	{% if NOT is_incremental() %}
-    and prices_b.minute >= '{{project_start_date}}'
+    AND prices_b.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    and prices_b.minute >= date_trunc("day", now() - interval '1 week')
+    AND prices_b.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 -- price of sold tokens
 LEFT JOIN {{ source('prices', 'usd') }} prices_s
     on prices_s.minute = date_trunc('minute', s.evt_block_time)
-    and prices_s.contract_address = s.fromToken
-    and prices_s.blockchain = 'avalanche_c'
+    AND prices_s.contract_address = s.fromToken
+    AND prices_s.blockchain = 'avalanche_c'
 	{% if NOT is_incremental() %}
-    and prices_s.minute >= '{{project_start_date}}'
+    AND prices_s.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    and prices_s.minute >= date_trunc("day", now() - interval '1 week')
+    AND prices_s.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 where 1 = 1
     {% if is_incremental() %}
-    and s.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND s.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 ;

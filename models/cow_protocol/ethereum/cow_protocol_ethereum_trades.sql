@@ -11,7 +11,7 @@
 
 -- Find the PoC Query here: https: / /dune.com/queries/1283229
 WITH
--- First subquery joins buy and sell token prices FROM prices.usd
+-- First subquery joins buy AND sell token prices FROM prices.usd
 -- Also deducts fee FROM sell amount
 trades_with_prices AS (
     SELECT try_cast(date_trunc('day', evt_block_time) AS date) AS block_date,
@@ -52,7 +52,7 @@ trades_with_prices AS (
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 ),
--- Second subquery gets token symbol and decimals FROM tokens.erc20 (to display units bought and sold)
+-- Second subquery gets token symbol AND decimals FROM tokens.erc20 (to display units bought AND sold)
 trades_with_token_units AS (
     SELECT block_date,
            block_time,
@@ -76,7 +76,7 @@ trades_with_token_units AS (
            sell_amount                       AS atoms_sold,
            buy_amount / pow(10, tb.decimals)  AS units_bought,
            buy_amount                        AS atoms_bought,
-           -- We use sell value when possible and buy value when NOT
+           -- We use sell value when possible AND buy value when NOT
            fee_amount / pow(10, ts.decimals)  AS fee,
            fee_amount                        AS fee_atoms,
            sell_price,
@@ -92,7 +92,7 @@ trades_with_token_units AS (
                                      ELSE buy_token
                                     END)
 ),
--- This, independent, aggregation defines a mapping of order_uid and trade
+-- This, independent, aggregation defines a mapping of order_uid AND trade
 -- TODO - create a view for the following block mapping uid to app_data
 order_ids AS (
     SELECT evt_tx_hash, collect_list(orderUid) AS order_ids
@@ -139,7 +139,7 @@ uid_to_app_id AS (
     FROM reduced_order_ids order_ids
              join trade_data trades
                   on evt_tx_hash = call_tx_hash
-                      and order_ids.pos = trades.pos
+                      AND order_ids.pos = trades.pos
 ),
 
 valued_trades AS (
@@ -166,7 +166,7 @@ valued_trades AS (
                 WHEN sell_price IS NOT NULL THEN
                     -- Choose the larger of two prices when both NOT NULL.
                     CASE
-                        WHEN buy_price IS NOT NULL and buy_price * units_bought > sell_price * units_sold
+                        WHEN buy_price IS NOT NULL AND buy_price * units_bought > sell_price * units_sold
                             then buy_price * units_bought
                         ELSE sell_price * units_sold
                         END
@@ -182,7 +182,7 @@ valued_trades AS (
            (CASE
                 WHEN sell_price IS NOT NULL THEN
                     CASE
-                        WHEN buy_price IS NOT NULL and buy_price * units_bought > sell_price * units_sold
+                        WHEN buy_price IS NOT NULL AND buy_price * units_bought > sell_price * units_sold
                             then buy_price * units_bought * fee / units_sold
                         ELSE sell_price * fee
                         END

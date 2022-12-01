@@ -93,7 +93,7 @@ with all_listings AS (
                     FROM all_punk_events
                     group by 1,2
                 ) b -- max event per punk per day
-    on date_trunc('day',a.evt_block_time) = b.day and a.punk_id = b.punk_id and a.punk_event_index = b.max_event
+    on date_trunc('day',a.evt_block_time) = b.day AND a.punk_id = b.punk_id AND a.punk_event_index = b.max_event
 )
 
 SELECT day
@@ -101,7 +101,7 @@ SELECT day
         , floor_price_eth*1.0*p.price AS floor_price_usd
 FROM
 (   SELECT day
-            , min(price_fill_in) filter (where bool_fill_in = 'Active' and price_fill_in > 0) AS floor_price_eth
+            , min(price_fill_in) filter (where bool_fill_in = 'Active' AND price_fill_in > 0) AS floor_price_eth
     FROM
     (   SELECT c.*
                 , last_value(listed_price,true) over (partition by punk_id order by day asc ) AS price_fill_in
@@ -113,7 +113,7 @@ FROM
                     , listed_bool
             FROM base_data  a
             left outer join aggregated_punk_on_off_data  b
-            on a.day = b.day and a.punk_id = b.punk_id
+            on a.day = b.day AND a.punk_id = b.punk_id
         ) c
     ) d
     group by 1

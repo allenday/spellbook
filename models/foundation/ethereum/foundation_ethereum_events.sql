@@ -206,7 +206,7 @@ LEFT JOIN {{ source('ethereum','traces') }} ett ON ett.block_time=t.block_time
     AND cast(ett.value AS STRING) = cast(t.royalty_fee_amount_raw AS string)
     AND ett.to!=t.project_contract_address
     AND t.royalty_fee_amount / t.amount_original < 0.5
-    and ett.success = true
+    AND ett.success = true
     {% if is_incremental() %}
     -- this filter will only be applied on an incremental run
     AND ett.block_time >=  date_trunc("day", now() - interval '1 week')

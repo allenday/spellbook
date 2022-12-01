@@ -77,5 +77,5 @@ FROM
     ) a
 ) b
 
-where punk_event_index = 1 and event_type = 'Listing' and event_sub_type = 'Public Listing'
+where punk_event_index = 1 AND event_type = 'Listing' AND event_sub_type = 'Public Listing'
 order by listed_price asc, evt_block_time desc 

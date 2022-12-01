@@ -24,7 +24,7 @@ batch_counts AS (
            sum(
                case
                    when selector != '0x2e1a7d4d' -- unwrap
-                    and selector != '0x095ea7b3' -- approval
+                    AND selector != '0x095ea7b3' -- approval
                        then 1
                    else 0
                 end)                                                AS dex_swaps,
@@ -54,8 +54,8 @@ batch_values AS (
     FROM {{ ref('cow_protocol_ethereum_trades') }}
         left outer join {{ source('prices', 'usd') }} AS p
             on p.contract_address = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-            and p.minute = date_trunc('minute', block_time)
-            and blockchain = 'ethereum'
+            AND p.minute = date_trunc('minute', block_time)
+            AND blockchain = 'ethereum'
     {% if is_incremental() %}
     WHERE block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -78,7 +78,7 @@ combined_batch_info AS (
                 SELECT count(*)
                 FROM {{ ref('dex_trades') }}
                 where tx_hash = evt_tx_hash
-                and blockchain = 'ethereum'
+                AND blockchain = 'ethereum'
               )
             ELSE dex_swaps
         END                                              AS dex_swaps,

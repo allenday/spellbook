@@ -405,7 +405,7 @@ VALUES
     ("gno-gnosis", "ethereum", "GNO", "0x6810e776880c02933d47db1b9fc05908e5386b96", 18),
     ("gnt-golem", "ethereum", "GNT", "0xa74476443119a942de498590fe1f2454d7d4ac0d", 18),
     ("govi-govi", "ethereum", "GOVI", "0xeeaa40b28a2d1b0b08f6f97bb1dd4b75316c6107", 18),
-    ("gp-wizards-and-dragons", "ethereum", "GP", "0x38ec27c6f05a169e7ed03132bca7d0cfee93c2c5", 18),
+    ("gp-wizards-AND-dragons", "ethereum", "GP", "0x38ec27c6f05a169e7ed03132bca7d0cfee93c2c5", 18),
     ("grid-grid", "ethereum", "GRID", "0x12b19d3e2ccc14da04fae33e63652ce469b3f2fd", 12),
     ("gro-gro-dao-token", "ethereum", "GRO", "0x3ec8798b81485a254928b70cda1cf0a2bb0b74d7", 18),
     ("grt-the-graph", "ethereum", "GRT", "0xc944e90c64b2c07662a292be6244bdf05cda44a7", 18),

@@ -12,7 +12,7 @@
     )
 }}
 
--- raw data table with all sales on superrare platform -- both primary and secondary
+-- raw data table with all sales on superrare platform -- both primary AND secondary
 with all_superrare_sales AS (
     SELECT  evt_block_time
             , `_originContract` AS contract_address
@@ -129,9 +129,9 @@ with all_superrare_sales AS (
             , ''
     FROM {{ source('ethereum','logs') }}
     where contract_address = lower('0x8c9f364bf7a56ed058fc63ef81c6cf09c833e656')
-        and topic1 = lower('0xea6d16c6bfcad11577aef5cc6728231c9f069ac78393828f8ca96847405902a9')
+        AND topic1 = lower('0xea6d16c6bfcad11577aef5cc6728231c9f069ac78393828f8ca96847405902a9')
         {% if is_incremental() %}
-        and block_time >= date_trunc("day", now() - interval '1 week')
+        AND block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
 
     union all
@@ -146,11 +146,11 @@ with all_superrare_sales AS (
             , ''
     FROM {{ source('ethereum','logs') }}
     where contract_address =  lower('0x65b49f7aee40347f5a90b714be4ef086f3fe5e2c')
-        and topic1 in (lower('0x2a9d06eec42acd217a17785dbec90b8b4f01a93ecd8c127edd36bfccf239f8b6')
+        AND topic1 in (lower('0x2a9d06eec42acd217a17785dbec90b8b4f01a93ecd8c127edd36bfccf239f8b6')
                         , lower('0x5764dbcef91eb6f946584f4ea671217c686fa7e858ce4f9f42d08422b86556a9')
                       )
         {% if is_incremental() %}
-        and block_time >= date_trunc("day", now() - interval '1 week')
+        AND block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
 )
 -- some items are sold in RARE currency on superrare. NOT available on coinpaprika, so using dex data to be able to convert to USD. usuing weekly average since dex data isn't fully populated on v2 right now (~1 / 8 of data vs. v1). switch back to daily once full data is available
@@ -168,20 +168,20 @@ with all_superrare_sales AS (
     where
         -- RARE trades
         blockchain = 'ethereum'
-        and (
+        AND (
             token_bought_address = lower('0xba5bde662c17e2adff1075610382b9b691296350')
             or token_sold_address = lower('0xba5bde662c17e2adff1075610382b9b691296350')
         )
-        and (
+        AND (
             token_bought_symbol like '%ETH%'
             or token_sold_symbol like '%ETH%'
         )
-        and case
+        AND case
             when token_bought_symbol like '%ETH%' then token_bought_amount * 1.0 / nullif(token_sold_amount, 0)
             else token_sold_amount * 1.0 / nullif(token_bought_amount, 0)
             end < 0.001
         {% if is_incremental() %}
-        and block_date >= date_trunc("day", now() - interval '1 week')
+        AND block_date >= date_trunc("day", now() - interval '1 week')
         {% endif %}
     group by
         1
@@ -202,8 +202,8 @@ with all_superrare_sales AS (
     FROM {{ source('erc721_ethereum','evt_transfer') }} evt
     inner join all_superrare_sales tsfa
         on evt.contract_address = tsfa.contract_address
-        and evt.tokenId = tsfa.tokenId
-        and tsfa.seller = lower('0x8c9f364bf7a56ed058fc63ef81c6cf09c833e656')
+        AND evt.tokenId = tsfa.tokenId
+        AND tsfa.seller = lower('0x8c9f364bf7a56ed058fc63ef81c6cf09c833e656')
     {% if is_incremental() %}
     where evt.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -234,7 +234,7 @@ SELECT
     a.amount AS amount_raw,
     case
     when a.currencyAddress = '0xba5bde662c17e2adff1075610382b9b691296350' then 'RARE'
-    else 'ETH' -- only RARE and ETH possible
+    else 'ETH' -- only RARE AND ETH possible
     end AS currency_symbol,
     case
     when a.currencyAddress = '0xba5bde662c17e2adff1075610382b9b691296350' then '0xba5bde662c17e2adff1075610382b9b691296350'
@@ -270,23 +270,23 @@ SELECT
     end AS superrare_sale_type,
     case
     when evt.to != po.previous_owner
-    and evt.to != seller
-    and erc20.to != seller -- secondary sale
+    AND evt.to != seller
+    AND erc20.to != seller -- secondary sale
     then ROUND((10 * (a.amount) / 100), 7)
     else NULL
     end AS royalty_fee_amount_raw,
     case
     when evt.to != po.previous_owner
-    and evt.to != seller
-    and erc20.to != seller -- secondary sale
+    AND evt.to != seller
+    AND erc20.to != seller -- secondary sale
     then ROUND((10 * ((a.amount / 1e18)) / 100), 7)
     else NULL
     end AS royalty_fee_amount,
     case
     when a.currencyAddress = '0xba5bde662c17e2adff1075610382b9b691296350'
-    and evt.to != po.previous_owner
-    and evt.to != seller
-    and erc20.to != seller -- secondary sale and rare
+    AND evt.to != po.previous_owner
+    AND evt.to != seller
+    AND erc20.to != seller -- secondary sale AND rare
     then ROUND(
         (
         10 * (
@@ -296,8 +296,8 @@ SELECT
         7
     )
     when evt.to != po.previous_owner
-    and evt.to != seller
-    and erc20.to != seller -- secondary sales
+    AND evt.to != seller
+    AND erc20.to != seller -- secondary sales
     then ROUND((10 * ((a.amount / 1e18) * ep.price) / 100), 7)
     else NULL
     end AS royalty_fee_amount_usd,
@@ -308,7 +308,7 @@ SELECT
     end AS royalty_fee_receive_address,
     case
     when a.currencyAddress = '0xba5bde662c17e2adff1075610382b9b691296350' then 'RARE'
-    else 'ETH' -- only RARE and ETH possible
+    else 'ETH' -- only RARE AND ETH possible
     end AS royalty_fee_currency_symbol,
     'superrare' || '-' || a.evt_tx_hash || '-' || CAST(a.tokenId AS VARCHAR(100)) || '-' || CAST(a.seller AS VARCHAR(100)) || '-' || COALESCE(a.contract_address) || '-' || 'Trade' AS unique_trade_id
 FROM all_superrare_sales a
@@ -319,9 +319,9 @@ left outer join
             , price
         FROM {{ source('prices','usd') }}
         where blockchain = 'ethereum'
-            and symbol = 'WETH'
+            AND symbol = 'WETH'
             {% if is_incremental() %}
-            and minute >= date_trunc("day", now() - interval '1 week')
+            AND minute >= date_trunc("day", now() - interval '1 week')
             {% endif %}
     ) ep
     on date_trunc('minute', a.evt_block_time) = ep.minute
@@ -330,19 +330,19 @@ left outer join rare_token_price_eth rp
 inner join {{ source('ethereum','transactions') }} t
     on a.evt_tx_hash = t.hash
     {% if is_incremental() %}
-    and t.block_time >= date_trunc("day", now() - interval '1 week')
+    AND t.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 left outer join {{ source('erc721_ethereum','evt_transfer') }} evt on evt.contract_address = a.contract_address
-    and evt.tokenId = a.tokenId
-    and evt.FROM = '0x0000000000000000000000000000000000000000'
+    AND evt.tokenId = a.tokenId
+    AND evt.FROM = '0x0000000000000000000000000000000000000000'
     {% if is_incremental() %}
-    and evt.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND evt.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 left outer join {{ source('erc20_ethereum','evt_transfer') }} erc20 on erc20.contract_address = a.contract_address
-    and erc20.value = a.tokenId
-    and erc20.FROM = '0x0000000000000000000000000000000000000000'
+    AND erc20.value = a.tokenId
+    AND erc20.FROM = '0x0000000000000000000000000000000000000000'
     {% if is_incremental() %}
-    and erc20.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND erc20.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 left outer join transfers_for_tokens_sold_from_auction po -- if sold FROM auction house previous owner
     on a.evt_tx_hash = po.evt_tx_hash

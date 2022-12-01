@@ -50,4 +50,4 @@ LEFT JOIN {{ ref('tokens_ethereum_rebase') }}  AS r
 LEFT JOIN {{ ref('balances_ethereum_erc20_noncompliant') }}  AS nc
     ON b.token_address = nc.token_address
 WHERE r.contract_address is NULL
-and nc.token_address is NULL
+AND nc.token_address is NULL

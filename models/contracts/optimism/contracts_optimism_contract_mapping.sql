@@ -45,15 +45,15 @@ with base_level AS (
     FROM {{ source('optimism', 'creation_traces') }} AS ct
     LEFT JOIN {{ ref('contracts_optimism_self_destruct_contracts') }} AS sd
       on ct.address = sd.contract_address
-      and ct.tx_hash = sd.creation_tx_hash
-      and ct.block_time = sd.created_time
+      AND ct.tx_hash = sd.creation_tx_hash
+      AND ct.block_time = sd.created_time
       {% if is_incremental() %}
-      and sd.created_time >= date_trunc('day', now() - interval '1 week')
+      AND sd.created_time >= date_trunc('day', now() - interval '1 week')
       {% endif %}
     where
       true
     {% if is_incremental() %}
-      and ct.block_time >= date_trunc('day', now() - interval '1 week')
+      AND ct.block_time >= date_trunc('day', now() - interval '1 week')
 
     -- to get existing history of contract mapping
     union all
@@ -170,12 +170,12 @@ with base_level AS (
   where
     true
     {% if is_incremental() %} -- this filter will only be applied on an incremental run
-    and NOT exists (
+    AND NOT exists (
       SELECT 1
       FROM {{ this }} AS gc
       where
         gc.contract_address = c.contract_address
-        and (
+        AND (
           (gc.contract_project = c.contract_project) or (gc.contract_project is NULL)
         )
     )
@@ -199,12 +199,12 @@ with base_level AS (
   where
     true
     {% if is_incremental() %} -- this filter will only be applied on an incremental run
-    and NOT exists (
+    AND NOT exists (
       SELECT 1
       FROM {{ this }} AS gc
       where
         gc.contract_address = snx.contract_address
-        and gc.contract_project = 'Synthetix'
+        AND gc.contract_project = 'Synthetix'
     )
     {% endif %}
     group by 1, 2, 3, 4, 5, 6, 7, 8, 9
@@ -226,7 +226,7 @@ with base_level AS (
   group by 1, 2, 3, 4, 5, 6, 7, 8, 9
 )
 ,cleanup AS (
---grab the first non-NULL value for each, i.e. if we have the contract via both contract mapping and optimism.contracts
+--grab the first non-NULL value for each, i.e. if we have the contract via both contract mapping AND optimism.contracts
   SELECT
     contract_address
     {% for col in cols %}

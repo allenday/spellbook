@@ -19,7 +19,7 @@ with hashflow_trades AS (
     FROM {{ ref('hashflow_ethereum_raw_trades') }}
     where fill_status is true -- successful trade
     {% if is_incremental() %}
-        and block_time >= date_trunc('day', now() - interval '10 days')
+        AND block_time >= date_trunc('day', now() - interval '10 days')
     {% endif %}
 ),
 
@@ -28,7 +28,7 @@ ethereum_transactions AS (
     FROM {{ source('ethereum', 'transactions') }}
     where block_time >= '{{ project_start_date }}'
     {% if is_incremental() %}
-        and block_time >= date_trunc('day', now() - interval '10 days')
+        AND block_time >= date_trunc('day', now() - interval '10 days')
     {% endif %}
 ),
 

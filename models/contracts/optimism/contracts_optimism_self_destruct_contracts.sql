@@ -21,10 +21,10 @@ with creates AS (
     FROM {{ source('optimism', 'traces') }}
     where
       type = 'create'
-      and success
-      and tx_success
+      AND success
+      AND tx_success
       {% if is_incremental() %}
-      and block_time >= date_trunc('day', now() - interval '1 week')
+      AND block_time >= date_trunc('day', now() - interval '1 week')
       {% endif %}
 )
 SELECT
@@ -35,11 +35,11 @@ SELECT
 FROM creates AS cr
 join {{ source('optimism', 'traces') }} AS sd
   on cr.creation_tx_hash = sd.tx_hash
-  and cr.created_time = sd.block_time
-  and cr.trace_element = sd.trace_address[0]
-  and sd.`type` = 'suicide'
+  AND cr.created_time = sd.block_time
+  AND cr.trace_element = sd.trace_address[0]
+  AND sd.`type` = 'suicide'
   {% if is_incremental() %}
-  and sd.block_time >= date_trunc('day', now() - interval '1 week')
+  AND sd.block_time >= date_trunc('day', now() - interval '1 week')
   {% endif %}
 group by 1, 2, 3, 4
 ;

@@ -2,7 +2,7 @@
          ,alias='events')
 }}
 
--- opensea.events is compose of mint, burn, and trades.
+-- opensea.events is compose of mint, burn, AND trades.
 -- but now there are only trades.
 -- materialize : view
 

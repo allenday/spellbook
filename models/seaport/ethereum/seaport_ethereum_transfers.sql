@@ -85,11 +85,11 @@ with p1_call AS (
      )
 
 
-,p1_add_rn AS (SELECT (max(case when purchase_method = 'Offer Accepted' and sub_type = 'offer' and sub_idx = 0 then token_contract_address
-                     when purchase_method = 'Buy' and sub_type = 'consideration' then token_contract_address
+,p1_add_rn AS (SELECT (max(case when purchase_method = 'Offer Accepted' AND sub_type = 'offer' AND sub_idx = 0 then token_contract_address
+                     when purchase_method = 'Buy' AND sub_type = 'consideration' then token_contract_address
                 end) over (partition by tx_hash, evt_index)) AS avg_original_currency_contract
-          ,sum(case when purchase_method = 'Offer Accepted' and sub_type = 'offer' and sub_idx = 0 then original_amount
-                    when purchase_method = 'Buy' and sub_type = 'consideration' then original_amount
+          ,sum(case when purchase_method = 'Offer Accepted' AND sub_type = 'offer' AND sub_idx = 0 then original_amount
+                    when purchase_method = 'Buy' AND sub_type = 'consideration' then original_amount
                end) over (partition by tx_hash, evt_index)
  / nft_transfer_count AS avg_original_amount
           ,sum(case when fee_royalty_yn = 'fee' then original_amount end) over (partition by tx_hash, evt_index) / nft_transfer_count AS avg_fee_amount
@@ -97,14 +97,14 @@ with p1_call AS (
           ,(max(case when fee_royalty_yn = 'fee' then receiver end) over (partition by tx_hash, evt_index)) AS avg_fee_receive_address
           ,(max(case when fee_royalty_yn = 'royalty' then receiver end) over (partition by tx_hash, evt_index)) AS avg_royalty_receive_address
           ,a.*
-      FROM (SELECT case when purchase_method = 'Offer Accepted' and sub_type = 'consideration' and fee_royalty_idx = 1 then 'fee'
-                        when purchase_method = 'Offer Accepted' and sub_type = 'consideration' and fee_royalty_idx = 2 then 'royalty'
-                        when purchase_method = 'Buy' and sub_type = 'consideration' and fee_royalty_idx = 2 then 'fee'
-                        when purchase_method = 'Buy' and sub_type = 'consideration' and fee_royalty_idx = 3 then 'royalty'
+      FROM (SELECT case when purchase_method = 'Offer Accepted' AND sub_type = 'consideration' AND fee_royalty_idx = 1 then 'fee'
+                        when purchase_method = 'Offer Accepted' AND sub_type = 'consideration' AND fee_royalty_idx = 2 then 'royalty'
+                        when purchase_method = 'Buy' AND sub_type = 'consideration' AND fee_royalty_idx = 2 then 'fee'
+                        when purchase_method = 'Buy' AND sub_type = 'consideration' AND fee_royalty_idx = 3 then 'royalty'
                    end AS fee_royalty_yn
-                  ,case when purchase_method = 'Offer Accepted' and main_type = 'order' then 'Individual Offer'
-                        when purchase_method = 'Offer Accepted' and main_type = 'basic_order' then 'Individual Offer'
-                        when purchase_method = 'Offer Accepted' and main_type = 'advanced_order' then 'Collection / Trait Offers'
+                  ,case when purchase_method = 'Offer Accepted' AND main_type = 'order' then 'Individual Offer'
+                        when purchase_method = 'Offer Accepted' AND main_type = 'basic_order' then 'Individual Offer'
+                        when purchase_method = 'Offer Accepted' AND main_type = 'advanced_order' then 'Collection / Trait Offers'
                         else 'Buy'
                    end AS order_type
                   ,a.*
@@ -206,7 +206,7 @@ with p1_call AS (
           ,a.royalty_amount / power(10,t1.decimals) * p1.price AS royalty_fee_amount_usd
           ,(a.royalty_amount / a.original_amount * 100)::STRING  AS royalty_fee_percentage
           ,a.royalty_receive_address AS royalty_fee_receive_address
-          ,case when royalty_amount > 0 and a.original_currency_contract =
+          ,case when royalty_amount > 0 AND a.original_currency_contract =
           '0x0000000000000000000000000000000000000000' then 'ETH'
                 when royalty_amount > 0 then t1.symbol
           end AS royalty_fee_currency_symbol
@@ -218,27 +218,27 @@ with p1_call AS (
         inner join {{ source('ethereum','transactions') }} tx
             on tx.hash = a.tx_hash
             {% if NOT is_incremental() %}
-            and tx.block_number > 14801608
+            AND tx.block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and tx.block_time >= date_trunc("day", now() - interval '1 week')
+            AND tx.block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         LEFT JOIN {{ ref('nft_ethereum_aggregators_markers') }} agg_m
                 ON LEFT(tx.data, CHARINDEX(agg_m.hash_marker, tx.data) + LENGTH(agg_m.hash_marker)) LIKE '%' || agg_m.hash_marker
         LEFT JOIN {{ ref('nft_aggregators') }} agg
             ON agg.contract_address = tx.to AND agg.blockchain = 'ethereum'
         LEFT JOIN {{ ref('tokens_nft') }} n
-            on n.contract_address = nft_contract_address and n.blockchain = 'ethereum'
+            on n.contract_address = nft_contract_address AND n.blockchain = 'ethereum'
         LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
             AND nft_contract_address=erct2.contract_address
             AND erct2.evt_tx_hash=a.tx_hash
             AND erct2.tokenId=a.nft_token_id
             AND erct2.FROM=concat('0x',substr(buyer,3,40))
             {% if NOT is_incremental() %}
-            and erct2.evt_block_number > 14801608
+            AND erct2.evt_block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
             AND nft_contract_address=erct3.contract_address
@@ -246,10 +246,10 @@ with p1_call AS (
             AND erct3.id=a.nft_token_id
             AND erct3.FROM=concat('0x',substr(buyer,3,40))
             {% if NOT is_incremental() %}
-            and erct3.evt_block_number > 14801608
+            AND erct3.evt_block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         LEFT JOIN {{ ref('tokens_erc20') }} t1
             on t1.contract_address =
@@ -257,17 +257,17 @@ with p1_call AS (
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 else a.original_currency_contract
                 end
-            and t1.blockchain = 'ethereum'
+            AND t1.blockchain = 'ethereum'
           LEFT JOIN {{ source('prices', 'usd') }} p1
             on p1.contract_address =
                 case when a.original_currency_contract = '0x0000000000000000000000000000000000000000'
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 else a.original_currency_contract
                 end
-            and p1.minute = date_trunc('minute', a.block_time)
-            and p1.blockchain = 'ethereum'
+            AND p1.minute = date_trunc('minute', a.block_time)
+            AND p1.blockchain = 'ethereum'
             {% if is_incremental() %}
-            and p1.minute >= date_trunc("day", now() - interval '1 week')
+            AND p1.minute >= date_trunc("day", now() - interval '1 week')
             {% endif %}
             )
 
@@ -347,10 +347,10 @@ with p1_call AS (
       FROM p2_call c
             inner join {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }} e
             on e.evt_tx_hash = c.tx_hash
-            and e.offerer = concat('0x',substr(c.offerer,3,40))
-            and get_json_object(e.offer[0], "$.token") = c.offer_token
-            and get_json_object(e.offer[0], "$.identifier") = c.offer_identifier
-            and get_json_object(e.offer[0], "$.itemType") = c.offer_item_type
+            AND e.offerer = concat('0x',substr(c.offerer,3,40))
+            AND get_json_object(e.offer[0], "$.token") = c.offer_token
+            AND get_json_object(e.offer[0], "$.identifier") = c.offer_identifier
+            AND get_json_object(e.offer[0], "$.itemType") = c.offer_item_type
 )
 ,p2_transfer_level AS (
     SELECT a.main_type
@@ -437,7 +437,7 @@ with p1_call AS (
           ,(a.evt_royalty_amount / a.attempt_amount * 100)::STRING  AS royalty_fee_percentage
           ,case when evt_royalty_amount > 0 then concat('0x',substr(evt_royalty_recipient,3,40)) end AS
           royalty_fee_receive_address
-          ,case when evt_royalty_amount > 0 and concat('0x',substr(a.evt_royalty_token,3,40)) =
+          ,case when evt_royalty_amount > 0 AND concat('0x',substr(a.evt_royalty_token,3,40)) =
           '0x0000000000000000000000000000000000000000' then 'ETH'
                 when evt_royalty_amount > 0 then t1.symbol
           end AS royalty_fee_currency_symbol
@@ -449,10 +449,10 @@ with p1_call AS (
         inner join {{ source('ethereum','transactions') }} tx
             on tx.hash = a.tx_hash
             {% if NOT is_incremental() %}
-            and tx.block_number > 14801608
+            AND tx.block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and tx.block_time >= date_trunc("day", now() - interval '1 week')
+            AND tx.block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
             AND concat('0x',substr(a.nft_address,3,40))=erct2.contract_address
@@ -460,10 +460,10 @@ with p1_call AS (
             AND erct2.tokenId=a.nft_token_id
             AND erct2.FROM=concat('0x',substr(buyer,3,40))
             {% if NOT is_incremental() %}
-            and erct2.evt_block_number > 14801608
+            AND erct2.evt_block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
             AND concat('0x',substr(a.nft_address,3,40))=erct3.contract_address
@@ -471,33 +471,33 @@ with p1_call AS (
             AND erct3.id=a.nft_token_id
             AND erct3.FROM=concat('0x',substr(buyer,3,40))
             {% if NOT is_incremental() %}
-            and erct3.evt_block_number > 14801608
+            AND erct3.evt_block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         LEFT JOIN {{ ref('nft_ethereum_aggregators_markers') }} agg_m
                 ON LEFT(tx.data, CHARINDEX(agg_m.hash_marker, tx.data) + LENGTH(agg_m.hash_marker)) LIKE '%' || agg_m.hash_marker
         LEFT JOIN {{ ref('nft_aggregators') }} agg
             ON agg.contract_address = tx.to AND agg.blockchain = 'ethereum'
         LEFT JOIN {{ ref('tokens_nft') }} n
-            on n.contract_address = concat('0x',substr(a.nft_address,3,40)) and n.blockchain = 'ethereum'
+            on n.contract_address = concat('0x',substr(a.nft_address,3,40)) AND n.blockchain = 'ethereum'
         LEFT JOIN {{ ref('tokens_erc20') }} t1
             on t1.contract_address =
                 case when concat('0x',substr(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 else concat('0x',substr(a.price_token,3,40))
-                end and t1.blockchain = 'ethereum'
+                end AND t1.blockchain = 'ethereum'
           LEFT JOIN {{ source('prices', 'usd') }} p1
             on p1.contract_address =
                 case when concat('0x',substr(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 else concat('0x',substr(a.price_token,3,40))
                 end
-            and p1.minute = date_trunc('minute', a.block_time)
-            and p1.blockchain = 'ethereum'
+            AND p1.minute = date_trunc('minute', a.block_time)
+            AND p1.blockchain = 'ethereum'
             {% if is_incremental() %}
-            and p1.minute >= date_trunc("day", now() - interval '1 week')
+            AND p1.minute >= date_trunc("day", now() - interval '1 week')
             {% endif %}
             )
 
@@ -573,11 +573,11 @@ with p1_call AS (
         )
 
 
-,p3_add_rn AS (SELECT (max(case when purchase_method = 'Offer Accepted' and sub_type = 'offer' and sub_idx = 0 then token_contract_address::STRING
-                     when purchase_method = 'Buy' and sub_type = 'consideration' then token_contract_address::STRING
+,p3_add_rn AS (SELECT (max(case when purchase_method = 'Offer Accepted' AND sub_type = 'offer' AND sub_idx = 0 then token_contract_address::STRING
+                     when purchase_method = 'Buy' AND sub_type = 'consideration' then token_contract_address::STRING
                 end) over (partition by tx_hash, evt_index)) AS avg_original_currency_contract
-          ,sum(case when purchase_method = 'Offer Accepted' and sub_type = 'offer' and sub_idx = 0 then original_amount
-                    when purchase_method = 'Buy' and sub_type = 'consideration' then original_amount
+          ,sum(case when purchase_method = 'Offer Accepted' AND sub_type = 'offer' AND sub_idx = 0 then original_amount
+                    when purchase_method = 'Buy' AND sub_type = 'consideration' then original_amount
                end) over (partition by tx_hash, evt_index)
  / nft_transfer_count AS avg_original_amount
           ,sum(case when fee_royalty_yn = 'fee' then original_amount end) over (partition by tx_hash, evt_index) / nft_transfer_count AS avg_fee_amount
@@ -585,14 +585,14 @@ with p1_call AS (
           ,(max(case when fee_royalty_yn = 'fee' then receiver::STRING end) over (partition by tx_hash, evt_index)) AS avg_fee_receive_address
           ,(max(case when fee_royalty_yn = 'royalty' then receiver::STRING end) over (partition by tx_hash, evt_index)) AS avg_royalty_receive_address
           ,a.*
-      FROM (SELECT case when purchase_method = 'Offer Accepted' and sub_type = 'consideration' and fee_royalty_idx = 1 then 'fee'
-                        when purchase_method = 'Offer Accepted' and sub_type = 'consideration' and fee_royalty_idx = 2 then 'royalty'
-                        when purchase_method = 'Buy' and sub_type = 'consideration' and fee_royalty_idx = 2 then 'fee'
-                        when purchase_method = 'Buy' and sub_type = 'consideration' and fee_royalty_idx = 3 then 'royalty'
+      FROM (SELECT case when purchase_method = 'Offer Accepted' AND sub_type = 'consideration' AND fee_royalty_idx = 1 then 'fee'
+                        when purchase_method = 'Offer Accepted' AND sub_type = 'consideration' AND fee_royalty_idx = 2 then 'royalty'
+                        when purchase_method = 'Buy' AND sub_type = 'consideration' AND fee_royalty_idx = 2 then 'fee'
+                        when purchase_method = 'Buy' AND sub_type = 'consideration' AND fee_royalty_idx = 3 then 'royalty'
                    end AS fee_royalty_yn
-                  ,case when purchase_method = 'Offer Accepted' and main_type = 'order' then 'Individual Offer'
-                        when purchase_method = 'Offer Accepted' and main_type = 'basic_order' then 'Individual Offer'
-                        when purchase_method = 'Offer Accepted' and main_type = 'advanced_order' then 'Collection / Trait Offers'
+                  ,case when purchase_method = 'Offer Accepted' AND main_type = 'order' then 'Individual Offer'
+                        when purchase_method = 'Offer Accepted' AND main_type = 'basic_order' then 'Individual Offer'
+                        when purchase_method = 'Offer Accepted' AND main_type = 'advanced_order' then 'Collection / Trait Offers'
                         else 'Buy'
                    end AS order_type
                   ,a.*
@@ -694,7 +694,7 @@ with p1_call AS (
           ,(a.royalty_amount / a.attempt_amount * 100)::STRING  AS royalty_fee_percentage
           ,case when royalty_amount > 0 then royalty_receive_address end AS
           royalty_fee_receive_address
-          ,case when royalty_amount > 0 and a.original_currency_contract =
+          ,case when royalty_amount > 0 AND a.original_currency_contract =
           '0x0000000000000000000000000000000000000000' then 'ETH'
           when royalty_amount > 0 then t1.symbol
           end AS royalty_fee_currency_symbol
@@ -706,27 +706,27 @@ with p1_call AS (
         inner join {{ source('ethereum','transactions') }} tx
             on tx.hash = a.tx_hash
             {% if NOT is_incremental() %}
-            and tx.block_number > 14801608
+            AND tx.block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and tx.block_time >= date_trunc("day", now() - interval '1 week')
+            AND tx.block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         LEFT JOIN {{ ref('nft_aggregators') }} agg
             ON agg.contract_address = tx.to AND agg.blockchain = 'ethereum'
         LEFT JOIN {{ ref('nft_ethereum_aggregators_markers') }} agg_m
                 ON LEFT(tx.data, CHARINDEX(agg_m.hash_marker, tx.data) + LENGTH(agg_m.hash_marker)) LIKE '%' || agg_m.hash_marker
         LEFT JOIN {{ ref('tokens_nft') }} n
-            on n.contract_address = nft_contract_address and n.blockchain = 'ethereum'
+            on n.contract_address = nft_contract_address AND n.blockchain = 'ethereum'
         LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
             AND nft_contract_address=erct2.contract_address
             AND erct2.evt_tx_hash=a.tx_hash
             AND erct2.tokenId=a.nft_token_id
             AND erct2.FROM=concat('0x',substr(buyer,3,40))
             {% if NOT is_incremental() %}
-            and erct2.evt_block_number > 14801608
+            AND erct2.evt_block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
             AND nft_contract_address=erct3.contract_address
@@ -734,10 +734,10 @@ with p1_call AS (
             AND erct3.id=a.nft_token_id
             AND erct3.FROM=concat('0x',substr(buyer,3,40))
             {% if NOT is_incremental() %}
-            and erct3.evt_block_number > 14801608
+            AND erct3.evt_block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         LEFT JOIN {{ ref('tokens_erc20') }} t1
             on t1.contract_address =
@@ -745,17 +745,17 @@ with p1_call AS (
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 else a.original_currency_contract
                 end
-            and t1.blockchain = 'ethereum'
+            AND t1.blockchain = 'ethereum'
           LEFT JOIN {{ source('prices', 'usd') }} p1
             on p1.contract_address =
                 case when a.original_currency_contract = '0x0000000000000000000000000000000000000000'
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 else a.original_currency_contract
                 end
-            and p1.minute = date_trunc('minute', a.block_time)
-            and p1.blockchain = 'ethereum'
+            AND p1.minute = date_trunc('minute', a.block_time)
+            AND p1.blockchain = 'ethereum'
             {% if is_incremental() %}
-            and p1.minute >= date_trunc("day", now() - interval '1 week')
+            AND p1.minute >= date_trunc("day", now() - interval '1 week')
             {% endif %}
             )
 
@@ -926,7 +926,7 @@ with p1_call AS (
           ,(a.evt_royalty_amount / a.attempt_amount * 100)::STRING  AS royalty_fee_percentage
           ,case when evt_royalty_amount > 0 then concat('0x',substr(evt_royalty_recipient,3,40)) end AS
           royalty_fee_receive_address
-          ,case when evt_royalty_amount > 0 and concat('0x',substr(a.evt_royalty_token,3,40)) =
+          ,case when evt_royalty_amount > 0 AND concat('0x',substr(a.evt_royalty_token,3,40)) =
           '0x0000000000000000000000000000000000000000' then 'ETH'
                 when evt_royalty_amount > 0 then t1.symbol
           end AS royalty_fee_currency_symbol
@@ -937,10 +937,10 @@ with p1_call AS (
     inner join {{ source('ethereum','transactions') }} tx
         on tx.hash = a.tx_hash
         {% if NOT is_incremental() %}
-        and tx.block_number > 14801608
+        AND tx.block_number > 14801608
         {% endif %}
         {% if is_incremental() %}
-        and tx.block_time >= date_trunc("day", now() - interval '1 week')
+        AND tx.block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
     LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
         AND concat('0x',substr(a.nft_address,3,40))=erct2.contract_address
@@ -948,10 +948,10 @@ with p1_call AS (
         AND erct2.tokenId=a.nft_token_id
         AND erct2.FROM=concat('0x',substr(buyer,3,40))
         {% if NOT is_incremental() %}
-        and erct2.evt_block_number > 14801608
+        AND erct2.evt_block_number > 14801608
         {% endif %}
         {% if is_incremental() %}
-        and erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
     LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
         AND concat('0x',substr(a.nft_address,3,40))=erct3.contract_address
@@ -959,34 +959,34 @@ with p1_call AS (
         AND erct3.id=a.nft_token_id
         AND erct3.FROM=concat('0x',substr(buyer,3,40))
         {% if NOT is_incremental() %}
-        and erct3.evt_block_number > 14801608
+        AND erct3.evt_block_number > 14801608
         {% endif %}
         {% if is_incremental() %}
-        and erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        AND erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
         LEFT JOIN {{ ref('nft_ethereum_aggregators_markers') }} agg_m
                 ON LEFT(tx.data, CHARINDEX(agg_m.hash_marker, tx.data) + LENGTH(agg_m.hash_marker)) LIKE '%' || agg_m.hash_marker
     LEFT JOIN {{ ref('nft_aggregators') }} agg
         ON agg.contract_address = tx.to AND agg.blockchain = 'ethereum'
     LEFT JOIN {{ ref('tokens_nft') }} n
-        on n.contract_address = concat('0x',substr(a.nft_address,3,40)) and n.blockchain = 'ethereum'
+        on n.contract_address = concat('0x',substr(a.nft_address,3,40)) AND n.blockchain = 'ethereum'
     LEFT JOIN {{ ref('tokens_erc20') }} t1
         on t1.contract_address =
             case when concat('0x',substr(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
             then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
             else concat('0x',substr(a.price_token,3,40))
             end
-        and t1.blockchain = 'ethereum'
+        AND t1.blockchain = 'ethereum'
         LEFT JOIN {{ source('prices', 'usd') }} p1
         on p1.contract_address =
             case when concat('0x',substr(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
             then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
             else concat('0x',substr(a.price_token,3,40))
             end
-        and p1.minute = date_trunc('minute', a.block_time)
-        and p1.blockchain = 'ethereum'
+        AND p1.minute = date_trunc('minute', a.block_time)
+        AND p1.blockchain = 'ethereum'
         {% if is_incremental() %}
-        and p1.minute >= date_trunc("day", now() - interval '1 week')
+        AND p1.minute >= date_trunc("day", now() - interval '1 week')
         {% endif %}
             )
 

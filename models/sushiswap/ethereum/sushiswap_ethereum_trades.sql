@@ -70,35 +70,35 @@ FROM dexs
 inner join {{ source('ethereum', 'transactions') }} tx
     on dexs.tx_hash = tx.hash
     {% if NOT is_incremental() %}
-    and tx.block_time >= '{{project_start_date}}'
+    AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    and tx.block_time >= date_trunc("day", now() - interval '1 week')
+    AND tx.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} erc20a
     on erc20a.contract_address = dexs.token_bought_address
-    and erc20a.blockchain = 'ethereum'
+    AND erc20a.blockchain = 'ethereum'
 LEFT JOIN {{ ref('tokens_erc20') }} erc20b
     on erc20b.contract_address = dexs.token_sold_address
-    and erc20b.blockchain = 'ethereum'
+    AND erc20b.blockchain = 'ethereum'
 LEFT JOIN {{ source('prices', 'usd') }} p_bought
     on p_bought.minute = date_trunc('minute', dexs.block_time)
-    and p_bought.contract_address = dexs.token_bought_address
-    and p_bought.blockchain = 'ethereum'
+    AND p_bought.contract_address = dexs.token_bought_address
+    AND p_bought.blockchain = 'ethereum'
     {% if NOT is_incremental() %}
-    and p_bought.minute >= '{{project_start_date}}'
+    AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    and p_bought.minute >= date_trunc("day", now() - interval '1 week')
+    AND p_bought.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p_sold
     on p_sold.minute = date_trunc('minute', dexs.block_time)
-    and p_sold.contract_address = dexs.token_sold_address
-    and p_sold.blockchain = 'ethereum'
+    AND p_sold.contract_address = dexs.token_sold_address
+    AND p_sold.blockchain = 'ethereum'
     {% if NOT is_incremental() %}
-    and p_sold.minute >= '{{project_start_date}}'
+    AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    and p_sold.minute >= date_trunc("day", now() - interval '1 week')
+    AND p_sold.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
     

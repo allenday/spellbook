@@ -14,7 +14,7 @@ WITH minute AS  -- This CTE generates a series of minute values
     ) ,
 
  / *
-GLP fees accrued to the Fee GLP contract and can be claimed by invoking function_claim()
+GLP fees accrued to the Fee GLP contract AND can be claimed by invoking function_claim()
 The Fee GLP contract can be found here: https: / /arbiscan.io/address/0x4e971a87900b931ff39d1aad67697f49835400b6
 * / 
 fglp_balances AS -- This CTE returns the accuals of WETH tokens in the Fee GLP contract in a designated minute
@@ -30,7 +30,7 @@ fglp_balances AS -- This CTE returns the accuals of WETH tokens in the Fee GLP c
             SUM(a.transfer_value) AS weth_transfer_value
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and selects all the inbound tranfers of WETH tokens to the Fee GLP contract
+            SELECT -- This subquery truncates the block time to a minute AND selects all the inbound tranfers of WETH tokens to the Fee GLP contract
                 date_trunc('minute', evt_block_time) AS minute,
                 ((value) / 1e18) AS transfer_value -- WETH 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}

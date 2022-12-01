@@ -49,7 +49,7 @@ FROM (VALUES
     , (array('ethereum'), '0xb3f923eabaf178fc1bd8e13902fc5c61d3ddef5b', 'Wintermute Binance Deposit', 'cex', 'hildobby', 'static', timestamp('2022-08-28'), now())
     , (array('ethereum'), '0xf977814e90da44bfa03b6295a0616a897441acec', 'Binance: BTC Proof of Assets', 'cex', 'soispoke', 'static', timestamp('2022-11-14'), now())
     , (array('ethereum'), '0x47ac0fb4F2d84898e4d9e7b4dab3c24507a6d503', 'Binance: Stablecoin Proof of Assets', 'cex', 'soispoke', 'static', timestamp('2022-11-14'), now())
-    , (array('ethereum'), '0x9be89d2a4cd102d8fecc6bf9da793be995c22541', 'Binance: ETH and ERC20 tokens Proof of Assets', 'cex', 'soispoke', 'static', timestamp('2022-11-14'), now())
+    , (array('ethereum'), '0x9be89d2a4cd102d8fecc6bf9da793be995c22541', 'Binance: ETH AND ERC20 tokens Proof of Assets', 'cex', 'soispoke', 'static', timestamp('2022-11-14'), now())
     , (array('ethereum'), '0x7884f51dc1410387371ce61747cb6264e1daee0b', 'Binance: DOT Proof of Assets', 'cex', 'soispoke', 'static', timestamp('2022-11-14'), now())
     , (array('ethereum'), '0xff0a024b66739357c4ed231fb3dbc0c8c22749f5', 'Binance: WRX Proof of Assets', 'cex', 'soispoke', 'static', timestamp('2022-11-14'), now())
     -- FTX, Source: https: / /etherscan.io/accounts/label/ftx

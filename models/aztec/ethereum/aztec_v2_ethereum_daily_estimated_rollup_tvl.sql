@@ -29,7 +29,7 @@ rollup_balance_changes AS (
   SELECT date
     , symbol
     , token_address
-    , sum(net_value_norm) over (partition by symbol,token_address order by date asc rows between unbounded preceding and current row) AS balance
+    , sum(net_value_norm) over (partition by symbol,token_address order by date asc rows between unbounded preceding AND current row) AS balance
     , lead(date, 1) over (partition by token_address order by date) AS next_date
   FROM rollup_balance_changes
 )
@@ -46,7 +46,7 @@ rollup_balance_changes AS (
   FROM day_series d
   inner join token_balances b
         on d.date >= b.date
-        and d.date < coalesce(b.next_date, CAST(NOW() AS date) + 1) -- if it's missing that means it's the last entry in the series
+        AND d.date < coalesce(b.next_date, CAST(NOW() AS date) + 1) -- if it's missing that means it's the last entry in the series
 )
 
 , token_addresses AS (
@@ -115,7 +115,7 @@ rollup_balance_changes AS (
     , b.balance * COALESCE(p.price_usd, bb.eth_price) AS tvl_usd
     , b.balance * COALESCE(p.price_eth, 1) AS tvl_eth
   FROM token_balances_filled b
-  inner join token_prices p on b.date = p.day and b.token_address = p.token_address
+  inner join token_prices p on b.date = p.day AND b.token_address = p.token_address
   LEFT JOIN token_prices bb on b.date = bb.day AND b.token_address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' -- using this to get price for missing ETH token
 
 )

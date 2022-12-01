@@ -34,7 +34,7 @@ SELECT
     dao,
     dao AS dao_wallet_address,
     MIN(created_block_time) AS created_block_time,
-    MIN(created_date) AS created_date -- using this to get the created date AS the first time the module was set up, it's possible to disable and renable a module.
+    MIN(created_date) AS created_date -- using this to get the created date AS the first time the module was set up, it's possible to disable AND renable a module.
 FROM
 get_zodiac_wallets
 GROUP BY 1, 2, 3, 4

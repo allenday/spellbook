@@ -14,7 +14,7 @@
 
 WITH  -- dune query here - https: / /dune.com/queries/1433790
 
-get_daohaus_molochs AS ( -- molochs are daos and this is getting a list of molochs created through daohaus
+get_daohaus_molochs AS ( -- molochs are daos AND this is getting a list of molochs created through daohaus
         SELECT
             block_time AS created_block_time,
             TRY_CAST(date_trunc('day', block_time) AS DATE) AS created_date,

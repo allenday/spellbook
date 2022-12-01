@@ -272,8 +272,8 @@ filtered_trades AS (
         LEFT JOIN
         sb_filter sb
             ON sb.day = t.day
-            AND ((t.buyer = sb.address1 and t.seller = sb.address2)
-            OR (t.seller = sb.address1 and t.buyer = sb.address2))
+            AND ((t.buyer = sb.address1 AND t.seller = sb.address2)
+            OR (t.seller = sb.address1 AND t.buyer = sb.address2))
         LEFT JOIN
         lv_filter lv
             ON lv.nft_address = t.nft_contract_address

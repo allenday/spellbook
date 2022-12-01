@@ -45,7 +45,7 @@ FROM (VALUES
 (array('ethereum'),'0x26a76f4fe7a21160274d060acb209f515f35429c','0xhabitat.eth Multisig Drainer','hackers','ilemi','static', timestamp('2022-08-28'), now()),
 (array('ethereum'),'0x8efab89b497b887cdaa2fb08ff71e4b3827774b2','Visor Finance Exploiter','hackers','ilemi','static', timestamp('2022-08-28'), now()),
 (array('ethereum'),'0x44183fd1a79704f79e0986c6380dd9bfbbc7e6d2','KyberSwap Attacker 4','hackers','ilemi','static', timestamp('2022-08-28'), now()),
-(array('ethereum'),'0x118203b0f2a3ef9e749d871c8fef5e5e55ef5c91','DEGO and Cocos Exploiter','hackers','ilemi','static', timestamp('2022-08-28'), now()),
+(array('ethereum'),'0x118203b0f2a3ef9e749d871c8fef5e5e55ef5c91','DEGO AND Cocos Exploiter','hackers','ilemi','static', timestamp('2022-08-28'), now()),
 (array('ethereum'),'0x57a72ce4fd69ebedefc1a938b690fbf11a7dff80','KyberSwap Attacker 1','hackers','ilemi','static', timestamp('2022-08-28'), now()),
 (array('ethereum'),'0x14ec0cd2acee4ce37260b925f74648127a889a28','Yearn (yDai) Exploiter','hackers','ilemi','static', timestamp('2022-08-28'), now()),
 (array('ethereum'),'0xf9e3d08196f76f5078882d98941b71c0884bea52','Popsicle Swap Hacker','hackers','ilemi','static', timestamp('2022-08-28'), now()),

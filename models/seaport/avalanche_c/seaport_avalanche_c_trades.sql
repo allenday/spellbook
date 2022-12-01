@@ -32,7 +32,7 @@ with source_avalanche_c_transactions AS (
       FROM {{ ref('seaport_avalanche_c_base_pairs') }}
       where 1=1
       {% if is_incremental() %}
-            and block_time >= date_trunc("day", now() - interval '1 week')
+            AND block_time >= date_trunc("day", now() - interval '1 week')
       {% endif %}
 )
 ,ref_tokens_nft AS (
@@ -55,10 +55,10 @@ with source_avalanche_c_transactions AS (
     FROM {{ source('prices', 'usd') }}
     where blockchain = 'avalanche_c'
     {% if NOT is_incremental() %}
-      and minute >= date '{{c_seaport_first_date}}'  -- seaport first txn
+      AND minute >= date '{{c_seaport_first_date}}'  -- seaport first txn
     {% endif %}
     {% if is_incremental() %}
-      and minute >= date_trunc("day", now() - interval '1 week')
+      AND minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 )
 ,iv_base_pairs_priv AS (
@@ -96,7 +96,7 @@ with source_avalanche_c_transactions AS (
         ,a.is_moved_nft
   FROM ref_seaport_avalanche_c_base_pairs a
   where 1=1
-    and NOT a.is_private
+    AND NOT a.is_private
   union all
   SELECT a.block_date
         ,a.block_time
@@ -134,16 +134,16 @@ with source_avalanche_c_transactions AS (
         ,a.is_moved_nft
   FROM ref_seaport_avalanche_c_base_pairs a
   LEFT JOIN ref_seaport_avalanche_c_base_pairs b on b.tx_hash = a.tx_hash
-    and b.evt_index = a.evt_index
-    and b.block_date = a.block_date -- for performance
-    and b.token_contract_address = a.token_contract_address
-    and b.token_id = a.token_id
-    and b.original_amount = a.original_amount
-    and b.is_moved_nft
+    AND b.evt_index = a.evt_index
+    AND b.block_date = a.block_date -- for performance
+    AND b.token_contract_address = a.token_contract_address
+    AND b.token_id = a.token_id
+    AND b.original_amount = a.original_amount
+    AND b.is_moved_nft
   where 1=1
-    and a.is_private
-    and NOT a.is_moved_nft
-    and a.consideration_cnt > 0
+    AND a.is_private
+    AND NOT a.is_moved_nft
+    AND a.consideration_cnt > 0
 )
 ,iv_volume AS (
   SELECT block_date
@@ -155,17 +155,17 @@ with source_avalanche_c_transactions AS (
         ,sum(case when is_platform_fee then original_amount end) AS platform_fee_amount_raw
         ,max(case when is_platform_fee then receiver end) AS platform_fee_receiver
         ,sum(case when is_creator_fee then original_amount end) AS creator_fee_amount_raw
-        ,sum(case when is_creator_fee and creator_fee_idx = 1 then original_amount end) AS creator_fee_amount_raw_1
-        ,sum(case when is_creator_fee and creator_fee_idx = 2 then original_amount end) AS creator_fee_amount_raw_2
-        ,sum(case when is_creator_fee and creator_fee_idx = 3 then original_amount end) AS creator_fee_amount_raw_3
-        ,sum(case when is_creator_fee and creator_fee_idx = 4 then original_amount end) AS creator_fee_amount_raw_4
-        ,max(case when is_creator_fee and creator_fee_idx = 1 then receiver end) AS creator_fee_receiver_1
-        ,max(case when is_creator_fee and creator_fee_idx = 2 then receiver end) AS creator_fee_receiver_2
-        ,max(case when is_creator_fee and creator_fee_idx = 3 then receiver end) AS creator_fee_receiver_3
-        ,max(case when is_creator_fee and creator_fee_idx = 4 then receiver end) AS creator_fee_receiver_4
+        ,sum(case when is_creator_fee AND creator_fee_idx = 1 then original_amount end) AS creator_fee_amount_raw_1
+        ,sum(case when is_creator_fee AND creator_fee_idx = 2 then original_amount end) AS creator_fee_amount_raw_2
+        ,sum(case when is_creator_fee AND creator_fee_idx = 3 then original_amount end) AS creator_fee_amount_raw_3
+        ,sum(case when is_creator_fee AND creator_fee_idx = 4 then original_amount end) AS creator_fee_amount_raw_4
+        ,max(case when is_creator_fee AND creator_fee_idx = 1 then receiver end) AS creator_fee_receiver_1
+        ,max(case when is_creator_fee AND creator_fee_idx = 2 then receiver end) AS creator_fee_receiver_2
+        ,max(case when is_creator_fee AND creator_fee_idx = 3 then receiver end) AS creator_fee_receiver_3
+        ,max(case when is_creator_fee AND creator_fee_idx = 4 then receiver end) AS creator_fee_receiver_4
   FROM iv_base_pairs_priv a
   where 1=1
-    and eth_erc_idx > 0
+    AND eth_erc_idx > 0
   group by 1,2,3,4
 )
 ,iv_nfts AS (
@@ -206,11 +206,11 @@ with source_avalanche_c_transactions AS (
         ,sub_type
         ,sub_idx
   FROM iv_base_pairs_priv a
-  LEFT JOIN iv_volume b on b.block_date = a.block_date  -- tx_hash and evt_index is PK, but for performance, block_time is included
-    and b.tx_hash = a.tx_hash
-    and b.evt_index = a.evt_index
+  LEFT JOIN iv_volume b on b.block_date = a.block_date  -- tx_hash AND evt_index is PK, but for performance, block_time is included
+    AND b.tx_hash = a.tx_hash
+    AND b.evt_index = a.evt_index
   where 1=1
-    and a.is_traded_nft
+    AND a.is_traded_nft
 )
 ,iv_trades AS (
   SELECT a.*
@@ -243,7 +243,7 @@ with source_avalanche_c_transactions AS (
   LEFT JOIN source_prices_usd p on p.contract_address = case when a.token_contract_address = '{{c_native_token_address}}' then '{{c_alternative_token_address}}'
                                                             else a.token_contract_address
                                                         end
-    and p.minute = date_trunc('minute', a.block_time)
+    AND p.minute = date_trunc('minute', a.block_time)
   LEFT JOIN ref_nft_aggregators agg on agg.contract_address = t.to
 )
 ,iv_columns AS (

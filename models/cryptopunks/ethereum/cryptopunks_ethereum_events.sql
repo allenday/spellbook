@@ -73,12 +73,12 @@ with cryptopunks_bids_and_sales AS (
     FROM cryptopunks_bids_and_sales a
 
     join {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_Transfer') }} b
-    on a.from_address = b.`FROM` and a.evt_block_number = b.evt_block_number and a.evt_index = (b.evt_index+1)
+    on a.from_address = b.`FROM` AND a.evt_block_number = b.evt_block_number AND a.evt_index = (b.evt_index+1)
 
     left outer join cryptopunks_bids_and_sales c
-    on a.punk_id = c.punk_id and c.event_type = "PunkBidEntered" and c.punk_id_event_number < a.punk_id_event_number and c.bid_from_address = b.`to`
+    on a.punk_id = c.punk_id AND c.event_type = "PunkBidEntered" AND c.punk_id_event_number < a.punk_id_event_number AND c.bid_from_address = b.`to`
 
-    where a.sale_price = 0 and a.to_address = '0x0000000000000000000000000000000000000000'
+    where a.sale_price = 0 AND a.to_address = '0x0000000000000000000000000000000000000000'
     group by 1,2,4,5,6,7,8,9
 )
 , regular_sales AS (
@@ -96,9 +96,9 @@ with cryptopunks_bids_and_sales AS (
     FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkBought') }} a
     left outer join {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkTransfer') }} b
     on a.`punkIndex` = b.`punkIndex`
-        and a.`toAddress` = b.`FROM`
-        and b.`FROM` = '0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2'
-        and a.evt_tx_hash = b.evt_tx_hash
+        AND a.`toAddress` = b.`FROM`
+        AND b.`FROM` = '0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2'
+        AND a.evt_tx_hash = b.evt_tx_hash
 
     where a.`value` != 0 or a.`toAddress` != '0x0000000000000000000000000000000000000000' -- only include sales here
 )
@@ -149,14 +149,14 @@ FROM
 
 inner join {{ source('ethereum','transactions') }} tx on a.evt_tx_hash = tx.hash
 {% if is_incremental() %}
-    and tx.block_time >= date_trunc("day", now() - interval '1 week')
+    AND tx.block_time >= date_trunc("day", now() - interval '1 week')
 {% endif %}
 
 LEFT JOIN {{ source('prices', 'usd') }} p on p.minute = date_trunc('minute', a.evt_block_time)
     AND p.contract_address = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
     AND p.blockchain = "ethereum"
 {% if is_incremental() %}
-    and p.minute >= date_trunc("day", now() - interval '1 week')
+    AND p.minute >= date_trunc("day", now() - interval '1 week')
 {% endif %}
 
 LEFT JOIN {{ ref('nft_ethereum_aggregators') }} agg on agg.contract_address = tx.to

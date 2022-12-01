@@ -96,7 +96,7 @@ WITH
         , CASE WHEN called_from_router = true THEN tr.FROM ELSE tr.to END AS project_contract_address -- either the router or the pool if called directly
         FROM swaps s
         inner join {{ source('ethereum', 'traces') }} tr
-        ON tr.success and s.call_block_number = tr.block_number and s.call_tx_hash = tr.tx_hash and s.call_trace_address = tr.trace_address
+        ON tr.success AND s.call_block_number = tr.block_number AND s.call_tx_hash = tr.tx_hash AND s.call_trace_address = tr.trace_address
         {% if is_incremental() %}
         -- this filter will only be applied on an incremental run. We only want to update with new swaps.
         AND tr.block_time >= date_trunc("day", now() - interval '1 week')
@@ -181,11 +181,11 @@ WITH
                 LEFT JOIN asset_recipient_update aru on swaps.call_block_time >= aru.evt_block_time AND swaps.contract_address = aru.contract_address
             ) a
         ) b
-        WHERE ordering = 1 --we want to keep the most recent pool_fee and protocol fee for each individual call (trade)
+        WHERE ordering = 1 --we want to keep the most recent pool_fee AND protocol fee for each individual call (trade)
     )
 
     ,swaps_w_traces AS (
-        -- we traces to get NFT and ETH transfer data because sudoswap doesn't emit any data in events for swaps, so we have to piece it together manually based on trace_address.
+        -- we traces to get NFT AND ETH transfer data because sudoswap doesn't emit any data in events for swaps, so we have to piece it together manually based on trace_address.
         SELECT
             sb.call_block_time
             , sb.call_block_number
@@ -300,7 +300,7 @@ WITH
             , tx.to AS tx_to
         FROM swaps_cleaned sc
         INNER JOIN {{ source('ethereum', 'transactions') }} tx
-            ON tx.block_number=sc.block_number and tx.hash=sc.tx_hash
+            ON tx.block_number=sc.block_number AND tx.hash=sc.tx_hash
             {% if is_incremental() %}
             AND tx.block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}

@@ -14,23 +14,23 @@ WITH minute AS  -- This CTE generates a series of minute values
     ) ,
 
  / *
-GLP tokens are minted and burned by the GLP Manager contract by invoking addLiquidity() and removeLiquidity()
+GLP tokens are minted AND burned by the GLP Manager contract by invoking addLiquidity() AND removeLiquidity()
 The GLP Manager contract can be found here: https: / /arbiscan.io/address/0x321F653eED006AD1C29D174e17d96351BDe22649
 * / 
 glp_balances AS -- This CTE returns the accuals of WETH tokens in the Fee GLP contract in a designated minute
     (
-    SELECT -- This subquery aggregates the mints and burns of GLP tokens over the minute series
+    SELECT -- This subquery aggregates the mints AND burns of GLP tokens over the minute series
         b.minute,
         b.glp_mint_burn_value,
         SUM(b.glp_mint_burn_value) OVER (ORDER BY b.minute ASC) AS glp_cum_balance
     FROM
         (
-        SELECT  -- This subquery aggregates all the inbound tranfers of mints and burns of GLP tokens in a designated minute
+        SELECT  -- This subquery aggregates all the inbound tranfers of mints AND burns of GLP tokens in a designated minute
             a.minute,
             SUM(a.mint_burn_value) AS glp_mint_burn_value
         FROM
             (
-            SELECT  -- This subquery truncates the block time to a minute and selects all mints and burns of GLP tokens through the GLP Manager contract
+            SELECT  -- This subquery truncates the block time to a minute AND selects all mints AND burns of GLP tokens through the GLP Manager contract
                 date_trunc('minute', evt_block_time) AS minute,
                 mintAmount / 1e18 AS mint_burn_value
             FROM {{source('gmx_arbitrum', 'GlpManager_evt_AddLiquidity')}}

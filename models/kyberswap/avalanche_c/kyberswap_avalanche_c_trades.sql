@@ -42,7 +42,7 @@ kyberswap_dex AS (
     UNION ALL
 
     -- https: / /docs.kyberswap.com/contract/implement-a-swap
-    -- deltaQty0 and deltaQty1, Negative numbers represent the sold amount, and positive numbers represent the buy amount
+    -- deltaQty0 AND deltaQty1, Negative numbers represent the sold amount, AND positive numbers represent the buy amount
     SELECT
         t.evt_block_time                                                               AS block_time
         ,t.sender                                                                      AS taker
@@ -152,7 +152,7 @@ INNER JOIN {{ source('avalanche_c', 'transactions') }} tx
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} erc20a
     ON erc20a.contract_address = kyberswap_dex.token_bought_address
-    and erc20a.blockchain = 'avalanche_c'
+    AND erc20a.blockchain = 'avalanche_c'
 LEFT JOIN {{ ref('tokens_erc20') }} erc20b
     ON erc20b.contract_address = kyberswap_dex.token_sold_address
     AND erc20b.blockchain = 'avalanche_c'

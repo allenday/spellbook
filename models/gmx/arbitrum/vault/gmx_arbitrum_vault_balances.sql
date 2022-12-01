@@ -31,7 +31,7 @@ vault_balances_frax AS -- This CTE returns the balance of FRAX tokens in the GMX
             SUM(a.transfer_value) AS transfer_value
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of FRAX tokens to and FROM the GMX Arbitrum Vault
+            SELECT -- This subquery truncates the block time to a minute AND aggregates the tranfers of FRAX tokens to AND FROM the GMX Arbitrum Vault
                 date_trunc('minute', evt_block_time) AS minute,
                 ((value) / 1e18) AS transfer_value -- FRAX 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
@@ -69,7 +69,7 @@ vault_balances_usdt AS -- This CTE returns the balance of USDT tokens in the GMX
             SUM(a.transfer_value) AS transfer_value
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of USDT tokens to and FROM the GMX Arbitrum Vault
+            SELECT -- This subquery truncates the block time to a minute AND aggregates the tranfers of USDT tokens to AND FROM the GMX Arbitrum Vault
                 date_trunc('minute', evt_block_time) AS minute,
                 ((value) / 1e6) AS transfer_value -- USDT 6dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
@@ -107,7 +107,7 @@ vault_balances_wbtc AS -- This CTE returns the balance of WBTC tokens in the GMX
             SUM(a.transfer_value) AS transfer_value
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of WBTC tokens to and FROM the GMX Arbitrum Vault
+            SELECT -- This subquery truncates the block time to a minute AND aggregates the tranfers of WBTC tokens to AND FROM the GMX Arbitrum Vault
                 date_trunc('minute', evt_block_time) AS minute,
                 ((value) / 1e8) AS transfer_value -- WBTC 8dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
@@ -145,7 +145,7 @@ vault_balances_usdc AS -- This CTE returns the balance of USDC tokens in the GMX
             SUM(a.transfer_value) AS transfer_value
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of USDC tokens to and FROM the GMX Arbitrum Vault
+            SELECT -- This subquery truncates the block time to a minute AND aggregates the tranfers of USDC tokens to AND FROM the GMX Arbitrum Vault
                 date_trunc('minute', evt_block_time) AS minute,
                 ((value) / 1e6) AS transfer_value -- USDC 6dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
@@ -183,7 +183,7 @@ vault_balances_uni AS -- This CTE returns the balance of UNI tokens in the GMX A
             SUM(a.transfer_value) AS transfer_value
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of UNI tokens to and FROM the GMX Arbitrum Vault
+            SELECT -- This subquery truncates the block time to a minute AND aggregates the tranfers of UNI tokens to AND FROM the GMX Arbitrum Vault
                 date_trunc('minute', evt_block_time) AS minute,
                 ((value) / 1e18) AS transfer_value -- UNI 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
@@ -221,7 +221,7 @@ vault_balances_link AS -- This CTE returns the balance of LINK tokens in the GMX
             SUM(a.transfer_value) AS transfer_value
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of LINK tokens to and FROM the GMX Arbitrum Vault
+            SELECT -- This subquery truncates the block time to a minute AND aggregates the tranfers of LINK tokens to AND FROM the GMX Arbitrum Vault
                 date_trunc('minute', evt_block_time) AS minute,
                 ((value) / 1e18) AS transfer_value -- LINK 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
@@ -259,7 +259,7 @@ vault_balances_weth AS -- This CTE returns the balance of WETH tokens in the GMX
             SUM(a.transfer_value) AS transfer_value
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of WETH tokens to and FROM the GMX Arbitrum Vault
+            SELECT -- This subquery truncates the block time to a minute AND aggregates the tranfers of WETH tokens to AND FROM the GMX Arbitrum Vault
                 date_trunc('minute', evt_block_time) AS minute,
                 ((value) / 1e18) AS transfer_value -- WETH 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
@@ -297,7 +297,7 @@ vault_balances_dai AS -- This CTE returns the balance of DAI tokens in the GMX A
             SUM(a.transfer_value) AS transfer_value
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of DAI tokens to and FROM the GMX Arbitrum Vault
+            SELECT -- This subquery truncates the block time to a minute AND aggregates the tranfers of DAI tokens to AND FROM the GMX Arbitrum Vault
                 date_trunc('minute', evt_block_time) AS minute,
                 ((value) / 1e18) AS transfer_value -- DAI 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
@@ -335,7 +335,7 @@ SELECT -- This CTE returns the balance of all supported tokens in the GMX Arbitr
     COALESCE(x.dai_balance,0) AS dai_balance -- Removes NULL values
 FROM
     (
-    SELECT -- This subquery collates all the data extracted FROM the vault balance CTE, joins them to the minute series, and uses last data to extrapolate over NULL values
+    SELECT -- This subquery collates all the data extracted FROM the vault balance CTE, joins them to the minute series, AND uses last data to extrapolate over NULL values
         a.minute,
         last(b.balance, true) OVER (ORDER BY a.minute ASC) AS frax_balance,
         last(c.balance, true) OVER (ORDER BY a.minute ASC) AS usdt_balance,

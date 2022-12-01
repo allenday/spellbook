@@ -345,7 +345,7 @@ with original_holders AS (
             , base_data.wallet
             , sum(coalesce(daily_transfer_sum,0)) over (partition by base_data.wallet order by base_data.day) AS holding
     FROM base_data
-    LEFT JOIN punk_transfer_summary on base_data.day = punk_transfer_summary.day and base_data.wallet = punk_transfer_summary.wallet
+    LEFT JOIN punk_transfer_summary on base_data.day = punk_transfer_summary.day AND base_data.wallet = punk_transfer_summary.wallet
 )
 
 SELECT day
