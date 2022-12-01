@@ -1,7 +1,7 @@
 [sqlfluff]
 dialect = sparksql
 templater = jinja
-exclude_rules = L016, L019, L030, L036, L043
+exclude_rules = L016, L019, L030, L036, L043, L003
 
 [sqlfluff:rules]
 layout:type:comma:line_position = leading
