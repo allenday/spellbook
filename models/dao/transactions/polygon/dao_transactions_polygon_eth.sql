@@ -45,7 +45,7 @@ transactions AS (
         AND to IN (SELECT dao_wallet_address FROM dao_tmp)
         AND (LOWER(call_type) NOT IN ('delegatecall', 'callcode', 'staticcall') or call_type IS NULL)
         AND success = true
-        AND CAST(value AS decimal(38,0)) != 0
+        AND CAST(value AS decimal(38, 0)) != 0
 
         UNION ALL
 
@@ -70,7 +70,7 @@ transactions AS (
         AND FROM IN (SELECT dao_wallet_address FROM dao_tmp)
         AND (LOWER(call_type) NOT IN ('delegatecall', 'callcode', 'staticcall') or call_type IS NULL)
         AND success = true
-        AND CAST(value AS decimal(38,0)) != 0
+        AND CAST(value AS decimal(38, 0)) != 0
 )
 
 SELECT
