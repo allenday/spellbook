@@ -15,9 +15,9 @@
 with nft_trade_address AS (
     SELECT distinct blockchain, buyer AS address_a, seller AS address_b
     from {{ ref('nft_trades') }}
-    where buyer is NOT null
-        and seller is NOT null
-        and blockchain is NOT null
+    where buyer is NOT NULL
+        and seller is NOT NULL
+        and blockchain is NOT NULL
     {% if is_incremental() %}
     and block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -25,9 +25,9 @@ with nft_trade_address AS (
 
     SELECT distinct blockchain, seller AS address_a, buyer AS address_b
     from {{ ref('nft_trades') }}
-    where buyer is NOT null
-        and seller is NOT null
-        and blockchain is NOT null
+    where buyer is NOT NULL
+        and seller is NOT NULL
+        and blockchain is NOT NULL
     {% if is_incremental() %}
     and block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}

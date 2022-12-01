@@ -99,8 +99,8 @@ known_solver_metadata (address, environment, name) AS (
 )
 -- Combining the metadata with current activation status for final table
 SELECT solver AS address,
-      case when environment is NOT null then environment else 'new' end AS environment,
-      case when name is NOT null then name else 'Uncatalogued' end      AS name,
+      case when environment is NOT NULL then environment else 'new' end AS environment,
+      case when name is NOT NULL then name else 'Uncatalogued' end      AS name,
       active
 from registered_solvers
     left outer join known_solver_metadata on solver = lower(address);

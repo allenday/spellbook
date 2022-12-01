@@ -137,7 +137,7 @@ SELECT DISTINCT
   tokens_nft.name AS collection,
   wa.amount_original / power(10,erc20.decimals) * p.price AS amount_usd,
   CASE WHEN erc_transfers.value_unique >= 1 THEN 'erc1155'
-      WHEN erc_transfers.value_unique is null THEN 'erc721'
+      WHEN erc_transfers.value_unique is NULL THEN 'erc721'
       ELSE wa.token_standard END AS token_standard,
   CASE
       WHEN agg.name is NULL AND erc_transfers.value_unique = 1 OR erc_transfers.count_erc = 1 THEN 'Single Item Trade'
@@ -195,7 +195,7 @@ INNER JOIN {{ source('ethereum','transactions') }} tx ON wa.call_tx_hash = tx.ha
     and tx.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 LEFT JOIN erc_transfers ON erc_transfers.evt_tx_hash = wa.call_tx_hash AND (wa.token_id = erc_transfers.token_id_erc
-OR wa.token_id = null)
+OR wa.token_id = NULL)
 LEFT JOIN {{ ref('tokens_nft') }} tokens_nft ON tokens_nft.contract_address = wa.nft_contract_address and tokens_nft.blockchain = 'ethereum'
 LEFT JOIN {{ ref('nft_aggregators') }} agg ON agg.contract_address = tx.to AND agg.blockchain = 'ethereum'
 LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_block_time=tx.block_time

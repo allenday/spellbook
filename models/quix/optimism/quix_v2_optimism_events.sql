@@ -106,7 +106,7 @@ with events_raw AS (
     join {{ source('erc20_optimism','evt_transfer') }} AS erc20
       on er.tx_hash = erc20.evt_tx_hash
       and er.block_number = erc20.evt_block_number
-      and erc20.value is NOT null
+      and erc20.value is NOT NULL
       and erc20.to NOT in (
         lower('{{quix_fee_address_address}}') --qx platform fee address
         ,er.seller
@@ -142,12 +142,12 @@ SELECT
     ,er.amount_raw / power(10, t1.decimals) AS amount_original
     ,er.amount_raw
     ,case
-        when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is null)
+        when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
             then 'ETH'
             else t1.symbol
         end AS currency_symbol
     ,case
-        when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is null)
+        when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
             then '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000'
             else erc20.contract_address
         end AS currency_contract
@@ -168,9 +168,9 @@ SELECT
     ,tr.value / power(10, t1.decimals) AS royalty_fee_amount
     ,tr.value / power(10, t1.decimals) * p1.price AS royalty_fee_amount_usd
     ,(tr.value / er.amount_raw * 100) AS royalty_fee_percentage
-    ,case when tr.value is NOT null then tr.to end AS royalty_fee_receive_address
-    ,case when tr.value is NOT null
-        then case when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is null)
+    ,case when tr.value is NOT NULL then tr.to end AS royalty_fee_receive_address
+    ,case when tr.value is NOT NULL
+        then case when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
             then 'ETH' else t1.symbol end
         end AS royalty_fee_currency_symbol
 from events_raw AS er
@@ -216,14 +216,14 @@ LEFT JOIN {{ source('erc20_optimism','evt_transfer') }} AS erc20
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} AS t1
     on t1.contract_address =
-        case when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is null)
+        case when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
         then '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000'
         else erc20.contract_address
         end
     and t1.blockchain = 'optimism'
     LEFT JOIN {{ source('prices', 'usd') }} AS p1
     on p1.contract_address =
-        case when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is null)
+        case when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
         then '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000'
         else erc20.contract_address
         end

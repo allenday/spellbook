@@ -204,7 +204,7 @@ WITH
                 CASE WHEN (tr.to = sb.protocolfee_recipient) THEN value
                 ELSE 0 END
                  ) AS protocol_fee_amount -- what the buyer paid
-            , ARRAY_AGG(distinct CASE WHEN substring(input,1,10)='0x42842e0e' THEN bytea2numeric_v2(substring(input,139,64))::int ELSE null::int END)
+            , ARRAY_AGG(distinct CASE WHEN substring(input,1,10)='0x42842e0e' THEN bytea2numeric_v2(substring(input,139,64))::int ELSE NULL::int END)
                 AS token_id
             , sb.call_tx_hash
             , sb.trade_recipient
@@ -266,7 +266,7 @@ WITH
             , nftcontractaddress AS nft_contract_address
             , project_contract_address -- This is either the router or the pool address if called directly
             , call_tx_hash AS tx_hash
-            , '' AS evt_index --we didn't use events in our case for decoding, so this will be null until we find a way to tie it together.
+            , '' AS evt_index --we didn't use events in our case for decoding, so this will be NULL until we find a way to tie it together.
             , protocol_fee_amount AS platform_fee_amount_raw
             , protocol_fee_amount / 1e18 AS platform_fee_amount
             , protocolfee AS platform_fee_percentage
@@ -275,12 +275,12 @@ WITH
             , (trade_price-protocol_fee_amount) / (1+pool_fee)*pool_fee/1e18 AS pool_fee_amount
             , pool_fee AS pool_fee_percentage
             -- royalties don't currently exist on the AMM,
-            , null::double AS royalty_fee_amount_raw
-            , null::double AS royalty_fee_amount
-            , null::double AS royalty_fee_percentage
-            , null::string AS royalty_fee_receive_address
-            , null::double AS royalty_fee_amount_usd
-            , null::string AS royalty_fee_currency_symbol
+            , NULL::double AS royalty_fee_amount_raw
+            , NULL::double AS royalty_fee_amount
+            , NULL::double AS royalty_fee_percentage
+            , NULL::string AS royalty_fee_receive_address
+            , NULL::double AS royalty_fee_amount_usd
+            , NULL::string AS royalty_fee_currency_symbol
             -- these 2 are used for matching the aggregator address, dropped later
             , router_caller
             , call_from
@@ -360,7 +360,7 @@ WITH
             , pool_fee_amount_raw / number_of_items AS pool_fee_amount_raw
             , pool_fee_amount_usd / number_of_items AS pool_fee_amount_usd
             , pool_fee_percentage
-            --below are null
+            --below are NULL
             , royalty_fee_amount / number_of_items AS royalty_fee_amount
             , royalty_fee_amount_raw / number_of_items AS royalty_fee_amount_raw
             , royalty_fee_amount_usd / number_of_items AS royalty_fee_amount_usd

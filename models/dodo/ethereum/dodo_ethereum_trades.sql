@@ -306,7 +306,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p_eth
     ON p_eth.minute = date_trunc('minute', dexs.block_time)
-    AND p_eth.blockchain is null
+    AND p_eth.blockchain is NULL
     AND p_eth.symbol = 'ETH'
     {% if NOT is_incremental() %}
     AND p_eth.minute >= '{{project_start_date}}'

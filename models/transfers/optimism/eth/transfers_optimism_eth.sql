@@ -29,7 +29,7 @@ with eth_transfers AS (
     join {{ source('optimism', 'transactions') }} AS t
         on r.tx_hash = t.hash
     where
-        (r.call_type NOT in ('delegatecall', 'callcode', 'staticcall') or r.call_type is null)
+        (r.call_type NOT in ('delegatecall', 'callcode', 'staticcall') or r.call_type is NULL)
         and r.tx_success
         and r.success
         and r.value > 0

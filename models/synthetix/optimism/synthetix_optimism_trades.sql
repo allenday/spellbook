@@ -35,7 +35,7 @@ WITH asset_price AS (
 
 synthetix_markets AS (
 	SELECT DISTINCT
-		--finds the position of the first occurence '00' in the hex string which indicates null characters / padded zeroes
+		--finds the position of the first occurence '00' in the hex string which indicates NULL characters / padded zeroes
 		--characters before this position should be taken to get the asset's hex name; use 'unhex' to get the readable text
 
 		--if the position is on an even number, that means the first '0' is part of the hexed version of the asset's last letter

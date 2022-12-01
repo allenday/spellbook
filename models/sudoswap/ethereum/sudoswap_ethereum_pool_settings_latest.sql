@@ -137,7 +137,7 @@ with
         LEFT JOIN {{ this }} t2
             ON t1.pool_address = t2.pool_address
     ) foo
-    where bonding_curve is NOT null --temp hack to exclude updates form erc20 pools
+    where bonding_curve is NOT NULL --temp hack to exclude updates form erc20 pools
 )
 {% endif %}
 

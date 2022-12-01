@@ -154,7 +154,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p_avx
     ON p_avx.minute = date_trunc('minute', dexs.block_time)
-    AND p_avx.blockchain is null
+    AND p_avx.blockchain is NULL
     AND p_avx.symbol = 'AVAX'
     {% if NOT is_incremental() %}
     AND p_avx.minute >= '{{project_start_date}}'

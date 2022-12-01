@@ -23,7 +23,7 @@ with dexs AS (
             '' AS maker,
             case when amount0Out  = 0 then amount1Out else amount0Out end AS token_bought_amount_raw,
             case when amount0In = 0 then amount1In else amount0In end AS token_sold_amount_raw,
-            null AS amount_usd,
+            NULL AS amount_usd,
             case when amount0Out  = 0 then f.token1 else f.token0 end AS token_bought_address,
             case when amount0In = 0 then f.token1 else f.token0 end AS token_sold_address,
             t.contract_address AS project_contract_address,

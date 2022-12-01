@@ -136,7 +136,7 @@ with base_level AS (
     on f.creator_address = cc.creator_address
   LEFT JOIN {{ ref('contracts_optimism_contract_creator_address_list') }} AS ccf
     on f.contract_factory = ccf.creator_address
-  where f.contract_address is NOT null
+  where f.contract_address is NOT NULL
  )
 ,combine AS (
   SELECT
@@ -226,7 +226,7 @@ with base_level AS (
   group by 1, 2, 3, 4, 5, 6, 7, 8, 9
 )
 ,cleanup AS (
---grab the first non-null value for each, i.e. if we have the contract via both contract mapping and optimism.contracts
+--grab the first non-NULL value for each, i.e. if we have the contract via both contract mapping and optimism.contracts
   SELECT
     contract_address
     {% for col in cols %}

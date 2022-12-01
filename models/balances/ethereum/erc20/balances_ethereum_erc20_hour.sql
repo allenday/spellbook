@@ -49,5 +49,5 @@ LEFT JOIN {{ ref('tokens_ethereum_rebase') }}  AS r
 -- Removes likely non-compliant tokens due to negative balances
 LEFT JOIN {{ ref('balances_ethereum_erc20_noncompliant') }}  AS nc
     ON b.token_address = nc.token_address
-WHERE r.contract_address is null
-and nc.token_address is null
+WHERE r.contract_address is NULL
+and nc.token_address is NULL

@@ -46,8 +46,8 @@ glp_balances AS -- This CTE returns the accuals of WETH tokens in the Fee GLP co
 
 SELECT
     x.minute,
-    COALESCE(x.glp_mint_burn,0) AS glp_mint_burn, -- Removes null values
-    COALESCE(x.glp_float,0) AS glp_float -- Removes null values
+    COALESCE(x.glp_mint_burn,0) AS glp_mint_burn, -- Removes NULL values
+    COALESCE(x.glp_float,0) AS glp_float -- Removes NULL values
 FROM
     (
     SELECT

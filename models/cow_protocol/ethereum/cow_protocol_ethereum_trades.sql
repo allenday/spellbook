@@ -164,7 +164,7 @@ valued_trades AS (
            atoms_bought,
            (CASE
                 WHEN sell_price IS NOT NULL THEN
-                    -- Choose the larger of two prices when both NOT null.
+                    -- Choose the larger of two prices when both NOT NULL.
                     CASE
                         WHEN buy_price IS NOT NULL and buy_price * units_bought > sell_price * units_sold
                             then buy_price * units_bought

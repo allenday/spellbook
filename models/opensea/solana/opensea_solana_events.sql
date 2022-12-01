@@ -30,7 +30,7 @@ SELECT
 FROM {{ source('solana','transactions') }}
 LEFT JOIN {{ source('prices', 'usd') }} p
   ON p.minute = date_trunc('minute', block_time)
-  AND p.blockchain is null
+  AND p.blockchain is NULL
   AND p.symbol = 'SOL'
   {% if is_incremental() %}
   AND p.minute >= date_trunc("day", now() - interval '1 week')

@@ -17,7 +17,7 @@ with node_names AS (
     name,node,block_time,tx_hash
     from (
         SELECT
-        case when _name = '0x0000000000000000000000000000000000000000' then null else _name end AS name
+        case when _name = '0x0000000000000000000000000000000000000000' then NULL else _name end AS name
         ,node
         ,call_block_time AS block_time
         ,call_tx_hash AS tx_hash

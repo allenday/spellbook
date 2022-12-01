@@ -57,8 +57,8 @@ SELECT DISTINCT
     pcr.startBlock AS start_block,
     pcr.endBlock AS end_block,
     CASE
-         WHEN pex.proposalId is NOT null and now() > pex.evt_block_time THEN 'Executed'
-         WHEN pca.proposalId is NOT null and now() > pca.evt_block_time THEN 'Canceled'
+         WHEN pex.proposalId is NOT NULL and now() > pex.evt_block_time THEN 'Executed'
+         WHEN pca.proposalId is NOT NULL and now() > pca.evt_block_time THEN 'Canceled'
          WHEN pcr.startBlock < pcr.evt_block_number < pcr.endBlock THEN 'Active'
          WHEN now() > pqu.evt_block_time AND startBlock > pcr.evt_block_number THEN 'Queued'
          ELSE 'Defeated' END AS status,

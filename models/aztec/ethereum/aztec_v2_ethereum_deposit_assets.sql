@@ -13,8 +13,8 @@ assets_added AS (
         SELECT
             0 AS asset_id,
             '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' AS asset_address,
-            null AS asset_gas_limit,
-            null AS date_added
+            NULL AS asset_gas_limit,
+            NULL AS date_added
 
         UNION
 

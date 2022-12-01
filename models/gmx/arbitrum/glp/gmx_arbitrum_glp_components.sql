@@ -843,7 +843,7 @@ SELECT  -- This subquery collates calculates the value of each components requir
     (0.5 * ((y.dai_getMaxPrice + y.dai_getMinPrice) + ABS(y.dai_getMaxPrice - y.dai_getMinPrice))) / 1e12 AS dai_current_price -- Current Price AS MAX(getMaxPrice,getMinPrice) - Decimal Places 12
 FROM
     (
-    SELECT -- This subquery removes null values
+    SELECT -- This subquery removes NULL values
         x.minute,
 
         COALESCE(x.frax_poolAmounts,0) AS frax_poolAmounts,
@@ -895,7 +895,7 @@ FROM
         COALESCE(x.dai_getMinPrice,0) AS dai_getMinPrice
     FROM
         (
-        SELECT -- This subquery collates all the data extracted from the vault contract functions, joins them to the minute series, and uses last data to extrapolate over null values
+        SELECT -- This subquery collates all the data extracted from the vault contract functions, joins them to the minute series, and uses last data to extrapolate over NULL values
             a.minute,
 
             last(b1.amount, true) OVER (ORDER BY a.minute ASC) AS frax_poolAmounts,

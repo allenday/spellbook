@@ -129,7 +129,7 @@ WITH
             block_number
             ,sum(fee_amount_raw) AS royalty_fee_amount_raw
             ,sum(fee_percentage) AS royalty_fee_percentage
-            , CAST(null AS VARCHAR(5)) AS royalty_fee_receive_address -- we have multiple address so have to null this field
+            , CAST(NULL AS VARCHAR(5)) AS royalty_fee_receive_address -- we have multiple address so have to null this field
             ,unique_trade_id
         from fee_events
             where NOT is_protocol_fee
@@ -227,7 +227,7 @@ SELECT
     , te.royalty_fee_amount_usd
     , te.royalty_fee_amount_raw
     , te.royalty_fee_currency_symbol
-    , te.royalty_fee_receive_address -- null here
+    , te.royalty_fee_receive_address -- NULL here
     , CAST(te.royalty_fee_percentage AS DOUBLE) AS royalty_fee_percentage
     , te.unique_trade_id
 from trades_enhanced te

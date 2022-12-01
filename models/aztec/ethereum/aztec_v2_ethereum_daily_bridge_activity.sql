@@ -29,7 +29,7 @@ daily_transfers AS (
         , sum(case when spec_txn_type = 'Bridge to Protocol' then value_norm else 0 end ) AS input_value_norm
         , sum(case when spec_txn_type = 'Protocol to Bridge' then value_norm else 0 end ) AS output_value_norm
     FROM {{ref('aztec_v2_ethereum_rollupbridge_transfers')}}
-    where bridge_protocol is NOT null -- exclude all txns that don't interact with the bridges
+    where bridge_protocol is NOT NULL -- exclude all txns that don't interact with the bridges
     group by 1,2,3,4
 ),
 

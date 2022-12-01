@@ -273,14 +273,14 @@ SELECT
     and evt.to != seller
     and erc20.to != seller -- secondary sale
     then ROUND((10 * (a.amount) / 100), 7)
-    else null
+    else NULL
     end AS royalty_fee_amount_raw,
     case
     when evt.to != po.previous_owner
     and evt.to != seller
     and erc20.to != seller -- secondary sale
     then ROUND((10 * ((a.amount / 1e18)) / 100), 7)
-    else null
+    else NULL
     end AS royalty_fee_amount,
     case
     when a.currencyAddress = '0xba5bde662c17e2adff1075610382b9b691296350'
@@ -299,11 +299,11 @@ SELECT
     and evt.to != seller
     and erc20.to != seller -- secondary sales
     then ROUND((10 * ((a.amount / 1e18) * ep.price) / 100), 7)
-    else null
+    else NULL
     end AS royalty_fee_amount_usd,
     CAST('10' AS DOUBLE) AS royalty_fee_percentage,
     case
-    when evt.to is NOT null then evt.to
+    when evt.to is NOT NULL then evt.to
     else erc20.to
     end AS royalty_fee_receive_address,
     case

@@ -28,8 +28,8 @@ with all_listings AS (
             , case when evt_tx_hash in (SELECT evt_tx_hash from {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkBought') }}) then 'Punk Bought'
                     else 'Other'
                 end AS event_sub_type
-            , null AS listed_price
-            , null AS listing_offered_to
+            , NULL AS listed_price
+            , NULL AS listing_offered_to
             , evt_block_number
             , evt_index
             , evt_block_time
@@ -40,8 +40,8 @@ with all_listings AS (
     SELECT  `punkIndex` AS punk_id
             , 'Punk Bought' AS event_type
             , 'Punk Bought' AS event_sub_type
-            , null AS listed_price
-            , null AS listing_offered_to
+            , NULL AS listed_price
+            , NULL AS listing_offered_to
             , evt_block_number
             , evt_index
             , evt_block_time
@@ -52,8 +52,8 @@ with all_listings AS (
     SELECT  `punkIndex` AS punk_id
             , 'Punk Transfer' AS event_type
             , 'Punk Transfer' AS event_sub_type
-            , null AS listed_price
-            , null AS listing_offered_to
+            , NULL AS listed_price
+            , NULL AS listing_offered_to
             , evt_block_number
             , evt_index
             , evt_block_time

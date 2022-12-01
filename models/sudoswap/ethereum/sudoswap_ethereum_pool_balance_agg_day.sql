@@ -59,7 +59,7 @@ WITH
           AND tr.type = 'call'
           AND (
             tr.call_type NOT IN ('delegatecall', 'callcode', 'staticcall')
-            OR tr.call_type IS null
+            OR tr.call_type IS NULL
           )
           {% if NOT is_incremental() %}
           AND tr.block_time > '{{project_start_date}}'
@@ -84,7 +84,7 @@ WITH
           AND tr.type = 'call'
           AND (
             tr.call_type NOT IN ('delegatecall', 'callcode', 'staticcall')
-            OR tr.call_type IS null
+            OR tr.call_type IS NULL
           )
           {% if NOT is_incremental() %}
           AND tr.block_time > '{{project_start_date}}'

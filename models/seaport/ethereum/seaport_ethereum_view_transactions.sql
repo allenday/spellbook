@@ -119,7 +119,7 @@ with iv_availadv AS (
                                    and b.receiver = a.receiver
            LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillAvailableAdvancedOrders') }} c on c.call_tx_hash = a.tx_hash
      where 1=1
-       and NOT (a.item_type in ('2','3') and b.tx_hash is null and c.call_tx_hash is not null)
+       and NOT (a.item_type in ('2','3') and b.tx_hash is NULL and c.call_tx_hash is not null)
 )
 ,iv_txn_level AS (
     SELECT tx_hash
@@ -246,23 +246,23 @@ with iv_availadv AS (
           ,a.fee_amount / power(10, e2.decimals) AS fee_amount
           ,a.fee_amount / power(10, e2.decimals) * p2.price AS fee_usd_amount
           ,a.zone AS zone_address
-          ,case when spc1.call_tx_hash is NOT null then 'Auction Settled'
-                when spc2.call_tx_hash is NOT null and spc2.parameters:basicOrderType::integer between 16 and 23 then 'Auction Settled'
-                when spc2.call_tx_hash is NOT null and spc2.parameters:basicOrderType::integer between 0 and 7 then 'Buy'
-                when spc2.call_tx_hash is NOT null then 'Buy'
-                when spc3.call_tx_hash is NOT null and spc3.advancedOrder:parameters:consideration[0]:identifierOrCriteria > '0' then 'Trait Offer Accepted'
-                when spc3.call_tx_hash is NOT null then 'Collection Offer Accepted'
+          ,case when spc1.call_tx_hash is NOT NULL then 'Auction Settled'
+                when spc2.call_tx_hash is NOT NULL and spc2.parameters:basicOrderType::integer between 16 and 23 then 'Auction Settled'
+                when spc2.call_tx_hash is NOT NULL and spc2.parameters:basicOrderType::integer between 0 and 7 then 'Buy'
+                when spc2.call_tx_hash is NOT NULL then 'Buy'
+                when spc3.call_tx_hash is NOT NULL and spc3.advancedOrder:parameters:consideration[0]:identifierOrCriteria > '0' then 'Trait Offer Accepted'
+                when spc3.call_tx_hash is NOT NULL then 'Collection Offer Accepted'
                 else 'Private Sale'
            end AS category
-          ,case when spc1.call_tx_hash is NOT null then 'Collection / Trait Offer Accepted' -- include English Auction and Dutch Auction
-                when spc2.call_tx_hash is NOT null and spc2.parameters:basicOrderType::integer between 0 and 15 then 'Buy' -- Buy it directly
-                when spc2.call_tx_hash is NOT null and spc2.parameters:basicOrderType::integer between 16 and 23 and spc2.parameters:considerationIdentifier = a.nft_token_id then 'Individual Offer Accepted'
-                when spc2.call_tx_hash is NOT null then 'Buy'
-                when spc3.call_tx_hash is NOT null and a.original_currency_contract = '0x0000000000000000000000000000000000000000' then 'Buy'
-                when spc3.call_tx_hash is NOT null then 'Collection / Trait Offer Accepted' -- offer for collection
-                when spc4.call_tx_hash is NOT null then 'Bulk Purchase' -- bundles of NFTs are purchased through aggregators or in a cart
-                when spc5.call_tx_hash is NOT null then 'Bulk Purchase' -- bundles of NFTs are purchased through aggregators or in a cart
-                when spc6.call_tx_hash is NOT null then 'Private Sale' -- sales for designated address
+          ,case when spc1.call_tx_hash is NOT NULL then 'Collection / Trait Offer Accepted' -- include English Auction and Dutch Auction
+                when spc2.call_tx_hash is NOT NULL and spc2.parameters:basicOrderType::integer between 0 and 15 then 'Buy' -- Buy it directly
+                when spc2.call_tx_hash is NOT NULL and spc2.parameters:basicOrderType::integer between 16 and 23 and spc2.parameters:considerationIdentifier = a.nft_token_id then 'Individual Offer Accepted'
+                when spc2.call_tx_hash is NOT NULL then 'Buy'
+                when spc3.call_tx_hash is NOT NULL and a.original_currency_contract = '0x0000000000000000000000000000000000000000' then 'Buy'
+                when spc3.call_tx_hash is NOT NULL then 'Collection / Trait Offer Accepted' -- offer for collection
+                when spc4.call_tx_hash is NOT NULL then 'Bulk Purchase' -- bundles of NFTs are purchased through aggregators or in a cart
+                when spc5.call_tx_hash is NOT NULL then 'Bulk Purchase' -- bundles of NFTs are purchased through aggregators or in a cart
+                when spc6.call_tx_hash is NOT NULL then 'Private Sale' -- sales for designated address
                 else 'Buy'
            end AS order_type
 

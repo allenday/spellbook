@@ -85,11 +85,11 @@ new_router AS (
             else mp.symbol end AS maker_symbol,
         case when get_json_object(quote,'$.baseToken') = '0x0000000000000000000000000000000000000000' then 'ETH'
             else tp.symbol end AS taker_symbol,
-        case when l.evt_tx_hash is NOT null then l.`quoteTokenAmount` / power(10, mp.decimals)
+        case when l.evt_tx_hash is NOT NULL then l.`quoteTokenAmount` / power(10, mp.decimals)
             else cast(get_json_object(quote,'$.maxQuoteTokenAmount') AS float) / power(10,mp.decimals) end  AS maker_token_amount,
-        case when l.evt_tx_hash is NOT null then l.`baseTokenAmount` / power(10, tp.decimals)
+        case when l.evt_tx_hash is NOT NULL then l.`baseTokenAmount` / power(10, tp.decimals)
             else cast(get_json_object(quote,'$.maxBaseTokenAmount') AS float) / power(10,tp.decimals) end  AS taker_token_amount,
-        case when l.evt_tx_hash is NOT null
+        case when l.evt_tx_hash is NOT NULL
             then coalesce(
                         l.`baseTokenAmount` / power(10, tp.decimals) * tp.price,
                         `quoteTokenAmount` / power(10, mp.decimals) * mp.price)
@@ -145,7 +145,7 @@ legacy_router_w_integration AS (
         substring(input, 324, 1) AS source,
         t.block_time,
         t.tx_hash,
-        t.error is null AS fill_status,
+        t.error is NULL AS fill_status,
         substring(t.input, 1, 4) AS method_id,
         t.to AS router_contract,
         substring(t.input, 17, 20) AS pool,
@@ -156,9 +156,9 @@ legacy_router_w_integration AS (
             else mp.symbol end AS maker_symbol,
         case when substring(input, 81, 20) = '0x0000000000000000000000000000000000000000' then 'ETH'
             else tp.symbol end AS taker_symbol,
-        case when l.tx_hash is NOT null then maker_token_amount / power(10,mp.decimals) end AS maker_token_amount,
-        case when l.tx_hash is NOT null then taker_token_amount / power(10,tp.decimals) end AS taker_token_amount,
-        case when l.tx_hash is NOT null then
+        case when l.tx_hash is NOT NULL then maker_token_amount / power(10,mp.decimals) end AS maker_token_amount,
+        case when l.tx_hash is NOT NULL then taker_token_amount / power(10,tp.decimals) end AS taker_token_amount,
+        case when l.tx_hash is NOT NULL then
             coalesce(
                 taker_token_amount / power(10, tp.decimals) * tp.price,
                 maker_token_amount / power(10, mp.decimals) * mp.price) end AS amount_usd
@@ -185,7 +185,7 @@ legacy_router_w_integration AS (
         substring(input, 484, 1) AS source,
         t.block_time,
         t.tx_hash,
-        t.error is null AS fill_status,
+        t.error is NULL AS fill_status,
         'tradeSingleHop' AS method_id,
         t.to AS router_contract,
         substring(t.input, 49, 20) AS pool, --mm
@@ -196,9 +196,9 @@ legacy_router_w_integration AS (
             else mp.symbol end AS maker_symbol,
         case when substring(input, 177, 20) = '0x0000000000000000000000000000000000000000' then 'ETH'
             else tp.symbol end AS taker_symbol,
-        case when l.tx_hash is NOT null then maker_token_amount / power(10,mp.decimals) end AS maker_token_amount,
-        case when l.tx_hash is NOT null then taker_token_amount / power(10,tp.decimals) end AS taker_token_amount,
-        case when l.tx_hash is NOT null then
+        case when l.tx_hash is NOT NULL then maker_token_amount / power(10,mp.decimals) end AS maker_token_amount,
+        case when l.tx_hash is NOT NULL then taker_token_amount / power(10,tp.decimals) end AS taker_token_amount,
+        case when l.tx_hash is NOT NULL then
             coalesce(
                 taker_token_amount / power(10, tp.decimals) * tp.price,
                 maker_token_amount / power(10, mp.decimals) * mp.price) end AS amount_usd
@@ -223,7 +223,7 @@ legacy_routers AS (
     SELECT
         t.block_time,
         t.tx_hash,
-        error is null AS fill_status,
+        error is NULL AS fill_status,
         substring(input, 1, 4) AS method_id,
         `to` AS router_contract,
         substring(input, 17, 20) AS pool, --mm
@@ -259,7 +259,7 @@ legacy_routers AS (
     SELECT
             t.block_time,
             t.tx_hash,
-            error is null AS fill_status,
+            error is NULL AS fill_status,
             substring(input, 1, 4) AS method_id,
             `to` AS router_contract,
             substring(input, 17, 20) AS pool,
@@ -285,7 +285,7 @@ legacy_routers AS (
     SELECT
         t.block_time,
         t.tx_hash,
-        error is null AS fill_status,
+        error is NULL AS fill_status,
         substring(input, 1, 4) AS method_id,
         `to` AS router_contract,
         substring(input, 17, 20) AS pool,
@@ -322,11 +322,11 @@ new_pool AS (
     -- same trade event abi, effectively only from table hashflow.pool_evt_trade since 2022-04-09
     SELECT
         l.evt_index AS composite_index,
-        null AS source, -- no join on call for this batch, refer to metabase for source info
+        NULL AS source, -- no join on call for this batch, refer to metabase for source info
         tx.block_time AS block_time,
         tx.hash AS tx_hash,
         true AS fill_status, -- without call we are only logging successful fills
-        null AS method_id, -- without call we don't have function call info
+        NULL AS method_id, -- without call we don't have function call info
         tx.to AS router_contract, -- taking top level contract called in tx AS router, NOT necessarily HF contract
         l.pool AS pool,
         tx.from AS trader,
@@ -364,7 +364,7 @@ dedupe_new_router AS ( -- since new_router and new_pool have overlapping trades,
     on new_router.block_time = new_pool.block_time
         and new_router.composite_index = new_pool.composite_index
         and new_router.tx_hash = new_pool.tx_hash
-    where new_pool.tx_hash is null
+    where new_pool.tx_hash is NULL
 
 ),
 

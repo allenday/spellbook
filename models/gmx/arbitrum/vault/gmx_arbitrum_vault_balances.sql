@@ -325,17 +325,17 @@ vault_balances_dai AS -- This CTE returns the balance of DAI tokens in the GMX A
 
 SELECT -- This CTE returns the balance of all supported tokens in the GMX Arbitrum Vault in a designated minute
     x.minute AS minute,
-    COALESCE(x.frax_balance,0) AS frax_balance, -- Removes null values
-    COALESCE(x.usdt_balance,0) AS usdt_balance, -- Removes null values
-    COALESCE(x.wbtc_balance,0) AS wbtc_balance, -- Removes null values
-    COALESCE(x.usdc_balance,0) AS usdc_balance, -- Removes null values
-    COALESCE(x.uni_balance,0) AS uni_balance, -- Removes null values
-    COALESCE(x.link_balance,0) AS link_balance, -- Removes null values
-    COALESCE(x.weth_balance,0) AS weth_balance, -- Removes null values
-    COALESCE(x.dai_balance,0) AS dai_balance -- Removes null values
+    COALESCE(x.frax_balance,0) AS frax_balance, -- Removes NULL values
+    COALESCE(x.usdt_balance,0) AS usdt_balance, -- Removes NULL values
+    COALESCE(x.wbtc_balance,0) AS wbtc_balance, -- Removes NULL values
+    COALESCE(x.usdc_balance,0) AS usdc_balance, -- Removes NULL values
+    COALESCE(x.uni_balance,0) AS uni_balance, -- Removes NULL values
+    COALESCE(x.link_balance,0) AS link_balance, -- Removes NULL values
+    COALESCE(x.weth_balance,0) AS weth_balance, -- Removes NULL values
+    COALESCE(x.dai_balance,0) AS dai_balance -- Removes NULL values
 FROM
     (
-    SELECT -- This subquery collates all the data extracted from the vault balance CTE, joins them to the minute series, and uses last data to extrapolate over null values
+    SELECT -- This subquery collates all the data extracted from the vault balance CTE, joins them to the minute series, and uses last data to extrapolate over NULL values
         a.minute,
         last(b.balance, true) OVER (ORDER BY a.minute ASC) AS frax_balance,
         last(c.balance, true) OVER (ORDER BY a.minute ASC) AS usdt_balance,

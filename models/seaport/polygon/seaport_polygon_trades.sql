@@ -108,7 +108,7 @@ with source_polygon_transactions AS (
         ,a.offer_first_item_type
         ,a.consideration_first_item_type
         ,a.sender
-        ,case when b.tx_hash is NOT null then b.receiver
+        ,case when b.tx_hash is NOT NULL then b.receiver
               else a.receiver
           end AS receiver
         ,a.zone

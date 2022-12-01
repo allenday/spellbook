@@ -381,9 +381,9 @@ with p1_call AS (
           ,evt_fee_recipient AS evt_fee_recipient
           ,evt_royalty_recipient AS evt_royalty_recipient
           ,coalesce(price_amount,0) + coalesce(fee_amount,0) + coalesce(royalty_amount,0) AS attempt_amount
-          ,case when evt_tx_hash is NOT null then coalesce(price_amount,0) + coalesce(fee_amount,0) + coalesce(royalty_amount,0) end AS trade_amount
-          ,case when evt_tx_hash is null then coalesce(price_amount,0) + coalesce(fee_amount,0) + coalesce(royalty_amount,0) else 0 end AS revert_amount
-          ,case when evt_tx_hash is null then true else false end AS reverted
+          ,case when evt_tx_hash is NOT NULL then coalesce(price_amount,0) + coalesce(fee_amount,0) + coalesce(royalty_amount,0) end AS trade_amount
+          ,case when evt_tx_hash is NULL then coalesce(price_amount,0) + coalesce(fee_amount,0) + coalesce(royalty_amount,0) else 0 end AS revert_amount
+          ,case when evt_tx_hash is NULL then true else false end AS reverted
           ,'Bulk Purchase' AS trade_type
           ,'Bulk Purchase' AS order_type
           ,'Buy' AS purchase_method

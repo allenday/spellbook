@@ -24,5 +24,5 @@ SELECT
     timestamp('2022-09-03') AS created_at,
     now() AS updated_at
 FROM nft_trades
-WHERE address is NOT null
+WHERE address is NOT NULL
 GROUP BY address

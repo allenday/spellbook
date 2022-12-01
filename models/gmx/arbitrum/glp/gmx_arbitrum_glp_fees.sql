@@ -43,8 +43,8 @@ fglp_balances AS -- This CTE returns the accuals of WETH tokens in the Fee GLP c
 
 SELECT
     x.minute,
-    COALESCE(x.fees_weth_generated,0) AS fees_weth_generated, -- Removes null values
-    COALESCE(x.fees_weth_cumulative,0) AS fees_weth_cumulative, -- Removes null values
+    COALESCE(x.fees_weth_generated,0) AS fees_weth_generated, -- Removes NULL values
+    COALESCE(x.fees_weth_cumulative,0) AS fees_weth_cumulative, -- Removes NULL values
     x.weth_current_price
 FROM
     (
