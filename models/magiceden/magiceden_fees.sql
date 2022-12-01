@@ -1,4 +1,4 @@
- {{
+{{
   config(
         alias='fees',
         post_hook='{{ expose_spells(\'["solana"]\',

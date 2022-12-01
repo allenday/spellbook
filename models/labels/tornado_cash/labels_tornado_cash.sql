@@ -24,7 +24,7 @@ FROM {{ ref('tornado_cash_withdrawals') }}
 SELECT
     collect_set(blockchain) AS blockchain,
     address,
-    'Tornado Cash ' || array_join(collect_set(name),' AND ') AS name,
+    'Tornado Cash ' || array_join(collect_set(name), ' AND ') AS name,
     'tornado_cash' AS category,
     'soispoke' AS contributor,
     'query' AS source,

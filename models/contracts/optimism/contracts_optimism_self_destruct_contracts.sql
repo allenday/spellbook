@@ -1,4 +1,4 @@
- {{
+{{
   config(
         alias='self_destruct_contracts',
         materialized ='incremental',
@@ -15,9 +15,9 @@
 with creates AS (
     SELECT
       block_time AS created_time
-      ,tx_hash AS creation_tx_hash
-      ,address AS contract_address
-      ,trace_address[0] AS trace_element
+      , tx_hash AS creation_tx_hash
+      , address AS contract_address
+      , trace_address[0] AS trace_element
     FROM {{ source('optimism', 'traces') }}
     where
       type = 'create'
@@ -29,9 +29,9 @@ with creates AS (
 )
 SELECT
   cr.created_time
-  ,cr.creation_tx_hash
-  ,cr.contract_address
-  ,cr.trace_element
+  , cr.creation_tx_hash
+  , cr.contract_address
+  , cr.trace_element
 FROM creates AS cr
 join {{ source('optimism', 'traces') }} AS sd
   ON cr.creation_tx_hash = sd.tx_hash

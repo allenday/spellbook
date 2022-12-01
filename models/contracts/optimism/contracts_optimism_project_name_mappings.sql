@@ -11,10 +11,10 @@
 
 SELECT
   dune_name
-  ,mapped_name
+  , mapped_name
 FROM (
     values
-    ('lyra_v1',	'Lyra')
+    ('lyra_v1', 'Lyra')
     , ('Lyra V1', 'Lyra')
     , ('aave_v3', 'Aave')
     , ('perp_v2', 'Perpetual Protocol')
@@ -30,7 +30,7 @@ FROM (
     , ('quixotic_v4', 'Quix')
     , ('across_v2', 'Across')
     , ('openocean_v2', 'OpenOcean')
-    , ('setprotocol_v2',	'Set Protocol')
+    , ('setprotocol_v2', 'Set Protocol')
     , ('kromatikafinance', 'Kromatika')
     , ('kratosdao', 'Kratos Dao')
     , ('curvefi', 'Curve')

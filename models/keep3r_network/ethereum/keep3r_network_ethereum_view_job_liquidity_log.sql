@@ -52,7 +52,7 @@ WITH job_liquidities AS (
         'LiquidityWithdrawal' AS event,
         rm.contract_address keep3r,
         rm._job job,
-        rm._liquidity AS token,- CAST(rm._amount AS DOUBLE) / 1e18 AS amount
+        rm._liquidity AS token, - CAST(rm._amount AS DOUBLE) / 1e18 AS amount
     FROM
         (
             SELECT

@@ -1,4 +1,4 @@
- {{
+{{
   config(
         alias='trades',
         post_hook='{{ expose_spells(\'["ethereum"]\',
@@ -17,13 +17,13 @@ SELECT
       amount_usd,
       token_standard,
       trade_type,
-      CAST(number_of_items AS DECIMAL(38,0)) AS number_of_items,
+      CAST(number_of_items AS DECIMAL(38, 0)) AS number_of_items,
       trade_category,
       evt_type,
       seller,
       buyer,
       amount_original,
-      CAST(amount_raw AS DECIMAL(38,0)) AS amount_raw,
+      CAST(amount_raw AS DECIMAL(38, 0)) AS amount_raw,
       currency_symbol,
       currency_contract,
       nft_contract_address,

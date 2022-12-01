@@ -1,4 +1,4 @@
- {{
+{{
   config(
         alias='burns',
         post_hook='{{ expose_spells(\'["ethereum"]\',

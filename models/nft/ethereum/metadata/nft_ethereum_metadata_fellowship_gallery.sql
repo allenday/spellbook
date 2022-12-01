@@ -66,4 +66,4 @@ FROM (VALUES
 
 ) AS temp_table (contract_address, collection_name, artist_name, platform, website)
 
-order BY artist_name ASC, collection_name ASC 
+order BY artist_name ASC, collection_name ASC

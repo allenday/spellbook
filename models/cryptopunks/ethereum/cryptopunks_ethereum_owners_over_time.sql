@@ -305,25 +305,25 @@ with original_holders AS (
             , address AS wallet
             , sum(original_count) AS punk_balance
     FROM original_holders
-    GROUP BY 1,2
+    GROUP BY 1, 2
 
     union all
 
-    SELECT  date_trunc('day',evt_block_time) AS day
+    SELECT  date_trunc('day', evt_block_time) AS day
             , `FROM` AS wallet
             , count(*)*-1.0 AS punk_balance
     FROM {{ source('erc20_ethereum', 'evt_transfer') }}
     where contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks
-    GROUP BY 1,2
+    GROUP BY 1, 2
 
     union all
 
-    SELECT  date_trunc('day',evt_block_time) AS day
+    SELECT  date_trunc('day', evt_block_time) AS day
             , `to` AS wallet
             , count(*) AS punk_balance
     FROM {{ source('erc20_ethereum', 'evt_transfer') }}
     where contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks
-    GROUP BY 1,2
+    GROUP BY 1, 2
 )
 , punk_transfer_summary AS (
     SELECT  day
@@ -343,7 +343,7 @@ with original_holders AS (
 , combined_table AS (
     SELECT base_data.day
             , base_data.wallet
-            , sum(coalesce(daily_transfer_sum,0)) over (partition BY base_data.wallet order BY base_data.day) AS holding
+            , sum(coalesce(daily_transfer_sum, 0)) over (partition BY base_data.wallet order BY base_data.day) AS holding
     FROM base_data
     LEFT JOIN punk_transfer_summary ON base_data.day = punk_transfer_summary.day AND base_data.wallet = punk_transfer_summary.wallet
 )

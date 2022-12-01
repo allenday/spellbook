@@ -18,25 +18,25 @@
 with registrations AS (
     SELECT
         label AS label_hash
-        ,name AS label_name
-        ,evt_block_number AS block_number
-        ,evt_block_time AS block_time
-        ,evt_tx_hash AS tx_hash
-        ,evt_index
+        , name AS label_name
+        , evt_block_number AS block_number
+        , evt_block_time AS block_time
+        , evt_tx_hash AS tx_hash
+        , evt_index
     FROM {{ ref('ens_view_registrations') }}
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 )
 
-,node_info AS (
+, node_info AS (
     SELECT
         a AS address
-        ,node
-        ,evt_block_number AS block_number
-        ,evt_block_time AS block_time
-        ,evt_tx_hash AS tx_hash
-        ,evt_index
+        , node
+        , evt_block_number AS block_number
+        , evt_block_time AS block_time
+        , evt_tx_hash AS tx_hash
+        , evt_index
     FROM {{ source('ethereumnameservice_ethereum', 'PublicResolver_evt_AddrChanged') }}
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
@@ -48,13 +48,13 @@ with registrations AS (
     SELECT *
     FROM (
         SELECT *
-        ,row_number() over (partition BY node order BY block_time DESC, evt_index DESC) AS ordering2
+        , row_number() over (partition BY node order BY block_time DESC, evt_index DESC) AS ordering2
         FROM (
             SELECT
             r.*
-            ,n.address
-            ,n.node
-            ,row_number() over (partition BY r.tx_hash order BY (r.evt_index - n.evt_index) ASC) AS ordering
+            , n.address
+            , n.node
+            , row_number() over (partition BY r.tx_hash order BY (r.evt_index - n.evt_index) ASC) AS ordering
             FROM registrations r
             inner join node_info n
             ON r.block_number = n.block_number
@@ -68,14 +68,14 @@ with registrations AS (
 
 SELECT
     node
-    ,concat(label_name,'.eth') AS name
-    ,label_name
-    ,label_hash
-    ,address AS initial_address
-    ,tx_hash
-    ,block_number
-    ,block_time
-    ,evt_index
+    , concat(label_name, '.eth') AS name
+    , label_name
+    , label_hash
+    , address AS initial_address
+    , tx_hash
+    , block_number
+    , block_time
+    , evt_index
 FROM matching
 
 

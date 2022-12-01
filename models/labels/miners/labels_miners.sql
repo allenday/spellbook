@@ -63,4 +63,4 @@ SELECT DISTINCT array('optimism') AS blockchain,
        'query' AS source,
        date('2022-09-28') AS created_at,
        now() AS modified_at
-FROM {{ source('optimism', 'blocks') }} 
+FROM {{ source('optimism', 'blocks') }}

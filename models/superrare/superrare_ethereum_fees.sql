@@ -1,4 +1,4 @@
- {{
+{{
   config(
         alias='fees',
         post_hook='{{ expose_spells(\'["ethereum"]\',
@@ -25,7 +25,7 @@ royalty_fee_receive_address,
 royalty_fee_currency_symbol,
 token_standard,
 trade_type,
-CAST(number_of_items AS DECIMAL(38,0)) AS number_of_items,
+CAST(number_of_items AS DECIMAL(38, 0)) AS number_of_items,
 trade_category,
 evt_type,
 seller,

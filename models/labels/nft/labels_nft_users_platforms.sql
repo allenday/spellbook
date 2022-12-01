@@ -17,7 +17,7 @@ FROM {{ ref('nft_trades') }}
 SELECT
     collect_set(blockchain) AS blockchain,
     address,
-    array_join(collect_set(concat(upper(substring(project,1,1)),substring(project,2))), ', ') ||' User' AS name,
+    array_join(collect_set(concat(upper(substring(project, 1, 1)), substring(project, 2))), ', ') ||' User' AS name,
     'nft' AS category,
     'soispoke' AS contributor,
     'query' AS source,

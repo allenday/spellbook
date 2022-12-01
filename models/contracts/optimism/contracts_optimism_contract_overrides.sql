@@ -10,8 +10,8 @@
 }}
 SELECT
   lower(contract_address) AS contract_address
-  ,contract_project
-  ,contract_name
+  , contract_project
+  , contract_name
 FROM
     (values
     ('0xc30141B657f4216252dc59Af2e7CdB9D8792e1B0', 'Socket', 'Socket Registry')

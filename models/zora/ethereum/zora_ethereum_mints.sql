@@ -1,4 +1,4 @@
- {{
+{{
   config(
         alias='mints',
         post_hook='{{ expose_spells(\'["ethereum"]\',

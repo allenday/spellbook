@@ -19,5 +19,5 @@ FROM {{ ref('transfers_ethereum_erc721') }}
 -- this filter will only be applied ON an incremental run
 where evt_block_time >= date_trunc('hour', now() - interval '1 week')
 {% endif %}
-GROUP BY 1,2,3,4,5
+GROUP BY 1, 2, 3, 4, 5
 having sum(amount) = 1
