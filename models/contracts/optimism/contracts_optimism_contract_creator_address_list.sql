@@ -14,7 +14,7 @@ FROM (
   SELECT
     lower(creator_address) AS creator_address
     ,contract_project
-  from
+  FROM
       (values
       ('0x932607335869cff6349ef450e74c83a3b871a9ff', 'Lyra V1')
       ,('0x41a742d0cb523b0c313518309ade763fb609da25', 'Lyra V1')

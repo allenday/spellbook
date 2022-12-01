@@ -23,12 +23,12 @@ FROM (
        now() AS modified_at
     FROM (
         SELECT *
-        from (
+        FROM (
             SELECT
                 address,
                  name
                  ,row_number() over (partition by address order by block_time asc) AS ordering
-            from {{ ref('ens_resolver_latest') }}
+            FROM {{ ref('ens_resolver_latest') }}
         ) where ordering = 1
     ) res
     FULL OUTER JOIN {{ ref('ens_reverse_latest') }} rev

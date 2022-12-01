@@ -50,15 +50,15 @@ SELECT
     end AS token_pair
 	, s.toAmount / power(10, erc20_b.decimals) AS token_bought_amount
 	, s.fromAmount / power(10, erc20_s.decimals) AS token_sold_amount
-    , coalesce(s.`to`, tx.from) AS taker
+    , coalesce(s.`to`, tx.FROM) AS taker
 	, '' AS maker
 	, cast(s.contract_address AS STRING) AS project_contract_address
 	, s.evt_tx_hash AS tx_hash
-    , tx.from AS tx_from
+    , tx.FROM AS tx_from
     , tx.to AS tx_to
 	, '' AS trace_address
 	, s.evt_index AS evt_index
-from
+FROM
     {{ source('platypus_finance_avalanche_c', 'Pool_evt_Swap') }} s
 inner join {{ source('avalanche_c', 'transactions') }} tx
     ON tx.hash = s.evt_tx_hash

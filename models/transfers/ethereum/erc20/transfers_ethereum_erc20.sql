@@ -12,19 +12,19 @@ with
             contract_address AS token_address,
             evt_block_time,
             value AS amount_raw
-        from
+        FROM
             {{ source('erc20_ethereum', 'evt_transfer') }}
     )
 
     ,
     received_transfers AS (
         SELECT
-        'receive' || '-' || evt_tx_hash || '-' || evt_index || '-' || `from` AS unique_transfer_id,
-        `from` AS wallet_address,
+        'receive' || '-' || evt_tx_hash || '-' || evt_index || '-' || `FROM` AS unique_transfer_id,
+        `FROM` AS wallet_address,
         contract_address AS token_address,
         evt_block_time,
         - value AS amount_raw
-        from
+        FROM
             {{ source('erc20_ethereum', 'evt_transfer') }}
     )
 
@@ -36,7 +36,7 @@ with
             contract_address AS token_address,
             evt_block_time,
             wad AS amount_raw
-        from
+        FROM
             {{ source('zeroex_ethereum', 'weth9_evt_deposit') }}
     )
 
@@ -48,18 +48,18 @@ with
             contract_address AS token_address,
             evt_block_time,
             - wad AS amount_raw
-        from
+        FROM
             {{ source('zeroex_ethereum', 'weth9_evt_withdrawal') }}
     )
 
 SELECT unique_transfer_id, 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, amount_raw
-from sent_transfers
+FROM sent_transfers
 union
 SELECT unique_transfer_id, 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, amount_raw
-from received_transfers
+FROM received_transfers
 union
 SELECT unique_transfer_id, 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, amount_raw
-from deposited_weth
+FROM deposited_weth
 union
 SELECT unique_transfer_id, 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, amount_raw
-from withdrawn_weth
+FROM withdrawn_weth

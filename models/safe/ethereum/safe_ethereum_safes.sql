@@ -15,7 +15,7 @@
 }}
 
 SELECT
-    et.from AS address,
+    et.FROM AS address,
     case
         when et.to = '0x8942595a2dc5181df0465af0d7be08c8f23c93af' then '0.1.0'
         when et.to = '0xb6029ea3b2c51d09a50b53ca8012feeb05bda35a' then '1.0.0'
@@ -26,7 +26,7 @@ SELECT
     try_cast(date_trunc('day', et.block_time) AS date) AS block_date,
     et.block_time AS creation_time,
     et.tx_hash
-from {{ source('ethereum', 'traces') }} et
+FROM {{ source('ethereum', 'traces') }} et
 where et.success = true
     and et.call_type = 'delegatecall' -- the delegate call to the master copy is the Safe address
     and (
@@ -58,7 +58,7 @@ SELECT contract_address AS address,
     try_cast(date_trunc('day', evt_block_time) AS date) AS block_date,
     evt_block_time AS creation_time,
     evt_tx_hash AS tx_hash
-from {{ source('gnosis_safe_ethereum', 'GnosisSafev1_3_0_evt_SafeSetup') }}
+FROM {{ source('gnosis_safe_ethereum', 'GnosisSafev1_3_0_evt_SafeSetup') }}
 {% if NOT is_incremental() %}
 where evt_block_time > '2018-11-24' -- for initial query optimisation
 {% endif %}

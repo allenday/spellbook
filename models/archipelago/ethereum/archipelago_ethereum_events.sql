@@ -98,9 +98,9 @@ WITH
             e.*
             , t.nft_contract_address
             , t.token_id
-            , tx.from AS tx_from
+            , tx.FROM AS tx_from
             , tx.to  AS tx_to
-        from trade_events e
+        FROM trade_events e
         inner join token_events t
             ON e.block_number = t.block_number and e.unique_trade_id = t.unique_trade_id
         inner join {{ source('ethereum', 'transactions') }} tx
@@ -119,7 +119,7 @@ WITH
             ,sum(fee_amount_raw) AS platform_fee_amount_raw
             ,sum(fee_percentage) AS platform_fee_percentage
             ,unique_trade_id
-        from fee_events
+        FROM fee_events
             where is_protocol_fee
         group by block_number,unique_trade_id
     ),
@@ -131,7 +131,7 @@ WITH
             ,sum(fee_percentage) AS royalty_fee_percentage
             , CAST(NULL AS VARCHAR(5)) AS royalty_fee_receive_address -- we have multiple address so have to null this field
             ,unique_trade_id
-        from fee_events
+        FROM fee_events
             where NOT is_protocol_fee
         group by block_number,unique_trade_id
     ),
@@ -145,7 +145,7 @@ WITH
             , rf.royalty_fee_amount_raw
             , rf.royalty_fee_percentage
             , rf.royalty_fee_receive_address
-        from trades_with_nft_and_tx t
+        FROM trades_with_nft_and_tx t
         LEFT JOIN platform_fees pf
             ON t.block_number = pf.block_number and t.unique_trade_id = pf.unique_trade_id
         LEFT JOIN royalty_fees rf
@@ -164,7 +164,7 @@ WITH
             , royalty_fee_amount_raw / pow(10, p.decimals) AS royalty_fee_amount
             , royalty_fee_amount_raw / pow(10, p.decimals)*p.price AS royalty_fee_amount_usd
             , p.symbol AS royalty_fee_currency_symbol
-        from trades_with_fees t
+        FROM trades_with_fees t
         LEFT JOIN {{ source('prices', 'usd') }} p ON p.blockchain='ethereum'
             AND p.symbol = 'WETH' -- currently we only have ETH trades
             AND date_trunc('minute', p.minute)=date_trunc('minute', t.block_time)
@@ -183,7 +183,7 @@ WITH
             , nft.name AS collection
             , agg.contract_address AS aggregator_address
             , agg.name AS aggregator_name
-        from trades_with_price t
+        FROM trades_with_price t
         LEFT JOIN tokens_ethereum_nft nft
             ON nft_contract_address = nft.contract_address
         LEFT JOIN nft_ethereum_aggregators agg
@@ -202,9 +202,9 @@ SELECT
     , te.token_standard
     , 1 AS number_of_items
     , 'Single Item Trade' AS trade_type
-    , case when te.tx_from = COALESCE(seller_fix.from, te.seller) then 'Offer Accepted' else 'Buy' end AS trade_category
+    , case when te.tx_from = COALESCE(seller_fix.FROM, te.seller) then 'Offer Accepted' else 'Buy' end AS trade_category
     , 'Trade' AS evt_type
-    , COALESCE(seller_fix.from, te.seller) AS seller
+    , COALESCE(seller_fix.FROM, te.seller) AS seller
     , COALESCE(buyer_fix.to, te.buyer) AS buyer
     , te.amount_raw
     , te.amount_original
@@ -230,13 +230,13 @@ SELECT
     , te.royalty_fee_receive_address -- NULL here
     , CAST(te.royalty_fee_percentage AS DOUBLE) AS royalty_fee_percentage
     , te.unique_trade_id
-from trades_enhanced te
+FROM trades_enhanced te
 LEFT JOIN {{ ref('nft_ethereum_transfers') }} buyer_fix on buyer_fix.block_time=te.block_time
     and te.nft_contract_address=buyer_fix.contract_address
     and buyer_fix.tx_hash=te.tx_hash
     and te.token_id=buyer_fix.token_id
     and te.buyer=te.aggregator_address
-    and buyer_fix.from=te.aggregator_address
+    and buyer_fix.FROM=te.aggregator_address
     {% if is_incremental() %}
     and buyer_fix.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}

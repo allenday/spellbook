@@ -10,7 +10,7 @@
                                     \'["aalan3", "jeff-dude"]\') }}'
         )
 }}
-SELECT token_id, blockchain, symbol, LOWER(contract_address) AS contract_address, decimals from (
+SELECT token_id, blockchain, symbol, LOWER(contract_address) AS contract_address, decimals FROM (
 VALUES
     ("ada-cardano", NULL, "ADA", null, null),
     ("ae-aeternity", NULL, "AE", null, null),

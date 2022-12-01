@@ -8,24 +8,24 @@ with
             evt_block_time,
             tokenId,
             1 AS amount
-        from
+        FROM
             {{ source('erc721_ethereum', 'evt_transfer') }}
     )
 
     ,
     sent_transfers AS (
-        SELECT 'send' || '-' || evt_tx_hash || '-' || evt_index || '-' || `from` AS unique_tx_id,
-            from AS wallet_address,
+        SELECT 'send' || '-' || evt_tx_hash || '-' || evt_index || '-' || `FROM` AS unique_tx_id,
+            FROM AS wallet_address,
             contract_address AS token_address,
             evt_block_time,
             tokenId,
             -1 AS amount
-        from
+        FROM
             {{ source('erc721_ethereum', 'evt_transfer') }}
     )
 
 SELECT 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, tokenId, amount, unique_tx_id
-from received_transfers
+FROM received_transfers
 union
 SELECT 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, tokenId, amount, unique_tx_id
-from sent_transfers
+FROM sent_transfers

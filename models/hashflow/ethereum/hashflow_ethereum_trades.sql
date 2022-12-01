@@ -16,7 +16,7 @@
 
 with hashflow_trades AS (
     SELECT *
-    from {{ ref('hashflow_ethereum_raw_trades') }}
+    FROM {{ ref('hashflow_ethereum_raw_trades') }}
     where fill_status is true -- successful trade
     {% if is_incremental() %}
         and block_time >= date_trunc('day', now() - interval '10 days')
@@ -25,7 +25,7 @@ with hashflow_trades AS (
 
 ethereum_transactions AS (
     SELECT *
-    from {{ source('ethereum', 'transactions') }}
+    FROM {{ source('ethereum', 'transactions') }}
     where block_time >= '{{ project_start_date }}'
     {% if is_incremental() %}
         and block_time >= date_trunc('day', now() - interval '10 days')
@@ -34,7 +34,7 @@ ethereum_transactions AS (
 
 erc20_tokens AS (
     SELECT *
-    from {{ ref('tokens_erc20') }}
+    FROM {{ ref('tokens_erc20') }}
     where blockchain = 'ethereum'
 )
 
@@ -60,11 +60,11 @@ SELECT
     hashflow_trades.pool AS maker,
     hashflow_trades.router_contract AS project_contract_address,
     hashflow_trades.tx_hash,
-    tx.from AS tx_from,
+    tx.FROM AS tx_from,
     tx.to AS tx_to,
     '' AS trace_address,
     case when hashflow_trades.composite_index <> -1 then hashflow_trades.composite_index end AS evt_index
-from hashflow_trades
+FROM hashflow_trades
 inner join ethereum_transactions tx
     on hashflow_trades.tx_hash = tx.hash
 LEFT JOIN erc20_tokens erc20a

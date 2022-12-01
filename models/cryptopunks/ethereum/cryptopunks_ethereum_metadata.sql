@@ -9,7 +9,7 @@
 }}
 
 SELECT punk_id, punk_type, attribute_count, attribute_list
-from ( VALUES
+FROM ( VALUES
         ('0','Female','3',array('Green Eye Shadow','Earring','Blonde Bob')),
         ('1','Male','2',array('Smile','Mohawk')),
         ('2','Female','1',array('Wild Hair')),

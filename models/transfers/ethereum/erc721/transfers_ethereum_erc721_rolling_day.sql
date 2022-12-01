@@ -10,4 +10,4 @@
             tokenId,
             cast(current_timestamp AS timestamp) AS updated_at,
             row_number() over (partition by token_address, tokenId order by day desc) AS recency_index
-        from {{ ref('transfers_ethereum_erc721_agg_day') }}
+        FROM {{ ref('transfers_ethereum_erc721_agg_day') }}

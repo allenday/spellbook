@@ -14,7 +14,7 @@
 
 with nft_trade_address AS (
     SELECT distinct blockchain, buyer AS address_a, seller AS address_b
-    from {{ ref('nft_trades') }}
+    FROM {{ ref('nft_trades') }}
     where buyer is NOT NULL
         and seller is NOT NULL
         and blockchain is NOT NULL
@@ -24,7 +24,7 @@ with nft_trade_address AS (
     union all
 
     SELECT distinct blockchain, seller AS address_a, buyer AS address_b
-    from {{ ref('nft_trades') }}
+    FROM {{ ref('nft_trades') }}
     where buyer is NOT NULL
         and seller is NOT NULL
         and blockchain is NOT NULL
@@ -38,7 +38,7 @@ linked_address_nft_trade AS (
         address_a,
         address_b,
         count(*) AS cnt
-    from nft_trade_address
+    FROM nft_trade_address
     group by 1, 2, 3
     having count(*) > 1
 ),
@@ -48,24 +48,24 @@ linked_address_sorted AS (
     SELECT blockchain,
         (case when address_a > address_b then address_b else address_a end) AS master_address,
         address_a AS alternative_address
-    from linked_address_nft_trade
+    FROM linked_address_nft_trade
     union
     SELECT blockchain,
         (case when address_a > address_b then address_b else address_a end) AS master_address,
         address_b AS alternative_address
-    from linked_address_nft_trade
+    FROM linked_address_nft_trade
 ),
 
 linked_address_sorted_row_num AS (
     SELECT blockchain, master_address, alternative_address,
         master_address || '-' || alternative_address AS linked_address_id,
         row_number() over (partition by blockchain, alternative_address order by master_address) AS row_num
-    from linked_address_sorted
+    FROM linked_address_sorted
 )
 
 SELECT blockchain,
     master_address,
     alternative_address,
     linked_address_id
-from linked_address_sorted_row_num
+FROM linked_address_sorted_row_num
 where row_num = 1

@@ -19,7 +19,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p
     ON p.contract_address = rh.token_address
     AND p.minute = date_trunc('minute', rh.last_updated) - INTERVAL 10 minutes
     AND p.blockchain = 'ethereum'
--- Removes rebase tokens from balances
+-- Removes rebase tokens FROM balances
 LEFT JOIN {{ ref('tokens_ethereum_rebase') }}  AS r
     ON rh.token_address = r.contract_address
 -- Removes likely non-compliant tokens due to negative balances

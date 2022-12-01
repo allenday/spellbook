@@ -2,7 +2,7 @@
 
 SELECT distinct
     array('ethereum') AS blockchain,
-    from AS address,
+    FROM AS address,
     'Ethereum Validator' AS name,
     'validators' AS category,
     'soispoke' AS contributor,

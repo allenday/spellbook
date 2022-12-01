@@ -99,7 +99,7 @@ with
         ,delta
         ,spot_price
         ,coalesce(t1.update_time, t2.update_time, t3.update_time) AS latest_update_time
-    from latest_spot_price t1
+    FROM latest_spot_price t1
     full join latest_delta t2 on t1.pool_address = t2.pool_address
     full join latest_pool_fee t3 on t1.pool_address = t3.pool_address or t2.pool_address = t3.pool_address
 )
@@ -120,10 +120,10 @@ with
 )
 
 -- incremental update:
--- we need to backfill columns from the existing data in order to have full rows
+-- we need to backfill columns FROM the existing data in order to have full rows
 {% if is_incremental() %}
 , full_settings_backfilled AS (
-    SELECT * from(
+    SELECT * FROM(
         SELECT
          coalesce(t1.pool_address,t3.pool_address) AS pool_address
         ,coalesce(t2.bonding_curve, t3.bonding_curve) AS bonding_curve
@@ -131,7 +131,7 @@ with
         ,coalesce(t1.delta, t2.delta, t3.delta) AS delta
         ,coalesce(t1.spot_price, t2.spot_price, t3.spot_price) AS spot_price
         ,coalesce(t1.latest_update_time,t3.creation_block_time) AS latest_update_time
-        from latest_settings t1
+        FROM latest_settings t1
         full outer join initial_settings t3
             ON t1.pool_address = t3.pool_address
         LEFT JOIN {{ this }} t2
@@ -152,12 +152,12 @@ with
     ,coalesce(new.delta, old.delta) AS delta
     ,coalesce(new.spot_price,old.spot_price) AS spot_price
     ,coalesce(new.latest_update_time,old.creation_block_time) AS latest_update_time
-    from initial_settings old
+    FROM initial_settings old
     LEFT JOIN latest_settings new
     ON old.pool_address = new.pool_address
 )
 {% endif %}
 
 
-SELECT * from full_settings_backfilled
+SELECT * FROM full_settings_backfilled
 ;

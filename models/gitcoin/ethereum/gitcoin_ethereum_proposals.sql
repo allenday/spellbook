@@ -34,7 +34,7 @@ SELECT COUNT(DISTINCT voter) AS number_of_voters,
        SUM(votes_abstain) AS votes_abstain,
        SUM(votes_for) + SUM(votes_against) + SUM(votes_abstain) AS votes_total,
        proposalId
-from cte_support
+FROM cte_support
 GROUP BY proposalId)
 
 SELECT DISTINCT
@@ -69,5 +69,5 @@ LEFT JOIN {{ source('gitcoin_ethereum', 'GovernorAlpha_evt_ProposalCanceled') }}
 LEFT JOIN {{ source('gitcoin_ethereum', 'GovernorAlpha_evt_ProposalExecuted') }} pex ON pex.id = pcr.id
 LEFT JOIN {{ source('gitcoin_ethereum', 'GovernorAlpha_evt_ProposalQueued') }} pqu ON pex.id = pcr.id
 {% if is_incremental() %}
-WHERE pcr.evt_block_time > (SELECT max(created_at) from {{ this }})
+WHERE pcr.evt_block_time > (SELECT max(created_at) FROM {{ this }})
 {% endif %}

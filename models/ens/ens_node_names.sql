@@ -23,7 +23,7 @@ with registrations AS (
         ,evt_block_time AS block_time
         ,evt_tx_hash AS tx_hash
         ,evt_index
-    from {{ ref('ens_view_registrations') }}
+    FROM {{ ref('ens_view_registrations') }}
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -37,7 +37,7 @@ with registrations AS (
         ,evt_block_time AS block_time
         ,evt_tx_hash AS tx_hash
         ,evt_index
-    from {{ source('ethereumnameservice_ethereum','PublicResolver_evt_AddrChanged') }}
+    FROM {{ source('ethereumnameservice_ethereum','PublicResolver_evt_AddrChanged') }}
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -46,16 +46,16 @@ with registrations AS (
 -- here's the sketchy matching
 , matching AS (
     SELECT *
-    from (
+    FROM (
         SELECT *
         ,row_number() over (partition by node order by block_time desc, evt_index desc) AS ordering2
-        from (
+        FROM (
             SELECT
             r.*
             ,n.address
             ,n.node
             ,row_number() over (partition by r.tx_hash order by (r.evt_index - n.evt_index) asc) AS ordering
-            from registrations r
+            FROM registrations r
             inner join node_info n
             ON r.block_number = n.block_number
             AND r.tx_hash = n.tx_hash
@@ -76,6 +76,6 @@ SELECT
     ,block_number
     ,block_time
     ,evt_index
-from matching
+FROM matching
 
 

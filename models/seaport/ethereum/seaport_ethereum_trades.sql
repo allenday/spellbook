@@ -19,7 +19,7 @@
 
 with source_ethereum_transactions AS (
     SELECT *
-    from {{ source('ethereum','transactions') }}
+    FROM {{ source('ethereum','transactions') }}
     {% if NOT is_incremental() %}
     where block_time >= date '{{c_seaport_first_date}}'  -- seaport first txn
     {% endif %}
@@ -29,7 +29,7 @@ with source_ethereum_transactions AS (
 )
 ,ref_seaport_ethereum_base_pairs AS (
       SELECT *
-      from {{ ref('seaport_ethereum_base_pairs') }}
+      FROM {{ ref('seaport_ethereum_base_pairs') }}
       where 1=1
       {% if is_incremental() %}
             and block_time >= date_trunc("day", now() - interval '1 week')
@@ -37,22 +37,22 @@ with source_ethereum_transactions AS (
 )
 ,ref_tokens_nft AS (
     SELECT *
-    from {{ ref('tokens_nft') }}
+    FROM {{ ref('tokens_nft') }}
     where blockchain = 'ethereum'
 )
 ,ref_tokens_erc20 AS (
     SELECT *
-    from {{ ref('tokens_erc20') }}
+    FROM {{ ref('tokens_erc20') }}
     where blockchain = 'ethereum'
 )
 ,ref_nft_aggregators AS (
     SELECT *
-    from {{ ref('nft_aggregators') }}
+    FROM {{ ref('nft_aggregators') }}
     where blockchain = 'ethereum'
 )
 ,source_prices_usd AS (
     SELECT *
-    from {{ source('prices', 'usd') }}
+    FROM {{ source('prices', 'usd') }}
     where blockchain = 'ethereum'
     {% if NOT is_incremental() %}
       and minute >= date '{{c_seaport_first_date}}'  -- seaport first txn
@@ -93,7 +93,7 @@ with source_ethereum_transactions AS (
         ,a.creator_fee_idx
         ,a.is_traded_nft
         ,a.is_moved_nft
-  from ref_seaport_ethereum_base_pairs a
+  FROM ref_seaport_ethereum_base_pairs a
   where 1=1
     and NOT a.is_private
   union all
@@ -130,7 +130,7 @@ with source_ethereum_transactions AS (
         ,a.creator_fee_idx
         ,a.is_traded_nft
         ,a.is_moved_nft
-  from ref_seaport_ethereum_base_pairs a
+  FROM ref_seaport_ethereum_base_pairs a
   LEFT JOIN ref_seaport_ethereum_base_pairs b on b.tx_hash = a.tx_hash
     and b.evt_index = a.evt_index
     and b.block_time = a.block_time -- for performance
@@ -160,7 +160,7 @@ with source_ethereum_transactions AS (
         ,max(case when is_creator_fee and creator_fee_idx = 2 then receiver end) AS creator_fee_receiver_2
         ,max(case when is_creator_fee and creator_fee_idx = 3 then receiver end) AS creator_fee_receiver_3
         ,max(case when is_creator_fee and creator_fee_idx = 4 then receiver end) AS creator_fee_receiver_4
-  from iv_base_pairs_priv a
+  FROM iv_base_pairs_priv a
   where 1=1
     and eth_erc_idx > 0
   group by 1,2,3
@@ -200,7 +200,7 @@ with source_ethereum_transactions AS (
           end AS estimated_price
         ,is_private
         ,sub_idx
-  from iv_base_pairs_priv a
+  FROM iv_base_pairs_priv a
   LEFT JOIN iv_volume b on b.block_time = a.block_time  -- tx_hash and evt_index is PK, but for performance, block_time is included
     and b.tx_hash = a.tx_hash
     and b.evt_index = a.evt_index
@@ -211,7 +211,7 @@ with source_ethereum_transactions AS (
   SELECT a.*
           ,try_cast(date_trunc('day', a.block_time) AS date) AS block_date
           ,n.name AS nft_token_name
-          ,t.`from` AS tx_from
+          ,t.`FROM` AS tx_from
           ,t.`to` AS tx_to
           ,right(t.data,8) AS right_hash
           ,case when a.token_contract_address = '{{c_native_token_address}}' then '{{c_native_symbol}}'
@@ -233,7 +233,7 @@ with source_ethereum_transactions AS (
            end AS aggregator_name
           ,agg.contract_address AS aggregator_address
           ,'seaport-' || tx_hash || '-' || evt_index || '-' || nft_contract_address || '-' || nft_token_id || '-' || sub_idx AS unique_trade_id
-  from iv_nfts a
+  FROM iv_nfts a
   inner join source_ethereum_transactions t on t.hash = a.tx_hash
   LEFT JOIN ref_tokens_nft n on n.contract_address = nft_contract_address
   LEFT JOIN ref_tokens_erc20 e on e.contract_address = case when a.token_contract_address = '{{c_native_token_address}}' then '{{c_alternative_token_address}}'
@@ -320,8 +320,8 @@ with source_ethereum_transactions AS (
 
     -- unique key
     ,unique_trade_id
-  from iv_trades
+  FROM iv_trades
 )
 SELECT *
-from iv_columns
+FROM iv_columns
 ;

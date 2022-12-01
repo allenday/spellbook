@@ -334,7 +334,7 @@ glp_weth_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against 
     ) ,
 
  / *
-getMaxPrice returns the maximum price of a supported token in the vault from the vault price feed contract.
+getMaxPrice returns the maximum price of a supported token in the vault FROM the vault price feed contract.
 * / 
 glp_frax_getMaxPrice AS -- This CTE returns the maximum price of FRAX tokens in the pool for a designated minute
     (
@@ -489,7 +489,7 @@ glp_dai_getMaxPrice AS -- This CTE returns the maximum price of DAI tokens in th
     ) ,
 
  / *
-getMinPrice returns the maximum price of a supported token in the vault from the vault price feed contract.
+getMinPrice returns the maximum price of a supported token in the vault FROM the vault price feed contract.
 * / 
 glp_frax_getMinPrice AS -- This CTE returns the minimum price of FRAX tokens in the pool for a designated minute
     (
@@ -895,7 +895,7 @@ FROM
         COALESCE(x.dai_getMinPrice,0) AS dai_getMinPrice
     FROM
         (
-        SELECT -- This subquery collates all the data extracted from the vault contract functions, joins them to the minute series, and uses last data to extrapolate over NULL values
+        SELECT -- This subquery collates all the data extracted FROM the vault contract functions, joins them to the minute series, and uses last data to extrapolate over NULL values
             a.minute,
 
             last(b1.amount, true) OVER (ORDER BY a.minute ASC) AS frax_poolAmounts,

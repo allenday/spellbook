@@ -19,7 +19,7 @@ with
             contract_address AS token_address,
             evt_block_time,
             value AS amount_raw
-        from
+        FROM
             {{ source('erc20_bnb', 'evt_Transfer') }}
         {% if is_incremental() %}
         where evt_block_time >= date_trunc('day', now() - interval '1 week')
@@ -28,11 +28,11 @@ with
     ,
     received_transfers AS (
         SELECT
-            `from` AS wallet_address,
+            `FROM` AS wallet_address,
             contract_address AS token_address,
             evt_block_time,
             - value AS amount_raw
-        from
+        FROM
             {{ source('erc20_bnb', 'evt_Transfer') }}
         {% if is_incremental() %}
         where evt_block_time >= date_trunc('day', now() - interval '1 week')
@@ -45,7 +45,7 @@ with
             contract_address AS token_address,
             evt_block_time,
             wad AS amount_raw
-        from
+        FROM
             {{ source('bnb_bnb', 'WBNB_evt_Deposit') }}
         {% if is_incremental() %}
         where evt_block_time >= date_trunc('day', now() - interval '1 week')
@@ -58,7 +58,7 @@ with
             contract_address AS token_address,
             evt_block_time,
             - wad AS amount_raw
-        from
+        FROM
             {{ source('bnb_bnb', 'WBNB_evt_Withdrawal') }}
         {% if is_incremental() %}
         where evt_block_time >= date_trunc('day', now() - interval '1 week')
@@ -71,7 +71,7 @@ with
             token_address,
             evt_block_time,
             amount_raw
-        from sent_transfers
+        FROM sent_transfers
 
         union
 
@@ -80,7 +80,7 @@ with
             token_address,
             evt_block_time,
             amount_raw
-        from received_transfers
+        FROM received_transfers
 
         union
 
@@ -89,7 +89,7 @@ with
             token_address,
             evt_block_time,
             amount_raw
-        from deposited_wbnb
+        FROM deposited_wbnb
 
         union
 
@@ -98,7 +98,7 @@ with
             token_address,
             evt_block_time,
             amount_raw
-        from withdrawn_wbnb
+        FROM withdrawn_wbnb
     )
 SELECT
     'bnb' AS blockchain,
@@ -108,7 +108,7 @@ SELECT
     t.symbol,
     sum(tr.amount_raw) AS amount_raw,
     sum(tr.amount_raw / power(10, t.decimals)) AS amount
-from transfers_bnb_bep20 tr
+FROM transfers_bnb_bep20 tr
 LEFT JOIN {{ ref('tokens_bnb_bep20') }} t on t.contract_address = tr.token_address
 group by 1, 2, 3, 4, 5
 ;

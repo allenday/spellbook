@@ -161,7 +161,7 @@ SELECT 'ethereum' AS blockchain
     END AS token_standard
 , trade_type
 , CAST(1 AS DECIMAL(38,0)) AS number_of_items
-, CASE WHEN et.`from`=seller THEN 'Offer Accepted'
+, CASE WHEN et.`FROM`=seller THEN 'Offer Accepted'
     ELSE 'Buy'
     END AS trade_category
 , 'Trade' AS evt_type
@@ -185,7 +185,7 @@ SELECT 'ethereum' AS blockchain
 , aggregator_name
 , aggregator_address
 , txs.tx_hash
-, et.`from` AS tx_from
+, et.`FROM` AS tx_from
 , et.`to` AS tx_to
 , platform_fee_amount_raw
 , CASE WHEN currency_contract='0x0000000000000000000000000000000000000000' THEN platform_fee_amount_raw / POWER(10, 18)
@@ -225,7 +225,7 @@ LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct ON erct.evt_block_
     AND txs.nft_contract_address=erct.contract_address
     AND erct.evt_tx_hash=txs.tx_hash
     AND erct.tokenId=txs.token_id
-    AND erct.from=txs.seller
+    AND erct.FROM=txs.seller
     {% if is_incremental() %}
     AND erct.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -233,7 +233,7 @@ LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_bloc
     AND txs.nft_contract_address=erct2.contract_address
     AND erct2.evt_tx_hash=txs.tx_hash
     AND erct2.tokenId=txs.token_id
-    AND erct2.from=txs.buyer
+    AND erct2.FROM=txs.buyer
     {% if is_incremental() %}
     AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -241,7 +241,7 @@ LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.e
     AND txs.nft_contract_address=erct3.contract_address
     AND erct3.evt_tx_hash=txs.tx_hash
     AND erct3.id=txs.token_id
-    AND erct3.from=txs.buyer
+    AND erct3.FROM=txs.buyer
     {% if is_incremental() %}
     AND erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}

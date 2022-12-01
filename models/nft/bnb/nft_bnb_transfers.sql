@@ -16,10 +16,10 @@
 , t.contract_address
 , t.tokenId AS token_id
 , 1 AS amount
-, t.from
+, t.FROM
 , t.to
 , t.evt_tx_hash AS tx_hash
-, 'bnb' || t.evt_tx_hash || '-bep721-' || t.contract_address || '-' || t.tokenId || '-' || t.from || '-' || t.to || '-' || '1' || '-' || t.evt_index AS unique_transfer_id
+, 'bnb' || t.evt_tx_hash || '-bep721-' || t.contract_address || '-' || t.tokenId || '-' || t.FROM || '-' || t.to || '-' || '1' || '-' || t.evt_index AS unique_transfer_id
 FROM {{ source('erc721_bnb','evt_transfer') }} t
 {% if is_incremental() %}
     ANTI JOIN {{this}} anti_table
@@ -38,10 +38,10 @@ SELECT t.evt_block_time AS block_time
 , t.contract_address
 , t.id AS token_id
 , t.value AS amount
-, t.from
+, t.FROM
 , t.to
 , t.evt_tx_hash AS tx_hash
-, 'bnb' || t.evt_tx_hash || '-bep721-' || t.contract_address || '-' || t.id || '-' || t.from || '-' || t.to || '-' || t.value || '-' || t.evt_index AS unique_transfer_id
+, 'bnb' || t.evt_tx_hash || '-bep721-' || t.contract_address || '-' || t.id || '-' || t.FROM || '-' || t.to || '-' || t.value || '-' || t.evt_index AS unique_transfer_id
 FROM {{ source('erc1155_bnb','evt_transfersingle') }} t
 {% if is_incremental() %}
     ANTI JOIN {{this}} anti_table
@@ -60,12 +60,12 @@ SELECT evt_block_time AS block_time
 , contract_address
 , ids_and_count.ids AS token_id
 , ids_and_count.values AS amount
-, from
+, FROM
 , to
 , evt_tx_hash AS tx_hash
-, 'bnb' || evt_tx_hash || '-bep1155-' || contract_address || '-' || ids_and_count.ids || '-' || from || '-' || to || '-' || ids_and_count.values || '-' || evt_index AS unique_transfer_id
+, 'bnb' || evt_tx_hash || '-bep1155-' || contract_address || '-' || ids_and_count.ids || '-' || FROM || '-' || to || '-' || ids_and_count.values || '-' || evt_index AS unique_transfer_id
 FROM (
-    SELECT t.evt_block_time, t.evt_block_number, t.evt_tx_hash, t.contract_address, t.from, t.to, t.evt_index
+    SELECT t.evt_block_time, t.evt_block_number, t.evt_tx_hash, t.contract_address, t.FROM, t.to, t.evt_index
     , explode(arrays_zip(t.values, t.ids)) AS ids_and_count
     FROM {{ source('erc1155_bnb', 'evt_transferbatch') }} t
     {% if is_incremental() %}
@@ -75,7 +75,7 @@ FROM (
     {% if is_incremental() %}
     WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    GROUP BY t.evt_block_time, t.evt_block_number, t.evt_tx_hash, t.contract_address, t.from, t.to, t.evt_index, t.values, t.ids
+    GROUP BY t.evt_block_time, t.evt_block_number, t.evt_tx_hash, t.contract_address, t.FROM, t.to, t.evt_index, t.values, t.ids
     )
 WHERE ids_and_count.values > 0
-GROUP BY evt_block_time, evt_block_number, evt_tx_hash, contract_address, from, to, evt_index, token_id, amount
+GROUP BY evt_block_time, evt_block_number, evt_tx_hash, contract_address, FROM, to, evt_index, token_id, amount

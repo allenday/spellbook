@@ -24,9 +24,9 @@ with iv_availadv AS (
           ,call_block_time AS block_time
           ,call_block_number AS block_number
           ,exec_idx AS evt_index
-      from (SELECT *
+      FROM (SELECT *
                   ,posexplode(output_executions) AS (exec_idx, exec)
-              from {{ source('seaport_ethereum','Seaport_call_fulfillAvailableAdvancedOrders') }} a
+              FROM {{ source('seaport_ethereum','Seaport_call_fulfillAvailableAdvancedOrders') }} a
              where call_success
             )
 )
@@ -46,9 +46,9 @@ with iv_availadv AS (
           ,evt_block_time AS block_time
           ,evt_block_number AS block_number
           ,evt_index
-    from (SELECT *
+    FROM (SELECT *
                 ,posexplode(offer) AS (rn, each_offer)
-            from {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }}  a
+            FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }}  a
            where 1=1
             and recipient != '0x0000000000000000000000000000000000000000'
          )
@@ -68,9 +68,9 @@ with iv_availadv AS (
           ,evt_block_time AS block_time
           ,evt_block_number AS block_number
           ,evt_index
-      from (SELECT *
+      FROM (SELECT *
                   ,posexplode(consideration) AS (rn, each_consideration)
-              from {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }} a
+              FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }} a
              where 1=1
               and recipient != '0x0000000000000000000000000000000000000000'
           )
@@ -90,15 +90,15 @@ with iv_availadv AS (
           ,a.evt_block_time AS block_time
           ,a.evt_block_number AS block_number
           ,a.evt_index
-     from (SELECT *
+     FROM (SELECT *
                   ,posexplode(consideration) AS (rn, each_consideration)
-              from {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }} a
+              FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }} a
              where 1=1
                and recipient = '0x0000000000000000000000000000000000000000'
            ) a
           inner join  (SELECT *
                               ,posexplode(offer) AS (rn, each_offer)
-                          from {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }} a
+                          FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }} a
                          where 1=1
                            and recipient = '0x0000000000000000000000000000000000000000'
                        ) e on a.recipient = e.recipient
@@ -110,7 +110,7 @@ with iv_availadv AS (
 )
 ,iv_transfer_level AS (
     SELECT a.*
-      from iv_transfer_level_pre a
+      FROM iv_transfer_level_pre a
            LEFT JOIN iv_availadv b on b.tx_hash = a.tx_hash
                                    and b.item_type in ('2','3')
                                    and b.token_contract_address = a.token_contract_address
@@ -181,7 +181,7 @@ with iv_availadv AS (
           ,coalesce(sum(case when item_type = '2' then original_amount end),0) AS erc721_item_count
           ,coalesce(sum(case when item_type = '3' then original_amount end),0) AS erc1155_item_count
           ,coalesce(sum(case when item_type in ('2','3') then original_amount end),0) AS nft_item_count
-      from (
+      FROM (
             SELECT a.*
                   ,count(case when item_type in ('2','3') then 1 end) over (partition by tx_hash) AS nft_transfer_count
                   ,case when main_type = 'advanced' then 'auction'
@@ -191,7 +191,7 @@ with iv_availadv AS (
                   ,case when (item_type, sub_idx) in (('2',1),('3',1)) then True
                         when main_type = 'advanced' and sub_idx = 3 then True
                   end AS first_item
-              from iv_transfer_level a
+              FROM iv_transfer_level a
             ) a
      group by 1,2,3,4,5,6,7
 )
@@ -234,7 +234,7 @@ with iv_availadv AS (
           ,a.exchange_contract_address
           ,a.tx_hash
           ,a.block_number
-          ,tx.`from` AS tx_from
+          ,tx.`FROM` AS tx_from
           ,tx.`to` AS tx_to
           ,a.evt_index
           ,1 AS trade_id
@@ -266,7 +266,7 @@ with iv_availadv AS (
                 else 'Buy'
            end AS order_type
 
-      from iv_txn_level a
+      FROM iv_txn_level a
           LEFT JOIN {{ source('ethereum','transactions') }} tx on tx.hash = a.tx_hash
                                               and tx.block_number > 14801608
           LEFT JOIN {{ ref('tokens_ethereum_nft') }} n on n.contract_address = a.nft_contract_address
@@ -319,4 +319,4 @@ SELECT block_time
       ,fee_amount
       ,fee_usd_amount
       ,zone_address
-  from iv_nft_trades
+  FROM iv_nft_trades

@@ -17,4 +17,4 @@
             sum(amount) over (
                 partition by token_address, wallet_address order by hour
             ) AS amount
-        from {{ ref('transfers_ethereum_erc20_agg_hour') }}
+        FROM {{ ref('transfers_ethereum_erc20_agg_hour') }}

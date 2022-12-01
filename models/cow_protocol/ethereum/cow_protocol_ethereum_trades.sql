@@ -11,8 +11,8 @@
 
 -- Find the PoC Query here: https: / /dune.com/queries/1283229
 WITH
--- First subquery joins buy and sell token prices from prices.usd
--- Also deducts fee from sell amount
+-- First subquery joins buy and sell token prices FROM prices.usd
+-- Also deducts fee FROM sell amount
 trades_with_prices AS (
     SELECT try_cast(date_trunc('day', evt_block_time) AS date) AS block_date,
            evt_block_time            AS block_time,
@@ -52,7 +52,7 @@ trades_with_prices AS (
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 ),
--- Second subquery gets token symbol and decimals from tokens.erc20 (to display units bought and sold)
+-- Second subquery gets token symbol and decimals FROM tokens.erc20 (to display units bought and sold)
 trades_with_token_units AS (
     SELECT block_date,
            block_time,
@@ -96,8 +96,8 @@ trades_with_token_units AS (
 -- TODO - create a view for the following block mapping uid to app_data
 order_ids AS (
     SELECT evt_tx_hash, collect_list(orderUid) AS order_ids
-    from (  SELECT orderUid, evt_tx_hash, evt_index
-            from {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Trade') }}
+    FROM (  SELECT orderUid, evt_tx_hash, evt_index
+            FROM {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Trade') }}
              {% if is_incremental() %}
              where evt_block_time >= date_trunc("day", now() - interval '1 week')
              {% endif %}
@@ -108,7 +108,7 @@ order_ids AS (
 
 exploded_order_ids AS (
     SELECT evt_tx_hash, posexplode(order_ids)
-    from order_ids
+    FROM order_ids
 ),
 
 reduced_order_ids AS (
@@ -117,14 +117,14 @@ reduced_order_ids AS (
         -- This is a dirty hack!
         collect_list(evt_tx_hash)[0] AS evt_tx_hash,
         collect_list(pos)[0] AS pos
-    from exploded_order_ids
+    FROM exploded_order_ids
     group by order_id
 ),
 
 trade_data AS (
     SELECT call_tx_hash,
            posexplode(trades)
-    from {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_call_settle') }}
+    FROM {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_call_settle') }}
     where call_success = true
     {% if is_incremental() %}
     AND call_block_time >= date_trunc("day", now() - interval '1 week')
@@ -136,7 +136,7 @@ uid_to_app_id AS (
         order_id AS uid,
         get_json_object(trades.col, '$.appData') AS app_data,
         get_json_object(trades.col, '$.receiver') AS receiver
-    from reduced_order_ids order_ids
+    FROM reduced_order_ids order_ids
              join trade_data trades
                   on evt_tx_hash = call_tx_hash
                       and order_ids.pos = trades.pos
@@ -197,4 +197,4 @@ valued_trades AS (
                   ON uid = order_uid
 )
 
-SELECT * from valued_trades
+SELECT * FROM valued_trades

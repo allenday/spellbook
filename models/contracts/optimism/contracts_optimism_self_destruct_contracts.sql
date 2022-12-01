@@ -18,7 +18,7 @@ with creates AS (
       ,tx_hash AS creation_tx_hash
       ,address AS contract_address
       ,trace_address[0] AS trace_element
-    from {{ source('optimism', 'traces') }}
+    FROM {{ source('optimism', 'traces') }}
     where
       type = 'create'
       and success
@@ -32,7 +32,7 @@ SELECT
   ,cr.creation_tx_hash
   ,cr.contract_address
   ,cr.trace_element
-from creates AS cr
+FROM creates AS cr
 join {{ source('optimism', 'traces') }} AS sd
   on cr.creation_tx_hash = sd.tx_hash
   and cr.created_time = sd.block_time

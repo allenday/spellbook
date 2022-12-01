@@ -15,14 +15,14 @@
 with node_names AS (
     SELECT
     name,node,block_time,tx_hash
-    from (
+    FROM (
         SELECT
         case when _name = '0x0000000000000000000000000000000000000000' then NULL else _name end AS name
         ,node
         ,call_block_time AS block_time
         ,call_tx_hash AS tx_hash
         ,row_number() over (partition by node order by call_block_time desc) AS ordering --in theory we should also order by tx_index here
-        from {{ source('ethereumnameservice_ethereum', 'DefaultReverseResolver_call_setName') }}
+        FROM {{ source('ethereumnameservice_ethereum', 'DefaultReverseResolver_call_setName') }}
         where call_success
         {% if is_incremental() %}
         AND call_block_time >= date_trunc("day", now() - interval '1 week')
@@ -33,9 +33,9 @@ with node_names AS (
 
 --static Node <> Address relations
 , address_nodes AS (SELECT distinct
-    tr.from AS address,
+    tr.FROM AS address,
     output AS node
-    from {{ source('ethereum', 'traces') }} tr
+    FROM {{ source('ethereum', 'traces') }} tr
     where success
         and (to = '0x9062c0a6dbd6108336bcbe4593a3d1ce05512069' -- ReverseRegistrar v1
             or  to = '0x084b1c3c81545d370f3634392de611caabff8148' -- ReverseRegistrar v2
@@ -57,6 +57,6 @@ SELECT
     ,block_time AS latest_tx_block_time
     ,tx_hash AS latest_tx_hash
     ,an.node AS address_node
-from address_nodes an
+FROM address_nodes an
 LEFT JOIN node_names nn
 ON an.node = nn.node

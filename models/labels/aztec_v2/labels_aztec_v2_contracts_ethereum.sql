@@ -13,7 +13,7 @@ with
       now() AS updated_at,
       version,
       protocol
-    from
+    FROM
       (
         SELECT
           protocol,
@@ -91,8 +91,8 @@ with
   )
 SELECT
   c.*,
-  t.`from` AS contract_creator
-from
+  t.`FROM` AS contract_creator
+FROM
   contract_labels c
   inner join ethereum.traces t on t.type = 'create'
   and c.address = t.address

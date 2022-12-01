@@ -12,7 +12,7 @@
 SELECT
   dune_name
   ,mapped_name
-from (
+FROM (
     values
     ('lyra_v1',	'Lyra')
     ,('Lyra V1', 'Lyra')

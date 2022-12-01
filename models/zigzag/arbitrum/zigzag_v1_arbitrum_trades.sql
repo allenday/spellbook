@@ -29,7 +29,7 @@ with
       '' AS trace_address,
       row_number() OVER(PARTITION BY call_tx_hash ORDER BY zzmo.makerOrder) AS evt_index, --prevent duplicates
       contract_address AS project_contract_address
-    from
+    FROM
     {{ source('zigzag_test_v6_arbitrum', 'zigzag_settelment_call_matchOrders') }} zzmo
     where
         call_success = true
@@ -60,15 +60,15 @@ SELECT
     ) AS amount_usd
     ,dexs.token_bought_address
     ,dexs.token_sold_address
-    ,coalesce(dexs.taker, tx.from) AS taker -- subqueries rely on this COALESCE to avoid redundant joins with the transactions table
+    ,coalesce(dexs.taker, tx.FROM) AS taker -- subqueries rely on this COALESCE to avoid redundant joins with the transactions table
     ,dexs.maker
     ,dexs.project_contract_address
     ,dexs.tx_hash
-    ,tx.from AS tx_from
+    ,tx.FROM AS tx_from
     ,tx.to AS tx_to
     ,dexs.trace_address
     ,dexs.evt_index
-from dexs
+FROM dexs
 INNER JOIN {{ source('arbitrum', 'transactions') }} tx
     ON tx.hash = dexs.tx_hash
     {% if NOT is_incremental() %}

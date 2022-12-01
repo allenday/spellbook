@@ -6,16 +6,16 @@ with
       pools AS (
         -- uni v2 pools
         SELECT pair
-        from uniswap_v2_ethereum.Factory_evt_PairCreated
+        FROM uniswap_v2_ethereum.Factory_evt_PairCreated
         union
 
         -- uni v3 pools
         SELECT pool AS pair
-        from uniswap_v3_ethereum.Factory_evt_PoolCreated
+        FROM uniswap_v3_ethereum.Factory_evt_PoolCreated
       ),
       err_contracts AS (
         SELECT address
-        from
+        FROM
           (
             VALUES
               --
@@ -58,10 +58,10 @@ with
       AND t1.token_bought_address = t2.token_sold_address
       AND t1.evt_index != t2.evt_index
       AND t1.taker NOT in (
-        SELECT pair from pools
+        SELECT pair FROM pools
       )
       AND t1.taker NOT in (
-        SELECT address from err_contracts
+        SELECT address FROM err_contracts
       )
   )
 SELECT
@@ -73,5 +73,5 @@ SELECT
   "query" AS source,
   timestamp('2022-10-05') AS created_at,
   now() AS updated_at
-from
+FROM
   eth_arb_traders

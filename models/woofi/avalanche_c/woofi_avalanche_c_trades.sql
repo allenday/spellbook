@@ -21,7 +21,7 @@ WITH dexs AS
             evt_block_time AS block_time
             ,'woofi' AS project
             ,'1' AS version
-            ,from AS taker
+            ,FROM AS taker
             ,to AS maker
             ,fromAmount AS token_bought_amount_raw
             ,toAmount AS token_sold_amount_raw
@@ -34,7 +34,7 @@ WITH dexs AS
             ,evt_index
         FROM
             {{ source('woofi_avalanche_c', 'WooPP_evt_WooSwap')}}
-        WHERE from <> '0x5aa6a4e96a9129562e2fc06660d07feddaaf7854' -- woorouter
+        WHERE FROM <> '0x5aa6a4e96a9129562e2fc06660d07feddaaf7854' -- woorouter
 
         {% if is_incremental() %}
         AND evt_block_time >= date_trunc("day", now() - interval '1 week')
@@ -46,7 +46,7 @@ WITH dexs AS
             evt_block_time AS block_time
             ,'woofi' AS project
             ,'1' AS version
-            ,from AS taker
+            ,FROM AS taker
             ,to AS maker
             ,fromAmount AS token_bought_amount_raw
             ,toAmount AS token_sold_amount_raw
@@ -109,11 +109,11 @@ SELECT
     ) AS amount_usd
     ,dexs.token_bought_address
     ,dexs.token_sold_address
-    ,coalesce(dexs.taker, tx.from) AS taker -- subqueries rely on this COALESCE to avoid redundant joins with the transactions table
+    ,coalesce(dexs.taker, tx.FROM) AS taker -- subqueries rely on this COALESCE to avoid redundant joins with the transactions table
     ,dexs.maker
     ,dexs.project_contract_address
     ,dexs.tx_hash
-    ,tx.from AS tx_from
+    ,tx.FROM AS tx_from
     ,tx.to AS tx_to
     ,dexs.trace_address
     ,dexs.evt_index

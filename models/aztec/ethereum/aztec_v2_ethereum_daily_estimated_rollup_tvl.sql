@@ -20,7 +20,7 @@ rollup_balance_changes AS (
     , t.symbol
     , t.contract_address AS token_address
     , sum(case when t.from_type = 'Rollup' then -1 * value_norm when t.to_type = 'Rollup' then value_norm else 0 end) AS net_value_norm
-  from {{ref('aztec_v2_ethereum_rollupbridge_transfers')}} t
+  FROM {{ref('aztec_v2_ethereum_rollupbridge_transfers')}} t
   where t.from_type = 'Rollup' or t.to_type = 'Rollup'
   group by 1,2,3
 )
@@ -31,7 +31,7 @@ rollup_balance_changes AS (
     , token_address
     , sum(net_value_norm) over (partition by symbol,token_address order by date asc rows between unbounded preceding and current row) AS balance
     , lead(date, 1) over (partition by token_address order by date) AS next_date
-  from rollup_balance_changes
+  FROM rollup_balance_changes
 )
 
 , day_series AS (
@@ -43,7 +43,7 @@ rollup_balance_changes AS (
     , b.symbol
     , b.token_address
     , b.balance
-  from day_series d
+  FROM day_series d
   inner join token_balances b
         on d.date >= b.date
         and d.date < coalesce(b.next_date, CAST(NOW() AS date) + 1) -- if it's missing that means it's the last entry in the series
@@ -114,10 +114,10 @@ rollup_balance_changes AS (
     , b.balance
     , b.balance * COALESCE(p.price_usd, bb.eth_price) AS tvl_usd
     , b.balance * COALESCE(p.price_eth, 1) AS tvl_eth
-  from token_balances_filled b
+  FROM token_balances_filled b
   inner join token_prices p on b.date = p.day and b.token_address = p.token_address
   LEFT JOIN token_prices bb on b.date = bb.day AND b.token_address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' -- using this to get price for missing ETH token
 
 )
-SELECT * from token_tvls
+SELECT * FROM token_tvls
 ;

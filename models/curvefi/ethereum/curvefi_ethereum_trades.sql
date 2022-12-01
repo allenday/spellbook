@@ -771,11 +771,11 @@ SELECT
     ) AS amount_usd
     ,dexs.token_bought_address
     ,dexs.token_sold_address
-    ,coalesce(dexs.taker, tx.from) AS taker -- subqueries rely on this COALESCE to avoid redundant joins with the transactions table
+    ,coalesce(dexs.taker, tx.FROM) AS taker -- subqueries rely on this COALESCE to avoid redundant joins with the transactions table
     ,dexs.maker
     ,dexs.project_contract_address
     ,dexs.tx_hash
-    ,tx.from AS tx_from
+    ,tx.FROM AS tx_from
     ,tx.to AS tx_to
     ,dexs.trace_address
     ,dexs.evt_index
@@ -783,7 +783,7 @@ FROM dexs
 INNER JOIN {{ source('ethereum', 'transactions') }} tx
     ON tx.hash = dexs.tx_hash
     {% if NOT is_incremental() %}
-    -- The date below is derrived from `SELECT min(evt_block_time) from uniswap_ethereum.Factory_evt_NewExchange;`
+    -- The date below is derrived FROM `SELECT min(evt_block_time) from uniswap_ethereum.Factory_evt_NewExchange;`
     -- If dexs above is changed then this will also need to be changed.
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
@@ -796,7 +796,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_bought ON p_bought.minute = date_trunc
     AND p_bought.contract_address = dexs.token_bought_address
     AND p_bought.blockchain = 'ethereum'
     {% if NOT is_incremental() %}
-    -- The date below is derrived from `SELECT min(evt_block_time) from uniswap_ethereum.Factory_evt_NewExchange;`
+    -- The date below is derrived FROM `SELECT min(evt_block_time) from uniswap_ethereum.Factory_evt_NewExchange;`
     -- If dexs above is changed then this will also need to be changed.
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
@@ -807,7 +807,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold ON p_sold.minute = date_trunc('mi
     AND p_sold.contract_address = dexs.token_sold_address
     AND p_sold.blockchain = 'ethereum'
     {% if NOT is_incremental() %}
-    -- The date below is derrived from `SELECT min(evt_block_time) from uniswap_ethereum.Factory_evt_NewExchange;`
+    -- The date below is derrived FROM `SELECT min(evt_block_time) from uniswap_ethereum.Factory_evt_NewExchange;`
     -- If dexs above is changed then this will also need to be changed.
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}

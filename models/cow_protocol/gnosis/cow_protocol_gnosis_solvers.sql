@@ -11,10 +11,10 @@ WITH
 -- with true / false for adds/removes respectively
 solver_activation_events AS (
     SELECT solver, evt_block_number, evt_index, True AS activated
-    from {{ source('gnosis_protocol_v2_gnosis', 'GPv2AllowListAuthentication_evt_SolverAdded') }}
+    FROM {{ source('gnosis_protocol_v2_gnosis', 'GPv2AllowListAuthentication_evt_SolverAdded') }}
     union
     SELECT solver, evt_block_number, evt_index, False AS activated
-    from {{ source('gnosis_protocol_v2_gnosis', 'GPv2AllowListAuthentication_evt_SolverRemoved') }}
+    FROM {{ source('gnosis_protocol_v2_gnosis', 'GPv2AllowListAuthentication_evt_SolverRemoved') }}
 ),
 -- Sorting by (evt_block_number, evt_index) allows us to pick the most recent activation status of each unique solver
 ranked_solver_events AS (
@@ -24,11 +24,11 @@ ranked_solver_events AS (
         evt_block_number,
         evt_index,
         activated AS active
-    from solver_activation_events
+    FROM solver_activation_events
 ),
 registered_solvers AS (
     SELECT solver, active
-    from ranked_solver_events
+    FROM ranked_solver_events
     where rk = 1
 ),
 -- Manually inserting environment and name for each "known" solver
@@ -62,5 +62,5 @@ SELECT solver AS address,
       case when environment is NOT NULL then environment else 'new' end AS environment,
       case when name is NOT NULL then name else 'Uncatalogued' end      AS name,
       active
-from registered_solvers
+FROM registered_solvers
     left outer join known_solver_metadata on solver = lower(address);

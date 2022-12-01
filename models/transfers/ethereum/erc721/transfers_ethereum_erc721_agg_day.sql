@@ -14,7 +14,7 @@ SELECT
     token_address,
     tokenId,
     wallet_address || '-' || date_trunc('day', evt_block_time) || '-' || token_address || '-' || tokenId AS unique_transfer_id
-from {{ ref('transfers_ethereum_erc721') }}
+FROM {{ ref('transfers_ethereum_erc721') }}
 {% if is_incremental() %}
 -- this filter will only be applied on an incremental run
 where evt_block_time >= date_trunc('hour', now() - interval '1 week')

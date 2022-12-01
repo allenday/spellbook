@@ -13,7 +13,7 @@ SELECT
   lower(contract_address) AS contract_address
   ,contract_project
   ,contract_name
-from
+FROM
     (values
     ('0xc30141B657f4216252dc59Af2e7CdB9D8792e1B0', 'Socket', 'Socket Registry')
     ,('0x81b30ff521D1fEB67EDE32db726D95714eb00637', 'Optimistic Explorer', 'OptimisticExplorerNFT')

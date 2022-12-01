@@ -10,7 +10,7 @@
 
 with original_holders AS (
     SELECT address, original_count
-    from (VALUES
+    FROM (VALUES
         ('0xc352b534e8b987e036a93539fd6897f53488e56a', 1020)
         , ('0x00d7c902fbbcd3c9db2da80a439c94486c50eb81', 1005)
         , ('0x53ede7cae3eb6a7d11429fe589c0278c9acbe21a', 919)
@@ -304,15 +304,15 @@ with original_holders AS (
     SELECT  to_date('2017-06-22', 'yyyy-MM-dd') AS day
             , address AS wallet
             , sum(original_count) AS punk_balance
-    from original_holders
+    FROM original_holders
     group by 1,2
 
     union all
 
     SELECT  date_trunc('day',evt_block_time) AS day
-            , `from` AS wallet
+            , `FROM` AS wallet
             , count(*)*-1.0 AS punk_balance
-    from {{ source('erc20_ethereum','evt_transfer') }}
+    FROM {{ source('erc20_ethereum','evt_transfer') }}
     where contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks
     group by 1,2
 
@@ -321,7 +321,7 @@ with original_holders AS (
     SELECT  date_trunc('day',evt_block_time) AS day
             , `to` AS wallet
             , count(*) AS punk_balance
-    from {{ source('erc20_ethereum','evt_transfer') }}
+    FROM {{ source('erc20_ethereum','evt_transfer') }}
     where contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks
     group by 1,2
 )
@@ -329,26 +329,26 @@ with original_holders AS (
     SELECT  day
             , wallet
             , sum(punk_balance) AS daily_transfer_sum
-    from transfers
+    FROM transfers
     group by day, wallet
 )
 , base_data AS (
     with all_days  AS (SELECT explode(sequence(to_date('2017-06-22'), to_date(now()), interval 1 day)) AS day)
-    , all_wallets AS (SELECT distinct wallet from punk_transfer_summary)
+    , all_wallets AS (SELECT distinct wallet FROM punk_transfer_summary)
 
     SELECT  day
             , wallet
-    from all_days full outer join all_wallets on true
+    FROM all_days full outer join all_wallets on true
 )
 , combined_table AS (
     SELECT base_data.day
             , base_data.wallet
             , sum(coalesce(daily_transfer_sum,0)) over (partition by base_data.wallet order by base_data.day) AS holding
-    from base_data
+    FROM base_data
     LEFT JOIN punk_transfer_summary on base_data.day = punk_transfer_summary.day and base_data.wallet = punk_transfer_summary.wallet
 )
 
 SELECT day
         , count(wallet) filter (where holding > 0) AS unique_wallets
-from combined_table
+FROM combined_table
 group by 1

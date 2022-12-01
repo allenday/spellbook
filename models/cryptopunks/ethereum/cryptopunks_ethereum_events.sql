@@ -14,7 +14,7 @@
 with cryptopunks_bids_and_sales AS (
     SELECT *
             , row_number() over (partition by punk_id order by evt_block_number asc, evt_index asc) AS punk_id_event_number
-    from
+    FROM
     (
     SELECT  "PunkBought" AS event_type
             , `punkIndex` AS punk_id
@@ -27,7 +27,7 @@ with cryptopunks_bids_and_sales AS (
             , evt_index
             , evt_block_time
             , evt_tx_hash
-    from {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkBought') }}
+    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkBought') }}
 
     union all
 
@@ -42,7 +42,7 @@ with cryptopunks_bids_and_sales AS (
             , evt_index
             , evt_block_time
             , evt_tx_hash
-    from {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkBidEntered') }}
+    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkBidEntered') }}
 
     union all
 
@@ -57,23 +57,23 @@ with cryptopunks_bids_and_sales AS (
             , evt_index
             , evt_block_time
             , evt_tx_hash
-    from {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkBidWithdrawn') }}
+    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkBidWithdrawn') }}
     ) a
 )
 , bid_sales AS (
     SELECT  "Offer Accepted" AS event_type
             , a.punk_id
-            , max(c.bid_amount) AS sale_price -- max bid from buyer pre-sale
+            , max(c.bid_amount) AS sale_price -- max bid FROM buyer pre-sale
             , b.`to` AS to_address -- for bids accepted, look up who the seller transferred to in the same block with 1 offset index
             , a.from_address
             , a.evt_block_number
             , a.evt_index
             , a.evt_block_time
             , a.evt_tx_hash
-    from cryptopunks_bids_and_sales a
+    FROM cryptopunks_bids_and_sales a
 
     join {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_Transfer') }} b
-    on a.from_address = b.`from` and a.evt_block_number = b.evt_block_number and a.evt_index = (b.evt_index+1)
+    on a.from_address = b.`FROM` and a.evt_block_number = b.evt_block_number and a.evt_index = (b.evt_index+1)
 
     left outer join cryptopunks_bids_and_sales c
     on a.punk_id = c.punk_id and c.event_type = "PunkBidEntered" and c.punk_id_event_number < a.punk_id_event_number and c.bid_from_address = b.`to`
@@ -93,11 +93,11 @@ with cryptopunks_bids_and_sales AS (
             , a.evt_index
             , a.evt_block_time
             , a.evt_tx_hash
-    from {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkBought') }} a
+    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkBought') }} a
     left outer join {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkTransfer') }} b
     on a.`punkIndex` = b.`punkIndex`
-        and a.`toAddress` = b.`from`
-        and b.`from` = '0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2'
+        and a.`toAddress` = b.`FROM`
+        and b.`FROM` = '0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2'
         and a.evt_tx_hash = b.evt_tx_hash
 
     where a.`value` != 0 or a.`toAddress` != '0x0000000000000000000000000000000000000000' -- only include sales here
@@ -128,7 +128,7 @@ SELECT  "ethereum" AS blockchain
         , agg.contract_address AS aggregator_address
         , a.evt_block_number AS block_number
         , a.evt_tx_hash AS tx_hash
-        , tx.`from` AS tx_from
+        , tx.`FROM` AS tx_from
         , tx.`to` AS tx_to
         , cast(0 AS double) AS platform_fee_amount_raw
         , cast(0 AS double) AS platform_fee_amount
@@ -141,10 +141,10 @@ SELECT  "ethereum" AS blockchain
         , '' AS royalty_fee_receive_address
         , '' AS royalty_fee_currency_symbol
         , "cryptopunks" || '-' || a.evt_tx_hash || '-' || a.punk_id || '-' ||  a.from_address || '-' || a.evt_index || '-' || "" AS unique_trade_id
-from
-(   SELECT * from bid_sales
+FROM
+(   SELECT * FROM bid_sales
     union all
-    SELECT * from regular_sales
+    SELECT * FROM regular_sales
 ) a
 
 inner join {{ source('ethereum','transactions') }} tx on a.evt_tx_hash = tx.hash

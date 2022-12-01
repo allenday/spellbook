@@ -16,7 +16,7 @@
 
 with ethereum_traces AS (
     SELECT *
-    from {{ source('ethereum', 'traces') }}
+    FROM {{ source('ethereum', 'traces') }}
     where `to` in ('0x455a3b3be6e7c8843f2b03a1ca22a5a5727ef5c4','0x9d4fc735e1a596420d24a266b7b5402fe4ec153c',
                    '0x2405cb057a9baf85daa11ce9832baed839b6871c','0x043389f397ad72619d05946f5f35426a7ace6613',
                    '0xa18607ca4a3804cc3cd5730eafefcc47a7641643', '0x6ad3dac99c9a4a480748c566ce7b3503506e3d71')
@@ -28,7 +28,7 @@ with ethereum_traces AS (
 
 ethereum_transactions AS (
     SELECT *
-    from {{ source('ethereum', 'transactions') }}
+    FROM {{ source('ethereum', 'transactions') }}
     where block_time >= '{{ project_start_date }}'
     {% if is_incremental() %}
         and block_time >= date_trunc('day', now() - interval '10 days')
@@ -37,7 +37,7 @@ ethereum_transactions AS (
 
 prices_usd AS (
     SELECT *
-    from {{ source('prices', 'usd') }}
+    FROM {{ source('prices', 'usd') }}
     where `minute` >= '{{ project_start_date }}'
         and blockchain = 'ethereum'
     {% if is_incremental() %}
@@ -47,13 +47,13 @@ prices_usd AS (
 
 erc20_tokens AS (
     SELECT *
-    from {{ ref('tokens_erc20') }}
+    FROM {{ ref('tokens_erc20') }}
     where blockchain = 'ethereum'
 ),
 
 hashflow_pool_evt_trade AS (
     SELECT *
-    from {{ source('hashflow_ethereum', 'pool_evt_trade') }}
+    FROM {{ source('hashflow_ethereum', 'pool_evt_trade') }}
     where evt_block_time >= '{{ project_start_date }}'
     {% if is_incremental() %}
         and evt_block_time >= date_trunc('day', now() - interval '10 days')
@@ -63,7 +63,7 @@ hashflow_pool_evt_trade AS (
 {% if NOT is_incremental() %}
 ethereum_logs AS (
     SELECT *
-    from {{ source('ethereum', 'logs') }}
+    FROM {{ source('ethereum', 'logs') }}
     where block_time >= '{{ project_start_date }}'
         and block_number <= 13974528 -- block of last trade of all legacy routers
 ),
@@ -77,10 +77,10 @@ new_router AS (
         t.call_success AS fill_status,
         'tradeSingleHop' AS method_id,
         t.contract_address AS router_contract,
-        ('0x' || substring(get_json_object(quote,'$.pool') from 3)) AS pool,
-        tx.from AS trader,
-        ('0x' || substring(get_json_object(quote,'$.quoteToken') from 3)) AS maker_token,
-        ('0x' || substring(get_json_object(quote,'$.baseToken') from 3)) AS taker_token,
+        ('0x' || substring(get_json_object(quote,'$.pool') FROM 3)) AS pool,
+        tx.FROM AS trader,
+        ('0x' || substring(get_json_object(quote,'$.quoteToken') FROM 3)) AS maker_token,
+        ('0x' || substring(get_json_object(quote,'$.baseToken') FROM 3)) AS taker_token,
         case when get_json_object(quote,'$.quoteToken') = '0x0000000000000000000000000000000000000000' then 'ETH'
             else mp.symbol end AS maker_symbol,
         case when get_json_object(quote,'$.baseToken') = '0x0000000000000000000000000000000000000000' then 'ETH'
@@ -96,19 +96,19 @@ new_router AS (
             else coalesce(
                     cast(get_json_object(quote,'$.maxBaseTokenAmount') AS float) / power(10, tp.decimals) * tp.price,
                     cast(get_json_object(quote,'$.maxQuoteTokenAmount') AS float) / power(10, mp.decimals) * mp.price) end AS amount_usd
-    from {{ source('hashflow_ethereum', 'router_call_tradesinglehop') }} t
+    FROM {{ source('hashflow_ethereum', 'router_call_tradesinglehop') }} t
     inner join ethereum_transactions tx on tx.hash = t.call_tx_hash
-    LEFT JOIN hashflow_pool_evt_trade l on l.txid = ('0x' || substring(get_json_object(quote,'$.txid') from 3))
+    LEFT JOIN hashflow_pool_evt_trade l on l.txid = ('0x' || substring(get_json_object(quote,'$.txid') FROM 3))
     LEFT JOIN prices_usd tp on tp.minute = date_trunc('minute', t.call_block_time)
         and tp.contract_address =
             case when get_json_object(quote,'$.baseToken') = '0x0000000000000000000000000000000000000000'
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-            else ('0x' || substring(get_json_object(quote,'$.baseToken') from 3)) end
+            else ('0x' || substring(get_json_object(quote,'$.baseToken') FROM 3)) end
     LEFT JOIN prices_usd mp on mp.minute = date_trunc('minute', t.call_block_time)
         and mp.contract_address =
             case when get_json_object(quote,'$.quoteToken') = '0x0000000000000000000000000000000000000000'
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-            else ('0x' || substring(get_json_object(quote,'$.quoteToken') from 3)) end
+            else ('0x' || substring(get_json_object(quote,'$.quoteToken') FROM 3)) end
 ),
 
 event_decoding_legacy_router AS (
@@ -121,7 +121,7 @@ event_decoding_legacy_router AS (
         substring(`data`, 77, 20) AS taker_token,
         cast(conv(substring(`data`, 173, 20), 16, 10) AS decimal) AS maker_token_amount,
         cast(conv(substring(`data`, 141, 20), 16, 10) AS decimal) AS taker_token_amount
-    from ethereum_logs
+    FROM ethereum_logs
     where topic1 ='0x8cf3dec1929508e5677d7db003124e74802bfba7250a572205a9986d86ca9f1e' -- trade0()
 
     union all
@@ -135,7 +135,7 @@ event_decoding_legacy_router AS (
         substring(`data`, 109, 20) AS taker_token,
         cast(conv(substring(`data`, 205, 20), 16, 10) AS decimal) AS maker_token_amount,
         cast(conv(substring(`data`, 173, 20), 16, 10) AS decimal) AS taker_token_amount
-    from ethereum_logs l
+    FROM ethereum_logs l
     where topic1 ='0xb709ddcc6550418e9b89df1f4938071eeaa3f6376309904c77e15d46b16066f5' -- trade()
 ),
 
@@ -149,7 +149,7 @@ legacy_router_w_integration AS (
         substring(t.input, 1, 4) AS method_id,
         t.to AS router_contract,
         substring(t.input, 17, 20) AS pool,
-        tx.from AS trader, -- adjusted to use tx sender due to integration, was substring(t.input, 49, 20) AS trader,
+        tx.FROM AS trader, -- adjusted to use tx sender due to integration, was substring(t.input, 49, 20) AS trader,
         maker_token,
         taker_token,
         case when substring(input, 113, 20) = '0x0000000000000000000000000000000000000000' then 'ETH'
@@ -162,7 +162,7 @@ legacy_router_w_integration AS (
             coalesce(
                 taker_token_amount / power(10, tp.decimals) * tp.price,
                 maker_token_amount / power(10, mp.decimals) * mp.price) end AS amount_usd
-    from ethereum_traces t
+    FROM ethereum_traces t
     inner join ethereum_transactions tx on tx.hash = t.tx_hash
     LEFT JOIN event_decoding_legacy_router l on l.tx_id = substring(t.input, 325, 32) -- join on tx_id 1:1, no dup
     LEFT JOIN prices_usd tp on tp.minute = date_trunc('minute', t.block_time)
@@ -189,7 +189,7 @@ legacy_router_w_integration AS (
         'tradeSingleHop' AS method_id,
         t.to AS router_contract,
         substring(t.input, 49, 20) AS pool, --mm
-        tx.from AS trader,
+        tx.FROM AS trader,
         maker_token,
         taker_token,
         case when substring(input, 209, 20) = '0x0000000000000000000000000000000000000000' then 'ETH'
@@ -202,7 +202,7 @@ legacy_router_w_integration AS (
             coalesce(
                 taker_token_amount / power(10, tp.decimals) * tp.price,
                 maker_token_amount / power(10, mp.decimals) * mp.price) end AS amount_usd
-    from ethereum_traces t
+    FROM ethereum_traces t
     inner join ethereum_transactions tx on tx.hash = t.tx_hash
     LEFT JOIN event_decoding_legacy_router l on l.tx_id = substring(t.input, 485, 32)
     LEFT JOIN prices_usd tp on tp.minute = date_trunc('minute', t.block_time)
@@ -245,7 +245,7 @@ legacy_routers AS (
         case when substring(input, 1, 4) = '0xc7f6b19d'
                 then cast(conv(substring(input, 113, 20), 16, 10) AS decimal) / 1e18 * price
             else cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / 1e18 * price end AS amount_usd
-    from ethereum_traces t
+    FROM ethereum_traces t
     LEFT JOIN prices_usd p on minute = date_trunc('minute', t.block_time)
     LEFT JOIN erc20_tokens e on e.contract_address = substring(input, 81, 20)
     where cast(trace_address AS STRING) = '{}'  --top level call
@@ -273,7 +273,7 @@ legacy_routers AS (
             coalesce(
                 cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / power(10, tp.decimals) * tp.price,
                 cast(conv(substring(input, 177, 20), 16, 10) AS decimal) / power(10, mp.decimals) * mp.price) AS amount_usd
-    from ethereum_traces t
+    FROM ethereum_traces t
     LEFT JOIN prices_usd tp on tp.minute = date_trunc('minute', t.block_time) and tp.contract_address = substring(input, 81, 20)
     LEFT JOIN prices_usd mp on mp.minute = date_trunc('minute', t.block_time) and mp.contract_address = substring(input, 113, 20)
     where cast(trace_address AS STRING) = '{}'
@@ -307,7 +307,7 @@ legacy_routers AS (
         case when substring(input, 1, 4) = '0xe43d9733'
                 then cast(conv(substring(input, 113, 20), 16, 10) AS decimal) / 1e18 * price
             else cast(conv(substring(input, 145, 20), 16, 10) AS decimal) / 1e18 * price end AS amount_usd
-    from ethereum_traces t
+    FROM ethereum_traces t
     LEFT JOIN prices_usd p on minute = date_trunc('minute', t.block_time)
     LEFT JOIN erc20_tokens e on e.contract_address = substring(input, 81, 20)
     where cast(trace_address AS STRING) = '{}'
@@ -319,7 +319,7 @@ legacy_routers AS (
 
 new_pool AS (
     -- subquery for including new pools created on 2022-04-09
-    -- same trade event abi, effectively only from table hashflow.pool_evt_trade since 2022-04-09
+    -- same trade event abi, effectively only FROM table hashflow.pool_evt_trade since 2022-04-09
     SELECT
         l.evt_index AS composite_index,
         NULL AS source, -- no join on call for this batch, refer to metabase for source info
@@ -329,7 +329,7 @@ new_pool AS (
         NULL AS method_id, -- without call we don't have function call info
         tx.to AS router_contract, -- taking top level contract called in tx AS router, NOT necessarily HF contract
         l.pool AS pool,
-        tx.from AS trader,
+        tx.FROM AS trader,
         l.`quoteToken` AS maker_token,
         l.`baseToken` AS taker_token,
         case when l.`quoteToken` = '0x0000000000000000000000000000000000000000' then 'ETH'
@@ -341,7 +341,7 @@ new_pool AS (
         coalesce(
                 l.`baseTokenAmount` / power(10, tp.decimals) * tp.price,
                 l.`quoteTokenAmount` / power(10, mp.decimals) * mp.price) AS amount_usd
-    from hashflow_pool_evt_trade l
+    FROM hashflow_pool_evt_trade l
     inner join ethereum_transactions tx on tx.hash = l.evt_tx_hash
     LEFT JOIN prices_usd tp on tp.minute = date_trunc('minute', tx.block_time)
         and tp.contract_address =
@@ -357,9 +357,9 @@ new_pool AS (
 
 {% if NOT is_incremental() %}
 
-dedupe_new_router AS ( -- since new_router and new_pool have overlapping trades, we remove them from new_router here
+dedupe_new_router AS ( -- since new_router and new_pool have overlapping trades, we remove them FROM new_router here
     SELECT new_router.*
-    from new_router
+    FROM new_router
     LEFT JOIN new_pool
     on new_router.block_time = new_pool.block_time
         and new_router.composite_index = new_pool.composite_index
@@ -373,25 +373,25 @@ dedupe_new_router AS ( -- since new_router and new_pool have overlapping trades,
 all_trades AS (
     SELECT
         -1 AS composite_index,
-        -- was decoding from trace, no log_index, only single swap exist so works AS PK
+        -- was decoding FROM trace, no log_index, only single swap exist so works AS PK
         '0x00' AS source,
-        -- all from native front end, no integration yet
+        -- all FROM native front end, no integration yet
         *
-    from legacy_routers
+    FROM legacy_routers
 
     union all
 
-    SELECT * from new_pool
+    SELECT * FROM new_pool
 
     {% if NOT is_incremental() %}
 
     union all
 
-    SELECT * from legacy_router_w_integration
+    SELECT * FROM legacy_router_w_integration
 
     union all
 
-    SELECT * from dedupe_new_router
+    SELECT * FROM dedupe_new_router
 
     {% endif %}
 )
@@ -414,6 +414,6 @@ SELECT
     trader,
     tx_hash,
     amount_usd
-from all_trades
+FROM all_trades
 where fill_status is true
 ;

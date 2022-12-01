@@ -30,7 +30,7 @@ with dexs AS (
             t.evt_tx_hash AS tx_hash,
             '' AS trace_address,
             t.evt_index
-        from
+        FROM
             {{ source('sushi_ethereum', 'Pair_evt_Swap') }} t
             inner join {{ source('sushi_ethereum', 'Factory_evt_PairCreated') }} f
                 on f.pair = t.contract_address
@@ -58,15 +58,15 @@ SELECT
     ) AS amount_usd,
     dexs.token_bought_address,
     dexs.token_sold_address,
-    coalesce(dexs.taker, tx.from) AS taker,
+    coalesce(dexs.taker, tx.FROM) AS taker,
     dexs.maker,
     dexs.project_contract_address,
     dexs.tx_hash,
-    tx.from AS tx_from,
+    tx.FROM AS tx_from,
     tx.to AS tx_to,
     dexs.trace_address,
     dexs.evt_index
-from dexs
+FROM dexs
 inner join {{ source('ethereum', 'transactions') }} tx
     on dexs.tx_hash = tx.hash
     {% if NOT is_incremental() %}

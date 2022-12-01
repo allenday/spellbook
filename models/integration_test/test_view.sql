@@ -41,7 +41,7 @@ with
       erc1155_values_batch.explode_value,
       erc1155_ids_batch.evt_tx_hash,
       erc1155_ids_batch.to,
-      erc1155_ids_batch.from,
+      erc1155_ids_batch.FROM,
       erc1155_ids_batch.contract_address,
       erc1155_ids_batch.evt_index,
       erc1155_ids_batch.evt_block_time
@@ -77,7 +77,7 @@ with
     SELECT
       evt_tx_hash,
       evt_tx_hash || '-' || evt_index || '-' || to AS unique_tx_id,
-      from AS wallet_address,
+      FROM AS wallet_address,
       contract_address AS token_address,
       evt_block_time,
       id AS tokenId,
@@ -87,7 +87,7 @@ with
     SELECT
       evt_tx_hash,
       evt_tx_hash || '-' || evt_index || '-' || to AS unique_tx_id,
-      from AS wallet_address,
+      FROM AS wallet_address,
       contract_address AS token_address,
       evt_block_time,
       explode_id AS tokenId,
@@ -97,8 +97,8 @@ with
   )
 
 SELECT 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, tokenId, amount, evt_tx_hash, unique_tx_id
-from sent_transfers
+FROM sent_transfers
 union all
 SELECT 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, tokenId, amount, evt_tx_hash, unique_tx_id
-from received_transfers
+FROM received_transfers
 limit 100

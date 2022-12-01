@@ -10,7 +10,7 @@
 
 with original_holders AS (
     SELECT address, punk_id
-    from (VALUES
+    FROM (VALUES
         ('0xc352b534e8b987e036a93539fd6897f53488e56a',0)
         , ('0xc352b534e8b987e036a93539fd6897f53488e56a',1)
         , ('0xc352b534e8b987e036a93539fd6897f53488e56a',2)
@@ -10018,29 +10018,29 @@ with original_holders AS (
 SELECT punk_id
         , `to` AS current_owner
         , evt_block_time AS last_transfer_time
-from
+FROM
 (   SELECT *
             , row_number() over (partition by punk_id order by evt_block_number desc, evt_index desc) AS punk_id_tx_rank
-    from
+    FROM
     (
-        SELECT  NULL AS `from`
+        SELECT  NULL AS `FROM`
                 , address AS `to`
                 , cast('2017-06-23 19:37:59' AS timestamp) AS evt_block_time
                 , cast(3919418 AS int) AS evt_block_number
                 , cast(1 AS int) AS evt_index
                 , punk_id
-        from original_holders
+        FROM original_holders
 
         union all
 
-        SELECT  a.`from`
+        SELECT  a.`FROM`
                 , a.`to`
                 , a.evt_block_time
                 , a.evt_block_number
                 , a.evt_index
-                , case when topic1 = '0x05af636b70da6819000c49f85b21fa82081c632069bb626f30932034099107d8' then cast(bytea2numeric_v2(substring(data from 3)) AS int)
-                    else cast(bytea2numeric_v2(substring(topic2 from 3)) AS int) end AS punk_id
-        from {{ source('erc20_ethereum','evt_transfer') }} a
+                , case when topic1 = '0x05af636b70da6819000c49f85b21fa82081c632069bb626f30932034099107d8' then cast(bytea2numeric_v2(substring(data FROM 3)) AS int)
+                    else cast(bytea2numeric_v2(substring(topic2 FROM 3)) AS int) end AS punk_id
+        FROM {{ source('erc20_ethereum','evt_transfer') }} a
         inner join {{ source('ethereum','logs') }} b on a.evt_tx_hash = b.tx_hash -- and topic1 = '0x58e5d5a525e3b40bc15abaa38b5882678db1ee68befd2f60bafe3a7fd06db9e3'
         where a.contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks contract
             and topic1 in   (   '0xb0e0a660b4e50f26f0b7ce75c24655fc76cc66e3334a54ff410277229fa10bd4' -- PunkNoLongerForSale

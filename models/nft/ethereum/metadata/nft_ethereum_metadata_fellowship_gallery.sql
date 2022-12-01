@@ -4,7 +4,7 @@
 }}
 
 SELECT contract_address, collection_name, artist_name, platform, website
-from (VALUES
+FROM (VALUES
         ('0x398034c799fad7fdc4695c8eb8bec713ebed9da4','Alessandra Sanguinetti','Alessandra Sanguinetti','Foundation','https: / /foundation.app/collection/alessandra-sanguinetti'),
         ('0xf25d28271e2b98a1771dfa45c6a3ad65958d4f81','La Calle','Alex Webb','Foundation','https: / /foundation.app/collection/awlc'),
         ('0x7037843d739d846cdce3a6839a80f7d70b60b99a','ASK10','August Sander','OpenSea','https: / /looksrare.org/collections/0x7037843d739D846CdCe3A6839A80f7D70b60b99A/'),

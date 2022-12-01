@@ -32,7 +32,7 @@ transactions AS (
             to AS dao_wallet_address,
             'tx_in' AS tx_type,
             evt_index AS tx_index,
-            from AS address_interacted_with,
+            FROM AS address_interacted_with,
             array('') AS trace_address
         FROM
         {{ source('erc20_gnosis', 'evt_transfer') }}
@@ -51,7 +51,7 @@ transactions AS (
             evt_tx_hash AS tx_hash,
             contract_address AS token,
             value AS value,
-            from AS dao_wallet_address,
+            FROM AS dao_wallet_address,
             'tx_out' AS tx_type,
             evt_index AS tx_index,
             to AS address_interacted_with,
@@ -64,7 +64,7 @@ transactions AS (
         {% if is_incremental() %}
         WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
-        AND from IN (SELECT dao_wallet_address FROM dao_tmp)
+        AND FROM IN (SELECT dao_wallet_address FROM dao_tmp)
 )
 
 SELECT

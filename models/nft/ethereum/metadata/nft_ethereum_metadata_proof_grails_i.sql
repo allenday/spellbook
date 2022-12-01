@@ -3,7 +3,7 @@
         )
 }}
 SELECT contract_address, project_id, project_id_base_value, collection_name, artist_name, grails_season, grail_id, art_collection_unique_id
-from (VALUES
+FROM (VALUES
         ('0xb6329bd2741c4e5e91e26c4e653db643e74b2b19', 0, 1, 'What do you "B"', 'Gary Vaynerchuk', 1, 1, '0xb6329bd2741c4e5e91e26c4e653db643e74b2b19-0')
         , ('0xb6329bd2741c4e5e91e26c4e653db643e74b2b19', 1, 1, 'What do you "B"', 'Gary Vaynerchuk', 1, 1, '0xb6329bd2741c4e5e91e26c4e653db643e74b2b19-1')
         , ('0xb6329bd2741c4e5e91e26c4e653db643e74b2b19', 2, 1, 'MIRROR, MIRROR.', 'Lucréce', 1, 2, '0xb6329bd2741c4e5e91e26c4e653db643e74b2b19-2')

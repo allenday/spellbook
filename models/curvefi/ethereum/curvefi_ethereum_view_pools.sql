@@ -155,9 +155,9 @@ meta_pools_deployed AS (
         output_0 AS deposit_contract,
         _coin AS coin0,
         CASE
-            WHEN _base_pool = '{{curvefi_ethereum_DAI_USDC_USDT_pool_contract}}' THEN '{{threeCRV_ethereum_token}}' --changing from swap to token contract
-            WHEN _base_pool = '{{curvefi_ethereum_sBTC_swap_contract}}' THEN '{{sbtcCRV_ethereum_token}}' --changing from swap to token contract
-            WHEN _base_pool = '{{curvefi_ethereum_REN_swap_contract}}' THEN '{{renCRV_ethereum_token}}' --changing from swap to token contract
+            WHEN _base_pool = '{{curvefi_ethereum_DAI_USDC_USDT_pool_contract}}' THEN '{{threeCRV_ethereum_token}}' --changing FROM swap to token contract
+            WHEN _base_pool = '{{curvefi_ethereum_sBTC_swap_contract}}' THEN '{{sbtcCRV_ethereum_token}}' --changing FROM swap to token contract
+            WHEN _base_pool = '{{curvefi_ethereum_REN_swap_contract}}' THEN '{{renCRV_ethereum_token}}' --changing FROM swap to token contract
         END AS coin1,
         CAST(
             NULL AS VARCHAR(5)

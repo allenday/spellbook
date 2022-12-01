@@ -21,9 +21,9 @@ SELECT
     -et.value AS amount_raw,
     et.tx_hash,
     array_join(et.trace_address, ',') AS trace_address
-from {{ source('ethereum', 'traces') }} et
-join {{ ref('safe_ethereum_safes') }} s on et.from = s.address
-    and et.from != et.to -- exclude calls to self to guarantee unique key property
+FROM {{ source('ethereum', 'traces') }} et
+join {{ ref('safe_ethereum_safes') }} s on et.FROM = s.address
+    and et.FROM != et.to -- exclude calls to self to guarantee unique key property
     and et.success = true
     and (lower(et.call_type) NOT in ('delegatecall', 'callcode', 'staticcall') or et.call_type is NULL)
     and cast(et.value AS decimal(38,0)) > 0 -- value is of type STRING. exclude 0 value traces
@@ -44,9 +44,9 @@ SELECT
     et.value AS amount_raw,
     et.tx_hash,
     array_join(et.trace_address, ',') AS trace_address
-from {{ source('ethereum', 'traces') }} et
+FROM {{ source('ethereum', 'traces') }} et
 join {{ ref('safe_ethereum_safes') }} s on et.to = s.address
-    and et.from != et.to -- exclude calls to self to guarantee unique key property
+    and et.FROM != et.to -- exclude calls to self to guarantee unique key property
     and et.success = true
     and (lower(et.call_type) NOT in ('delegatecall', 'callcode', 'staticcall') or et.call_type is NULL)
     and cast(et.value AS decimal(38,0)) > 0 -- value is of type STRING. exclude 0 value traces

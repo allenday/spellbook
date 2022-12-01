@@ -43,11 +43,11 @@ with iv_offer_consideration AS (
             ,case when recipient = '0x0000000000000000000000000000000000000000' then true
                 else false
             end AS is_private
-    from
+    FROM
     (
         SELECT *
             ,posexplode(offer) AS (offer_idx, offer_item)
-        from {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }}
+        FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }}
     )
     union all
     SELECT evt_block_time AS block_time
@@ -89,11 +89,11 @@ with iv_offer_consideration AS (
             ,case when recipient = '0x0000000000000000000000000000000000000000' then true
                 else false
             end AS is_private
-    from
+    FROM
     (
         SELECT *
             ,posexplode(consideration) AS (consideration_idx, consideration_item)
-        from {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }}
+        FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }}
     )
 )
 ,iv_base_pairs AS (
@@ -128,7 +128,7 @@ with iv_offer_consideration AS (
             ,case when offer_first_item_type in ('erc721','erc1155') and sub_type = 'consideration' and item_type in ('erc721','erc1155') then true
                 else false
             end is_moved_nft
-    from
+    FROM
     (
         SELECT a.*
             ,case when item_type in ('native','erc20') then sum(case when item_type in ('native','erc20') then 1 end) over (partition by tx_hash, evt_index, sub_type order by sub_idx) end AS eth_erc_idx
@@ -141,9 +141,9 @@ with iv_offer_consideration AS (
             ,sum(case when offer_first_item_type = 'erc20' and sub_type = 'consideration' and item_type in ('erc1155') then 1
                         when offer_first_item_type in ('erc721','erc1155') and sub_type = 'offer' and item_type in ('erc1155') then 1
                 end) over (partition by tx_hash, evt_index) AS erc1155_cnt
-        from iv_offer_consideration a
+        FROM iv_offer_consideration a
     ) a
 )
 SELECT *
-from iv_base_pairs
+FROM iv_base_pairs
 ;

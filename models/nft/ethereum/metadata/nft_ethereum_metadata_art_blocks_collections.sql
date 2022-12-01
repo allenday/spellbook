@@ -5,7 +5,7 @@
 }}
 
     SELECT contract_address, project_id, project_id_base_value, collection_name, artist_name, art_blocks_project_type, art_blocks_curated_season, art_collection_unique_id
-    from (VALUES
+    FROM (VALUES
         ('0x059edd72cd353df5106d2b9cc5ab83a52287ac3a', 0, 1000000, 'Chromie Squiggle', 'Snowfro', 'Curated', '1', '0x059edd72cd353df5106d2b9cc5ab83a52287ac3a-0')
         , ('0x059edd72cd353df5106d2b9cc5ab83a52287ac3a', 1, 1000000, 'Genesis', 'DCA', 'Curated', '1', '0x059edd72cd353df5106d2b9cc5ab83a52287ac3a-1')
         , ('0x059edd72cd353df5106d2b9cc5ab83a52287ac3a', 2, 1000000, 'Construction Token', 'Jeff Davis', 'Curated', '1', '0x059edd72cd353df5106d2b9cc5ab83a52287ac3a-2')

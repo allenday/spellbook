@@ -16,7 +16,7 @@ with uniswap_v3_poolcreated AS (
     ,token0
     ,token1
     ,fee
-  from {{ source('uniswap_v3_optimism', 'factory_evt_poolcreated') }}
+  FROM {{ source('uniswap_v3_optimism', 'factory_evt_poolcreated') }}
   group by 1, 2, 3, 4
 )
 ,ovm1_legacy_pools_raw AS (
@@ -761,10 +761,10 @@ SELECT
   ,col.token0
   ,col.token1
   ,col.fee
-from ovm1_legacy_pools_raw
+FROM ovm1_legacy_pools_raw
 
 union
 
 SELECT
   *
-from uniswap_v3_poolcreated
+FROM uniswap_v3_poolcreated

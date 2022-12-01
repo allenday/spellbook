@@ -103,7 +103,7 @@ token_prices AS (
         , dt.user_deposit_value_norm * COALESCE(p.price_eth, 1) AS user_deposits_eth
         , dt.user_withdrawal_value_norm * COALESCE(p.price_usd, b.eth_price) AS user_withdrawals_usd
         , dt.user_withdrawal_value_norm * COALESCE(p.price_eth, 1) AS user_withdrawals_eth
-    from daily_transfers dt
+    FROM daily_transfers dt
     inner join token_prices p on dt.date = p.day and dt.token_address = p.token_address
     LEFT JOIN token_prices b on dt.date = b.day AND dt.token_address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' -- using this to get price for missing ETH token
 ;

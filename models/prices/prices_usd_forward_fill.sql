@@ -42,7 +42,7 @@ WITH
     ,decimals
     ,symbol
     ,price
-    from timeseries t
+    FROM timeseries t
     LEFT JOIN unfinalized p
     ON t.minute >= p.minute and (p.next_update_minute is NULL OR t.minute < p.next_update_minute) -- perform forward fill
 )

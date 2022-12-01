@@ -21,7 +21,7 @@ SELECT 'ethereum' AS blockchain
 , contract_address
 , token_id
 , amount
-, from
+, FROM
 , to
 , tx_hash
 , unique_transfer_id
@@ -40,7 +40,7 @@ SELECT 'bnb' AS blockchain
 , contract_address
 , token_id
 , amount
-, from
+, FROM
 , to
 , tx_hash
 , unique_transfer_id
@@ -59,7 +59,7 @@ SELECT 'avalanche_c' AS blockchain
 , contract_address
 , token_id
 , amount
-, from
+, FROM
 , to
 , tx_hash
 , unique_transfer_id
@@ -78,7 +78,7 @@ SELECT 'gnosis' AS blockchain
 , contract_address
 , token_id
 , amount
-, from
+, FROM
 , to
 , tx_hash
 , unique_transfer_id
@@ -97,7 +97,7 @@ SELECT 'optimism' AS blockchain
 , contract_address
 , token_id
 , amount
-, from
+, FROM
 , to
 , tx_hash
 , unique_transfer_id
@@ -116,7 +116,7 @@ SELECT 'arbitrum' AS blockchain
 , contract_address
 , token_id
 , amount
-, from
+, FROM
 , to
 , tx_hash
 , unique_transfer_id
@@ -135,7 +135,7 @@ SELECT 'polygon' AS blockchain
 , contract_address
 , token_id
 , amount
-, from
+, FROM
 , to
 , tx_hash
 , unique_transfer_id

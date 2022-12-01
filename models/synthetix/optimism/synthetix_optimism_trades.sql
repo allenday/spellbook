@@ -62,7 +62,7 @@ perps AS (
 		,DECODE(sm.asset, 'UTF-8') AS virtual_asset
 
 		,CASE
-			WHEN LEFT(sm.asset, 1) = 's' THEN SUBSTRING(sm.asset, 2) --removes 's' indicator from synthetic assets
+			WHEN LEFT(sm.asset, 1) = 's' THEN SUBSTRING(sm.asset, 2) --removes 's' indicator FROM synthetic assets
 			ELSE sm.asset
 		END AS underlying_asset
 
@@ -116,7 +116,7 @@ SELECT
 	,perps.trader
 	,perps.volume_raw
 	,perps.tx_hash
-	,tx.from AS tx_from
+	,tx.FROM AS tx_from
 	,tx.to AS tx_to
 	,perps.evt_index
 FROM perps

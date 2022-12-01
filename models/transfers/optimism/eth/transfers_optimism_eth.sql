@@ -13,7 +13,7 @@
 }}
 with eth_transfers AS (
     SELECT
-        r.from
+        r.FROM
         ,r.to
         --Using the ETH deposit placeholder address to match with prices tables
         ,lower('0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000') AS contract_address
@@ -25,7 +25,7 @@ with eth_transfers AS (
         ,r.block_number AS tx_block_number
         ,substring(t.data, 1, 10) AS tx_method_id
         ,r.tx_hash || '-' || r.trace_address::STRING AS unique_transfer_id
-    from {{ source('optimism', 'traces') }} AS r
+    FROM {{ source('optimism', 'traces') }} AS r
     join {{ source('optimism', 'transactions') }} AS t
         on r.tx_hash = t.hash
     where
@@ -39,10 +39,10 @@ with eth_transfers AS (
         {% endif %}
 
     union all
-    --ETH Transfers from deposits and withdrawals are ERC20 transfers of the 'deadeadead' ETH token. These do NOT appear in traces.
+    --ETH Transfers FROM deposits and withdrawals are ERC20 transfers of the 'deadeadead' ETH token. These do NOT appear in traces.
 
     SELECT
-        r.from
+        r.FROM
         ,r.to
         --Using the ETH deposit placeholder address to match with prices tables
         ,lower('0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000') AS contract_address
@@ -54,7 +54,7 @@ with eth_transfers AS (
         ,r.evt_block_number AS tx_block_number
         ,substring(t.data, 1, 10) AS tx_method_id
         ,r.evt_tx_hash || '-' || array(r.evt_index)::STRING AS unique_transfer_id
-    from {{ source('erc20_optimism', 'evt_transfer') }} AS r
+    FROM {{ source('erc20_optimism', 'evt_transfer') }} AS r
     join {{ source('optimism', 'transactions') }} AS t
         on r.evt_tx_hash = t.hash
     where
@@ -66,4 +66,4 @@ with eth_transfers AS (
         and t.block_time >= date_trunc('day', now() - interval '1 week')
         {% endif %}
 )
-SELECT * from eth_transfers order by tx_block_time
+SELECT * FROM eth_transfers order by tx_block_time

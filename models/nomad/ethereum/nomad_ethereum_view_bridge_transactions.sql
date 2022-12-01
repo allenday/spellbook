@@ -34,13 +34,13 @@ with nomad_bridge_domains(domain_id, domain_name, domain_type) AS (
           ,amount / pow(10, e1.decimals) AS original_amount
           ,e1.symbol AS original_currency
           ,amount / pow(10, e1.decimals) * coalesce(p1.price, 0) AS usd_amount
-          ,`from` AS sender
+          ,`FROM` AS sender
           ,concat('0x', right(toId, 40)) AS recipient
           ,toDomain AS domain_id
           ,d.domain_name AS domain_name
           ,fastLiquidityEnabled AS fast_liquidity_enabled
           ,'0x0000000000000000000000000000000000000000' AS liquidity_provider
-      from {{ source('nomad_ethereum','BridgeRouter_evt_Send') }} s
+      FROM {{ source('nomad_ethereum','BridgeRouter_evt_Send') }} s
       inner join nomad_bridge_domains d on d.domain_id = s.toDomain
       LEFT JOIN {{ ref('tokens_erc20') }} e1 on e1.contract_address = s.token and e1.blockchain = 'ethereum'
       LEFT JOIN {{ source('prices', 'usd') }} p1 on p1.contract_address = s.token
@@ -61,13 +61,13 @@ with nomad_bridge_domains(domain_id, domain_name, domain_type) AS (
           ,amount / pow(10, e1.decimals) AS original_amount
           ,e1.symbol AS original_currency
           ,amount / pow(10, e1.decimals) * coalesce(p1.price, 0) AS usd_amount
-          ,t.`from` AS sender
+          ,t.`FROM` AS sender
           ,r.recipient
           ,left(originAndNonce, 8) AS domain_id
           ,d.domain_name AS domain_name
           ,false AS fast_liquidity_enabled
           ,liquidityProvider AS liquidity_provider
-      from {{ source('nomad_ethereum', 'BridgeRouter_evt_Receive') }} r
+      FROM {{ source('nomad_ethereum', 'BridgeRouter_evt_Receive') }} r
       inner join {{ source('ethereum','transactions') }} t on r.evt_block_number = t.block_number
             and r.evt_tx_hash = t.hash
             and t.block_time >= '2022-01-01'
@@ -96,4 +96,4 @@ SELECT block_time
       ,domain_name
       ,fast_liquidity_enabled
       ,liquidity_provider
-  from nomad_bridge_transactions
+  FROM nomad_bridge_transactions

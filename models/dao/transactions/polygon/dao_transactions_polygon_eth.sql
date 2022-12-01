@@ -32,7 +32,7 @@ transactions AS (
             to AS dao_wallet_address,
             'tx_in' AS tx_type,
             tx_index,
-            from AS address_interacted_with,
+            FROM AS address_interacted_with,
             trace_address
         FROM
         {{ source('polygon', 'traces') }}
@@ -54,7 +54,7 @@ transactions AS (
             tx_hash,
             LOWER('0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') AS token,
             value AS value,
-            from AS dao_wallet_address,
+            FROM AS dao_wallet_address,
             'tx_out' AS tx_type,
             tx_index,
             to AS address_interacted_with,
@@ -67,7 +67,7 @@ transactions AS (
         {% if is_incremental() %}
         WHERE block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
-        AND from IN (SELECT dao_wallet_address FROM dao_tmp)
+        AND FROM IN (SELECT dao_wallet_address FROM dao_tmp)
         AND (LOWER(call_type) NOT IN ('delegatecall', 'callcode', 'staticcall') or call_type IS NULL)
         AND success = true
         AND CAST(value AS decimal(38,0)) != 0

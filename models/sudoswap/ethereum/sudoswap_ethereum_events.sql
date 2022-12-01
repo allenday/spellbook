@@ -92,9 +92,9 @@ WITH
     -- this join should be removed in the future when more call trace info is added to the _call_ tables, we need the call_from field to track down the eth traces.
     , swaps_with_calldata AS (
         SELECT s.*
-        , tr.from AS call_from
-        , CASE WHEN called_from_router = true THEN tr.from ELSE tr.to END AS project_contract_address -- either the router or the pool if called directly
-        from swaps s
+        , tr.FROM AS call_from
+        , CASE WHEN called_from_router = true THEN tr.FROM ELSE tr.to END AS project_contract_address -- either the router or the pool if called directly
+        FROM swaps s
         inner join {{ source('ethereum', 'traces') }} tr
         ON tr.success and s.call_block_number = tr.block_number and s.call_tx_hash = tr.tx_hash and s.call_trace_address = tr.trace_address
         {% if is_incremental() %}
@@ -173,7 +173,7 @@ WITH
                     , coalesce(aru.a, pc.asset_recip) AS asset_recip
                     , coalesce(aru.evt_block_time, pc.block_time) AS asset_recip_update_time
                 FROM swaps_with_calldata swaps
-                JOIN pairs_created pc ON pc.pair_address = contract_address --remember swaps from other NFT addresses won't appear!
+                JOIN pairs_created pc ON pc.pair_address = contract_address --remember swaps FROM other NFT addresses won't appear!
                 -- we might need to do these joins separately since we're exploding into a lot of rows..
                 -- should NOT matter a lot since # of changes per pool should be small
                 LEFT JOIN pool_fee_update fu ON swaps.call_block_time >= fu.evt_block_time AND swaps.contract_address = fu.contract_address
@@ -193,11 +193,11 @@ WITH
             , SUM(
                 CASE WHEN sb.trade_category = 'Buy' -- caller buys, AMM sells
                 THEN (
-                    CASE WHEN tr.from = sb.call_from THEN value -- amount of ETH payed
+                    CASE WHEN tr.FROM = sb.call_from THEN value -- amount of ETH payed
                     WHEN (tr.to = sb.call_from AND sb.call_from != sb.asset_recip) THEN -value --refunds unless the caller is also the asset recipient, no way to discriminate there.
                     ELSE 0 END)
                 ELSE ( -- caller sells, AMM buys
-                    CASE WHEN tr.from = sb.pair_address THEN value -- all ETH leaving the pool, nothing should be coming in on a sell.
+                    CASE WHEN tr.FROM = sb.pair_address THEN value -- all ETH leaving the pool, nothing should be coming in on a sell.
                     ELSE 0 END)
                 END ) AS trade_price -- what the buyer paid (incl all fees)
             , SUM(
@@ -296,7 +296,7 @@ WITH
             , sc.amount_original*pu.price AS amount_usd
             , sc.pool_fee_amount*pu.price AS pool_fee_amount_usd
             , sc.platform_fee_amount*pu.price AS platform_fee_amount_usd
-            , tx.from AS tx_from
+            , tx.FROM AS tx_from
             , tx.to AS tx_to
         FROM swaps_cleaned sc
         INNER JOIN {{ source('ethereum', 'transactions') }} tx

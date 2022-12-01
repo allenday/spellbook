@@ -30,7 +30,7 @@ batch_counts AS (
                 end)                                                AS dex_swaps,
            sum(case when selector = '0x2e1a7d4d' then 1 else 0 end) AS unwraps,
            sum(case when selector = '0x095ea7b3' then 1 else 0 end) AS token_approvals
-    from {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Settlement') }} s
+    FROM {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Settlement') }} s
         left outer join {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Interaction') }} i
             on i.evt_tx_hash = s.evt_tx_hash
             {% if is_incremental() %}
@@ -51,7 +51,7 @@ batch_values AS (
         sum(usd_value)  AS batch_value,
         sum(fee_usd)    AS fee_value,
         price           AS eth_price
-    from {{ ref('cow_protocol_ethereum_trades') }}
+    FROM {{ ref('cow_protocol_ethereum_trades') }}
         left outer join {{ source('prices', 'usd') }} AS p
             on p.contract_address = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
             and p.minute = date_trunc('minute', block_time)
@@ -76,7 +76,7 @@ combined_batch_info AS (
               )
                THEN (
                 SELECT count(*)
-                from {{ ref('dex_trades') }}
+                FROM {{ ref('dex_trades') }}
                 where tx_hash = evt_tx_hash
                 and blockchain = 'ethereum'
               )
@@ -92,7 +92,7 @@ combined_batch_info AS (
         length(data)::decimal / 1024                     AS call_data_size,
         unwraps,
         token_approvals
-    from batch_counts b
+    FROM batch_counts b
         join batch_values t
             on b.evt_tx_hash = t.tx_hash
         inner join {{ source('ethereum', 'transactions') }} tx
@@ -103,4 +103,4 @@ combined_batch_info AS (
     where num_trades > 0 --! Exclude Withdraw Batches
 )
 
-SELECT * from combined_batch_info
+SELECT * FROM combined_batch_info

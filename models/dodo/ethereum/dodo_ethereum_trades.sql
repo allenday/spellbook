@@ -13,8 +13,8 @@
 )
 }}
 
--- The first dodo contracted was deployed on '2020-08-10 13:19' from the query
---SELECT min(evt_block_time) from dodo_ethereum.DODO_evt_BuyBaseToken;
+-- The first dodo contracted was deployed on '2020-08-10 13:19' FROM the query
+--SELECT min(evt_block_time) FROM dodo_ethereum.DODO_evt_BuyBaseToken;
 {% set project_start_date = '2020-08-10' %}
 
 WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_symbol, base_token_address, quote_token_address) AS
@@ -261,11 +261,11 @@ SELECT
     ) AS amount_usd
     ,dexs.token_bought_address
     ,dexs.token_sold_address
-    ,coalesce(dexs.taker, tx.from) AS taker -- subqueries rely on this COALESCE to avoid redundant joins with the transactions table
+    ,coalesce(dexs.taker, tx.FROM) AS taker -- subqueries rely on this COALESCE to avoid redundant joins with the transactions table
     ,dexs.maker
     ,dexs.project_contract_address
     ,dexs.tx_hash
-    ,tx.from AS tx_from
+    ,tx.FROM AS tx_from
     ,tx.to AS tx_to
     ,dexs.trace_address
     ,dexs.evt_index

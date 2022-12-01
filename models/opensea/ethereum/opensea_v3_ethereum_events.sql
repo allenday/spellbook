@@ -57,4 +57,4 @@ SELECT blockchain
       ,estimated_price
       ,is_private
       ,unique_trade_id
-  from {{ ref('opensea_v3_ethereum_trades') }}
+  FROM {{ ref('opensea_v3_ethereum_trades') }}

@@ -68,7 +68,7 @@ SELECT
 	,perps.trader
 	,perps.volume_raw
 	,perps.tx_hash
-	,tx.from AS tx_from
+	,tx.FROM AS tx_from
 	,tx.to AS tx_to
 	,perps.evt_index
 FROM perps

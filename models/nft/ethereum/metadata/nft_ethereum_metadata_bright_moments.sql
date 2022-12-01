@@ -5,7 +5,7 @@
 
 
 SELECT contract_address, project_id, project_id_base_value, collection_name, artist_name, bright_moments_city, art_collection_unique_id
-from (VALUES
+FROM (VALUES
         ('0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676', 1, 1000000, 'Stellaraum', 'Alida Sun', 'Berlin', '0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676-1')
         , ('0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676', 2, 1000000, 'Parnassus', 'mpkoz', 'Berlin', '0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676-2')
         , ('0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676', 3, 1000000, 'Inflection', 'Jeff Davis', 'Berlin', '0x0a1bbd57033f57e7b6743621b79fcb9eb2ce3676-3')

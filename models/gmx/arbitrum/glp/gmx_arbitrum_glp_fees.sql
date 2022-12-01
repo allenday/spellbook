@@ -52,7 +52,7 @@ FROM
         a.minute AS minute,
         b.weth_transfer_value AS fees_weth_generated,
         last(b.weth_cum_balance, true) OVER (ORDER BY a.minute ASC) AS fees_weth_cumulative, -- extrapolation
-        last(c.weth_current_price, true) OVER (ORDER BY a.minute ASC) AS weth_current_price -- extrapolation necessary for missing values arising from in data table syncing speed
+        last(c.weth_current_price, true) OVER (ORDER BY a.minute ASC) AS weth_current_price -- extrapolation necessary for missing values arising FROM in data table syncing speed
     FROM minute a
     LEFT JOIN
         (

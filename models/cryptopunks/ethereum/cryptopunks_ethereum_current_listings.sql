@@ -20,12 +20,12 @@ with all_listings AS (
             , evt_index
             , evt_block_time
             , evt_tx_hash
-    from {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkOffered') }}
+    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkOffered') }}
 )
 , all_no_longer_for_sale_events (
     SELECT  `punkIndex` AS punk_id
             , 'No Longer For Sale' AS event_type
-            , case when evt_tx_hash in (SELECT evt_tx_hash from cryptopunks_ethereum.CryptoPunksMarket_evt_PunkBought) then 'Punk Bought'
+            , case when evt_tx_hash in (SELECT evt_tx_hash FROM cryptopunks_ethereum.CryptoPunksMarket_evt_PunkBought) then 'Punk Bought'
                     else 'Other'
                 end AS event_sub_type
             , NULL AS listed_price
@@ -34,7 +34,7 @@ with all_listings AS (
             , evt_index
             , evt_block_time
             , evt_tx_hash
-    from {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkNoLongerForSale') }}
+    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkNoLongerForSale') }}
 )
 , all_buys AS (
     SELECT  `punkIndex` AS punk_id
@@ -46,7 +46,7 @@ with all_listings AS (
             , evt_index
             , evt_block_time
             , evt_tx_hash
-    from {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkBought') }}
+    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkBought') }}
 )
 , all_transfers AS (
     SELECT  `punkIndex` AS punk_id
@@ -58,22 +58,22 @@ with all_listings AS (
             , evt_index
             , evt_block_time
             , evt_tx_hash
-    from {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkTransfer') }}
+    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkTransfer') }}
 )
 
 SELECT b.punk_id
         , listed_price
         , evt_block_time AS listing_created_at
-from
+FROM
 (
     SELECT *
             , row_number() over (partition by punk_id order by evt_block_number desc, evt_index desc ) AS punk_event_index
-    from
+    FROM
     (
-    SELECT * from all_listings
-    union all SELECT * from all_no_longer_for_sale_events
-    union all SELECT * from all_buys
-    union all SELECT * from all_transfers
+    SELECT * FROM all_listings
+    union all SELECT * FROM all_no_longer_for_sale_events
+    union all SELECT * FROM all_buys
+    union all SELECT * FROM all_transfers
     ) a
 ) b
 

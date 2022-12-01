@@ -12,7 +12,7 @@
     )
 }}
 
-{% set project_start_date = '2021-05-22' %}     -- SELECT min(evt_block_time) from biswap_bnb.BiswapPair_evt_Swap
+{% set project_start_date = '2021-05-22' %}     -- SELECT min(evt_block_time) FROM biswap_bnb.BiswapPair_evt_Swap
 
 WITH biswap_dex AS (
     SELECT  t.evt_block_time                                             AS block_time,
@@ -60,11 +60,11 @@ SELECT 'bnb'                                                           AS blockc
            )                                                           AS amount_usd,
        biswap_dex.token_bought_address,
        biswap_dex.token_sold_address,
-       coalesce(biswap_dex.taker, tx.from)                             AS taker,
+       coalesce(biswap_dex.taker, tx.FROM)                             AS taker,
        biswap_dex.maker,
        biswap_dex.project_contract_address,
        biswap_dex.tx_hash,
-       tx.from                                                         AS tx_from,
+       tx.FROM                                                         AS tx_from,
        tx.to                                                           AS tx_to,
        biswap_dex.trace_address,
        biswap_dex.evt_index

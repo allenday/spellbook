@@ -12,7 +12,7 @@ SELECT
   lower(contract_address) AS contract_address
   ,project_name
   ,project_type
-from
+FROM
 (
   values
   ('0x828b5adbe8e0a06aaf5d5a5fd16e6b15a393d86e', 'Nar Card', 'NFT')

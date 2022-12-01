@@ -15,7 +15,7 @@
 with events_raw AS (
     SELECT
       *
-    from (
+    FROM (
         SELECT
             evt_block_number AS block_number
             ,tokenId AS token_id
@@ -26,7 +26,7 @@ with events_raw AS (
             ,seller
             ,erc721address AS nft_contract_address
             ,price AS amount_raw
-        from {{ source('quixotic_v2_optimism','ExchangeV2_evt_BuyOrderFilled') }}
+        FROM {{ source('quixotic_v2_optimism','ExchangeV2_evt_BuyOrderFilled') }}
         {% if is_incremental() %} -- this filter will only be applied on an incremental run
         where evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
@@ -43,7 +43,7 @@ with events_raw AS (
             ,seller
             ,erc721address AS nft_contract_address
             ,price AS amount_raw
-        from {{ source('quixotic_v2_optimism','ExchangeV2_evt_DutchAuctionFilled') }}
+        FROM {{ source('quixotic_v2_optimism','ExchangeV2_evt_DutchAuctionFilled') }}
         {% if is_incremental() %} -- this filter will only be applied on an incremental run
         where evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
@@ -60,7 +60,7 @@ with events_raw AS (
             ,seller
             ,erc721address AS nft_contract_address
             ,price AS amount_raw
-        from {{ source('quixotic_v2_optimism','ExchangeV2_evt_SellOrderFilled') }}
+        FROM {{ source('quixotic_v2_optimism','ExchangeV2_evt_SellOrderFilled') }}
         {% if is_incremental() %} -- this filter will only be applied on an incremental run
         where evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
@@ -75,7 +75,7 @@ with events_raw AS (
       ,tr.tx_hash
       ,tr.value
       ,tr.to
-    from events_raw AS er
+    FROM events_raw AS er
     join {{ ref('transfers_optimism_eth') }} AS tr
       on er.tx_hash = tr.tx_hash
       and er.block_number = tr.tx_block_number
@@ -102,7 +102,7 @@ with events_raw AS (
       ,erc20.evt_tx_hash AS tx_hash
       ,erc20.value
       ,erc20.to
-    from events_raw AS er
+    FROM events_raw AS er
     join {{ source('erc20_optimism','evt_transfer') }} AS erc20
       on er.tx_hash = erc20.evt_tx_hash
       and er.block_number = erc20.evt_block_number
@@ -158,7 +158,7 @@ SELECT
     ,er.tx_hash
     ,coalesce(erct2.evt_index,1) AS evt_index
     ,er.block_number
-    ,tx.from AS tx_from
+    ,tx.FROM AS tx_from
     ,tx.to AS tx_to
     ,ROUND((2.5*(er.amount_raw) / 100),7) AS platform_fee_amount_raw
     ,ROUND((2.5*((er.amount_raw / power(10,t1.decimals)))/100),7) AS platform_fee_amount
@@ -173,7 +173,7 @@ SELECT
         then case when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
             then 'ETH' else t1.symbol end
         end AS royalty_fee_currency_symbol
-from events_raw AS er
+FROM events_raw AS er
 join {{ source('optimism','transactions') }} AS tx
     on er.tx_hash = tx.hash
     and er.block_number = tx.block_number
@@ -195,7 +195,7 @@ LEFT JOIN {{ source('erc721_optimism','evt_transfer') }} AS erct2
     and er.nft_contract_address=erct2.contract_address
     and erct2.evt_tx_hash=er.tx_hash
     and erct2.tokenId=er.token_id
-    and erct2.from=er.buyer
+    and erct2.FROM=er.buyer
     {% if NOT is_incremental() %}
     -- smallest block number for source tables above
     and erct2.evt_block_number >= '{{min_block_number}}'

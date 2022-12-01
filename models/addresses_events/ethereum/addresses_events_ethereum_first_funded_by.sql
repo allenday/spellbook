@@ -12,7 +12,7 @@
 }}
 
 SELECT b.to AS address
-    , MIN(a.from) AS first_funded_by
+    , MIN(a.FROM) AS first_funded_by
     , MIN(a.block_time) AS block_time
     , MIN(a.block_number) AS block_number
     , MIN(a.tx_hash) AS tx_hash

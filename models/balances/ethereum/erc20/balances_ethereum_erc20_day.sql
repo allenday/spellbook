@@ -43,7 +43,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p
     ON p.contract_address = b.token_address
     AND d.day = p.minute
     AND p.blockchain = 'ethereum'
--- Removes rebase tokens from balances
+-- Removes rebase tokens FROM balances
 LEFT JOIN {{ ref('tokens_ethereum_rebase') }}  AS r
     ON b.token_address = r.contract_address
 -- Removes likely non-compliant tokens due to negative balances
