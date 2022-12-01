@@ -25,7 +25,7 @@ with iv_availadv AS (
           , call_block_number AS block_number
           , exec_idx AS evt_index
       FROM (SELECT *
-                  ,posexplode(output_executions) AS (exec_idx, exec)
+                  , posexplode(output_executions) AS (exec_idx, exec)
               FROM {{ source('seaport_ethereum', 'Seaport_call_fulfillAvailableAdvancedOrders') }} a
              where call_success
             )
@@ -47,7 +47,7 @@ with iv_availadv AS (
           , evt_block_number AS block_number
           , evt_index
     FROM (SELECT *
-                ,posexplode(offer) AS (rn, each_offer)
+                , posexplode(offer) AS (rn, each_offer)
             FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }}  a
            where 1=1
             AND recipient != '0x0000000000000000000000000000000000000000'

@@ -120,7 +120,7 @@ with all_superrare_sales AS (
     UNION ALL
 
     SELECT  block_time
-            , concat('0x',SUBSTRING(topic2 FROM 27 FOR 40)) AS contract_address
+            , concat('0x', SUBSTRING(topic2 FROM 27 FOR 40)) AS contract_address
             , bytea2numeric_v2(SUBSTRING(topic4 FROM 3)) AS token_id
             , lower('0x8c9f364bf7a56ed058fc63ef81c6cf09c833e656') AS seller -- ALL sent FROM auction house contract
             , concat('0x',SUBSTRING(topic3 FROM 27 FOR 40)) AS buyer
@@ -137,10 +137,10 @@ with all_superrare_sales AS (
     UNION ALL
 
     SELECT block_time
-            , concat('0x',SUBSTRING(topic2 FROM 27 FOR 40)) AS contract_address
+            , concat('0x', SUBSTRING(topic2 FROM 27 FOR 40)) AS contract_address
             , bytea2numeric_v2(SUBSTRING(data FROM 67 FOR 64)) AS token_id
-            , concat('0x',SUBSTRING(topic4 FROM 27 FOR 40)) AS seller
-            , concat('0x',SUBSTRING(topic3 FROM 27 FOR 40)) AS buyer
+            , concat('0x', SUBSTRING(topic4 FROM 27 FOR 40)) AS seller
+            , concat('0x', SUBSTRING(topic3 FROM 27 FOR 40)) AS buyer
             , bytea2numeric_v2(SUBSTRING(data FROM 3 FOR 64)) AS amount
             , tx_hash
             , ''
