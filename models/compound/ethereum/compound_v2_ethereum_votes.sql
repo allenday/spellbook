@@ -26,7 +26,7 @@ FROM {{ source('compound_v2_ethereum', 'GovernorBravoDelegate_evt_VoteCast') }}
 GROUP BY proposalId)
 
 SELECT
-    '{{blockchain}}' AS blockchain,
+    '{{ blockchain }}' AS blockchain,
     '{{project}}' AS project,
     '{{project_version}}' AS version,
     vc.evt_block_time AS block_time,

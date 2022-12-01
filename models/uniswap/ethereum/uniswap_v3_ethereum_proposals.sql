@@ -39,7 +39,7 @@ FROM cte_support
 GROUP BY proposalId)
 
 SELECT DISTINCT
-    '{{blockchain}}' AS blockchain,
+    '{{ blockchain }}' AS blockchain,
     '{{project}}' AS project,
     '{{project_version}}' AS version,
     pcr.evt_block_time AS created_at,

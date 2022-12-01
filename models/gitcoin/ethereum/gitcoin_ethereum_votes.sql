@@ -25,7 +25,7 @@ FROM {{ source('gitcoin_ethereum', 'GovernorAlpha_evt_VoteCast') }}
 GROUP BY proposalId)
 
 SELECT
-    '{{blockchain}}' AS blockchain,
+    '{{ blockchain }}' AS blockchain,
     '{{project}}' AS project,
     cast(NULL AS STRING) AS version,
     vc.evt_block_time AS block_time,
