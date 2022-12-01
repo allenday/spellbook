@@ -25,7 +25,7 @@ with node_names AS (
         FROM {{ source('ethereumnameservice_ethereum', 'DefaultReverseResolver_call_setName') }}
         where call_success
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
     ) foo
     where ordering = 1
@@ -42,21 +42,21 @@ with node_names AS (
         )
         AND SUBSTRING(input,1,10) in (
             '0xc47f0027' -- setName(STRING)
-            ,'0x0f5a5466' -- claimWithResolver(address,address)
-            ,'0x1e83409a' -- claim(address)
+            , '0x0f5a5466' -- claimWithResolver(address,address)
+            , '0x1e83409a' -- claim(address)
             )
         {% if is_incremental() %}
-        AND block_time >= date_trunc("day", now() - interval '1 week')
+        AND block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
 
 )
 
 SELECT
     address
-    ,name
-    ,block_time AS latest_tx_block_time
-    ,tx_hash AS latest_tx_hash
-    ,an.node AS address_node
+    , name
+    , block_time AS latest_tx_block_time
+    , tx_hash AS latest_tx_hash
+    , an.node AS address_node
 FROM address_nodes an
 LEFT JOIN node_names nn
 ON an.node = nn.node

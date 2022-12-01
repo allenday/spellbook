@@ -48,15 +48,15 @@ with base_level AS (
       AND ct.tx_hash = sd.creation_tx_hash
       AND ct.block_time = sd.created_time
       {% if is_incremental() %}
-      AND sd.created_time >= date_trunc('day', now() - interval '1 week')
+      AND sd.created_time >= date_trunc('day', now() - INTERVAL '1 week')
       {% endif %}
     where
       true
     {% if is_incremental() %}
-      AND ct.block_time >= date_trunc('day', now() - interval '1 week')
+      AND ct.block_time >= date_trunc('day', now() - INTERVAL '1 week')
 
     -- to get existing history of contract mapping
-    union all
+    UNION ALL
 
     SELECT
       creator_address
@@ -79,7 +79,7 @@ with base_level AS (
     ON bl.contract_address = t.contract_address
   GROUP BY 1, 2
 
-  union all
+  UNION ALL
 
   SELECT
     bl.contract_address
@@ -153,7 +153,7 @@ with base_level AS (
   LEFT JOIN {{ source('optimism', 'contracts') }} AS oc
     ON cc.contract_address = oc.address
 
-  union all
+  UNION ALL
   -- ovm 1.0 contracts
 
   SELECT
@@ -182,7 +182,7 @@ with base_level AS (
     {% endif %}
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
 
-  union all
+  UNION ALL
   --synthetix genesis contracts
 
   SELECT

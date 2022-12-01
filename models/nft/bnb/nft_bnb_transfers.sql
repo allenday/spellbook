@@ -26,7 +26,7 @@ FROM {{ source('erc721_bnb', 'evt_transfer') }} t
         ON t.evt_tx_hash = anti_table.tx_hash
     {% endif %}
 {% if is_incremental() %}
-WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
+WHERE t.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}
 UNION
 SELECT t.evt_block_time AS block_time
@@ -48,7 +48,7 @@ FROM {{ source('erc1155_bnb', 'evt_transfersingle') }} t
         ON t.evt_tx_hash = anti_table.tx_hash
     {% endif %}
 {% if is_incremental() %}
-WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
+WHERE t.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}
 UNION
 SELECT evt_block_time AS block_time
@@ -73,7 +73,7 @@ FROM (
             ON t.evt_tx_hash = anti_table.tx_hash
     {% endif %}
     {% if is_incremental() %}
-    WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE t.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
     GROUP BY t.evt_block_time, t.evt_block_number, t.evt_tx_hash, t.contract_address, t.from, t.to, t.evt_index, t.values, t.ids
     )

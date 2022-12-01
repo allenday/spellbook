@@ -26,6 +26,6 @@ with
 
 SELECT 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, tokenId, amount, unique_tx_id
 FROM received_transfers
-union
+UNION
 SELECT 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, tokenId, amount, unique_tx_id
 FROM sent_transfers

@@ -52,7 +52,7 @@ with iv_availadv AS (
            where 1=1
             AND recipient != '0x0000000000000000000000000000000000000000'
          )
-    union all
+    UNION ALL
     SELECT 'normal' AS main_type
           , 'consideration' AS sub_type
           , rn + 1 AS sub_idx
@@ -74,7 +74,7 @@ with iv_availadv AS (
              where 1=1
               AND recipient != '0x0000000000000000000000000000000000000000'
           )
-    union all
+    UNION ALL
     SELECT 'advanced' AS main_type
           , 'mix' AS sub_type
           , a.rn + 1 AS sub_idx

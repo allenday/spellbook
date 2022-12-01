@@ -25,12 +25,12 @@ glp_balances AS -- This CTE returns the accuals of WETH tokens in the Fee GLP co
         SUM(b.glp_mint_burn_value) OVER (ORDER BY b.minute ASC) AS glp_cum_balance
     FROM
         (
-        SELECT  -- This subquery aggregates all the inbound tranfers of mints AND burns of GLP tokens in a designated minute
+        SELECT  -- This subquery aggregates ALL the inbound tranfers of mints AND burns of GLP tokens in a designated minute
             a.minute,
             SUM(a.mint_burn_value) AS glp_mint_burn_value
         FROM
             (
-            SELECT  -- This subquery truncates the block time to a minute AND selects all mints AND burns of GLP tokens through the GLP Manager contract
+            SELECT  -- This subquery truncates the block time to a minute AND selects ALL mints AND burns of GLP tokens through the GLP Manager contract
                 date_trunc('minute', evt_block_time) AS minute,
                 mintAmount / 1e18 AS mint_burn_value
             FROM {{source('gmx_arbitrum', 'GlpManager_evt_AddLiquidity')}}

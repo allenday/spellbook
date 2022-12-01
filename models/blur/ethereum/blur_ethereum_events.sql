@@ -77,7 +77,7 @@ JOIN {{ source('ethereum', 'transactions') }} et ON et.block_time=bm.evt_block_t
     AND et.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND et.block_time >= date_trunc("day", now() - interval '1 week')
+    AND et.block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ ref('nft_ethereum_aggregators') }} agg ON agg.contract_address=et.to
 LEFT JOIN {{ source('prices', 'usd') }} pu ON pu.blockchain='ethereum'
@@ -88,7 +88,7 @@ LEFT JOIN {{ source('prices', 'usd') }} pu ON pu.blockchain='ethereum'
     AND pu.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND pu.minute >= date_trunc("day", now() - interval '1 week')
+    AND pu.minute >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ ref('tokens_ethereum_nft') }} nft ON get_json_object(bm.buy, '$.collection')=nft.contract_address
 LEFT JOIN {{ ref('nft_ethereum_transfers') }} erct ON erct.block_time=bm.evt_block_time
@@ -100,7 +100,7 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} erct ON erct.block_time=bm.evt_blo
     AND erct.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND erct.block_time >= date_trunc("day", now() - interval '1 week')
+    AND erct.block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ ref('nft_ethereum_transfers') }} buyer_fix ON buyer_fix.block_time=bm.evt_block_time
     AND get_json_object(bm.buy, '$.collection')=buyer_fix.contract_address
@@ -112,7 +112,7 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} buyer_fix ON buyer_fix.block_time=
     AND buyer_fix.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND buyer_fix.block_time >= date_trunc("day", now() - interval '1 week')
+    AND buyer_fix.block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ ref('nft_ethereum_transfers') }} seller_fix ON seller_fix.block_time=bm.evt_block_time
     AND get_json_object(bm.buy, '$.collection')=seller_fix.contract_address
@@ -124,9 +124,9 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} seller_fix ON seller_fix.block_tim
     AND seller_fix.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND seller_fix.block_time >= date_trunc("day", now() - interval '1 week')
+    AND seller_fix.block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 {% if is_incremental() %}
-WHERE bm.evt_block_time >= date_trunc("day", now() - interval '1 week')
+WHERE bm.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}
 ;

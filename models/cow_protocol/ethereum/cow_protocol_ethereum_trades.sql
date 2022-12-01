@@ -34,7 +34,7 @@ trades_with_prices AS (
                                  AND ps.minute = date_trunc('minute', evt_block_time)
                                  AND ps.blockchain = 'ethereum'
                                  {% if is_incremental() %}
-                                 AND ps.minute >= date_trunc("day", now() - interval '1 week')
+                                 AND ps.minute >= date_trunc("day", now() - INTERVAL '1 week')
                                  {% endif %}
              LEFT OUTER JOIN {{ source('prices', 'usd') }} AS pb
                              ON pb.contract_address = (
@@ -46,10 +46,10 @@ trades_with_prices AS (
                                  AND pb.minute = date_trunc('minute', evt_block_time)
                                  AND pb.blockchain = 'ethereum'
                                  {% if is_incremental() %}
-                                 AND pb.minute >= date_trunc("day", now() - interval '1 week')
+                                 AND pb.minute >= date_trunc("day", now() - INTERVAL '1 week')
                                  {% endif %}
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 ),
 -- Second subquery gets token symbol AND decimals FROM tokens.erc20 (to display units bought AND sold)
@@ -99,7 +99,7 @@ order_ids AS (
     FROM (  SELECT orderUid, evt_tx_hash, evt_index
             FROM {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Trade') }}
              {% if is_incremental() %}
-             where evt_block_time >= date_trunc("day", now() - interval '1 week')
+             where evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
              {% endif %}
                      sort BY evt_index
          ) AS _
@@ -127,7 +127,7 @@ trade_data AS (
     FROM {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_call_settle') }}
     where call_success = true
     {% if is_incremental() %}
-    AND call_block_time >= date_trunc("day", now() - interval '1 week')
+    AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 ),
 

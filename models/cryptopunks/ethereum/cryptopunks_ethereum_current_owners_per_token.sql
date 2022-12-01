@@ -10031,7 +10031,7 @@ FROM
                 , punk_id
         FROM original_holders
 
-        union all
+        UNION ALL
 
         SELECT  a.`FROM`
                 , a.`to`

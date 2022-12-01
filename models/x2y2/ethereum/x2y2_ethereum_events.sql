@@ -40,7 +40,7 @@ WITH aggregator_routed_x2y2_txs AS (
     WHERE taker IN (SELECT contract_address FROM {{ ref('nft_ethereum_aggregators') }})
     {% if is_incremental() %}
     -- this filter will only be applied ON an incremental run
-    AND prof.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND prof.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
     )
 
@@ -71,14 +71,14 @@ WITH aggregator_routed_x2y2_txs AS (
     LEFT JOIN {{ source('ethereum', 'transactions') }} et ON inv.evt_block_time = et.block_time
         AND inv.evt_tx_hash = et.hash
         {% if is_incremental() %}
-        AND et.block_time >= date_trunc("day", now() - interval '1 week')
+        AND et.block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
     LEFT JOIN {{ ref('nft_ethereum_aggregators_markers') }} agg_m
         ON LEFT(et.data, CHARINDEX(agg_m.hash_marker, et.data) + LENGTH(agg_m.hash_marker)) LIKE '%' || agg_m.hash_marker
     WHERE taker NOT IN (SELECT contract_address FROM {{ ref('nft_ethereum_aggregators') }})
     {% if is_incremental() %}
     -- this filter will only be applied ON an incremental run
-    AND prof.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND prof.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
     )
 
@@ -111,7 +111,7 @@ WITH aggregator_routed_x2y2_txs AS (
         AND to NOT IN (SELECT contract_address FROM {{ ref('nft_ethereum_aggregators') }})
     {% if is_incremental() %}
     -- this filter will only be applied ON an incremental run
-    AND e721.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND e721.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
    )
 
@@ -212,14 +212,14 @@ FROM all_x2y2_txs txs
 INNER JOIN {{ source('ethereum', 'transactions') }} et ON et.block_time=txs.block_time
     AND et.hash=txs.tx_hash
     {% if is_incremental() %}
-    AND et.block_time >= date_trunc("day", now() - interval '1 week')
+    AND et.block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} pu ON pu.blockchain='ethereum'
     AND date_trunc('minute', pu.minute)=date_trunc('minute', txs.block_time)
     AND (pu.contract_address=txs.currency_contract
         OR (pu.contract_address='0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' AND txs.currency_contract='0x0000000000000000000000000000000000000000'))
     {% if is_incremental() %}
-    AND pu.minute >= date_trunc("day", now() - interval '1 week')
+    AND pu.minute >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct ON erct.evt_block_time=txs.block_time
     AND txs.nft_contract_address=erct.contract_address
@@ -227,7 +227,7 @@ LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct ON erct.evt_block
     AND erct.tokenId=txs.token_id
     AND erct.from=txs.seller
     {% if is_incremental() %}
-    AND erct.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND erct.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct2 ON erct2.evt_block_time=txs.block_time
     AND txs.nft_contract_address=erct2.contract_address
@@ -235,7 +235,7 @@ LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct2 ON erct2.evt_blo
     AND erct2.tokenId=txs.token_id
     AND erct2.from=txs.buyer
     {% if is_incremental() %}
-    AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND erct2.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ source('erc1155_ethereum', 'evt_transfersingle') }} erct3 ON erct3.evt_block_time=txs.block_time
     AND txs.nft_contract_address=erct3.contract_address
@@ -243,5 +243,5 @@ LEFT JOIN {{ source('erc1155_ethereum', 'evt_transfersingle') }} erct3 ON erct3.
     AND erct3.id=txs.token_id
     AND erct3.from=txs.buyer
     {% if is_incremental() %}
-    AND erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND erct3.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}

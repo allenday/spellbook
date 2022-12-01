@@ -13,19 +13,19 @@ WITH wyvern_call_data AS (
 SELECT
   call_tx_hash,
   call_block_time,
-  CASE WHEN CONTAINS('0x68f0bcaa', SUBSTRING(calldataBuy,1,4)) THEN 'Bundle Trade'
+  CASE WHEN CONTAINS('0x68f0bcaa', SUBSTRING(calldataBuy, 1, 4)) THEN 'Bundle Trade'
         ELSE 'Single Item Trade'
   END AS trade_type,
-  CASE WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy,1,4)) THEN 'erc721'
-        WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy,1,4)) THEN 'erc721'
-        WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy,1,4)) THEN 'erc1155'
-        WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy,1,4)) THEN 'erc1155'
+  CASE WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy, 1, 4)) THEN 'erc721'
+        WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy, 1, 4)) THEN 'erc721'
+        WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy, 1, 4)) THEN 'erc1155'
+        WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy, 1, 4)) THEN 'erc1155'
   END AS token_standard,
   addrs [0] AS project_contract_address,
-  CASE WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy,1,4)) THEN '0x'||SUBSTR(calldataBuy,163,40)
-        WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy,1,4)) THEN '0x'||SUBSTR(calldataBuy,163,40)
-        WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy,1,4)) THEN addrs [4]
-        WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy,1,4)) THEN addrs [4]
+  CASE WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy, 1, 4)) THEN '0x'||SUBSTR(calldataBuy,163,40)
+        WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy, 1, 4)) THEN '0x'||SUBSTR(calldataBuy,163,40)
+        WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy, 1, 4)) THEN addrs [4]
+        WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy, 1, 4)) THEN addrs [4]
         END AS nft_contract_address,
   CASE -- Replace `ETH` with `WETH` FOR ERC20 lookup later
       WHEN addrs [6] = '0x0000000000000000000000000000000000000000' THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
@@ -37,18 +37,18 @@ SELECT
   addrs [8] AS seller,
   -- Temporary fix FOR token ID until we implement a UDF equivalent FOR bytea2numeric that works FOR numbers higher than 64 bits
   -- We check if token ID in hex is longer than 16, because 2**64 can be represented in hex with 16 digits (log_16(2**64) = 16).
-  CASE WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy,1,4)) AND length(ltrim('0', SUBSTR(calldataBuy,203,64))) > 16
+  CASE WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy, 1, 4)) AND length(ltrim('0', SUBSTR(calldataBuy, 203, 64))) > 16
   THEN 'Token ID is larger than 64 bits AND can NOT be displayed'
-  WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy,1,4)) AND length(ltrim('0', SUBSTR(calldataBuy,203,64))) > 16
+  WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy, 1, 4)) AND length(ltrim('0', SUBSTR(calldataBuy, 203, 64))) > 16
   THEN 'Token ID is larger than 64 bits AND can NOT be displayed'
-  WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy,1,4)) AND length(ltrim('0', SUBSTR(calldataBuy,139,64))) > 16
+  WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy, 1, 4)) AND length(ltrim('0', SUBSTR(calldataBuy, 139, 64))) > 16
   THEN 'Token ID is larger than 64 bits AND can NOT be displayed'
-  WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy,1,4)) AND length(ltrim('0', SUBSTR(calldataBuy,139,64))) > 16
+  WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy, 1, 4)) AND length(ltrim('0', SUBSTR(calldataBuy, 139, 64))) > 16
   THEN 'Token ID is larger than 64 bits AND can NOT be displayed'
-  WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy,1,4)) THEN conv(SUBSTR(calldataBuy,203,64),16,10)::STRING
-  WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy,1,4)) THEN conv(SUBSTR(calldataBuy,203,64),16,10)::STRING
-  WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy,1,4)) THEN conv(SUBSTR(calldataBuy,139,64),16,10)::STRING
-  WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy,1,4)) THEN conv(SUBSTR(calldataBuy,139,64),16,10)::STRING
+  WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy, 1, 4)) THEN conv(SUBSTR(calldataBuy,203,64),16,10)::STRING
+  WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy, 1, 4)) THEN conv(SUBSTR(calldataBuy,203,64),16,10)::STRING
+  WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy, 1, 4)) THEN conv(SUBSTR(calldataBuy,139,64),16,10)::STRING
+  WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy, 1, 4)) THEN conv(SUBSTR(calldataBuy,139,64),16,10)::STRING
   END AS token_id,
   CASE WHEN size(call_trace_address) = 0 THEN array(3::bigint) -- FOR bundle join
   ELSE call_trace_address
@@ -61,7 +61,7 @@ WHERE
         OR addrs[10] = '0x5b3256965e7c3cf26e11fcaf296dfc8807c01073')
 AND call_success = true
 {% if is_incremental() %}
-AND call_block_time >= date_trunc("day", now() - interval '1 week')
+AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}
 ),
 
@@ -91,8 +91,8 @@ SELECT
     fees.tx_hash = wc.call_tx_hash
     AND fees.trace_address = wc.call_trace_address
     {% if is_incremental() %}
-    AND fees.block_time >= date_trunc("day", now() - interval '1 week')
-  WHERE wc.call_block_time >= date_trunc("day", now() - interval '1 week')
+    AND fees.block_time >= date_trunc("day", now() - INTERVAL '1 week')
+  WHERE wc.call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
   {% endif %}
 ),
 
@@ -192,7 +192,7 @@ SELECT DISTINCT
 FROM wyvern_all wa
 INNER JOIN {{ source('ethereum', 'transactions') }} tx ON wa.call_tx_hash = tx.hash
     {% if is_incremental() %}
-    AND tx.block_time >= date_trunc("day", now() - interval '1 week')
+    AND tx.block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN erc_transfers ON erc_transfers.evt_tx_hash = wa.call_tx_hash AND (wa.token_id = erc_transfers.token_id_erc
 OR wa.token_id = NULL)
@@ -204,7 +204,7 @@ LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct2 ON erct2.evt_blo
     AND erct2.tokenId=coalesce(token_id_erc, wa.token_id)
     AND erct2.from=buyer
     {% if is_incremental() %}
-    AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND erct2.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ source('erc1155_ethereum', 'evt_transfersingle') }} erct3 ON erct3.evt_block_time=tx.block_time
     AND wa.nft_contract_address=erct3.contract_address
@@ -212,13 +212,13 @@ LEFT JOIN {{ source('erc1155_ethereum', 'evt_transfersingle') }} erct3 ON erct3.
     AND erct3.id=coalesce(token_id_erc, wa.token_id)
     AND erct3.from=buyer
     {% if is_incremental() %}
-    AND erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND erct3.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', tx.block_time)
     AND p.contract_address = wa.currency_contract
     AND p.blockchain ='ethereum'
     {% if is_incremental() %}
-    AND p.minute >= date_trunc("day", now() - interval '1 week')
+    AND p.minute >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} erc20 ON erc20.contract_address = wa.currency_contract AND erc20.blockchain = 'ethereum'
   WHERE wa.call_tx_hash NOT in (

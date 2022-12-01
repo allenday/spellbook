@@ -20,6 +20,6 @@ FROM {{ ref('transfers_ethereum_erc20') }} tr
 LEFT JOIN {{ ref('tokens_ethereum_erc20') }} t ON t.contract_address = tr.token_address
 {% if is_incremental() %}
 -- this filter will only be applied ON an incremental run
-where tr.evt_block_time >= date_trunc('hour', now() - interval '1 week')
+where tr.evt_block_time >= date_trunc('hour', now() - INTERVAL '1 week')
 {% endif %}
 GROUP BY 1, 2, 3, 4, 5, 6

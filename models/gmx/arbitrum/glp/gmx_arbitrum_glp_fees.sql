@@ -25,12 +25,12 @@ fglp_balances AS -- This CTE returns the accuals of WETH tokens in the Fee GLP c
         SUM(b.weth_transfer_value) OVER (ORDER BY b.minute ASC) AS weth_cum_balance
     FROM
         (
-        SELECT  -- This subquery aggregates all the inbound tranfers of WETH tokens to the Fee GLP contract in a designated minute
+        SELECT  -- This subquery aggregates ALL the inbound tranfers of WETH tokens to the Fee GLP contract in a designated minute
             a.minute,
             SUM(a.transfer_value) AS weth_transfer_value
         FROM
             (
-            SELECT -- This subquery truncates the block time to a minute AND selects all the inbound tranfers of WETH tokens to the Fee GLP contract
+            SELECT -- This subquery truncates the block time to a minute AND selects ALL the inbound tranfers of WETH tokens to the Fee GLP contract
                 date_trunc('minute', evt_block_time) AS minute,
                 ((value) / 1e18) AS transfer_value -- WETH 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}

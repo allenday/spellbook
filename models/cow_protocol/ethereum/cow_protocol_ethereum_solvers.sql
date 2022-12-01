@@ -12,7 +12,7 @@ WITH
 solver_activation_events AS (
     SELECT solver, evt_block_number, evt_index, True AS activated
     FROM {{ source('gnosis_protocol_v2_ethereum', 'GPv2AllowListAuthentication_evt_SolverAdded') }}
-    union
+    UNION
     SELECT solver, evt_block_number, evt_index, False AS activated
     FROM {{ source('gnosis_protocol_v2_ethereum', 'GPv2AllowListAuthentication_evt_SolverRemoved') }}
 ),

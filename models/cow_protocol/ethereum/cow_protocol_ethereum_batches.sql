@@ -34,12 +34,12 @@ batch_counts AS (
         left outer join {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Interaction') }} i
             ON i.evt_tx_hash = s.evt_tx_hash
             {% if is_incremental() %}
-            AND i.evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND i.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
         join cow_protocol_ethereum.solvers
             ON solver = address
     {% if is_incremental() %}
-    WHERE s.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE s.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
     GROUP BY s.evt_tx_hash, solver, s.evt_block_time, name
 ),
@@ -57,7 +57,7 @@ batch_values AS (
             AND p.minute = date_trunc('minute', block_time)
             AND blockchain = 'ethereum'
     {% if is_incremental() %}
-    WHERE block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
     GROUP BY tx_hash, price
 ),
@@ -98,7 +98,7 @@ combined_batch_info AS (
         inner join {{ source('ethereum', 'transactions') }} tx
             ON evt_tx_hash = hash
             {% if is_incremental() %}
-            AND block_time >= date_trunc("day", now() - interval '1 week')
+            AND block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
     where num_trades > 0 --! Exclude Withdraw Batches
 )

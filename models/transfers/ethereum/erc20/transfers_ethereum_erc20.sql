@@ -54,12 +54,12 @@ with
 
 SELECT unique_transfer_id, 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, amount_raw
 FROM sent_transfers
-union
+UNION
 SELECT unique_transfer_id, 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, amount_raw
 FROM received_transfers
-union
+UNION
 SELECT unique_transfer_id, 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, amount_raw
 FROM deposited_weth
-union
+UNION
 SELECT unique_transfer_id, 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, amount_raw
 FROM withdrawn_weth

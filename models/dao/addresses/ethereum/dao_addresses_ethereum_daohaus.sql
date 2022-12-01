@@ -25,7 +25,7 @@ get_daohaus_molochs AS ( -- molochs are daos AND this is getting a list of moloc
         WHERE block_time >= '{{moloch_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        WHERE block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         AND topic1 = '0x099e0b09e056ad33e22e4d35de2e837a30ba249f33d912abb7e1e273bbf9d650' -- summon moloch event which is the event emitted WHEN a moloch is created through daohaus
         AND contract_address = '0x38064f40b20347d58b326e767791a6f79cdeddce' -- dao haus moloch v2.1 contract address
@@ -41,7 +41,7 @@ get_minion_creations AS ( -- minions are created BY molochs to manage funds (thi
         WHERE block_time >= '{{minion_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        WHERE block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         AND topic1 = '0xbaefe449c0963ab3bd87eb56115a3f8420fbefae45878f063cc59a6cb99d3ae0' -- summon minion event which is emitted WHEN a minion is created through dao haus
         AND contract_address IN ('0x594af060c08eea9f559bc668484e50596bcb2cfb', '0xbc37509a283e2bb67fd151c34e72e826c501e108') -- dao haus minion summoner contract addresses
@@ -56,7 +56,7 @@ get_daohaus_wallets AS (
             gc.wallet_address AS minion_wallet
         FROM
         get_daohaus_molochs gm
-        LEFT JOIN -- getting minions mapped to molochs (using a LEFT JOIN since NOT all molochs have a minion)
+        LEFT JOIN -- getting minions mapped to molochs (using a LEFT JOIN since NOT ALL molochs have a minion)
         get_minion_creations gc
             ON gm.moloch = gc.moloch
 ),
@@ -72,7 +72,7 @@ mapped_wallets AS (
         FROM
         get_daohaus_wallets
 
-        UNION -- molochs are wallet addresses AS well so using a union here since there'll be duplicates AS i'm unioning the moloch addresses & minion addresses
+        UNION -- molochs are wallet addresses AS well so using a UNION here since there'll be duplicates AS i'm unioning the moloch addresses & minion addresses
 
         SELECT
             'ethereum' AS blockchain,

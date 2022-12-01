@@ -61,7 +61,7 @@ with all_listings AS (
     FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkTransfer') }}
 )
 , base_data AS (
-    with all_days  AS (SELECT explode(sequence(to_date('2017-06-23'), to_date(now()), interval 1 day)) AS day)
+    with all_days  AS (SELECT explode(sequence(to_date('2017-06-23'), to_date(now()), INTERVAL 1 day)) AS day)
     , all_punk_ids AS (SELECT explode(sequence(0, 9999, 1)) AS punk_id)
 
     SELECT  day
@@ -75,9 +75,9 @@ with all_listings AS (
     FROM
     (
     SELECT * FROM all_listings
-    union all SELECT * FROM all_no_longer_for_sale_events
-    union all SELECT * FROM all_buys
-    union all SELECT * FROM all_transfers
+    UNION ALL SELECT * FROM all_no_longer_for_sale_events
+    UNION ALL SELECT * FROM all_buys
+    UNION ALL SELECT * FROM all_transfers
     ) a
     ORDER BY evt_block_number DESC, evt_index DESC
 )

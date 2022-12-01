@@ -88,7 +88,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', '3pool_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -118,7 +118,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', '3poolV2_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -148,7 +148,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'AavePool_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -178,7 +178,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'AavePool_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -208,7 +208,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'aave_v3_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -236,7 +236,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'agEURjEUR_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -266,7 +266,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'arUSD_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -296,7 +296,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'ATriCryptoPool_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -326,7 +326,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'avax3pool_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -354,7 +354,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'axlUSDCUSDC_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -382,7 +382,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'axlUSDC_USDC_e_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -412,7 +412,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'Blizz_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -440,7 +440,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'Curve_DD2_Pool_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -472,7 +472,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'deBridge_USDC_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -500,7 +500,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'DefrostH2O_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -532,7 +532,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'DefrostH2O_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -560,7 +560,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'eEURjEUR_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -588,7 +588,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'frax_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -620,7 +620,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'frax_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -648,7 +648,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'FUSD_MIM_Factory_Pool_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -676,7 +676,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'FUSDUSDC_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -704,7 +704,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'L2StableSwap_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -732,7 +732,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'MAI_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -764,7 +764,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'MAI_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -792,7 +792,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'MIM_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -824,7 +824,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'MIM_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -852,7 +852,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'MoreMoney_USD_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -884,7 +884,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'MoreMoney_USD_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -916,7 +916,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'NXUSDaV3CRV_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -944,7 +944,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'ren_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -972,7 +972,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'ren_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -1004,7 +1004,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'Topshelf_USDL_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -1032,7 +1032,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'USDCe_UST_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -1060,7 +1060,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'USD_coin_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -1092,7 +1092,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'USDS_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
         UNION ALL
@@ -1122,7 +1122,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'YUSDPOOL_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 )
 
@@ -1164,7 +1164,7 @@ INNER JOIN {{ source('avalanche_c', 'transactions') }} tx
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND tx.block_time >= date_trunc("day", now() - interval '1 week')
+    AND tx.block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} erc20a
     ON erc20a.contract_address = dexs.token_bought_address
@@ -1180,7 +1180,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_bought
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p_bought.minute >= date_trunc("day", now() - interval '1 week')
+    AND p_bought.minute >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p_sold
     ON p_sold.minute = date_trunc('minute', dexs.block_time)
@@ -1190,5 +1190,5 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p_sold.minute >= date_trunc("day", now() - interval '1 week')
+    AND p_sold.minute >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}

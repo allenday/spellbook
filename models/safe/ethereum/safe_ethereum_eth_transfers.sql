@@ -31,11 +31,11 @@ join {{ ref('safe_ethereum_safes') }} s ON et.from = s.address
 where et.block_time > '2018-11-24' -- FOR initial query optimisation
 {% endif %}
 {% if is_incremental() %}
--- to prevent potential counterfactual safe deployment issues we take a bigger interval
-where et.block_time > date_trunc("day", now() - interval '10 days')
+-- to prevent potential counterfactual safe deployment issues we take a bigger INTERVAL
+where et.block_time > date_trunc("day", now() - INTERVAL '10 days')
 {% endif %}
 
-union all
+UNION ALL
 
 SELECT
     s.address,
@@ -54,6 +54,6 @@ join {{ ref('safe_ethereum_safes') }} s ON et.to = s.address
 where et.block_time > '2018-11-24' -- FOR initial query optimisation
 {% endif %}
 {% if is_incremental() %}
--- to prevent potential counterfactual safe deployment issues we take a bigger interval
-where et.block_time > date_trunc("day", now() - interval '10 days')
+-- to prevent potential counterfactual safe deployment issues we take a bigger INTERVAL
+where et.block_time > date_trunc("day", now() - INTERVAL '10 days')
 {% endif %}

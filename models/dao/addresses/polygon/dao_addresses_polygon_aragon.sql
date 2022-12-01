@@ -22,7 +22,7 @@ aragon_daos AS ( -- decoded table FOR aragon ON dune that returns the address of
         WHERE evt_block_time >= '{{project_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
 ),
 
@@ -47,7 +47,7 @@ get_aragon_wallets AS ( -- this is getting the app address that is deployed FOR 
         WHERE block_time >= '{{project_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        WHERE block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         AND topic1 = LOWER('0xd880e726dced8808d727f02dd0e6fdd3a945b24bfee77e13367bcbe61ddbaf47') -- aragon apps deployment event
         AND contract_address IN (SELECT dao FROM aragon_daos)

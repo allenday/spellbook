@@ -22,7 +22,7 @@ with ethereum_traces AS (
                    '0xa18607ca4a3804cc3cd5730eafefcc47a7641643', '0x6ad3dac99c9a4a480748c566ce7b3503506e3d71')
         AND block_time >= '{{ project_start_date }}'
     {% if is_incremental() %}
-        AND block_time >= date_trunc('day', now() - interval '10 days')
+        AND block_time >= date_trunc('day', now() - INTERVAL '10 days')
     {% endif %}
 ),
 
@@ -31,7 +31,7 @@ ethereum_transactions AS (
     FROM {{ source('ethereum', 'transactions') }}
     where block_time >= '{{ project_start_date }}'
     {% if is_incremental() %}
-        AND block_time >= date_trunc('day', now() - interval '10 days')
+        AND block_time >= date_trunc('day', now() - INTERVAL '10 days')
     {% endif %}
 ),
 
@@ -41,7 +41,7 @@ prices_usd AS (
     where `minute` >= '{{ project_start_date }}'
         AND blockchain = 'ethereum'
     {% if is_incremental() %}
-        AND `minute` >= date_trunc('day', now() - interval '10 days')
+        AND `minute` >= date_trunc('day', now() - INTERVAL '10 days')
     {% endif %}
 ),
 
@@ -56,7 +56,7 @@ hashflow_pool_evt_trade AS (
     FROM {{ source('hashflow_ethereum', 'pool_evt_trade') }}
     where evt_block_time >= '{{ project_start_date }}'
     {% if is_incremental() %}
-        AND evt_block_time >= date_trunc('day', now() - interval '10 days')
+        AND evt_block_time >= date_trunc('day', now() - INTERVAL '10 days')
     {% endif %}
 ),
 
@@ -65,7 +65,7 @@ ethereum_logs AS (
     SELECT *
     FROM {{ source('ethereum', 'logs') }}
     where block_time >= '{{ project_start_date }}'
-        AND block_number <= 13974528 -- block of last trade of all legacy routers
+        AND block_number <= 13974528 -- block of last trade of ALL legacy routers
 ),
 
 new_router AS (
@@ -124,7 +124,7 @@ event_decoding_legacy_router AS (
     FROM ethereum_logs
     where topic1 ='0x8cf3dec1929508e5677d7db003124e74802bfba7250a572205a9986d86ca9f1e' -- trade0()
 
-    union all
+    UNION ALL
 
     SELECT
         tx_hash,
@@ -178,7 +178,7 @@ legacy_router_w_integration AS (
         AND SUBSTRING(input, 1, 4) in ('0xba93c39c') -- swap
         AND t.block_number <= 13803909 -- block of last trade of this legacy router
 
-    union all
+    UNION ALL
 
     SELECT
         cast(coalesce(l.evt_index, -1) AS int) AS composite_index,
@@ -254,7 +254,7 @@ legacy_routers AS (
                                        '0xc7f6b19d') -- eth to token
         AND p.symbol = 'WETH'
 
-    union all
+    UNION ALL
 
     SELECT
             t.block_time,
@@ -280,7 +280,7 @@ legacy_routers AS (
         AND `to` in ('0x455a3B3Be6e7C8843f2b03A1cA22A5a5727ef5C4', '0x9d4fc735e1a596420d24a266b7b5402fe4ec153c', '0x2405cb057a9baf85daa11ce9832baed839b6871c', '0x043389f397ad72619d05946f5f35426a7ace6613')
         AND SUBSTRING(input, 1, 4) in ('0x064f0410', '0x4d0246ad') -- token to token
 
-    union all
+    UNION ALL
 
     SELECT
         t.block_time,
@@ -375,21 +375,21 @@ all_trades AS (
         -1 AS composite_index,
         -- was decoding FROM trace, no log_index, only single swap exist so works AS PK
         '0x00' AS source,
-        -- all FROM native front END, no integration yet
+        -- ALL FROM native front END, no integration yet
         *
     FROM legacy_routers
 
-    union all
+    UNION ALL
 
     SELECT * FROM new_pool
 
     {% if NOT is_incremental() %}
 
-    union all
+    UNION ALL
 
     SELECT * FROM legacy_router_w_integration
 
-    union all
+    UNION ALL
 
     SELECT * FROM dedupe_new_router
 

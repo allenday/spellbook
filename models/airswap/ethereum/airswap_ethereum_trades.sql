@@ -32,7 +32,7 @@ WITH dexs AS
         evt_index
     FROM {{ source('airswap_ethereum', 'Light_evt_Swap')}} e
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 
     UNION ALL
@@ -53,7 +53,7 @@ WITH dexs AS
         evt_index
     FROM {{ source('airswap_ethereum', 'swap_evt_Swap')}} e
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 
     UNION ALL
@@ -74,7 +74,7 @@ WITH dexs AS
         evt_index
     FROM {{ source('airswap_ethereum', 'Swap_v3_evt_Swap')}} e
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 )
 SELECT
@@ -115,7 +115,7 @@ INNER JOIN {{ source('ethereum', 'transactions') }} tx
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND tx.block_time = date_trunc("day", now() - interval '1 week')
+    AND tx.block_time = date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} erc20a
     ON erc20a.contract_address = dexs.token_bought_address
@@ -130,7 +130,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_bought
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p_bought.minute >= date_trunc("day", now() - interval '1 week')
+    AND p_bought.minute >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
     AND p_bought.blockchain = 'ethereum'
 LEFT JOIN {{ source('prices', 'usd') }} p_sold
@@ -140,7 +140,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p_sold.minute >= date_trunc("day", now() - interval '1 week')
+    AND p_sold.minute >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
     AND p_sold.blockchain = 'ethereum'
 ;

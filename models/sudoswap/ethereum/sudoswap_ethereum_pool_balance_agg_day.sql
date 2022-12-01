@@ -34,7 +34,7 @@ WITH
     WHERE et.evt_block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    WHERE et.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE et.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
     GROUP BY
       1,2
@@ -65,12 +65,12 @@ WITH
           AND tr.block_time > '{{project_start_date}}'
           {% endif %}
           {% if is_incremental() %}
-          AND tr.block_time >= date_trunc("day", now() - interval '1 week')
+          AND tr.block_time >= date_trunc("day", now() - INTERVAL '1 week')
           {% endif %}
         GROUP BY
           1,2
     ) foo
-    union all
+    UNION ALL
     SELECT * FROM (
         SELECT
           date_trunc('day',tr.block_time) AS day
@@ -90,7 +90,7 @@ WITH
           AND tr.block_time > '{{project_start_date}}'
           {% endif %}
           {% if is_incremental() %}
-          AND tr.block_time >= date_trunc("day", now() - interval '1 week')
+          AND tr.block_time >= date_trunc("day", now() - INTERVAL '1 week')
           {% endif %}
         GROUP BY
           1,2

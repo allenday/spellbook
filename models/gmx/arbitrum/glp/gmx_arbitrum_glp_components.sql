@@ -33,7 +33,7 @@ glp_frax_poolAmounts AS -- This CTE returns the average amount of FRAX tokens in
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
         WHERE _0 = '0x17fc002b466eec40dae837fc4be5c67993ddbd6f' -- FRAX Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
@@ -52,7 +52,7 @@ glp_usdt_poolAmounts AS -- This CTE returns the average amount of USDT tokens in
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
         WHERE _0 = '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9' -- USDT Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
@@ -71,7 +71,7 @@ glp_wbtc_poolAmounts AS -- This CTE returns the average amount of WBTC tokens in
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
         WHERE _0 = '0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f' -- WBTC Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
@@ -90,7 +90,7 @@ glp_usdc_poolAmounts AS -- This CTE returns the average amount of USDC tokens in
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
         WHERE _0 = '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8' -- USDC Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
@@ -109,7 +109,7 @@ glp_uni_poolAmounts AS -- This CTE returns the average amount of UNI tokens in t
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
         WHERE _0 = '0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0' -- UNI Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
@@ -128,7 +128,7 @@ glp_link_poolAmounts AS -- This CTE returns the average amount of LINK tokens in
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
         WHERE _0 = '0xf97f4df75117a78c1a5a0dbb814af92458539fb4' -- LINK Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
@@ -147,7 +147,7 @@ glp_weth_poolAmounts AS -- This CTE returns the average amount of WETH tokens in
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
         WHERE _0 = '0x82af49447d8a07e3bd95bd0d56f35241523fbab1' -- WETH Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
@@ -166,7 +166,7 @@ glp_dai_poolAmounts AS -- This CTE returns the average amount of DAI tokens in t
         FROM {{source('gmx_arbitrum', 'Vault_call_poolAmounts')}}
         WHERE _0 = '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1' -- DAI Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
@@ -189,7 +189,7 @@ glp_wbtc_reservedAmounts AS -- This CTE returns the average amount of reserved W
         FROM {{source('gmx_arbitrum', 'Vault_call_reservedAmounts')}}
         WHERE _0 = '0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f' -- WBTC Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
@@ -208,7 +208,7 @@ glp_uni_reservedAmounts AS -- This CTE returns the average amount of reserved UN
         FROM {{source('gmx_arbitrum', 'Vault_call_reservedAmounts')}}
         WHERE _0 = '0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0' -- UNI Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
@@ -227,7 +227,7 @@ glp_link_reservedAmounts AS -- This CTE returns the average amount of reserved L
         FROM {{source('gmx_arbitrum', 'Vault_call_reservedAmounts')}}
         WHERE _0 = '0xf97f4df75117a78c1a5a0dbb814af92458539fb4' -- LINK Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
@@ -246,7 +246,7 @@ glp_weth_reservedAmounts AS -- This CTE returns the average amount of reserved W
         FROM {{source('gmx_arbitrum', 'Vault_call_reservedAmounts')}}
         WHERE _0 = '0x82af49447d8a07e3bd95bd0d56f35241523fbab1' -- WETH Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
@@ -270,7 +270,7 @@ glp_wbtc_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against 
             FROM {{source('gmx_arbitrum', 'Vault_call_guaranteedUsd')}}
             WHERE _0 = '0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f' -- WBTC Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -289,7 +289,7 @@ glp_uni_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against U
             FROM {{source('gmx_arbitrum', 'Vault_call_guaranteedUsd')}}
             WHERE _0 = '0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0' -- UNI Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -308,7 +308,7 @@ glp_link_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against 
             FROM {{source('gmx_arbitrum', 'Vault_call_guaranteedUsd')}}
             WHERE _0 = '0xf97f4df75117a78c1a5a0dbb814af92458539fb4' -- LINK Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -327,7 +327,7 @@ glp_weth_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against 
             FROM {{source('gmx_arbitrum', 'Vault_call_guaranteedUsd')}}
             WHERE _0 = '0x82af49447d8a07e3bd95bd0d56f35241523fbab1' -- WETH Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -349,7 +349,7 @@ glp_frax_getMaxPrice AS -- This CTE returns the maximum price of FRAX tokens in 
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0x17fc002b466eec40dae837fc4be5c67993ddbd6f' -- FRAX Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -368,7 +368,7 @@ glp_usdt_getMaxPrice AS -- This CTE returns the maximum price of USDT tokens in 
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9' -- USDT Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -387,7 +387,7 @@ glp_wbtc_getMaxPrice AS -- This CTE returns the maximum price of WBTC tokens in 
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f' -- WBTC Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -406,7 +406,7 @@ glp_usdc_getMaxPrice AS -- This CTE returns the maximum price of USDC tokens in 
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8' -- USDC Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -425,7 +425,7 @@ glp_uni_getMaxPrice AS -- This CTE returns the maximum price of UNI tokens in th
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0' -- UNI Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -444,7 +444,7 @@ glp_link_getMaxPrice AS -- This CTE returns the maximum price of LINK tokens in 
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0xf97f4df75117a78c1a5a0dbb814af92458539fb4' -- LINK Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -463,7 +463,7 @@ glp_weth_getMaxPrice AS -- This CTE returns the maximum price of WETH tokens in 
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0x82af49447d8a07e3bd95bd0d56f35241523fbab1' -- WETH Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -482,7 +482,7 @@ glp_dai_getMaxPrice AS -- This CTE returns the maximum price of DAI tokens in th
             FROM {{source('gmx_arbitrum', 'Vault_call_getMaxPrice')}}
             WHERE _token = '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1' -- DAI Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -504,7 +504,7 @@ glp_frax_getMinPrice AS -- This CTE returns the minimum price of FRAX tokens in 
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0x17fc002b466eec40dae837fc4be5c67993ddbd6f' -- FRAX Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -523,7 +523,7 @@ glp_usdt_getMinPrice AS -- This CTE returns the minimum price of USDT tokens in 
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9' -- USDT Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -542,7 +542,7 @@ glp_wbtc_getMinPrice AS -- This CTE returns the minimum price of WBTC tokens in 
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f' -- WBTC Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -561,7 +561,7 @@ glp_usdc_getMinPrice AS -- This CTE returns the minimum price of USDC tokens in 
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8' -- USDC Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -580,7 +580,7 @@ glp_uni_getMinPrice AS -- This CTE returns the minimum price of UNI tokens in th
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0' -- UNI Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -599,7 +599,7 @@ glp_link_getMinPrice AS -- This CTE returns the minimum price of LINK tokens in 
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0xf97f4df75117a78c1a5a0dbb814af92458539fb4' -- LINK Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -618,7 +618,7 @@ glp_weth_getMinPrice AS -- This CTE returns the minimum price of WETH tokens in 
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0x82af49447d8a07e3bd95bd0d56f35241523fbab1' -- WETH Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -637,167 +637,167 @@ glp_dai_getMinPrice AS -- This CTE returns the minimum price of DAI tokens in th
             FROM {{source('gmx_arbitrum', 'Vault_call_getMinPrice')}}
             WHERE _token = '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1' -- DAI Arbitrum Smart Contract
             {% if is_incremental() %}
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
     ) ,
 
  / *
-globalShortAveragePrices returns the volume weighted average price of all shorts.
+globalShortAveragePrices returns the volume weighted average price of ALL shorts.
 FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts ON those tokens.
 * / 
-glp_wbtc_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all WBTC shorts FOR a designated minute
+glp_wbtc_globalShortAveragePrices AS -- This CTE returns volume weighted average price of ALL WBTC shorts FOR a designated minute
     (
-    SELECT -- This query averages the volume weighted average price of all WBTC shorts if more than one transaction is reccorded FOR a designated minute
+    SELECT -- This query averages the volume weighted average price of ALL WBTC shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.price) AS price
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute AND fetches volume weighted average price of all WBTC shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches volume weighted average price of ALL WBTC shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS price
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortAveragePrices')}}
         WHERE _0 = '0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f' -- WBTC Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
     ) ,
 
-glp_uni_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all UNI shorts FOR a designated minute
+glp_uni_globalShortAveragePrices AS -- This CTE returns volume weighted average price of ALL UNI shorts FOR a designated minute
     (
-    SELECT -- This query averages the volume weighted average price of all UNI shorts if more than one transaction is reccorded FOR a designated minute
+    SELECT -- This query averages the volume weighted average price of ALL UNI shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.price) AS price
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute AND fetches volume weighted average price of all UNI shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches volume weighted average price of ALL UNI shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS price
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortAveragePrices')}}
         WHERE _0 = '0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0' -- UNI Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
     ) ,
 
-glp_link_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all LINK shorts FOR a designated minute
+glp_link_globalShortAveragePrices AS -- This CTE returns volume weighted average price of ALL LINK shorts FOR a designated minute
     (
-    SELECT -- This query averages the volume weighted average price of all LINK shorts if more than one transaction is reccorded FOR a designated minute
+    SELECT -- This query averages the volume weighted average price of ALL LINK shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.price) AS price
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute AND fetches volume weighted average price of all LINK shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches volume weighted average price of ALL LINK shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS price
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortAveragePrices')}}
         WHERE _0 = '0xf97f4df75117a78c1a5a0dbb814af92458539fb4' -- LINK Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
     ) ,
 
-glp_weth_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all WETH shorts FOR a designated minute
+glp_weth_globalShortAveragePrices AS -- This CTE returns volume weighted average price of ALL WETH shorts FOR a designated minute
     (
-    SELECT -- This query averages the volume weighted average price of all WETH shorts if more than one transaction is reccorded FOR a designated minute
+    SELECT -- This query averages the volume weighted average price of ALL WETH shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.price) AS price
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute AND fetches volume weighted average price of all WETH shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches volume weighted average price of ALL WETH shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS price
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortAveragePrices')}}
         WHERE _0 = '0x82af49447d8a07e3bd95bd0d56f35241523fbab1' -- WETH Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
     ) ,
 
  / *
-globalShortSizes returns the sum of all shorts reported in the asset currency.
+globalShortSizes returns the sum of ALL shorts reported in the asset currency.
 FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts ON those tokens.
 * / 
-glp_wbtc_globalShortSizes AS -- This CTE returns average sum of all WBTC shorts FOR a designated minute
+glp_wbtc_globalShortSizes AS -- This CTE returns average sum of ALL WBTC shorts FOR a designated minute
     (
-    SELECT -- This query averages sum of all WBTC shorts if more than one transaction is reccorded FOR a designated minute
+    SELECT -- This query averages sum of ALL WBTC shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute AND fetches the sum of all WBTC shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches the sum of ALL WBTC shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortSizes')}}
         WHERE _0 = '0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f' -- WBTC Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
     ) ,
 
-glp_uni_globalShortSizes AS -- This CTE returns average sum of all UNI shorts FOR a designated minute
+glp_uni_globalShortSizes AS -- This CTE returns average sum of ALL UNI shorts FOR a designated minute
     (
-    SELECT -- This query averages sum of all UNI shorts if more than one transaction is reccorded FOR a designated minute
+    SELECT -- This query averages sum of ALL UNI shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute AND fetches the sum of all UNI shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches the sum of ALL UNI shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortSizes')}}
         WHERE _0 = '0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0' -- UNI Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
     ) ,
 
-glp_link_globalShortSizes AS -- This CTE returns average sum of all LINK shorts FOR a designated minute
+glp_link_globalShortSizes AS -- This CTE returns average sum of ALL LINK shorts FOR a designated minute
     (
-    SELECT -- This query averages sum of all LINK shorts if more than one transaction is reccorded FOR a designated minute
+    SELECT -- This query averages sum of ALL LINK shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute AND fetches the sum of all LINK shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches the sum of ALL LINK shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortSizes')}}
         WHERE _0 = '0xf97f4df75117a78c1a5a0dbb814af92458539fb4' -- LINK Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
     ) ,
 
-glp_weth_globalShortSizes AS -- This CTE returns average sum of all WETH shorts FOR a designated minute
+glp_weth_globalShortSizes AS -- This CTE returns average sum of ALL WETH shorts FOR a designated minute
     (
-    SELECT -- This query averages sum of all WETH shorts if more than one transaction is reccorded FOR a designated minute
+    SELECT -- This query averages sum of ALL WETH shorts if more than one transaction is reccorded FOR a designated minute
         a.minute,
         AVG(a.amount) AS amount
     FROM
         (
-        SELECT -- This subquery truncates the block time to a minute AND fetches the sum of all WETH shorts
+        SELECT -- This subquery truncates the block time to a minute AND fetches the sum of ALL WETH shorts
             date_trunc('minute', call_block_time) AS minute,
             output_0 AS amount
         FROM {{source('gmx_arbitrum', 'Vault_call_globalShortSizes')}}
         WHERE _0 = '0x82af49447d8a07e3bd95bd0d56f35241523fbab1' -- WETH Arbitrum Smart Contract
         {% if is_incremental() %}
-        AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         ) a
     GROUP BY a.minute
@@ -895,7 +895,7 @@ FROM
         COALESCE(x.dai_getMinPrice,0) AS dai_getMinPrice
     FROM
         (
-        SELECT -- This subquery collates all the data extracted FROM the vault contract functions, joins them to the minute series, AND uses last data to extrapolate OVER NULL values
+        SELECT -- This subquery collates ALL the data extracted FROM the vault contract functions, joins them to the minute series, AND uses last data to extrapolate OVER NULL values
             a.minute,
 
             last(b1.amount, true) OVER (ORDER BY a.minute ASC) AS frax_poolAmounts,

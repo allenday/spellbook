@@ -48,7 +48,7 @@ with nomad_bridge_domains(domain_id, domain_name, domain_type) AS (
             AND p1.minute >= '2022-01-01'
             AND p1.blockchain = 'ethereum'
 
-      union all
+      UNION ALL
 
       SELECT evt_block_time AS block_time
           , evt_block_number AS block_number

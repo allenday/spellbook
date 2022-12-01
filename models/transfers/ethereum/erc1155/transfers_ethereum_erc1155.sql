@@ -93,6 +93,6 @@ with
 
 SELECT 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, tokenId, amount, evt_tx_hash, unique_tx_id
 FROM sent_transfers
-union all
+UNION ALL
 SELECT 'ethereum' AS blockchain, wallet_address, token_address, evt_block_time, tokenId, amount, evt_tx_hash, unique_tx_id
 FROM received_transfers

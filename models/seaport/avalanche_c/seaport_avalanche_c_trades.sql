@@ -24,7 +24,7 @@ with source_avalanche_c_transactions AS (
     where block_time >= date '{{c_seaport_first_date}}'  -- seaport first txn
     {% endif %}
     {% if is_incremental() %}
-    where block_time >= date_trunc("day", now() - interval '1 week')
+    where block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 )
 ,ref_seaport_avalanche_c_base_pairs AS (
@@ -32,7 +32,7 @@ with source_avalanche_c_transactions AS (
       FROM {{ ref('seaport_avalanche_c_base_pairs') }}
       where 1=1
       {% if is_incremental() %}
-            AND block_time >= date_trunc("day", now() - interval '1 week')
+            AND block_time >= date_trunc("day", now() - INTERVAL '1 week')
       {% endif %}
 )
 ,ref_tokens_nft AS (
@@ -58,7 +58,7 @@ with source_avalanche_c_transactions AS (
       AND minute >= date '{{c_seaport_first_date}}'  -- seaport first txn
     {% endif %}
     {% if is_incremental() %}
-      AND minute >= date_trunc("day", now() - interval '1 week')
+      AND minute >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 )
 ,iv_base_pairs_priv AS (
@@ -97,7 +97,7 @@ with source_avalanche_c_transactions AS (
   FROM ref_seaport_avalanche_c_base_pairs a
   where 1=1
     AND NOT a.is_private
-  union all
+  UNION ALL
   SELECT a.block_date
         ,a.block_time
         ,a.block_number

@@ -35,7 +35,7 @@ rollup_balance_changes AS (
 )
 
 , day_series AS (
-  SELECT explode(sequence(CAST('2022-06-06' AS date), CAST(NOW() AS date), interval '1 Day')) as date
+  SELECT explode(sequence(CAST('2022-06-06' AS date), CAST(NOW() AS date), INTERVAL '1 Day')) as date
 )
 
 , token_balances_filled AS (
@@ -70,7 +70,7 @@ rollup_balance_changes AS (
         AND p.minute >= '{{first_transfer_date}}'
         {% endif %}
         {% if is_incremental() %}
-        AND p.minute >= date_trunc("day", now() - interval '1 week')
+        AND p.minute >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
     GROUP BY 1, 2, 3
 )
@@ -86,7 +86,7 @@ rollup_balance_changes AS (
         WHERE p.minute >= '{{first_transfer_date}}'
         {% endif %}
         {% if is_incremental() %}
-        WHERE p.minute >= date_trunc("day", now() - interval '1 week')
+        WHERE p.minute >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         AND p.blockchain = 'ethereum'
         AND p.symbol = 'WETH'

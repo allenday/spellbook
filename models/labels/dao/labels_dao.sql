@@ -18,7 +18,7 @@ FROM
 {{ ref('dao_addresses') }}
 WHERE dao_creator_tool != 'zodiac' -- excluding zodiac since they're gnosis safes
 
-UNION  -- using a union because there are daos whose contract address also receives AND send funds
+UNION  -- using a UNION because there are daos whose contract address also receives AND send funds
 
 SELECT
     array(blockchain) AS blockchain,

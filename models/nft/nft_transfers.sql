@@ -27,7 +27,7 @@ SELECT 'ethereum' AS blockchain
 , unique_transfer_id
 FROM {{ ref('nft_ethereum_transfers') }}
 {% if is_incremental() %}
-WHERE block_time >= date_trunc("day", now() - interval '1 week')
+WHERE block_time >= date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}
 UNION ALL
 SELECT 'bnb' AS blockchain
@@ -46,7 +46,7 @@ SELECT 'bnb' AS blockchain
 , unique_transfer_id
 FROM {{ ref('nft_bnb_transfers') }}
 {% if is_incremental() %}
-WHERE block_time >= date_trunc("day", now() - interval '1 week')
+WHERE block_time >= date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}
 UNION ALL
 SELECT 'avalanche_c' AS blockchain
@@ -65,7 +65,7 @@ SELECT 'avalanche_c' AS blockchain
 , unique_transfer_id
 FROM {{ ref('nft_avalanche_c_transfers') }}
 {% if is_incremental() %}
-WHERE block_time >= date_trunc("day", now() - interval '1 week')
+WHERE block_time >= date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}
 UNION ALL
 SELECT 'gnosis' AS blockchain
@@ -84,7 +84,7 @@ SELECT 'gnosis' AS blockchain
 , unique_transfer_id
 FROM {{ ref('nft_gnosis_transfers') }}
 {% if is_incremental() %}
-WHERE block_time >= date_trunc("day", now() - interval '1 week')
+WHERE block_time >= date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}
 UNION ALL
 SELECT 'optimism' AS blockchain
@@ -103,7 +103,7 @@ SELECT 'optimism' AS blockchain
 , unique_transfer_id
 FROM {{ ref('nft_optimism_transfers') }}
 {% if is_incremental() %}
-WHERE block_time >= date_trunc("day", now() - interval '1 week')
+WHERE block_time >= date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}
 UNION ALL
 SELECT 'arbitrum' AS blockchain
@@ -122,7 +122,7 @@ SELECT 'arbitrum' AS blockchain
 , unique_transfer_id
 FROM {{ ref('nft_arbitrum_transfers') }}
 {% if is_incremental() %}
-WHERE block_time >= date_trunc("day", now() - interval '1 week')
+WHERE block_time >= date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}
 UNION ALL
 SELECT 'polygon' AS blockchain
@@ -141,5 +141,5 @@ SELECT 'polygon' AS blockchain
 , unique_transfer_id
 FROM {{ ref('nft_polygon_transfers') }}
 {% if is_incremental() %}
-WHERE block_time >= date_trunc("day", now() - interval '1 week')
+WHERE block_time >= date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}

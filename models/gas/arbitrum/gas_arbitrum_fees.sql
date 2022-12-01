@@ -36,15 +36,15 @@ SELECT
 FROM {{ source('arbitrum', 'transactions') }} txns
 JOIN {{ source('arbitrum', 'blocks') }} blocks ON blocks.number = txns.block_number
 {% if is_incremental() %}
-AND block_time >= date_trunc("day", now() - interval '2 days')
-AND blocks.time >= date_trunc("day", now() - interval '2 days')
+AND block_time >= date_trunc("day", now() - INTERVAL '2 days')
+AND blocks.time >= date_trunc("day", now() - INTERVAL '2 days')
 {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', block_time)
 AND p.blockchain = 'arbitrum'
 AND p.symbol = 'WETH'
 {% if is_incremental() %}
-AND p.minute >= date_trunc("day", now() - interval '2 days')
-WHERE block_time >= date_trunc("day", now() - interval '2 days')
-AND blocks.time >= date_trunc("day", now() - interval '2 days')
-AND p.minute >= date_trunc("day", now() - interval '2 days')
+AND p.minute >= date_trunc("day", now() - INTERVAL '2 days')
+WHERE block_time >= date_trunc("day", now() - INTERVAL '2 days')
+AND blocks.time >= date_trunc("day", now() - INTERVAL '2 days')
+AND p.minute >= date_trunc("day", now() - INTERVAL '2 days')
 {% endif %}

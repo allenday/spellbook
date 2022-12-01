@@ -12,7 +12,7 @@ with
         SELECT
             explode(
                 sequence(
-                    to_date('2015-01-01'), date_trunc('day', now()), interval 1 day
+                    to_date('2015-01-01'), date_trunc('day', now()), INTERVAL 1 day
                 )
             ) AS day
     )

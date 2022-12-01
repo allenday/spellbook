@@ -55,7 +55,7 @@ FROM
   (CAST('0xc70ffe29b29d02abec693748bc06dd56b14cf122' AS STRING), CAST('MilfKilla' AS string),CAST('MKMILF' AS string),CAST('erc721' AS string)),
   (CAST('0x2e8d82a0e51ba4dedc7b8b163e523c0a5752e300' AS STRING), CAST('xDaiPunks' AS string),CAST('xDaiPunks' AS string),CAST('erc721' AS string)),
   (CAST('0xe47297aee71ced341d3cdfc6f25c61589152edae' AS STRING), CAST('CyberWhale' AS string),CAST('WMILF' AS string),CAST('erc721' AS string)),
-  (CAST('0xaf7709ef95131a2a4480797fd19f94e75663d1d1' AS STRING), CAST('4th of July Lady Liberty' AS string),CAST('Happy 4th of July to all of our Milf Pass Holders!' AS string),CAST('erc721' AS string)),
+  (CAST('0xaf7709ef95131a2a4480797fd19f94e75663d1d1' AS STRING), CAST('4th of July Lady Liberty' AS string),CAST('Happy 4th of July to ALL of our Milf Pass Holders!' AS string),CAST('erc721' AS string)),
   (CAST('0x669f9ae489053c722de4ee037488ea4b1352d725' AS STRING), CAST('Milf Pass' AS string),CAST('MPMILF' AS string),CAST('erc721' AS string)),
   (CAST('0x9249b75af3d7e9422ab7b1ee55c499dba3a35d90' AS STRING), CAST('BEACH BUM MILF' AS string),CAST('BBMILF' AS string),CAST('erc721' AS string)),
   (CAST('0xac19700c61b735c0f3a91b6381e41e47c2fb0619' AS STRING), CAST('' AS string),CAST('' AS string),CAST('erc721' AS string)),

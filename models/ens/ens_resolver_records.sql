@@ -20,7 +20,7 @@ with resolver_records AS (
     , evt_index
     FROM {{ source('ethereumnameservice_ethereum', 'PublicResolver_evt_AddrChanged') }}
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
    )
 

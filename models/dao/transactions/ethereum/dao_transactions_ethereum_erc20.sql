@@ -41,7 +41,7 @@ transactions AS (
         WHERE evt_block_time >= '{{transactions_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         AND to IN (SELECT dao_wallet_address FROM dao_tmp)
 
@@ -63,7 +63,7 @@ transactions AS (
         WHERE evt_block_time >= '{{transactions_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         AND FROM IN (SELECT dao_wallet_address FROM dao_tmp)
 )
@@ -103,6 +103,6 @@ LEFT JOIN
     AND p.minute >= '{{transactions_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p.minute >= date_trunc("day", now() - interval '1 week')
+    AND p.minute >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 

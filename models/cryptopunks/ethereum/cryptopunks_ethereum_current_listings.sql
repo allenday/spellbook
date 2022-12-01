@@ -71,9 +71,9 @@ FROM
     FROM
     (
     SELECT * FROM all_listings
-    union all SELECT * FROM all_no_longer_for_sale_events
-    union all SELECT * FROM all_buys
-    union all SELECT * FROM all_transfers
+    UNION ALL SELECT * FROM all_no_longer_for_sale_events
+    UNION ALL SELECT * FROM all_buys
+    UNION ALL SELECT * FROM all_transfers
     ) a
 ) b
 

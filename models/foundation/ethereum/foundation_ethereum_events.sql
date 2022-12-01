@@ -183,7 +183,7 @@ LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} nft_t ON nft_t.evt_blo
     AND nft_t.contract_address = t.nft_contract_address
     {% if is_incremental() %}
     -- this filter will only be applied ON an incremental run
-    AND nft_t.evt_block_time >=  date_trunc("day", now() - interval '1 week')
+    AND nft_t.evt_block_time >=  date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ source('ethereum', 'transactions') }} et ON et.block_time=t.block_time
     AND et.hash=t.tx_hash
@@ -191,14 +191,14 @@ LEFT JOIN {{ source('ethereum', 'transactions') }} et ON et.block_time=t.block_t
     AND et.block_time > '2021-02-01'
     {% endif %}
     {% if is_incremental() %}
-    AND et.block_time >= date_trunc("day", now() - interval '1 week')
+    AND et.block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ ref('nft_ethereum_aggregators') }} agg ON agg.contract_address=et.to
 LEFT JOIN {{ source('prices', 'usd') }} pu ON pu.minute=date_trunc('minute', t.block_time)
     AND pu.blockchain='ethereum'
     AND pu.contract_address=t.currency_contract
     {% if is_incremental() %}
-    AND pu.minute >= date_trunc("day", now() - interval '1 week')
+    AND pu.minute >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ source('ethereum', 'traces') }} ett ON ett.block_time=t.block_time
     AND ett.tx_hash=t.tx_hash
@@ -209,9 +209,9 @@ LEFT JOIN {{ source('ethereum', 'traces') }} ett ON ett.block_time=t.block_time
     AND ett.success = true
     {% if is_incremental() %}
     -- this filter will only be applied ON an incremental run
-    AND ett.block_time >=  date_trunc("day", now() - interval '1 week')
+    AND ett.block_time >=  date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 {% if is_incremental() %}
 -- this filter will only be applied ON an incremental run
-AND t.block_time >=  date_trunc("day", now() - interval '1 week')
+AND t.block_time >=  date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}

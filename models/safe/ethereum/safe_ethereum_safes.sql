@@ -48,10 +48,10 @@ where et.success = true
     AND et.block_time > '2018-11-24' -- FOR initial query optimisation
     {% endif %}
     {% if is_incremental() %}
-    AND et.block_time > date_trunc("day", now() - interval '1 week')
+    AND et.block_time > date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 
-union all
+UNION ALL
 
 SELECT contract_address AS address,
     '1.3.0' AS creation_version,
@@ -63,5 +63,5 @@ FROM {{ source('gnosis_safe_ethereum', 'GnosisSafev1_3_0_evt_SafeSetup') }}
 where evt_block_time > '2018-11-24' -- FOR initial query optimisation
 {% endif %}
 {% if is_incremental() %}
-where evt_block_time > date_trunc("day", now() - interval '1 week')
+where evt_block_time > date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}

@@ -940,7 +940,7 @@ VALUES
     ('rvp-revolution-populi', 'ethereum', 'RVP', '0x17ef75aa22dd5f6c2763b8304ab24f40ee54d48a', 18),
     ('synr-syndicate-token', 'ethereum', 'SYNR', '0xbc6e06778708177a18210181b073da747c88490a', 18),
     -- ('tbtc-tbtc', 'ethereum', 'TBTC', '0x8daebade922df735c38c80c7ebd708af50815faa', 18), Remove feed with price anomaly
-    ('unn-union-protocol-governance-token', 'ethereum', 'UNN', '0x226f7b842e0f0120b7e194d05432b3fd14773a9d', 18),
+    ('unn-UNION-protocol-governance-token', 'ethereum', 'UNN', '0x226f7b842e0f0120b7e194d05432b3fd14773a9d', 18),
     ('wstr-wrappedstar', 'ethereum', 'WSTR', '0xf0dc76c22139ab22618ddfb498be1283254612b1', 18),
     ('xcn-chain', 'ethereum', 'XCN', '0xa2cd3d43c775978a96bdbf12d733d5a1ed94fb18', 18),
     ('xcur-curate', 'ethereum', 'XCUR', '0xe1c7e30c42c24582888c758984f6e382096786bd', 8),
@@ -1287,7 +1287,7 @@ VALUES
     ('rdt-ridotto', 'ethereum', 'RDT', '0x4740735aa98dc8aa232bd049f8f0210458e7fca3', 18),
     ('utu-utu-coin', 'ethereum', 'UTU', '0xa58a4f5c4bb043d2cc1e170613b74e767c94189b', 18),
     ('bart-bartertrade', 'ethereum', 'BART', '0x54c9ea2e9c9e8ed865db4a4ce6711c2a0d5063ba', 18),
-    ('bright-bright-union', 'ethereum', 'BRIGHT', '0xbeab712832112bd7664226db7cd025b153d3af55', 18),
+    ('bright-bright-UNION', 'ethereum', 'BRIGHT', '0xbeab712832112bd7664226db7cd025b153d3af55', 18),
     ('ctr-creator-platform', 'ethereum', 'CTR', '0x923b83c26b3809d960ff80332ed00aa46d7ed375', 18),
     ('cws-crowns', 'ethereum', 'CWS', '0xac0104cca91d167873b8601d2e71eb3d4d8c33e0', 18),
     ('keyfi-keyfi', 'ethereum', 'KEYFI', '0xb8647e90c0645152fccf4d9abb6b59eb4aa99052', 18),

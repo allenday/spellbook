@@ -29,7 +29,7 @@ WITH looksrare_trades AS (
     , ta.strategy
     FROM {{ source('looksrare_ethereum', 'looksrareexchange_evt_takerask') }} ta
     {% if is_incremental() %}
-    WHERE ta.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE ta.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
     UNION ALL
     SELECT tb.evt_block_time AS block_time
@@ -48,7 +48,7 @@ WITH looksrare_trades AS (
     , tb.strategy
     FROM {{ source('looksrare_ethereum', 'looksrareexchange_evt_takerbid') }} tb
     {% if is_incremental() %}
-    WHERE tb.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE tb.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
     )
 
@@ -118,12 +118,12 @@ LEFT JOIN {{ source('prices', 'usd') }} pu ON pu.blockchain='ethereum'
     AND (pu.contract_address=lr.currency_contract
         OR (pu.contract_address='0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' AND lr.currency_contract='0x0000000000000000000000000000000000000000'))
     {% if is_incremental() %}
-    AND pu.minute >= date_trunc("day", now() - interval '1 week')
+    AND pu.minute >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 INNER JOIN {{ source('ethereum', 'transactions') }} et ON lr.block_time=et.block_time
     AND lr.tx_hash=et.hash
     {% if is_incremental() %}
-    AND et.block_time >= date_trunc("day", now() - interval '1 week')
+    AND et.block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ ref('nft_ethereum_aggregators') }} agg ON et.to=agg.contract_address
 LEFT JOIN {{ ref('tokens_ethereum_nft') }} tok ON lr.nft_contract_address=tok.contract_address
@@ -132,7 +132,7 @@ LEFT JOIN {{ source('looksrare_ethereum', 'looksrareexchange_evt_royaltypayment'
     AND roy.collection=lr.nft_contract_address
     AND roy.tokenId=lr.token_id
     {% if is_incremental() %}
-    AND roy.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND roy.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT ANTI JOIN {{ source('erc20_ethereum', 'evt_transfer') }} anti_roy ON anti_roy.evt_block_time=lr.block_time
     AND anti_roy.evt_tx_hash=lr.tx_hash
@@ -141,7 +141,7 @@ LEFT ANTI JOIN {{ source('erc20_ethereum', 'evt_transfer') }} anti_roy ON anti_r
     AND anti_roy.to=roy.royaltyRecipient
     AND anti_roy.from!=lr.buyer
     {% if is_incremental() %}
-    AND anti_roy.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND anti_roy.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ ref('nft_ethereum_transfers') }} buyer_fix ON lr.block_time=buyer_fix.block_time
     AND lr.tx_hash=buyer_fix.tx_hash
@@ -150,7 +150,7 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} buyer_fix ON lr.block_time=buyer_f
     AND lr.buyer=agg.contract_address
     AND lr.buyer=buyer_fix.from
     {% if is_incremental() %}
-    AND buyer_fix.block_time >= date_trunc("day", now() - interval '1 week')
+    AND buyer_fix.block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ ref('nft_ethereum_transfers') }} seller_fix ON lr.block_time=seller_fix.block_time
     AND lr.tx_hash=seller_fix.tx_hash
@@ -159,7 +159,7 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} seller_fix ON lr.block_time=seller
     AND lr.seller=agg.contract_address
     AND lr.seller=seller_fix.to
     {% if is_incremental() %}
-    AND seller_fix.block_time >= date_trunc("day", now() - interval '1 week')
+    AND seller_fix.block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} standard ON lr.block_time=standard.evt_block_time
     AND lr.tx_hash=standard.evt_tx_hash
@@ -167,7 +167,7 @@ LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} standard ON lr.block_t
     AND lr.token_id=standard.tokenId
     AND COALESCE(seller_fix.from, lr.seller)=standard.from
     {% if is_incremental() %}
-    AND standard.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND standard.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN platform_fees pf ON pf.contract_address=lr.strategy
 LEFT JOIN {{ ref('nft_ethereum_aggregators_markers') }} agg_m

@@ -26,7 +26,7 @@ WITH
             , tradeId AS unique_trade_id
         FROM {{ source('archipelago_ethereum', 'ArchipelagoMarket_evt_Trade') }}
         {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         {% if NOT is_incremental() %}
         WHERE evt_block_time >= '2022-6-20'
@@ -44,7 +44,7 @@ WITH
             , tradeId AS unique_trade_id
         FROM {{ source('archipelago_ethereum', 'ArchipelagoMarket_evt_TokenTrade') }}
         {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         {% if NOT is_incremental() %}
         WHERE evt_block_time >= '2022-6-20'
@@ -69,7 +69,7 @@ WITH
                 AS is_protocol_fee
         FROM {{ source('archipelago_ethereum', 'ArchipelagoMarket_evt_RoyaltyPayment') }}
         {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         {% if NOT is_incremental() %}
         WHERE evt_block_time >= '2022-6-20'
@@ -106,7 +106,7 @@ WITH
         inner join {{ source('ethereum', 'transactions') }} tx
             ON e.block_number = tx.block_number AND e.tx_hash = tx.hash
             {% if is_incremental() %}
-            AND tx.block_time >= date_trunc("day", now() - interval '1 week')
+            AND tx.block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             {% if NOT is_incremental() %}
             AND tx.block_time >= '2022-6-20'
@@ -169,7 +169,7 @@ WITH
             AND p.symbol = 'WETH' -- currently we only have ETH trades
             AND date_trunc('minute', p.minute)=date_trunc('minute', t.block_time)
             {% if is_incremental() %}
-            AND p.minute >= date_trunc("day", now() - interval '1 week')
+            AND p.minute >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             {% if NOT is_incremental() %}
             AND p.minute >= '2022-4-1'
@@ -238,7 +238,7 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} buyer_fix ON buyer_fix.block_time=
     AND te.buyer=te.aggregator_address
     AND buyer_fix.from=te.aggregator_address
     {% if is_incremental() %}
-    AND buyer_fix.block_time >= date_trunc("day", now() - interval '1 week')
+    AND buyer_fix.block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ ref('nft_ethereum_transfers') }} seller_fix ON seller_fix.block_time=te.block_time
     AND te.nft_contract_address=seller_fix.contract_address
@@ -247,5 +247,5 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} seller_fix ON seller_fix.block_tim
     AND te.seller=te.aggregator_address
     AND seller_fix.to=te.aggregator_address
     {% if is_incremental() %}
-    AND seller_fix.block_time >= date_trunc("day", now() - interval '1 week')
+    AND seller_fix.block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}

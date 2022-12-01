@@ -22,7 +22,7 @@ with
         FROM
             {{ source('erc20_bnb', 'evt_Transfer') }}
         {% if is_incremental() %}
-        where evt_block_time >= date_trunc('day', now() - interval '1 week')
+        where evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
         {% endif %}
     )
     ,
@@ -35,7 +35,7 @@ with
         FROM
             {{ source('erc20_bnb', 'evt_Transfer') }}
         {% if is_incremental() %}
-        where evt_block_time >= date_trunc('day', now() - interval '1 week')
+        where evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
         {% endif %}
     )
     ,
@@ -48,7 +48,7 @@ with
         FROM
             {{ source('bnb_bnb', 'WBNB_evt_Deposit') }}
         {% if is_incremental() %}
-        where evt_block_time >= date_trunc('day', now() - interval '1 week')
+        where evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
         {% endif %}
     )
     ,
@@ -61,7 +61,7 @@ with
         FROM
             {{ source('bnb_bnb', 'WBNB_evt_Withdrawal') }}
         {% if is_incremental() %}
-        where evt_block_time >= date_trunc('day', now() - interval '1 week')
+        where evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
         {% endif %}
     )
     ,
@@ -73,7 +73,7 @@ with
             amount_raw
         FROM sent_transfers
 
-        union
+        UNION
 
         SELECT
             wallet_address,
@@ -82,7 +82,7 @@ with
             amount_raw
         FROM received_transfers
 
-        union
+        UNION
 
         SELECT
             wallet_address,
@@ -91,7 +91,7 @@ with
             amount_raw
         FROM deposited_wbnb
 
-        union
+        UNION
 
         SELECT
             wallet_address,

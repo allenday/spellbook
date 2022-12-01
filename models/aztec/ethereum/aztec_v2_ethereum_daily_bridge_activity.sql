@@ -29,7 +29,7 @@ daily_transfers AS (
         , sum(CASE WHEN spec_txn_type = 'Bridge to Protocol' THEN value_norm ELSE 0 END ) AS input_value_norm
         , sum(CASE WHEN spec_txn_type = 'Protocol to Bridge' THEN value_norm ELSE 0 END ) AS output_value_norm
     FROM {{ref('aztec_v2_ethereum_rollupbridge_transfers')}}
-    where bridge_protocol is NOT NULL -- exclude all txns that don't interact with the bridges
+    where bridge_protocol is NOT NULL -- exclude ALL txns that don't interact with the bridges
     GROUP BY 1,2,3,4
 ),
 
@@ -54,7 +54,7 @@ token_prices_token AS (
         AND p.minute >= '{{first_transfer_date}}'
         {% endif %}
         {% if is_incremental() %}
-        AND p.minute >= date_trunc("day", now() - interval '1 week')
+        AND p.minute >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
     GROUP BY 1, 2, 3
 ),
@@ -70,7 +70,7 @@ token_prices_eth AS (
         WHERE p.minute >= '{{first_transfer_date}}'
         {% endif %}
         {% if is_incremental() %}
-        WHERE p.minute >= date_trunc("day", now() - interval '1 week')
+        WHERE p.minute >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         AND p.blockchain = 'ethereum'
         AND p.symbol = 'WETH'

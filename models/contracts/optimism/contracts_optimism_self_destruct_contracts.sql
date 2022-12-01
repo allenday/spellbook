@@ -24,7 +24,7 @@ with creates AS (
       AND success
       AND tx_success
       {% if is_incremental() %}
-      AND block_time >= date_trunc('day', now() - interval '1 week')
+      AND block_time >= date_trunc('day', now() - INTERVAL '1 week')
       {% endif %}
 )
 SELECT
@@ -39,7 +39,7 @@ join {{ source('optimism', 'traces') }} AS sd
   AND cr.trace_element = sd.trace_address[0]
   AND sd.`type` = 'suicide'
   {% if is_incremental() %}
-  AND sd.block_time >= date_trunc('day', now() - interval '1 week')
+  AND sd.block_time >= date_trunc('day', now() - INTERVAL '1 week')
   {% endif %}
 GROUP BY 1, 2, 3, 4
 ;

@@ -29,7 +29,7 @@ with cryptopunks_bids_and_sales AS (
             , evt_tx_hash
     FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkBought') }}
 
-    union all
+    UNION ALL
 
     SELECT  "PunkBidEntered" AS event_type
             , `punkIndex` AS punk_id
@@ -44,7 +44,7 @@ with cryptopunks_bids_and_sales AS (
             , evt_tx_hash
     FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkBidEntered') }}
 
-    union all
+    UNION ALL
 
     SELECT  "PunkBidWithdrawn" AS event_type
             , `punkIndex` AS punk_id
@@ -143,20 +143,20 @@ SELECT  "ethereum" AS blockchain
         , "cryptopunks" || '-' || a.evt_tx_hash || '-' || a.punk_id || '-' ||  a.from_address || '-' || a.evt_index || '-' || "" AS unique_trade_id
 FROM
 (   SELECT * FROM bid_sales
-    union all
+    UNION ALL
     SELECT * FROM regular_sales
 ) a
 
 inner join {{ source('ethereum', 'transactions') }} tx ON a.evt_tx_hash = tx.hash
 {% if is_incremental() %}
-    AND tx.block_time >= date_trunc("day", now() - interval '1 week')
+    AND tx.block_time >= date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}
 
 LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', a.evt_block_time)
     AND p.contract_address = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
     AND p.blockchain = "ethereum"
 {% if is_incremental() %}
-    AND p.minute >= date_trunc("day", now() - interval '1 week')
+    AND p.minute >= date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}
 
 LEFT JOIN {{ ref('nft_ethereum_aggregators') }} agg ON agg.contract_address = tx.to

@@ -66,7 +66,7 @@ LEFT JOIN {{ ref('nft_trades') }} filter_baf
     AND filter_baf.nft_contract_address=nftt.nft_contract_address
     AND filter_baf.token_id=nftt.token_id
     {% if is_incremental() %}
-    AND filter_baf.block_time >= date_trunc("day", NOW() - interval '1 week')
+    AND filter_baf.block_time >= date_trunc("day", NOW() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ ref('nft_trades') }} filter_bought_3x
     ON filter_bought_3x.nft_contract_address=nftt.nft_contract_address
@@ -74,7 +74,7 @@ LEFT JOIN {{ ref('nft_trades') }} filter_bought_3x
     AND filter_bought_3x.buyer=nftt.buyer
     AND filter_bought_3x.token_standard IN ('erc721', 'erc20')
     {% if is_incremental() %}
-    AND filter_bought_3x.block_time >= date_trunc("day", NOW() - interval '1 week')
+    AND filter_bought_3x.block_time >= date_trunc("day", NOW() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ ref('addresses_events_ethereum_first_funded_by') }} filter_funding_buyer
     ON filter_funding_buyer.address=nftt.buyer
@@ -82,7 +82,7 @@ LEFT JOIN {{ ref('addresses_events_ethereum_first_funded_by') }} filter_funding_
     AND filter_funding_buyer.first_funded_by NOT IN (SELECT DISTINCT address FROM {{ ref('labels_cex') }})
     AND filter_funding_buyer.first_funded_by NOT IN (SELECT DISTINCT contract_address FROM {{ ref('tornado_cash_withdrawals') }})
     {% if is_incremental() %}
-    AND filter_funding_buyer.block_time >= date_trunc("day", NOW() - interval '1 week')
+    AND filter_funding_buyer.block_time >= date_trunc("day", NOW() - INTERVAL '1 week')
     {% endif %}
 LEFT JOIN {{ ref('addresses_events_ethereum_first_funded_by') }} filter_funding_seller
     ON filter_funding_seller.address=nftt.seller
@@ -90,7 +90,7 @@ LEFT JOIN {{ ref('addresses_events_ethereum_first_funded_by') }} filter_funding_
     AND filter_funding_seller.first_funded_by NOT IN (SELECT DISTINCT address FROM {{ ref('labels_cex') }})
     AND filter_funding_seller.first_funded_by NOT IN (SELECT DISTINCT contract_address FROM {{ ref('tornado_cash_withdrawals') }})
     {% if is_incremental() %}
-    AND filter_funding_seller.block_time >= date_trunc("day", NOW() - interval '1 week')
+    AND filter_funding_seller.block_time >= date_trunc("day", NOW() - INTERVAL '1 week')
     {% endif %}
 {% if is_incremental() %}
 LEFT ANTI JOIN {{this}} nft_wtf ON nftt.unique_trade_id = nft_wtf.unique_trade_id
@@ -100,7 +100,7 @@ AND nftt.unique_trade_id IS NOT NULL
 AND nftt.buyer IS NOT NULL
 AND nftt.seller IS NOT NULL
     {% if is_incremental() %}
-    AND nftt.block_time >= date_trunc("day", NOW() - interval '1 week')
+    AND nftt.block_time >= date_trunc("day", NOW() - INTERVAL '1 week')
     {% endif %}
 GROUP BY nftt.blockchain
     , nftt.project

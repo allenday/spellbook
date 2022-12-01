@@ -763,7 +763,7 @@ SELECT
   ,col.fee
 FROM ovm1_legacy_pools_raw
 
-union
+UNION
 
 SELECT
   *

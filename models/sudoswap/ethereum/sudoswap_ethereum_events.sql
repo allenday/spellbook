@@ -46,7 +46,7 @@ WITH
             WHERE call_success = true
             {% if is_incremental() %}
             -- this filter will only be applied ON an incremental run. We only want to update with new swaps.
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
             UNION ALL
@@ -65,7 +65,7 @@ WITH
             WHERE call_success = true
             {% if is_incremental() %}
             -- this filter will only be applied ON an incremental run. We only want to update with new swaps.
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
 
             UNION ALL
@@ -84,7 +84,7 @@ WITH
             WHERE call_success = true
             {% if is_incremental() %}
             -- this filter will only be applied ON an incremental run. We only want to update with new swaps.
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
         ) s
     )
@@ -99,7 +99,7 @@ WITH
         ON tr.success AND s.call_block_number = tr.block_number AND s.call_tx_hash = tr.tx_hash AND s.call_trace_address = tr.trace_address
         {% if is_incremental() %}
         -- this filter will only be applied ON an incremental run. We only want to update with new swaps.
-        AND tr.block_time >= date_trunc("day", now() - interval '1 week')
+        AND tr.block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
         {% if NOT is_incremental() %}
         AND tr.block_time >= '2022-4-1'
@@ -197,9 +197,9 @@ WITH
                     WHEN (tr.to = sb.call_from AND sb.call_from != sb.asset_recip) THEN -value --refunds unless the caller is also the asset recipient, no way to discriminate there.
                     ELSE 0 END)
                 ELSE ( -- caller sells, AMM buys
-                    CASE WHEN tr.from = sb.pair_address THEN value -- all ETH leaving the pool, nothing should be coming in ON a sell.
+                    CASE WHEN tr.from = sb.pair_address THEN value -- ALL ETH leaving the pool, nothing should be coming in ON a sell.
                     ELSE 0 END)
-                END ) AS trade_price -- what the buyer paid (incl all fees)
+                END ) AS trade_price -- what the buyer paid (incl ALL fees)
             , SUM(
                 CASE WHEN (tr.to = sb.protocolfee_recipient) THEN value
                 ELSE 0 END
@@ -225,10 +225,10 @@ WITH
             AND tr.tx_hash = sb.call_tx_hash
             AND (
                 (cardinality(call_trace_address) != 0 AND call_trace_address = slice(tr.trace_address,1,cardinality(call_trace_address))) --either a normal tx where trace address helps us narrow down which subtraces to look at FOR ETH transfers or NFT transfers.
-                OR cardinality(call_trace_address) = 0 -- In this CASE the swap function was called directly, all traces are thus subtraces of that call (like 0x34a52a94fce15c090cc16adbd6824948c731ecb19a39350633590a9cd163658b).
+                OR cardinality(call_trace_address) = 0 -- In this CASE the swap function was called directly, ALL traces are thus subtraces of that call (like 0x34a52a94fce15c090cc16adbd6824948c731ecb19a39350633590a9cd163658b).
                 )
             {% if is_incremental() %}
-            AND tr.block_time >= date_trunc("day", now() - interval '1 week')
+            AND tr.block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             {% if NOT is_incremental() %}
             AND tr.block_time >= '2022-4-1'
@@ -302,7 +302,7 @@ WITH
         INNER JOIN {{ source('ethereum', 'transactions') }} tx
             ON tx.block_number=sc.block_number AND tx.hash=sc.tx_hash
             {% if is_incremental() %}
-            AND tx.block_time >= date_trunc("day", now() - interval '1 week')
+            AND tx.block_time >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             {% if NOT is_incremental() %}
             AND tx.block_time >= '2022-4-1'
@@ -311,7 +311,7 @@ WITH
             AND date_trunc('minute', pu.minute)=date_trunc('minute', sc.block_time)
             AND symbol = 'WETH'
             {% if is_incremental() %}
-            AND pu.minute >= date_trunc("day", now() - interval '1 week')
+            AND pu.minute >= date_trunc("day", now() - INTERVAL '1 week')
             {% endif %}
             {% if NOT is_incremental() %}
             AND pu.minute >= '2022-4-1'

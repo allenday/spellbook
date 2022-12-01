@@ -34,11 +34,11 @@ with eth_transfers AS (
         AND r.success
         AND r.value > 0
         {% if is_incremental() %} -- this filter will only be applied ON an incremental run
-        AND r.block_time >= date_trunc('day', now() - interval '1 week')
-        AND t.block_time >= date_trunc('day', now() - interval '1 week')
+        AND r.block_time >= date_trunc('day', now() - INTERVAL '1 week')
+        AND t.block_time >= date_trunc('day', now() - INTERVAL '1 week')
         {% endif %}
 
-    union all
+    UNION ALL
     --ETH Transfers FROM deposits AND withdrawals are ERC20 transfers of the 'deadeadead' ETH token. These do NOT appear in traces.
 
     SELECT
@@ -62,8 +62,8 @@ with eth_transfers AS (
         AND t.success
         AND r.value > 0
         {% if is_incremental() %} -- this filter will only be applied ON an incremental run
-        AND r.evt_block_time >= date_trunc('day', now() - interval '1 week')
-        AND t.block_time >= date_trunc('day', now() - interval '1 week')
+        AND r.evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+        AND t.block_time >= date_trunc('day', now() - INTERVAL '1 week')
         {% endif %}
 )
 SELECT * FROM eth_transfers ORDER BY tx_block_time

@@ -73,10 +73,10 @@ with iv_offer_consideration AS (
         where evt_block_time >= date '{{c_seaport_first_date}}'  -- seaport first txn
         {% endif %}
         {% if is_incremental() %}
-        where evt_block_time >= date_trunc("day", now() - interval '1 week')
+        where evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
     )
-    union all
+    UNION ALL
     SELECT evt_block_time AS block_time
             ,evt_block_number AS block_number
             ,evt_tx_hash AS tx_hash
@@ -135,7 +135,7 @@ with iv_offer_consideration AS (
         where evt_block_time >= date '{{c_seaport_first_date}}'  -- seaport first txn
         {% endif %}
         {% if is_incremental() %}
-        where evt_block_time >= date_trunc("day", now() - interval '1 week')
+        where evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
     )
 )
@@ -150,7 +150,7 @@ with iv_offer_consideration AS (
                 WHEN offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND item_type in ('native', 'erc20') THEN true
                 ELSE false
             END is_price
-            ,CASE WHEN offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND eth_erc_idx = 0 THEN true  -- offer accepted has no price at all. it has to be calculated.
+            ,CASE WHEN offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND eth_erc_idx = 0 THEN true  -- offer accepted has no price at ALL. it has to be calculated.
                 WHEN offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND eth_erc_idx = 1 THEN true
                 ELSE false
             END is_netprice

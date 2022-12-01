@@ -17,21 +17,21 @@ WITH
   finalized AS (
     SELECT *
     FROM {{ source('prices', 'usd') }}
-    where minute <= now() - interval {{lookback_interval}}
+    where minute <= now() - INTERVAL {{lookback_interval}}
 )
 
 , unfinalized AS (
     SELECT *,
         lead(minute) OVER (PARTITION BY blockchain, contract_address, decimals, symbol ORDER BY minute ASC) AS next_update_minute
     FROM {{ source('prices', 'usd') }}
-    where minute > now() - interval {{lookback_interval}}
+    where minute > now() - INTERVAL {{lookback_interval}}
 )
 
 , timeseries AS (
     SELECT explode(sequence(
-        date_trunc('minute', now() - interval {{lookback_interval}})
+        date_trunc('minute', now() - INTERVAL {{lookback_interval}})
         , date_trunc('minute', now())
-        , interval 1 minute)) AS minute
+        , INTERVAL 1 minute)) AS minute
 )
 
 , forward_fill AS (

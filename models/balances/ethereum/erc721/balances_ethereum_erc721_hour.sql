@@ -12,7 +12,7 @@ with
         SELECT
             explode(
                 sequence(
-                    to_date('2015-01-01'), date_trunc('hour', now()), interval 1 hour
+                    to_date('2015-01-01'), date_trunc('hour', now()), INTERVAL 1 hour
                 )
             ) AS hour
     )

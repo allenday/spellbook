@@ -307,7 +307,7 @@ with original_holders AS (
     FROM original_holders
     GROUP BY 1, 2
 
-    union all
+    UNION ALL
 
     SELECT  date_trunc('day', evt_block_time) AS day
             , `FROM` AS wallet
@@ -316,7 +316,7 @@ with original_holders AS (
     where contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks
     GROUP BY 1, 2
 
-    union all
+    UNION ALL
 
     SELECT  date_trunc('day', evt_block_time) AS day
             , `to` AS wallet
@@ -333,7 +333,7 @@ with original_holders AS (
     GROUP BY day, wallet
 )
 , base_data AS (
-    with all_days  AS (SELECT explode(sequence(to_date('2017-06-22'), to_date(now()), interval 1 day)) AS day)
+    with all_days  AS (SELECT explode(sequence(to_date('2017-06-22'), to_date(now()), INTERVAL 1 day)) AS day)
     , all_wallets AS (SELECT distinct wallet FROM punk_transfer_summary)
 
     SELECT  day

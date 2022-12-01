@@ -60,7 +60,7 @@ cumulative_balance_by_token AS (
 ),
 
 calendar AS (
-    SELECT explode(sequence(to_date('2020-01-01'), current_date, interval 1 day)) AS day
+    SELECT explode(sequence(to_date('2020-01-01'), current_date, INTERVAL 1 day)) AS day
 ),
 
 running_cumulative_balance_by_token AS (

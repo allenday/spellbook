@@ -66,7 +66,7 @@ inner join {{ source('avalanche_c', 'transactions') }} tx
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND tx.block_time = date_trunc("day", now() - interval '1 week')
+    AND tx.block_time = date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 -- bought tokens
 LEFT JOIN {{ ref('tokens_erc20') }} erc20_b
@@ -85,7 +85,7 @@ LEFT JOIN {{ source('prices', 'usd') }} prices_b
     AND prices_b.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND prices_b.minute >= date_trunc("day", now() - interval '1 week')
+    AND prices_b.minute >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 -- price of sold tokens
 LEFT JOIN {{ source('prices', 'usd') }} prices_s
@@ -96,10 +96,10 @@ LEFT JOIN {{ source('prices', 'usd') }} prices_s
     AND prices_s.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND prices_s.minute >= date_trunc("day", now() - interval '1 week')
+    AND prices_s.minute >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 where 1 = 1
     {% if is_incremental() %}
-    AND s.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND s.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 ;
