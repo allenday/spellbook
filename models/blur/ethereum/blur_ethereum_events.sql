@@ -28,9 +28,9 @@ SELECT
         END AS trade_type
     , get_json_object(bm.buy, '$.amount') AS number_of_items
     , 'Trade' AS evt_type
-    , COALESCE(seller_fix.FROM, get_json_object(bm.sell, '$.trader')) AS seller
+    , COALESCE(seller_fix.from, get_json_object(bm.sell, '$.trader')) AS seller
     , COALESCE(buyer_fix.to, get_json_object(bm.buy, '$.trader')) AS buyer
-    , CASE WHEN et.FROM=buyer_fix.to OR et.from=COALESCE(buyer_fix.to, get_json_object(bm.buy, '$.trader')) THEN 'Buy'
+    , CASE WHEN et.from=buyer_fix.to OR et.from=COALESCE(buyer_fix.to, get_json_object(bm.buy, '$.trader')) THEN 'Buy'
         ELSE 'Offer Accepted'
         END AS trade_category
     , get_json_object(bm.buy, '$.price') AS amount_raw
@@ -51,7 +51,7 @@ SELECT
     , agg.name AS aggregator_name
     , agg.contract_address AS aggregator_address
     , bm.evt_tx_hash AS tx_hash
-    , et.FROM AS tx_from
+    , et.from AS tx_from
     , et.to AS tx_to
     , 0 AS platform_fee_amount_raw
     , 0 AS platform_fee_amount
@@ -69,7 +69,7 @@ SELECT
     , CASE WHEN get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.recipient') IS NOT NULL AND get_json_object(bm.buy, '$.paymentToken')='0x0000000000000000000000000000000000000000' THEN 'ETH'
         WHEN get_json_object(get_json_object(bm.sell, '$.fees[0]'), '$.recipient') IS NOT NULL THEN pu.symbol
         END AS royalty_fee_currency_symbol
-    ,  'ethereum-blur-v1' || bm.evt_tx_hash || '-' || COALESCE(seller_fix.FROM, get_json_object(bm.sell, '$.trader')) || '-' || COALESCE(buyer_fix.to, get_json_object(bm.buy, '$.trader')) || '-' || get_json_object(bm.buy, '$.collection') || '-' || get_json_object(bm.buy, '$.tokenId') AS unique_trade_id
+    ,  'ethereum-blur-v1' || bm.evt_tx_hash || '-' || COALESCE(seller_fix.from, get_json_object(bm.sell, '$.trader')) || '-' || COALESCE(buyer_fix.to, get_json_object(bm.buy, '$.trader')) || '-' || get_json_object(bm.buy, '$.collection') || '-' || get_json_object(bm.buy, '$.tokenId') AS unique_trade_id
 FROM {{ source('blur_ethereum', 'BlurExchange_evt_OrdersMatched') }} bm
 JOIN {{ source('ethereum', 'transactions') }} et ON et.block_time=bm.evt_block_time
     AND et.hash=bm.evt_tx_hash
@@ -95,7 +95,7 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} erct ON erct.block_time=bm.evt_blo
     AND get_json_object(bm.buy, '$.collection')=erct.contract_address
     AND erct.tx_hash=bm.evt_tx_hash
     AND get_json_object(bm.buy, '$.tokenId')=erct.token_id
-    AND erct.FROM=get_json_object(bm.sell, '$.trader')
+    AND erct.from=get_json_object(bm.sell, '$.trader')
     {% if NOT is_incremental() %}
     AND erct.block_time >= '{{project_start_date}}'
     {% endif %}
@@ -107,7 +107,7 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} buyer_fix ON buyer_fix.block_time=
     AND buyer_fix.tx_hash=bm.evt_tx_hash
     AND get_json_object(bm.buy, '$.tokenId')=buyer_fix.token_id
     AND get_json_object(bm.buy, '$.trader')=agg.contract_address
-    AND buyer_fix.FROM=agg.contract_address
+    AND buyer_fix.from=agg.contract_address
     {% if NOT is_incremental() %}
     AND buyer_fix.block_time >= '{{project_start_date}}'
     {% endif %}

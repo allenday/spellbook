@@ -104,13 +104,13 @@ erc_transfers AS
         id::STRING AS token_id_erc_uncapped,
         cardinality(collect_list(value)) AS count_erc,
         value AS value_unique,
-        CASE WHEN erc1155.FROM = '0x0000000000000000000000000000000000000000' THEN 'Mint'
+        CASE WHEN erc1155.from = '0x0000000000000000000000000000000000000000' THEN 'Mint'
         WHEN erc1155.to = '0x0000000000000000000000000000000000000000'
         OR erc1155.to = '0x000000000000000000000000000000000000dead' THEN 'Burn'
         ELSE 'Trade' END AS evt_type,
         evt_index
         FROM {{ source('erc1155_ethereum', 'evt_transfersingle') }} erc1155
-        GROUP BY evt_tx_hash,value,id,evt_index, erc1155.FROM, erc1155.to
+        GROUP BY evt_tx_hash,value,id,evt_index, erc1155.from, erc1155.to
             UNION ALL
 SELECT evt_tx_hash,
         -- token_id_erc will be used for joining. It may be 'Token ID is larger than 64 bits AND can NOT be displayed'
@@ -119,13 +119,13 @@ SELECT evt_tx_hash,
 		tokenId::STRING AS token_id_erc_uncapped,
         COUNT(tokenId) AS count_erc,
         NULL AS value_unique,
-        CASE WHEN erc721.FROM = '0x0000000000000000000000000000000000000000' THEN 'Mint'
+        CASE WHEN erc721.from = '0x0000000000000000000000000000000000000000' THEN 'Mint'
         WHEN erc721.to = '0x0000000000000000000000000000000000000000'
         OR erc721.to = '0x000000000000000000000000000000000000dead' THEN 'Burn'
         ELSE 'Trade' END AS evt_type,
         evt_index
         FROM {{ source('erc721_ethereum', 'evt_transfer') }} erc721
-        GROUP BY evt_tx_hash,tokenId,evt_index, erc721.FROM, erc721.to)
+        GROUP BY evt_tx_hash,tokenId,evt_index, erc721.from, erc721.to)
 
 SELECT DISTINCT
   'ethereum' AS blockchain,
@@ -176,7 +176,7 @@ SELECT DISTINCT
   agg.contract_address AS aggregator_address,
   tx.block_number,
   wa.call_tx_hash AS tx_hash,
-  tx.FROM AS tx_from,
+  tx.from AS tx_from,
   tx.to AS tx_to,
   ROUND((2.5*(wa.amount_original) / 100),7) AS platform_fee_amount_raw,
   ROUND((2.5*(wa.amount_original / power(10,erc20.decimals))/100),7) AS platform_fee_amount,
@@ -202,7 +202,7 @@ LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct2 ON erct2.evt_blo
     AND wa.nft_contract_address=erct2.contract_address
     AND erct2.evt_tx_hash=wa.call_tx_hash
     AND erct2.tokenId=coalesce(token_id_erc, wa.token_id)
-    AND erct2.FROM=buyer
+    AND erct2.from=buyer
     {% if is_incremental() %}
     AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -210,7 +210,7 @@ LEFT JOIN {{ source('erc1155_ethereum', 'evt_transfersingle') }} erct3 ON erct3.
     AND wa.nft_contract_address=erct3.contract_address
     AND erct3.evt_tx_hash=wa.call_tx_hash
     AND erct3.id=coalesce(token_id_erc, wa.token_id)
-    AND erct3.FROM=buyer
+    AND erct3.from=buyer
     {% if is_incremental() %}
     AND erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}

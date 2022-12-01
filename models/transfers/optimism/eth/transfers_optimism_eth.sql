@@ -13,7 +13,7 @@
 }}
 with eth_transfers AS (
     SELECT
-        r.FROM
+        r.from
         ,r.to
         --Using the ETH deposit placeholder address to match with prices tables
         ,lower('0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000') AS contract_address
@@ -42,7 +42,7 @@ with eth_transfers AS (
     --ETH Transfers FROM deposits AND withdrawals are ERC20 transfers of the 'deadeadead' ETH token. These do NOT appear in traces.
 
     SELECT
-        r.FROM
+        r.from
         ,r.to
         --Using the ETH deposit placeholder address to match with prices tables
         ,lower('0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000') AS contract_address

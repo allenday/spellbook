@@ -225,7 +225,7 @@ LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct ON erct.evt_block
     AND txs.nft_contract_address=erct.contract_address
     AND erct.evt_tx_hash=txs.tx_hash
     AND erct.tokenId=txs.token_id
-    AND erct.FROM=txs.seller
+    AND erct.from=txs.seller
     {% if is_incremental() %}
     AND erct.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -233,7 +233,7 @@ LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct2 ON erct2.evt_blo
     AND txs.nft_contract_address=erct2.contract_address
     AND erct2.evt_tx_hash=txs.tx_hash
     AND erct2.tokenId=txs.token_id
-    AND erct2.FROM=txs.buyer
+    AND erct2.from=txs.buyer
     {% if is_incremental() %}
     AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -241,7 +241,7 @@ LEFT JOIN {{ source('erc1155_ethereum', 'evt_transfersingle') }} erct3 ON erct3.
     AND txs.nft_contract_address=erct3.contract_address
     AND erct3.evt_tx_hash=txs.tx_hash
     AND erct3.id=txs.token_id
-    AND erct3.FROM=txs.buyer
+    AND erct3.from=txs.buyer
     {% if is_incremental() %}
     AND erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}

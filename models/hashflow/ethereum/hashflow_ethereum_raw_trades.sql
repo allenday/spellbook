@@ -78,7 +78,7 @@ new_router AS (
         'tradeSingleHop' AS method_id,
         t.contract_address AS router_contract,
         ('0x' || substring(get_json_object(quote,'$.pool') FROM 3)) AS pool,
-        tx.FROM AS trader,
+        tx.from AS trader,
         ('0x' || substring(get_json_object(quote,'$.quoteToken') FROM 3)) AS maker_token,
         ('0x' || substring(get_json_object(quote,'$.baseToken') FROM 3)) AS taker_token,
         case when get_json_object(quote,'$.quoteToken') = '0x0000000000000000000000000000000000000000' then 'ETH'
@@ -149,7 +149,7 @@ legacy_router_w_integration AS (
         substring(t.input, 1, 4) AS method_id,
         t.to AS router_contract,
         substring(t.input, 17, 20) AS pool,
-        tx.FROM AS trader, -- adjusted to use tx sender due to integration, was substring(t.input, 49, 20) AS trader,
+        tx.from AS trader, -- adjusted to use tx sender due to integration, was substring(t.input, 49, 20) AS trader,
         maker_token,
         taker_token,
         case when substring(input, 113, 20) = '0x0000000000000000000000000000000000000000' then 'ETH'
@@ -189,7 +189,7 @@ legacy_router_w_integration AS (
         'tradeSingleHop' AS method_id,
         t.to AS router_contract,
         substring(t.input, 49, 20) AS pool, --mm
-        tx.FROM AS trader,
+        tx.from AS trader,
         maker_token,
         taker_token,
         case when substring(input, 209, 20) = '0x0000000000000000000000000000000000000000' then 'ETH'
@@ -329,7 +329,7 @@ new_pool AS (
         NULL AS method_id, -- without call we don't have function call info
         tx.to AS router_contract, -- taking top level contract called in tx AS router, NOT necessarily HF contract
         l.pool AS pool,
-        tx.FROM AS trader,
+        tx.from AS trader,
         l.`quoteToken` AS maker_token,
         l.`baseToken` AS taker_token,
         case when l.`quoteToken` = '0x0000000000000000000000000000000000000000' then 'ETH'

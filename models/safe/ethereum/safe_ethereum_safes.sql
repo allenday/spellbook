@@ -15,7 +15,7 @@
 }}
 
 SELECT
-    et.FROM AS address,
+    et.from AS address,
     case
         when et.to = '0x8942595a2dc5181df0465af0d7be08c8f23c93af' then '0.1.0'
         when et.to = '0xb6029ea3b2c51d09a50b53ca8012feeb05bda35a' then '1.0.0'

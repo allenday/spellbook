@@ -60,7 +60,7 @@ SELECT
     hashflow_trades.pool AS maker,
     hashflow_trades.router_contract AS project_contract_address,
     hashflow_trades.tx_hash,
-    tx.FROM AS tx_from,
+    tx.from AS tx_from,
     tx.to AS tx_to,
     '' AS trace_address,
     case when hashflow_trades.composite_index <> -1 then hashflow_trades.composite_index end AS evt_index

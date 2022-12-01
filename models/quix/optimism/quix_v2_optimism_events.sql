@@ -158,7 +158,7 @@ SELECT
     ,er.tx_hash
     ,coalesce(erct2.evt_index,1) AS evt_index
     ,er.block_number
-    ,tx.FROM AS tx_from
+    ,tx.from AS tx_from
     ,tx.to AS tx_to
     ,ROUND((2.5*(er.amount_raw) / 100),7) AS platform_fee_amount_raw
     ,ROUND((2.5*((er.amount_raw / power(10,t1.decimals)))/100),7) AS platform_fee_amount
@@ -195,7 +195,7 @@ LEFT JOIN {{ source('erc721_optimism', 'evt_transfer') }} AS erct2
     AND er.nft_contract_address=erct2.contract_address
     AND erct2.evt_tx_hash=er.tx_hash
     AND erct2.tokenId=er.token_id
-    AND erct2.FROM=er.buyer
+    AND erct2.from=er.buyer
     {% if NOT is_incremental() %}
     -- smallest block number for source tables above
     AND erct2.evt_block_number >= '{{min_block_number}}'

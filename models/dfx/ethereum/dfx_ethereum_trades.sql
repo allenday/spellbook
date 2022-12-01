@@ -64,11 +64,11 @@ SELECT
     ) AS amount_usd,
     dexs.token_bought_address,
     dexs.token_sold_address,
-    COALESCE(dexs.taker, tx.FROM) AS taker,  -- subqueries rely ON this COALESCE to avoid redundant joins with the transactions table
+    COALESCE(dexs.taker, tx.from) AS taker,  -- subqueries rely ON this COALESCE to avoid redundant joins with the transactions table
     dexs.maker,
     dexs.project_contract_address,
     dexs.tx_hash,
-    tx.FROM AS tx_from,
+    tx.from AS tx_from,
     tx.to AS tx_to,
     dexs.trace_address,
     dexs.evt_index

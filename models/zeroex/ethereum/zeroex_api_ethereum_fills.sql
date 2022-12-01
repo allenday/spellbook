@@ -449,7 +449,7 @@ SELECT
         try_cast(date_trunc('day', all_tx.block_time) AS date) AS block_date,
         maker,
         CASE
-            WHEN taker = '0xdef1c0ded9bec7f1a1670819833240f027b25eff' THEN tx.FROM
+            WHEN taker = '0xdef1c0ded9bec7f1a1670819833240f027b25eff' THEN tx.from
             ELSE taker
         END AS taker, -- fix the user masked BY ProxyContract issue
         taker_token,

@@ -98,7 +98,7 @@ WITH
             e.*
             , t.nft_contract_address
             , t.token_id
-            , tx.FROM AS tx_from
+            , tx.from AS tx_from
             , tx.to  AS tx_to
         FROM trade_events e
         inner join token_events t
@@ -202,9 +202,9 @@ SELECT
     , te.token_standard
     , 1 AS number_of_items
     , 'Single Item Trade' AS trade_type
-    , case when te.tx_from = COALESCE(seller_fix.FROM, te.seller) then 'Offer Accepted' else 'Buy' end AS trade_category
+    , case when te.tx_from = COALESCE(seller_fix.from, te.seller) then 'Offer Accepted' else 'Buy' end AS trade_category
     , 'Trade' AS evt_type
-    , COALESCE(seller_fix.FROM, te.seller) AS seller
+    , COALESCE(seller_fix.from, te.seller) AS seller
     , COALESCE(buyer_fix.to, te.buyer) AS buyer
     , te.amount_raw
     , te.amount_original
@@ -236,7 +236,7 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} buyer_fix ON buyer_fix.block_time=
     AND buyer_fix.tx_hash=te.tx_hash
     AND te.token_id=buyer_fix.token_id
     AND te.buyer=te.aggregator_address
-    AND buyer_fix.FROM=te.aggregator_address
+    AND buyer_fix.from=te.aggregator_address
     {% if is_incremental() %}
     AND buyer_fix.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}

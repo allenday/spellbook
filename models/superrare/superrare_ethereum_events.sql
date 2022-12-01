@@ -191,9 +191,9 @@ with all_superrare_sales AS (
             , evt.tokenId
             , evt.evt_tx_hash
             , evt.to
-            , evt.FROM
-            , lag(evt.FROM) OVER (PARTITION BY evt.contract_address, evt.tokenId ORDER BY evt.evt_block_time ASC) AS previous_owner
-            , case  when evt.FROM = lower('0x8c9f364bf7a56ed058fc63ef81c6cf09c833e656')
+            , evt.from
+            , lag(evt.from) OVER (PARTITION BY evt.contract_address, evt.tokenId ORDER BY evt.evt_block_time ASC) AS previous_owner
+            , case  when evt.from = lower('0x8c9f364bf7a56ed058fc63ef81c6cf09c833e656')
                         then 'From Auction House'
                     when evt.to = lower('0x8c9f364bf7a56ed058fc63ef81c6cf09c833e656')
                         then 'To Auction House'
@@ -246,7 +246,7 @@ SELECT
     '' AS aggregator_address,
     a.evt_tx_hash AS tx_hash,
     t.block_number AS block_number,
-    t.FROM AS tx_from,
+    t.from AS tx_from,
     t.to AS tx_to,
     ROUND((3 * (a.amount) / 100), 7) AS platform_fee_amount_raw,
     ROUND((3 * ((a.amount / 1e18)) / 100), 7) platform_fee_amount,
@@ -334,13 +334,13 @@ inner join {{ source('ethereum', 'transactions') }} t
     {% endif %}
 left outer join {{ source('erc721_ethereum', 'evt_transfer') }} evt ON evt.contract_address = a.contract_address
     AND evt.tokenId = a.tokenId
-    AND evt.FROM = '0x0000000000000000000000000000000000000000'
+    AND evt.from = '0x0000000000000000000000000000000000000000'
     {% if is_incremental() %}
     AND evt.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 left outer join {{ source('erc20_ethereum', 'evt_transfer') }} erc20 ON erc20.contract_address = a.contract_address
     AND erc20.value = a.tokenId
-    AND erc20.FROM = '0x0000000000000000000000000000000000000000'
+    AND erc20.from = '0x0000000000000000000000000000000000000000'
     {% if is_incremental() %}
     AND erc20.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
