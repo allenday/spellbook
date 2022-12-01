@@ -246,7 +246,7 @@ SELECT
     ,dexs.block_time
     ,erc20a.symbol AS token_bought_symbol
     ,erc20b.symbol AS token_sold_symbol
-    ,case
+    ,CASE
         WHEN lower(erc20a.symbol) > lower(erc20b.symbol) THEN concat(erc20b.symbol, '-', erc20a.symbol)
         ELSE concat(erc20a.symbol, '-', erc20b.symbol)
     END AS token_pair

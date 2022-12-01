@@ -225,7 +225,7 @@ WITH
             AND tr.tx_hash = sb.call_tx_hash
             AND (
                 (cardinality(call_trace_address) != 0 AND call_trace_address = slice(tr.trace_address,1,cardinality(call_trace_address))) --either a normal tx where trace address helps us narrow down which subtraces to look at for ETH transfers or NFT transfers.
-                OR cardinality(call_trace_address) = 0 -- In this case the swap function was called directly, all traces are thus subtraces of that call (like 0x34a52a94fce15c090cc16adbd6824948c731ecb19a39350633590a9cd163658b).
+                OR cardinality(call_trace_address) = 0 -- In this CASE the swap function was called directly, all traces are thus subtraces of that call (like 0x34a52a94fce15c090cc16adbd6824948c731ecb19a39350633590a9cd163658b).
                 )
             {% if is_incremental() %}
             AND tr.block_time >= date_trunc("day", now() - interval '1 week')
@@ -266,7 +266,7 @@ WITH
             , nftcontractaddress AS nft_contract_address
             , project_contract_address -- This is either the router or the pool address if called directly
             , call_tx_hash AS tx_hash
-            , '' AS evt_index --we didn't use events in our case for decoding, so this will be NULL until we find a way to tie it together.
+            , '' AS evt_index --we didn't use events in our CASE for decoding, so this will be NULL until we find a way to tie it together.
             , protocol_fee_amount AS platform_fee_amount_raw
             , protocol_fee_amount / 1e18 AS platform_fee_amount
             , protocolfee AS platform_fee_percentage
@@ -291,7 +291,7 @@ WITH
         SELECT
             sc.*
             , tokens.name AS collection
-            , case WHEN lower(right(tx.data, 8)) = '72db8c0b' THEN 'Gem' ELSE agg.name END AS aggregator_name
+            , CASE WHEN lower(right(tx.data, 8)) = '72db8c0b' THEN 'Gem' ELSE agg.name END AS aggregator_name
             , agg.contract_address AS aggregator_address
             , sc.amount_original*pu.price AS amount_usd
             , sc.pool_fee_amount*pu.price AS pool_fee_amount_usd

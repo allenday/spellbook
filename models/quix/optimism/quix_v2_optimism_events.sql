@@ -135,18 +135,18 @@ SELECT
     ,'Buy' AS trade_category
     ,'Trade' AS evt_type
     ,er.seller
-    ,case
+    ,CASE
     WHEN er.buyer = agg.contract_address THEN erct2.to
     ELSE er.buyer
     END AS buyer
     ,er.amount_raw / power(10, t1.decimals) AS amount_original
     ,er.amount_raw
-    ,case
+    ,CASE
         WHEN (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
             THEN 'ETH'
             ELSE t1.symbol
         END AS currency_symbol
-    ,case
+    ,CASE
         WHEN (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
             THEN '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000'
             ELSE erc20.contract_address
@@ -168,9 +168,9 @@ SELECT
     ,tr.value / power(10, t1.decimals) AS royalty_fee_amount
     ,tr.value / power(10, t1.decimals) * p1.price AS royalty_fee_amount_usd
     , (tr.value / er.amount_raw * 100) AS royalty_fee_percentage
-    ,case WHEN tr.value is NOT NULL THEN tr.to END AS royalty_fee_receive_address
-    ,case WHEN tr.value is NOT NULL
-        THEN case WHEN (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
+    ,CASE WHEN tr.value is NOT NULL THEN tr.to END AS royalty_fee_receive_address
+    ,CASE WHEN tr.value is NOT NULL
+        THEN CASE WHEN (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
             THEN 'ETH' ELSE t1.symbol END
         END AS royalty_fee_currency_symbol
 FROM events_raw AS er
@@ -216,14 +216,14 @@ LEFT JOIN {{ source('erc20_optimism', 'evt_transfer') }} AS erc20
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} AS t1
     ON t1.contract_address =
-        case WHEN (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
+        CASE WHEN (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
         THEN '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000'
         ELSE erc20.contract_address
         END
     AND t1.blockchain = 'optimism'
     LEFT JOIN {{ source('prices', 'usd') }} AS p1
     ON p1.contract_address =
-        case WHEN (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
+        CASE WHEN (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
         THEN '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000'
         ELSE erc20.contract_address
         END

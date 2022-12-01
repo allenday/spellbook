@@ -23,9 +23,9 @@ daily_transfers AS (
         , contract_address AS token_address
         , count(*) AS num_tfers -- number of transfers
         , count(distinct evt_tx_hash) AS num_rollups -- number of rollups
-        , sum(case WHEN spec_txn_type in ('User Deposit', 'User Withdrawal') THEN value_norm ELSE 0 END ) AS abs_value_norm
-        , sum(case WHEN spec_txn_type = 'User Deposit' THEN value_norm ELSE 0 END ) AS user_deposit_value_norm
-        , sum(case WHEN spec_txn_type = 'User Withdrawal' THEN value_norm ELSE 0 END ) AS user_withdrawal_value_norm
+        , sum(CASE WHEN spec_txn_type in ('User Deposit', 'User Withdrawal') THEN value_norm ELSE 0 END ) AS abs_value_norm
+        , sum(CASE WHEN spec_txn_type = 'User Deposit' THEN value_norm ELSE 0 END ) AS user_deposit_value_norm
+        , sum(CASE WHEN spec_txn_type = 'User Withdrawal' THEN value_norm ELSE 0 END ) AS user_withdrawal_value_norm
     FROM {{ref('aztec_v2_ethereum_rollupbridge_transfers')}}
     where spec_txn_type in ('User Deposit', 'User Withdrawal')
     GROUP BY 1, 2

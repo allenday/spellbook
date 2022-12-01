@@ -21,11 +21,11 @@ with dexs AS (
             t.evt_block_time AS block_time,
             t.to AS taker,
             '' AS maker,
-            case WHEN amount0Out  = 0 THEN amount1Out ELSE amount0Out END AS token_bought_amount_raw,
-            case WHEN amount0In = 0 THEN amount1In ELSE amount0In END AS token_sold_amount_raw,
+            CASE WHEN amount0Out  = 0 THEN amount1Out ELSE amount0Out END AS token_bought_amount_raw,
+            CASE WHEN amount0In = 0 THEN amount1In ELSE amount0In END AS token_sold_amount_raw,
             NULL AS amount_usd,
-            case WHEN amount0Out  = 0 THEN f.token1 ELSE f.token0 END AS token_bought_address,
-            case WHEN amount0In = 0 THEN f.token1 ELSE f.token0 END AS token_sold_address,
+            CASE WHEN amount0Out  = 0 THEN f.token1 ELSE f.token0 END AS token_bought_address,
+            CASE WHEN amount0In = 0 THEN f.token1 ELSE f.token0 END AS token_sold_address,
             t.contract_address AS project_contract_address,
             t.evt_tx_hash AS tx_hash,
             '' AS trace_address,
@@ -43,7 +43,7 @@ SELECT
     dexs.block_time,
     erc20a.symbol AS token_bought_symbol,
     erc20b.symbol AS token_sold_symbol,
-    case
+    CASE
         WHEN lower(erc20a.symbol) > lower(erc20b.symbol) THEN concat(erc20b.symbol, '-', erc20a.symbol)
         ELSE concat(erc20a.symbol, '-', erc20b.symbol)
     END AS token_pair,

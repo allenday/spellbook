@@ -96,12 +96,12 @@ with base_level AS (
       {{i}} AS level
       , coalesce(u.creator_address, b.creator_address) AS creator_address
       {% if loop.first -%}
-      , case
+      , CASE
         when u.creator_address is NULL then NULL
         else b.creator_address
       end AS contract_factory
       {% else -%}
-      , case
+      , CASE
         when u.creator_address is NULL then b.contract_factory
         else b.creator_address
       end AS contract_factory

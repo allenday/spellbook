@@ -16,7 +16,7 @@
 
 SELECT
     et.from AS address,
-    case
+    CASE
         WHEN et.to = '0x8942595a2dc5181df0465af0d7be08c8f23c93af' THEN '0.1.0'
         WHEN et.to = '0xb6029ea3b2c51d09a50b53ca8012feeb05bda35a' THEN '1.0.0'
         WHEN et.to = '0xae32496491b53841efb51829d6f886387708f99b' THEN '1.1.0'

@@ -11,7 +11,7 @@
 with all_listings AS (
     SELECT  `punkIndex` AS punk_id
             , 'Listing' AS event_type
-            , case WHEN `toAddress` = '0x0000000000000000000000000000000000000000' THEN 'Public Listing'
+            , CASE WHEN `toAddress` = '0x0000000000000000000000000000000000000000' THEN 'Public Listing'
                     ELSE 'Private Listing'
                 END AS event_sub_type
             , `minValue` / 1e18 AS listed_price
@@ -25,7 +25,7 @@ with all_listings AS (
 , all_no_longer_for_sale_events (
     SELECT  `punkIndex` AS punk_id
             , 'No Longer For Sale' AS event_type
-            , case WHEN evt_tx_hash in (SELECT evt_tx_hash FROM cryptopunks_ethereum.CryptoPunksMarket_evt_PunkBought) THEN 'Punk Bought'
+            , CASE WHEN evt_tx_hash in (SELECT evt_tx_hash FROM cryptopunks_ethereum.CryptoPunksMarket_evt_PunkBought) THEN 'Punk Bought'
                     ELSE 'Other'
                 END AS event_sub_type
             , NULL AS listed_price

@@ -108,7 +108,7 @@ with source_polygon_transactions AS (
         ,a.offer_first_item_type
         ,a.consideration_first_item_type
         ,a.sender
-        ,case WHEN b.tx_hash is NOT NULL THEN b.receiver
+        ,CASE WHEN b.tx_hash is NOT NULL THEN b.receiver
               ELSE a.receiver
           END AS receiver
         ,a.zone
@@ -151,18 +151,18 @@ with source_polygon_transactions AS (
         ,tx_hash
         ,evt_index
         ,max(token_contract_address) AS token_contract_address
-        ,sum(case WHEN is_price THEN original_amount END) AS price_amount_raw
-        ,sum(case WHEN is_platform_fee THEN original_amount END) AS platform_fee_amount_raw
-        ,max(case WHEN is_platform_fee THEN receiver END) AS platform_fee_receiver
-        ,sum(case WHEN is_creator_fee THEN original_amount END) AS creator_fee_amount_raw
-        ,sum(case WHEN is_creator_fee AND creator_fee_idx = 1 THEN original_amount END) AS creator_fee_amount_raw_1
-        ,sum(case WHEN is_creator_fee AND creator_fee_idx = 2 THEN original_amount END) AS creator_fee_amount_raw_2
-        ,sum(case WHEN is_creator_fee AND creator_fee_idx = 3 THEN original_amount END) AS creator_fee_amount_raw_3
-        ,sum(case WHEN is_creator_fee AND creator_fee_idx = 4 THEN original_amount END) AS creator_fee_amount_raw_4
-        ,max(case WHEN is_creator_fee AND creator_fee_idx = 1 THEN receiver END) AS creator_fee_receiver_1
-        ,max(case WHEN is_creator_fee AND creator_fee_idx = 2 THEN receiver END) AS creator_fee_receiver_2
-        ,max(case WHEN is_creator_fee AND creator_fee_idx = 3 THEN receiver END) AS creator_fee_receiver_3
-        ,max(case WHEN is_creator_fee AND creator_fee_idx = 4 THEN receiver END) AS creator_fee_receiver_4
+        ,sum(CASE WHEN is_price THEN original_amount END) AS price_amount_raw
+        ,sum(CASE WHEN is_platform_fee THEN original_amount END) AS platform_fee_amount_raw
+        ,max(CASE WHEN is_platform_fee THEN receiver END) AS platform_fee_receiver
+        ,sum(CASE WHEN is_creator_fee THEN original_amount END) AS creator_fee_amount_raw
+        ,sum(CASE WHEN is_creator_fee AND creator_fee_idx = 1 THEN original_amount END) AS creator_fee_amount_raw_1
+        ,sum(CASE WHEN is_creator_fee AND creator_fee_idx = 2 THEN original_amount END) AS creator_fee_amount_raw_2
+        ,sum(CASE WHEN is_creator_fee AND creator_fee_idx = 3 THEN original_amount END) AS creator_fee_amount_raw_3
+        ,sum(CASE WHEN is_creator_fee AND creator_fee_idx = 4 THEN original_amount END) AS creator_fee_amount_raw_4
+        ,max(CASE WHEN is_creator_fee AND creator_fee_idx = 1 THEN receiver END) AS creator_fee_receiver_1
+        ,max(CASE WHEN is_creator_fee AND creator_fee_idx = 2 THEN receiver END) AS creator_fee_receiver_2
+        ,max(CASE WHEN is_creator_fee AND creator_fee_idx = 3 THEN receiver END) AS creator_fee_receiver_3
+        ,max(CASE WHEN is_creator_fee AND creator_fee_idx = 4 THEN receiver END) AS creator_fee_receiver_4
   FROM iv_base_pairs_priv a
   where 1=1
     AND eth_erc_idx > 0
@@ -176,7 +176,7 @@ with source_polygon_transactions AS (
         ,a.block_number
         ,a.sender AS seller
         ,a.receiver AS buyer
-        ,case WHEN nft_cnt > 1 THEN 'bundle trade'
+        ,CASE WHEN nft_cnt > 1 THEN 'bundle trade'
               ELSE 'single item trade'
           END AS trade_type
         ,a.order_type
@@ -199,7 +199,7 @@ with source_polygon_transactions AS (
         ,creator_fee_receiver_2
         ,creator_fee_receiver_3
         ,creator_fee_receiver_4
-        ,case WHEN nft_cnt > 1 THEN true
+        ,CASE WHEN nft_cnt > 1 THEN true
               ELSE false
           END AS estimated_price
         ,is_private
@@ -218,10 +218,10 @@ with source_polygon_transactions AS (
           ,t.`FROM` AS tx_from
           ,t.`to` AS tx_to
           ,right(t.data,8) AS right_hash
-          ,case WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_native_symbol}}'
+          ,CASE WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_native_symbol}}'
                 ELSE e.symbol
            END AS token_symbol
-          ,case WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_alternative_token_address}}'
+          ,CASE WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_alternative_token_address}}'
                 ELSE a.token_contract_address
            END AS token_alternative_symbol
           ,e.decimals AS price_token_decimals
@@ -237,10 +237,10 @@ with source_polygon_transactions AS (
   FROM iv_nfts a
   inner join source_polygon_transactions t ON t.hash = a.tx_hash
   LEFT JOIN ref_tokens_nft n ON n.contract_address = nft_contract_address
-  LEFT JOIN ref_tokens_erc20 e ON e.contract_address = case WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_alternative_token_address}}'
+  LEFT JOIN ref_tokens_erc20 e ON e.contract_address = CASE WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_alternative_token_address}}'
                                                             ELSE a.token_contract_address
                                                       END
-  LEFT JOIN source_prices_usd p ON p.contract_address = case WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_alternative_token_address}}'
+  LEFT JOIN source_prices_usd p ON p.contract_address = CASE WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_alternative_token_address}}'
                                                             ELSE a.token_contract_address
                                                         END
     AND p.minute = date_trunc('minute', a.block_time)
@@ -279,7 +279,7 @@ with source_polygon_transactions AS (
     ,token_symbol AS currency_symbol
     ,token_alternative_symbol AS currency_contract
     ,token_contract_address AS original_currency_contract
-    ,price_token_decimals AS currency_decimals   -- in case calculating royalty1~4
+    ,price_token_decimals AS currency_decimals   -- in CASE calculating royalty1~4
 
     -- project info (platform or exchange)
     ,platform_contract_address AS project_contract_address

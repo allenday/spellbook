@@ -39,7 +39,7 @@ synthetix_markets AS (
 		--characters before this position should be taken to get the asset's hex name; use 'unhex' to get the readable text
 
 		--if the position is ON an even number, that means the first '0' is part of the hexed version of the asset's last letter
-		--in this case, this zero should be included in the hex characters to be unhexed to get the complete asset's name
+		--in this CASE, this zero should be included in the hex characters to be unhexed to get the complete asset's name
 
 		--SUBSTRING starts ON 3 to skip the '0x' at the beginning of the STRING
 		CASE

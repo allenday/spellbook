@@ -44,7 +44,7 @@ SELECT
 	, s.fromToken AS token_sold_address
 	, erc20_b.symbol AS token_bought_symbol
 	, erc20_s.symbol AS token_sold_symbol
-	, case
+	, CASE
         WHEN lower(erc20_b.symbol) > lower(erc20_s.symbol) THEN concat(erc20_s.symbol, '-', erc20_b.symbol)
         ELSE concat(erc20_b.symbol, '-', erc20_s.symbol)
     END AS token_pair

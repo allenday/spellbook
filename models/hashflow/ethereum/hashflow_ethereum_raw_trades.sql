@@ -81,15 +81,15 @@ new_router AS (
         tx.from AS trader,
         ('0x' || SUBSTRING(get_json_object(quote,'$.quoteToken') FROM 3)) AS maker_token,
         ('0x' || SUBSTRING(get_json_object(quote,'$.baseToken') FROM 3)) AS taker_token,
-        case WHEN get_json_object(quote,'$.quoteToken') = '0x0000000000000000000000000000000000000000' THEN 'ETH'
+        CASE WHEN get_json_object(quote,'$.quoteToken') = '0x0000000000000000000000000000000000000000' THEN 'ETH'
             ELSE mp.symbol END AS maker_symbol,
-        case WHEN get_json_object(quote,'$.baseToken') = '0x0000000000000000000000000000000000000000' THEN 'ETH'
+        CASE WHEN get_json_object(quote,'$.baseToken') = '0x0000000000000000000000000000000000000000' THEN 'ETH'
             ELSE tp.symbol END AS taker_symbol,
-        case WHEN l.evt_tx_hash is NOT NULL THEN l.`quoteTokenAmount` / power(10, mp.decimals)
+        CASE WHEN l.evt_tx_hash is NOT NULL THEN l.`quoteTokenAmount` / power(10, mp.decimals)
             ELSE cast(get_json_object(quote,'$.maxQuoteTokenAmount') AS float) / power(10,mp.decimals) END  AS maker_token_amount,
-        case WHEN l.evt_tx_hash is NOT NULL THEN l.`baseTokenAmount` / power(10, tp.decimals)
+        CASE WHEN l.evt_tx_hash is NOT NULL THEN l.`baseTokenAmount` / power(10, tp.decimals)
             ELSE cast(get_json_object(quote,'$.maxBaseTokenAmount') AS float) / power(10,tp.decimals) END  AS taker_token_amount,
-        case WHEN l.evt_tx_hash is NOT NULL
+        CASE WHEN l.evt_tx_hash is NOT NULL
             THEN coalesce(
                         l.`baseTokenAmount` / power(10, tp.decimals) * tp.price,
                         `quoteTokenAmount` / power(10, mp.decimals) * mp.price)
@@ -101,12 +101,12 @@ new_router AS (
     LEFT JOIN hashflow_pool_evt_trade l ON l.txid = ('0x' || SUBSTRING(get_json_object(quote,'$.txid') FROM 3))
     LEFT JOIN prices_usd tp ON tp.minute = date_trunc('minute', t.call_block_time)
         AND tp.contract_address =
-            case WHEN get_json_object(quote,'$.baseToken') = '0x0000000000000000000000000000000000000000'
+            CASE WHEN get_json_object(quote,'$.baseToken') = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
             ELSE ('0x' || SUBSTRING(get_json_object(quote,'$.baseToken') FROM 3)) END
     LEFT JOIN prices_usd mp ON mp.minute = date_trunc('minute', t.call_block_time)
         AND mp.contract_address =
-            case WHEN get_json_object(quote,'$.quoteToken') = '0x0000000000000000000000000000000000000000'
+            CASE WHEN get_json_object(quote,'$.quoteToken') = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
             ELSE ('0x' || SUBSTRING(get_json_object(quote,'$.quoteToken') FROM 3)) END
 ),
@@ -152,13 +152,13 @@ legacy_router_w_integration AS (
         tx.from AS trader, -- adjusted to use tx sender due to integration, was SUBSTRING(t.input, 49, 20) AS trader,
         maker_token,
         taker_token,
-        case WHEN SUBSTRING(input, 113, 20) = '0x0000000000000000000000000000000000000000' THEN 'ETH'
+        CASE WHEN SUBSTRING(input, 113, 20) = '0x0000000000000000000000000000000000000000' THEN 'ETH'
             ELSE mp.symbol END AS maker_symbol,
-        case WHEN SUBSTRING(input, 81, 20) = '0x0000000000000000000000000000000000000000' THEN 'ETH'
+        CASE WHEN SUBSTRING(input, 81, 20) = '0x0000000000000000000000000000000000000000' THEN 'ETH'
             ELSE tp.symbol END AS taker_symbol,
-        case WHEN l.tx_hash is NOT NULL THEN maker_token_amount / power(10,mp.decimals) END AS maker_token_amount,
-        case WHEN l.tx_hash is NOT NULL THEN taker_token_amount / power(10,tp.decimals) END AS taker_token_amount,
-        case WHEN l.tx_hash is NOT NULL THEN
+        CASE WHEN l.tx_hash is NOT NULL THEN maker_token_amount / power(10,mp.decimals) END AS maker_token_amount,
+        CASE WHEN l.tx_hash is NOT NULL THEN taker_token_amount / power(10,tp.decimals) END AS taker_token_amount,
+        CASE WHEN l.tx_hash is NOT NULL THEN
             coalesce(
                 taker_token_amount / power(10, tp.decimals) * tp.price,
                 maker_token_amount / power(10, mp.decimals) * mp.price) END AS amount_usd
@@ -167,11 +167,11 @@ legacy_router_w_integration AS (
     LEFT JOIN event_decoding_legacy_router l ON l.tx_id = SUBSTRING(t.input, 325, 32) -- join ON tx_id 1:1, no dup
     LEFT JOIN prices_usd tp ON tp.minute = date_trunc('minute', t.block_time)
         AND tp.contract_address =
-            case WHEN SUBSTRING(input, 81, 20) = '0x0000000000000000000000000000000000000000'
+            CASE WHEN SUBSTRING(input, 81, 20) = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' ELSE SUBSTRING(input, 81, 20) END
     LEFT JOIN prices_usd mp ON mp.minute = date_trunc('minute', t.block_time)
         AND mp.contract_address =
-            case WHEN SUBSTRING(input, 113, 20) = '0x0000000000000000000000000000000000000000'
+            CASE WHEN SUBSTRING(input, 113, 20) = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' ELSE SUBSTRING(input, 113, 20) END
     where -- cast(trace_address AS STRING) = '{}'  --top level call -- removed this because of 1inch integration
         t.to in ('0xa18607ca4a3804cc3cd5730eafefcc47a7641643')
@@ -192,13 +192,13 @@ legacy_router_w_integration AS (
         tx.from AS trader,
         maker_token,
         taker_token,
-        case WHEN SUBSTRING(input, 209, 20) = '0x0000000000000000000000000000000000000000' THEN 'ETH'
+        CASE WHEN SUBSTRING(input, 209, 20) = '0x0000000000000000000000000000000000000000' THEN 'ETH'
             ELSE mp.symbol END AS maker_symbol,
-        case WHEN SUBSTRING(input, 177, 20) = '0x0000000000000000000000000000000000000000' THEN 'ETH'
+        CASE WHEN SUBSTRING(input, 177, 20) = '0x0000000000000000000000000000000000000000' THEN 'ETH'
             ELSE tp.symbol END AS taker_symbol,
-        case WHEN l.tx_hash is NOT NULL THEN maker_token_amount / power(10,mp.decimals) END AS maker_token_amount,
-        case WHEN l.tx_hash is NOT NULL THEN taker_token_amount / power(10,tp.decimals) END AS taker_token_amount,
-        case WHEN l.tx_hash is NOT NULL THEN
+        CASE WHEN l.tx_hash is NOT NULL THEN maker_token_amount / power(10,mp.decimals) END AS maker_token_amount,
+        CASE WHEN l.tx_hash is NOT NULL THEN taker_token_amount / power(10,tp.decimals) END AS taker_token_amount,
+        CASE WHEN l.tx_hash is NOT NULL THEN
             coalesce(
                 taker_token_amount / power(10, tp.decimals) * tp.price,
                 maker_token_amount / power(10, mp.decimals) * mp.price) END AS amount_usd
@@ -207,11 +207,11 @@ legacy_router_w_integration AS (
     LEFT JOIN event_decoding_legacy_router l ON l.tx_id = SUBSTRING(t.input, 485, 32)
     LEFT JOIN prices_usd tp ON tp.minute = date_trunc('minute', t.block_time)
         AND tp.contract_address =
-            case WHEN SUBSTRING(input, 177, 20) = '0x0000000000000000000000000000000000000000'
+            CASE WHEN SUBSTRING(input, 177, 20) = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' ELSE SUBSTRING(input, 177, 20) END
     LEFT JOIN prices_usd mp ON mp.minute = date_trunc('minute', t.block_time)
         AND mp.contract_address =
-            case WHEN SUBSTRING(input, 209, 20) = '0x0000000000000000000000000000000000000000'
+            CASE WHEN SUBSTRING(input, 209, 20) = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' ELSE SUBSTRING(input, 209, 20) END
     where t.to in ('0x6ad3dac99c9a4a480748c566ce7b3503506e3d71')
         AND SUBSTRING(input, 1, 4) in ('0xf0910b2b') -- trade single hop
@@ -228,21 +228,21 @@ legacy_routers AS (
         `to` AS router_contract,
         SUBSTRING(input, 17, 20) AS pool, --mm
         SUBSTRING(input, 49, 20) AS trader,
-        case WHEN SUBSTRING(input, 1, 4) = '0xc7f6b19d' THEN SUBSTRING(input, 81, 20)
+        CASE WHEN SUBSTRING(input, 1, 4) = '0xc7f6b19d' THEN SUBSTRING(input, 81, 20)
             ELSE '0x0000000000000000000000000000000000000000' END AS maker_token,
-        case WHEN SUBSTRING(input, 1, 4) = '0xc7f6b19d' THEN '0x0000000000000000000000000000000000000000'
+        CASE WHEN SUBSTRING(input, 1, 4) = '0xc7f6b19d' THEN '0x0000000000000000000000000000000000000000'
             ELSE SUBSTRING(input, 81, 20) END AS taker_token, --eth
-        case WHEN SUBSTRING(input, 1, 4) = '0xc7f6b19d' THEN e.symbol
+        CASE WHEN SUBSTRING(input, 1, 4) = '0xc7f6b19d' THEN e.symbol
             ELSE 'ETH' END AS maker_symbol,
-        case WHEN SUBSTRING(input, 1, 4) = '0xc7f6b19d' THEN 'ETH'
+        CASE WHEN SUBSTRING(input, 1, 4) = '0xc7f6b19d' THEN 'ETH'
             ELSE e.symbol END AS taker_symbol,
-        case WHEN SUBSTRING(input, 1, 4) = '0xc7f6b19d'
+        CASE WHEN SUBSTRING(input, 1, 4) = '0xc7f6b19d'
                 THEN cast(conv(SUBSTRING(input, 145, 20), 16, 10) AS decimal) / power(10, e.decimals)
             ELSE cast(conv(SUBSTRING(input, 145, 20), 16, 10) AS decimal) / 1e18 END AS maker_token_amount,
-        case WHEN SUBSTRING(input, 1, 4) = '0xc7f6b19d'
+        CASE WHEN SUBSTRING(input, 1, 4) = '0xc7f6b19d'
                 THEN cast(conv(SUBSTRING(input, 113, 20), 16, 10) AS decimal) / 1e18
             ELSE cast(conv(SUBSTRING(input, 113, 20), 16, 10) AS decimal) / power(10,e.decimals) END AS taker_token_amount,
-        case WHEN SUBSTRING(input, 1, 4) = '0xc7f6b19d'
+        CASE WHEN SUBSTRING(input, 1, 4) = '0xc7f6b19d'
                 THEN cast(conv(SUBSTRING(input, 113, 20), 16, 10) AS decimal) / 1e18 * price
             ELSE cast(conv(SUBSTRING(input, 145, 20), 16, 10) AS decimal) / 1e18 * price END AS amount_usd
     FROM ethereum_traces t
@@ -290,21 +290,21 @@ legacy_routers AS (
         `to` AS router_contract,
         SUBSTRING(input, 17, 20) AS pool,
         SUBSTRING(input, 49, 20) AS trader,
-        case WHEN SUBSTRING(input, 1, 4) = '0xe43d9733' THEN SUBSTRING(input, 81, 20)
+        CASE WHEN SUBSTRING(input, 1, 4) = '0xe43d9733' THEN SUBSTRING(input, 81, 20)
             ELSE '0x0000000000000000000000000000000000000000' END AS maker_token,
-        case WHEN SUBSTRING(input, 1, 4) = '0xe43d9733' THEN '0x0000000000000000000000000000000000000000'
+        CASE WHEN SUBSTRING(input, 1, 4) = '0xe43d9733' THEN '0x0000000000000000000000000000000000000000'
             ELSE SUBSTRING(input, 81, 20) END AS taker_token, --eth
-        case WHEN SUBSTRING(input, 1, 4) = '0xe43d9733' THEN e.symbol
+        CASE WHEN SUBSTRING(input, 1, 4) = '0xe43d9733' THEN e.symbol
             ELSE 'ETH' END AS maker_symbol,
-        case WHEN SUBSTRING(input, 1, 4) = '0xe43d9733' THEN 'ETH'
+        CASE WHEN SUBSTRING(input, 1, 4) = '0xe43d9733' THEN 'ETH'
             ELSE e.symbol END AS taker_symbol,
-        case WHEN SUBSTRING(input, 1, 4) = '0xe43d9733'
+        CASE WHEN SUBSTRING(input, 1, 4) = '0xe43d9733'
                 THEN cast(conv(SUBSTRING(input, 145, 20), 16, 10) AS decimal) / power(10,e.decimals)
             ELSE cast(conv(SUBSTRING(input, 145, 20), 16, 10) AS decimal) / 1e18 END AS maker_token_amount,
-        case WHEN SUBSTRING(input, 1, 4) = '0xe43d9733'
+        CASE WHEN SUBSTRING(input, 1, 4) = '0xe43d9733'
                 THEN cast(conv(SUBSTRING(input, 113, 20), 16, 10) AS decimal) / 1e18
             ELSE cast(conv(SUBSTRING(input, 113, 20), 16, 10) AS decimal) / power(10,e.decimals) END AS taker_token_amount,
-        case WHEN SUBSTRING(input, 1, 4) = '0xe43d9733'
+        CASE WHEN SUBSTRING(input, 1, 4) = '0xe43d9733'
                 THEN cast(conv(SUBSTRING(input, 113, 20), 16, 10) AS decimal) / 1e18 * price
             ELSE cast(conv(SUBSTRING(input, 145, 20), 16, 10) AS decimal) / 1e18 * price END AS amount_usd
     FROM ethereum_traces t
@@ -332,9 +332,9 @@ new_pool AS (
         tx.from AS trader,
         l.`quoteToken` AS maker_token,
         l.`baseToken` AS taker_token,
-        case WHEN l.`quoteToken` = '0x0000000000000000000000000000000000000000' THEN 'ETH'
+        CASE WHEN l.`quoteToken` = '0x0000000000000000000000000000000000000000' THEN 'ETH'
             ELSE mp.symbol END AS maker_symbol,
-        case WHEN l.`baseToken` = '0x0000000000000000000000000000000000000000' THEN 'ETH'
+        CASE WHEN l.`baseToken` = '0x0000000000000000000000000000000000000000' THEN 'ETH'
             ELSE tp.symbol END AS taker_symbol,
         l.`quoteTokenAmount` / power(10, mp.decimals) AS maker_token_amount,
         l.`baseTokenAmount` / power(10, tp.decimals) AS taker_token_amount,
@@ -345,11 +345,11 @@ new_pool AS (
     inner join ethereum_transactions tx ON tx.hash = l.evt_tx_hash
     LEFT JOIN prices_usd tp ON tp.minute = date_trunc('minute', tx.block_time)
         AND tp.contract_address =
-            case WHEN l.`baseToken` = '0x0000000000000000000000000000000000000000'
+            CASE WHEN l.`baseToken` = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' ELSE l.`baseToken` END
     LEFT JOIN prices_usd mp ON mp.minute = date_trunc('minute', tx.block_time)
         AND mp.contract_address =
-            case WHEN l.`quoteToken` = '0x0000000000000000000000000000000000000000'
+            CASE WHEN l.`quoteToken` = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' ELSE l.`quoteToken` END
     WHERE l.evt_block_time > '2022-04-08' -- necessary filter to only include new trades
 ),

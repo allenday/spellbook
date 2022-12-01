@@ -48,7 +48,7 @@ SELECT
      , dexs.block_time
      , bep20a.symbol                                             AS token_bought_symbol
      , bep20b.symbol                                             AS token_sold_symbol
-     , case
+     , CASE
            WHEN lower(bep20a.symbol) > lower(bep20b.symbol) THEN concat(bep20b.symbol, '-', bep20a.symbol)
            ELSE concat(bep20a.symbol, '-', bep20b.symbol)
        END                                                       AS token_pair

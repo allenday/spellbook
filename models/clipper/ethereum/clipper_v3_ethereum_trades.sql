@@ -43,7 +43,7 @@ SELECT
     ,e.block_time
     ,t_bought.symbol AS token_bought_symbol
     ,t_sold.symbol AS token_sold_symbol
-    ,case
+    ,CASE
         WHEN lower(t_bought.symbol) > lower(t_sold.symbol) THEN concat(t_sold.symbol, '-', t_bought.symbol)
         ELSE concat(t_bought.symbol, '-', t_sold.symbol)
     END AS token_pair

@@ -154,7 +154,7 @@ valued_trades AS (
            sell_token,
            buy_token_address,
            buy_token,
-           case
+           CASE
                  WHEN lower(buy_token) > lower(sell_token) THEN concat(sell_token, '-', buy_token)
                  ELSE concat(buy_token, '-', sell_token)
                END AS token_pair,

@@ -85,7 +85,7 @@ with cryptopunks_bids_and_sales AS (
     SELECT  "Buy" AS event_type
             , a.`punkIndex` AS punk_id
             , a.`value` / 1e18 AS sale_price
-            , case WHEN a.`toAddress` = '0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2' -- gem
+            , CASE WHEN a.`toAddress` = '0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2' -- gem
                 THEN b.`to`
                 ELSE a.`toAddress` END AS to_address
             , a.`fromAddress` AS from_address

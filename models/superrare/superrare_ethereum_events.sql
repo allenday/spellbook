@@ -158,7 +158,7 @@ with all_superrare_sales AS (
     SELECT
         date_trunc('week', block_time) AS week,
         avg(
-            case
+            CASE
             WHEN token_bought_symbol like '%ETH%' THEN token_bought_amount * 1.0 / nullif(token_sold_amount, 0)
             ELSE token_sold_amount * 1.0 / nullif(token_bought_amount, 0)
             END
@@ -176,7 +176,7 @@ with all_superrare_sales AS (
             token_bought_symbol like '%ETH%'
             or token_sold_symbol like '%ETH%'
         )
-        AND case
+        AND CASE
             WHEN token_bought_symbol like '%ETH%' THEN token_bought_amount * 1.0 / nullif(token_sold_amount, 0)
             ELSE token_sold_amount * 1.0 / nullif(token_bought_amount, 0)
             END < 0.001
@@ -193,7 +193,7 @@ with all_superrare_sales AS (
             , evt.to
             , evt.from
             , lag(evt.from) OVER (PARTITION BY evt.contract_address, evt.tokenId ORDER BY evt.evt_block_time ASC) AS previous_owner
-            , case  WHEN evt.from = lower('0x8c9f364bf7a56ed058fc63ef81c6cf09c833e656')
+            , CASE  WHEN evt.from = lower('0x8c9f364bf7a56ed058fc63ef81c6cf09c833e656')
                         THEN 'From Auction House'
                     WHEN evt.to = lower('0x8c9f364bf7a56ed058fc63ef81c6cf09c833e656')
                         THEN 'To Auction House'
@@ -216,11 +216,11 @@ SELECT
     a.evt_block_time AS block_time,
     a.tokenId AS token_id,
     '' AS collection,
-    case
+    CASE
     WHEN a.currencyAddress = '0xba5bde662c17e2adff1075610382b9b691296350' THEN (a.amount / 1e18) * average_price_that_day_eth_per_rare * ep.price
     ELSE (a.amount / 1e18) * ep.price
     END AS amount_usd,
-    case
+    CASE
     WHEN a.contract_address = '0x41a322b28d0ff354040e2cbc676f0320d8c8850d' THEN 'erc20'
     ELSE 'erc721'
     END AS token_standard,
@@ -232,11 +232,11 @@ SELECT
     a.buyer AS buyer,
     (a.amount / 1e18) AS amount_original,
     a.amount AS amount_raw,
-    case
+    CASE
     WHEN a.currencyAddress = '0xba5bde662c17e2adff1075610382b9b691296350' THEN 'RARE'
     ELSE 'ETH' -- only RARE AND ETH possible
     END AS currency_symbol,
-    case
+    CASE
     WHEN a.currencyAddress = '0xba5bde662c17e2adff1075610382b9b691296350' THEN '0xba5bde662c17e2adff1075610382b9b691296350'
     ELSE '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
     END AS currency_contract,
@@ -250,7 +250,7 @@ SELECT
     t.to AS tx_to,
     ROUND((3 * (a.amount) / 100), 7) AS platform_fee_amount_raw,
     ROUND((3 * ((a.amount / 1e18)) / 100), 7) platform_fee_amount,
-    case
+    CASE
     WHEN a.currencyAddress = '0xba5bde662c17e2adff1075610382b9b691296350' THEN ROUND(
         (
         3 * (
@@ -262,27 +262,27 @@ SELECT
     ELSE ROUND((3 * ((a.amount / 1e18) * ep.price) / 100), 7)
     END AS platform_fee_amount_usd,
     CAST('3' AS DOUBLE) AS platform_fee_percentage,
-    case
+    CASE
     WHEN evt.to = po.previous_owner THEN 'Primary' -- auctions
     WHEN evt.to = seller THEN 'Primary'
     WHEN erc20.to = seller THEN 'Primary'
     ELSE 'Secondary'
     END AS superrare_sale_type,
-    case
+    CASE
     WHEN evt.to != po.previous_owner
     AND evt.to != seller
     AND erc20.to != seller -- secondary sale
     THEN ROUND((10 * (a.amount) / 100), 7)
     ELSE NULL
     END AS royalty_fee_amount_raw,
-    case
+    CASE
     WHEN evt.to != po.previous_owner
     AND evt.to != seller
     AND erc20.to != seller -- secondary sale
     THEN ROUND((10 * ((a.amount / 1e18)) / 100), 7)
     ELSE NULL
     END AS royalty_fee_amount,
-    case
+    CASE
     WHEN a.currencyAddress = '0xba5bde662c17e2adff1075610382b9b691296350'
     AND evt.to != po.previous_owner
     AND evt.to != seller
@@ -302,11 +302,11 @@ SELECT
     ELSE NULL
     END AS royalty_fee_amount_usd,
     CAST('10' AS DOUBLE) AS royalty_fee_percentage,
-    case
+    CASE
     WHEN evt.to is NOT NULL THEN evt.to
     ELSE erc20.to
     END AS royalty_fee_receive_address,
-    case
+    CASE
     WHEN a.currencyAddress = '0xba5bde662c17e2adff1075610382b9b691296350' THEN 'RARE'
     ELSE 'ETH' -- only RARE AND ETH possible
     END AS royalty_fee_currency_symbol,

@@ -85,32 +85,32 @@ with p1_call AS (
      )
 
 
-,p1_add_rn AS (SELECT (max(case WHEN purchase_method = 'Offer Accepted' AND sub_type = 'offer' AND sub_idx = 0 THEN token_contract_address
+,p1_add_rn AS (SELECT (max(CASE WHEN purchase_method = 'Offer Accepted' AND sub_type = 'offer' AND sub_idx = 0 THEN token_contract_address
                      WHEN purchase_method = 'Buy' AND sub_type = 'consideration' THEN token_contract_address
                 END) OVER (PARTITION BY tx_hash, evt_index)) AS avg_original_currency_contract
-          ,sum(case WHEN purchase_method = 'Offer Accepted' AND sub_type = 'offer' AND sub_idx = 0 THEN original_amount
+          ,sum(CASE WHEN purchase_method = 'Offer Accepted' AND sub_type = 'offer' AND sub_idx = 0 THEN original_amount
                     WHEN purchase_method = 'Buy' AND sub_type = 'consideration' THEN original_amount
                END) OVER (PARTITION BY tx_hash, evt_index)
  / nft_transfer_count AS avg_original_amount
-          ,sum(case WHEN fee_royalty_yn = 'fee' THEN original_amount END) OVER (PARTITION BY tx_hash, evt_index) / nft_transfer_count AS avg_fee_amount
-          ,sum(case WHEN fee_royalty_yn = 'royalty' THEN original_amount END) OVER (PARTITION BY tx_hash, evt_index) / nft_transfer_count AS avg_royalty_amount
-          , (max(case WHEN fee_royalty_yn = 'fee' THEN receiver END) OVER (PARTITION BY tx_hash, evt_index)) AS avg_fee_receive_address
-          , (max(case WHEN fee_royalty_yn = 'royalty' THEN receiver END) OVER (PARTITION BY tx_hash, evt_index)) AS avg_royalty_receive_address
+          ,sum(CASE WHEN fee_royalty_yn = 'fee' THEN original_amount END) OVER (PARTITION BY tx_hash, evt_index) / nft_transfer_count AS avg_fee_amount
+          ,sum(CASE WHEN fee_royalty_yn = 'royalty' THEN original_amount END) OVER (PARTITION BY tx_hash, evt_index) / nft_transfer_count AS avg_royalty_amount
+          , (max(CASE WHEN fee_royalty_yn = 'fee' THEN receiver END) OVER (PARTITION BY tx_hash, evt_index)) AS avg_fee_receive_address
+          , (max(CASE WHEN fee_royalty_yn = 'royalty' THEN receiver END) OVER (PARTITION BY tx_hash, evt_index)) AS avg_royalty_receive_address
           ,a.*
-      FROM (SELECT case WHEN purchase_method = 'Offer Accepted' AND sub_type = 'consideration' AND fee_royalty_idx = 1 THEN 'fee'
+      FROM (SELECT CASE WHEN purchase_method = 'Offer Accepted' AND sub_type = 'consideration' AND fee_royalty_idx = 1 THEN 'fee'
                         WHEN purchase_method = 'Offer Accepted' AND sub_type = 'consideration' AND fee_royalty_idx = 2 THEN 'royalty'
                         WHEN purchase_method = 'Buy' AND sub_type = 'consideration' AND fee_royalty_idx = 2 THEN 'fee'
                         WHEN purchase_method = 'Buy' AND sub_type = 'consideration' AND fee_royalty_idx = 3 THEN 'royalty'
                    END AS fee_royalty_yn
-                  ,case WHEN purchase_method = 'Offer Accepted' AND main_type = 'ORDER' THEN 'Individual Offer'
+                  ,CASE WHEN purchase_method = 'Offer Accepted' AND main_type = 'ORDER' THEN 'Individual Offer'
                         WHEN purchase_method = 'Offer Accepted' AND main_type = 'basic_order' THEN 'Individual Offer'
                         WHEN purchase_method = 'Offer Accepted' AND main_type = 'advanced_order' THEN 'Collection / Trait Offers'
                         ELSE 'Buy'
                    END AS order_type
                   ,a.*
-              FROM (SELECT (count(case WHEN item_type in ('2', '3') THEN 1 END) OVER (PARTITION BY tx_hash, evt_index)) AS nft_transfer_count
-                          , (sum(case WHEN item_type in ('0', '1') THEN 1 END) OVER (PARTITION BY tx_hash, evt_index, sub_type ORDER BY sub_idx)) AS fee_royalty_idx
-                          ,case WHEN max(case WHEN (sub_type,sub_idx,item_type) in (('offer',0,'1')) THEN 1 ELSE 0 END) OVER (PARTITION BY tx_hash) = 1 THEN 'Offer Accepted'
+              FROM (SELECT (count(CASE WHEN item_type in ('2', '3') THEN 1 END) OVER (PARTITION BY tx_hash, evt_index)) AS nft_transfer_count
+                          , (sum(CASE WHEN item_type in ('0', '1') THEN 1 END) OVER (PARTITION BY tx_hash, evt_index, sub_type ORDER BY sub_idx)) AS fee_royalty_idx
+                          ,CASE WHEN max(CASE WHEN (sub_type,sub_idx,item_type) in (('offer',0,'1')) THEN 1 ELSE 0 END) OVER (PARTITION BY tx_hash) = 1 THEN 'Offer Accepted'
                                 ELSE 'Buy'
                            END AS purchase_method
                           ,a.*
@@ -147,7 +147,7 @@ with p1_call AS (
           ,coalesce(avg_original_amount,0) + coalesce(avg_fee_amount,0) + coalesce(avg_royalty_amount,0) AS attempt_amount
           ,0 AS revert_amount
           ,false AS reverted
-          ,case WHEN nft_transfer_count > 1 THEN true ELSE false END AS price_estimated
+          ,CASE WHEN nft_transfer_count > 1 THEN true ELSE false END AS price_estimated
           ,'' AS offer_order_type
           ,item_type
           ,order_type_id
@@ -168,10 +168,10 @@ with p1_call AS (
           ,a.nft_token_id AS token_id
           ,n.name AS collection
           ,a.attempt_amount / power(10,t1.decimals) * p1.price AS amount_usd
-          ,case WHEN item_type = '2' THEN 'erc721'
+          ,CASE WHEN item_type = '2' THEN 'erc721'
                 WHEN item_type = '3' THEN 'erc1155'
            END AS token_standard
-          ,case WHEN order_type = 'Bulk Purchase' THEN 'Bulk Purchase'
+          ,CASE WHEN order_type = 'Bulk Purchase' THEN 'Bulk Purchase'
                 WHEN nft_transfer_count = 1 THEN 'Single Item Trade'
                 ELSE 'Bundle Trade'
            END AS trade_type
@@ -183,10 +183,10 @@ with p1_call AS (
             ELSE concat('0x',SUBSTR(buyer,3,40)) END AS buyer
           ,a.original_amount / power(10,t1.decimals) AS amount_original
           ,a.original_amount AS amount_raw
-          ,case WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000' THEN 'ETH'
+          ,CASE WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000' THEN 'ETH'
                 ELSE t1.symbol
            END AS currency_symbol
-          ,case WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000' THEN
+          ,CASE WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000' THEN
           '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 ELSE a.original_currency_contract
            END AS currency_contract
@@ -206,7 +206,7 @@ with p1_call AS (
           ,a.royalty_amount / power(10,t1.decimals) * p1.price AS royalty_fee_amount_usd
           , (a.royalty_amount / a.original_amount * 100)::STRING  AS royalty_fee_percentage
           ,a.royalty_receive_address AS royalty_fee_receive_address
-          ,case WHEN royalty_amount > 0 AND a.original_currency_contract =
+          ,CASE WHEN royalty_amount > 0 AND a.original_currency_contract =
           '0x0000000000000000000000000000000000000000' THEN 'ETH'
                 WHEN royalty_amount > 0 THEN t1.symbol
           END AS royalty_fee_currency_symbol
@@ -253,14 +253,14 @@ with p1_call AS (
             {% endif %}
         LEFT JOIN {{ ref('tokens_erc20') }} t1
             ON t1.contract_address =
-                case WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000'
+                CASE WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 ELSE a.original_currency_contract
                 END
             AND t1.blockchain = 'ethereum'
           LEFT JOIN {{ source('prices', 'usd') }} p1
             ON p1.contract_address =
-                case WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000'
+                CASE WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 ELSE a.original_currency_contract
                 END
@@ -381,9 +381,9 @@ with p1_call AS (
           ,evt_fee_recipient AS evt_fee_recipient
           ,evt_royalty_recipient AS evt_royalty_recipient
           ,coalesce(price_amount,0) + coalesce(fee_amount,0) + coalesce(royalty_amount,0) AS attempt_amount
-          ,case WHEN evt_tx_hash is NOT NULL THEN coalesce(price_amount,0) + coalesce(fee_amount,0) + coalesce(royalty_amount,0) END AS trade_amount
-          ,case WHEN evt_tx_hash is NULL THEN coalesce(price_amount,0) + coalesce(fee_amount,0) + coalesce(royalty_amount,0) ELSE 0 END AS revert_amount
-          ,case WHEN evt_tx_hash is NULL THEN true ELSE false END AS reverted
+          ,CASE WHEN evt_tx_hash is NOT NULL THEN coalesce(price_amount,0) + coalesce(fee_amount,0) + coalesce(royalty_amount,0) END AS trade_amount
+          ,CASE WHEN evt_tx_hash is NULL THEN coalesce(price_amount,0) + coalesce(fee_amount,0) + coalesce(royalty_amount,0) ELSE 0 END AS revert_amount
+          ,CASE WHEN evt_tx_hash is NULL THEN true ELSE false END AS reverted
           ,'Bulk Purchase' AS trade_type
           ,'Bulk Purchase' AS order_type
           ,'Buy' AS purchase_method
@@ -400,7 +400,7 @@ with p1_call AS (
           ,a.nft_token_id AS token_id
           ,n.name AS collection
           ,a.attempt_amount / power(10,t1.decimals) * p1.price AS amount_usd
-          ,case WHEN offer_item_type = '2' THEN 'erc721'
+          ,CASE WHEN offer_item_type = '2' THEN 'erc721'
                 WHEN offer_item_type = '3' THEN 'erc1155'
            END AS token_standard
           ,trade_type
@@ -412,11 +412,11 @@ with p1_call AS (
             ELSE concat('0x',SUBSTR(buyer,3,40)) END AS buyer
           ,a.attempt_amount / power(10,t1.decimals) AS amount_original
           ,a.attempt_amount AS amount_raw
-          ,case WHEN concat('0x',SUBSTR(a.price_token,3,40)) =
+          ,CASE WHEN concat('0x',SUBSTR(a.price_token,3,40)) =
           '0x0000000000000000000000000000000000000000' THEN 'ETH'
                 ELSE t1.symbol
            END AS currency_symbol
-          ,case WHEN concat('0x',SUBSTR(a.price_token,3,40)) =
+          ,CASE WHEN concat('0x',SUBSTR(a.price_token,3,40)) =
           '0x0000000000000000000000000000000000000000' THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 ELSE concat('0x',SUBSTR(a.price_token,3,40))
            END AS currency_contract
@@ -435,9 +435,9 @@ with p1_call AS (
           ,a.evt_royalty_amount / power(10,t1.decimals) AS royalty_fee_amount
           ,a.evt_royalty_amount / power(10,t1.decimals) * p1.price AS royalty_fee_amount_usd
           , (a.evt_royalty_amount / a.attempt_amount * 100)::STRING  AS royalty_fee_percentage
-          ,case WHEN evt_royalty_amount > 0 THEN concat('0x',SUBSTR(evt_royalty_recipient,3,40)) END AS
+          ,CASE WHEN evt_royalty_amount > 0 THEN concat('0x',SUBSTR(evt_royalty_recipient,3,40)) END AS
           royalty_fee_receive_address
-          ,case WHEN evt_royalty_amount > 0 AND concat('0x',SUBSTR(a.evt_royalty_token,3,40)) =
+          ,CASE WHEN evt_royalty_amount > 0 AND concat('0x',SUBSTR(a.evt_royalty_token,3,40)) =
           '0x0000000000000000000000000000000000000000' THEN 'ETH'
                 WHEN evt_royalty_amount > 0 THEN t1.symbol
           END AS royalty_fee_currency_symbol
@@ -484,13 +484,13 @@ with p1_call AS (
             ON n.contract_address = concat('0x',SUBSTR(a.nft_address,3,40)) AND n.blockchain = 'ethereum'
         LEFT JOIN {{ ref('tokens_erc20') }} t1
             ON t1.contract_address =
-                case WHEN concat('0x',SUBSTR(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
+                CASE WHEN concat('0x',SUBSTR(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 ELSE concat('0x',SUBSTR(a.price_token,3,40))
                 END AND t1.blockchain = 'ethereum'
           LEFT JOIN {{ source('prices', 'usd') }} p1
             ON p1.contract_address =
-                case WHEN concat('0x',SUBSTR(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
+                CASE WHEN concat('0x',SUBSTR(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 ELSE concat('0x',SUBSTR(a.price_token,3,40))
                 END
@@ -573,32 +573,32 @@ with p1_call AS (
         )
 
 
-,p3_add_rn AS (SELECT (max(case WHEN purchase_method = 'Offer Accepted' AND sub_type = 'offer' AND sub_idx = 0 THEN token_contract_address::STRING
+,p3_add_rn AS (SELECT (max(CASE WHEN purchase_method = 'Offer Accepted' AND sub_type = 'offer' AND sub_idx = 0 THEN token_contract_address::STRING
                      WHEN purchase_method = 'Buy' AND sub_type = 'consideration' THEN token_contract_address::STRING
                 END) OVER (PARTITION BY tx_hash, evt_index)) AS avg_original_currency_contract
-          ,sum(case WHEN purchase_method = 'Offer Accepted' AND sub_type = 'offer' AND sub_idx = 0 THEN original_amount
+          ,sum(CASE WHEN purchase_method = 'Offer Accepted' AND sub_type = 'offer' AND sub_idx = 0 THEN original_amount
                     WHEN purchase_method = 'Buy' AND sub_type = 'consideration' THEN original_amount
                END) OVER (PARTITION BY tx_hash, evt_index)
  / nft_transfer_count AS avg_original_amount
-          ,sum(case WHEN fee_royalty_yn = 'fee' THEN original_amount END) OVER (PARTITION BY tx_hash, evt_index) / nft_transfer_count AS avg_fee_amount
-          ,sum(case WHEN fee_royalty_yn = 'royalty' THEN original_amount END) OVER (PARTITION BY tx_hash, evt_index) / nft_transfer_count AS avg_royalty_amount
-          , (max(case WHEN fee_royalty_yn = 'fee' THEN receiver::STRING END) OVER (PARTITION BY tx_hash, evt_index)) AS avg_fee_receive_address
-          , (max(case WHEN fee_royalty_yn = 'royalty' THEN receiver::STRING END) OVER (PARTITION BY tx_hash, evt_index)) AS avg_royalty_receive_address
+          ,sum(CASE WHEN fee_royalty_yn = 'fee' THEN original_amount END) OVER (PARTITION BY tx_hash, evt_index) / nft_transfer_count AS avg_fee_amount
+          ,sum(CASE WHEN fee_royalty_yn = 'royalty' THEN original_amount END) OVER (PARTITION BY tx_hash, evt_index) / nft_transfer_count AS avg_royalty_amount
+          , (max(CASE WHEN fee_royalty_yn = 'fee' THEN receiver::STRING END) OVER (PARTITION BY tx_hash, evt_index)) AS avg_fee_receive_address
+          , (max(CASE WHEN fee_royalty_yn = 'royalty' THEN receiver::STRING END) OVER (PARTITION BY tx_hash, evt_index)) AS avg_royalty_receive_address
           ,a.*
-      FROM (SELECT case WHEN purchase_method = 'Offer Accepted' AND sub_type = 'consideration' AND fee_royalty_idx = 1 THEN 'fee'
+      FROM (SELECT CASE WHEN purchase_method = 'Offer Accepted' AND sub_type = 'consideration' AND fee_royalty_idx = 1 THEN 'fee'
                         WHEN purchase_method = 'Offer Accepted' AND sub_type = 'consideration' AND fee_royalty_idx = 2 THEN 'royalty'
                         WHEN purchase_method = 'Buy' AND sub_type = 'consideration' AND fee_royalty_idx = 2 THEN 'fee'
                         WHEN purchase_method = 'Buy' AND sub_type = 'consideration' AND fee_royalty_idx = 3 THEN 'royalty'
                    END AS fee_royalty_yn
-                  ,case WHEN purchase_method = 'Offer Accepted' AND main_type = 'ORDER' THEN 'Individual Offer'
+                  ,CASE WHEN purchase_method = 'Offer Accepted' AND main_type = 'ORDER' THEN 'Individual Offer'
                         WHEN purchase_method = 'Offer Accepted' AND main_type = 'basic_order' THEN 'Individual Offer'
                         WHEN purchase_method = 'Offer Accepted' AND main_type = 'advanced_order' THEN 'Collection / Trait Offers'
                         ELSE 'Buy'
                    END AS order_type
                   ,a.*
-              FROM (SELECT count(case WHEN item_type in ('2', '3') THEN 1 END) OVER (PARTITION BY tx_hash, evt_index) AS nft_transfer_count
-                          ,sum(case WHEN item_type in ('0', '1') THEN 1 END) OVER (PARTITION BY tx_hash, evt_index, sub_type ORDER BY sub_idx) AS fee_royalty_idx
-                          ,case WHEN max(case WHEN (sub_type,sub_idx,item_type) in (('offer',0,'1')) THEN 1 ELSE 0 END) OVER (PARTITION BY tx_hash) = 1 THEN 'Offer Accepted'
+              FROM (SELECT count(CASE WHEN item_type in ('2', '3') THEN 1 END) OVER (PARTITION BY tx_hash, evt_index) AS nft_transfer_count
+                          ,sum(CASE WHEN item_type in ('0', '1') THEN 1 END) OVER (PARTITION BY tx_hash, evt_index, sub_type ORDER BY sub_idx) AS fee_royalty_idx
+                          ,CASE WHEN max(CASE WHEN (sub_type,sub_idx,item_type) in (('offer',0,'1')) THEN 1 ELSE 0 END) OVER (PARTITION BY tx_hash) = 1 THEN 'Offer Accepted'
                                 ELSE 'Buy'
                            END AS purchase_method
                           ,a.*
@@ -637,7 +637,7 @@ with p1_call AS (
           ,coalesce(avg_original_amount,0) AS attempt_amount
           ,0 AS revert_amount
           ,false AS reverted
-          ,case WHEN nft_transfer_count > 1 THEN true ELSE false END AS price_estimated
+          ,CASE WHEN nft_transfer_count > 1 THEN true ELSE false END AS price_estimated
           ,'' AS offer_order_type
           ,item_type
           ,order_type_id
@@ -655,10 +655,10 @@ with p1_call AS (
           ,a.nft_token_id AS token_id
           ,n.name AS collection
           ,a.attempt_amount / power(10,t1.decimals) * p1.price AS amount_usd
-          ,case WHEN item_type = '2' THEN 'erc721'
+          ,CASE WHEN item_type = '2' THEN 'erc721'
                 WHEN item_type = '3' THEN 'erc1155'
            END AS token_standard
-          ,case WHEN order_type = 'Bulk Purchase' THEN 'Bulk Purchase'
+          ,CASE WHEN order_type = 'Bulk Purchase' THEN 'Bulk Purchase'
                 WHEN nft_transfer_count = 1 THEN 'Single Item Trade'
                 ELSE 'Bundle Trade'
            END AS trade_type
@@ -670,10 +670,10 @@ with p1_call AS (
             ELSE concat('0x',SUBSTR(buyer,3,40)) END AS buyer
           ,a.attempt_amount / power(10,t1.decimals) AS amount_original
           ,a.attempt_amount AS amount_raw
-          ,case WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000' THEN 'ETH'
+          ,CASE WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000' THEN 'ETH'
                 ELSE t1.symbol
            END AS currency_symbol
-          ,case WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000' THEN
+          ,CASE WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000' THEN
           '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 ELSE a.original_currency_contract
            END AS currency_contract
@@ -692,9 +692,9 @@ with p1_call AS (
           ,a.royalty_amount / power(10,t1.decimals) AS royalty_fee_amount
           ,a.royalty_amount / power(10,t1.decimals) * p1.price AS royalty_fee_amount_usd
           , (a.royalty_amount / a.attempt_amount * 100)::STRING  AS royalty_fee_percentage
-          ,case WHEN royalty_amount > 0 THEN royalty_receive_address END AS
+          ,CASE WHEN royalty_amount > 0 THEN royalty_receive_address END AS
           royalty_fee_receive_address
-          ,case WHEN royalty_amount > 0 AND a.original_currency_contract =
+          ,CASE WHEN royalty_amount > 0 AND a.original_currency_contract =
           '0x0000000000000000000000000000000000000000' THEN 'ETH'
           WHEN royalty_amount > 0 THEN t1.symbol
           END AS royalty_fee_currency_symbol
@@ -741,14 +741,14 @@ with p1_call AS (
             {% endif %}
         LEFT JOIN {{ ref('tokens_erc20') }} t1
             ON t1.contract_address =
-                case WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000'
+                CASE WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 ELSE a.original_currency_contract
                 END
             AND t1.blockchain = 'ethereum'
           LEFT JOIN {{ source('prices', 'usd') }} p1
             ON p1.contract_address =
-                case WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000'
+                CASE WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 ELSE a.original_currency_contract
                 END
@@ -804,32 +804,32 @@ with p1_call AS (
 
 
   ,p4_add_rn AS (
-    SELECT max(case WHEN fee_royalty_yn = 'price' THEN offerer END) OVER (PARTITION BY tx_hash) AS price_offerer
-          ,max(case WHEN fee_royalty_yn = 'price' THEN recipient END) OVER (PARTITION BY tx_hash) AS price_recipient
-          ,max(case WHEN fee_royalty_yn = 'price' THEN offer_token END) OVER (PARTITION BY tx_hash) AS price_token
-          ,max(case WHEN fee_royalty_yn = 'price' THEN offer_amount END) OVER (PARTITION BY tx_hash) / nft_transfer_count AS price_amount
-          ,max(case WHEN fee_royalty_yn = 'price' THEN offer_item_type END) OVER (PARTITION BY tx_hash) AS price_item_type
-          ,max(case WHEN fee_royalty_yn = 'price' THEN offer_identifier END) OVER (PARTITION BY tx_hash) AS price_id
-          ,max(case WHEN fee_royalty_yn = 'fee' THEN offerer END) OVER (PARTITION BY tx_hash) AS fee_offerer
-          ,max(case WHEN fee_royalty_yn = 'fee' THEN recipient END) OVER (PARTITION BY tx_hash) AS fee_recipient
-          ,max(case WHEN fee_royalty_yn = 'fee' THEN offer_token END) OVER (PARTITION BY tx_hash) AS fee_token
-          ,max(case WHEN fee_royalty_yn = 'fee' THEN offer_amount END) OVER (PARTITION BY tx_hash) / nft_transfer_count AS fee_amount
-          ,max(case WHEN fee_royalty_yn = 'fee' THEN offer_item_type END) OVER (PARTITION BY tx_hash) AS fee_item_type
-          ,max(case WHEN fee_royalty_yn = 'fee' THEN offer_identifier END) OVER (PARTITION BY tx_hash) AS fee_id
-          ,max(case WHEN fee_royalty_yn = 'royalty' THEN offerer END) OVER (PARTITION BY tx_hash) AS royalty_offerer
-          ,max(case WHEN fee_royalty_yn = 'royalty' THEN recipient END) OVER (PARTITION BY tx_hash) AS royalty_recipient
-          ,max(case WHEN fee_royalty_yn = 'royalty' THEN offer_token END) OVER (PARTITION BY tx_hash) AS royalty_token
-          ,max(case WHEN fee_royalty_yn = 'royalty' THEN offer_amount END) OVER (PARTITION BY tx_hash) / nft_transfer_count AS royalty_amount
-          ,max(case WHEN fee_royalty_yn = 'royalty' THEN offer_item_type END) OVER (PARTITION BY tx_hash) AS royalty_item_type
-          ,max(case WHEN fee_royalty_yn = 'royalty' THEN offer_identifier END) OVER (PARTITION BY tx_hash) AS royalty_id
+    SELECT max(CASE WHEN fee_royalty_yn = 'price' THEN offerer END) OVER (PARTITION BY tx_hash) AS price_offerer
+          ,max(CASE WHEN fee_royalty_yn = 'price' THEN recipient END) OVER (PARTITION BY tx_hash) AS price_recipient
+          ,max(CASE WHEN fee_royalty_yn = 'price' THEN offer_token END) OVER (PARTITION BY tx_hash) AS price_token
+          ,max(CASE WHEN fee_royalty_yn = 'price' THEN offer_amount END) OVER (PARTITION BY tx_hash) / nft_transfer_count AS price_amount
+          ,max(CASE WHEN fee_royalty_yn = 'price' THEN offer_item_type END) OVER (PARTITION BY tx_hash) AS price_item_type
+          ,max(CASE WHEN fee_royalty_yn = 'price' THEN offer_identifier END) OVER (PARTITION BY tx_hash) AS price_id
+          ,max(CASE WHEN fee_royalty_yn = 'fee' THEN offerer END) OVER (PARTITION BY tx_hash) AS fee_offerer
+          ,max(CASE WHEN fee_royalty_yn = 'fee' THEN recipient END) OVER (PARTITION BY tx_hash) AS fee_recipient
+          ,max(CASE WHEN fee_royalty_yn = 'fee' THEN offer_token END) OVER (PARTITION BY tx_hash) AS fee_token
+          ,max(CASE WHEN fee_royalty_yn = 'fee' THEN offer_amount END) OVER (PARTITION BY tx_hash) / nft_transfer_count AS fee_amount
+          ,max(CASE WHEN fee_royalty_yn = 'fee' THEN offer_item_type END) OVER (PARTITION BY tx_hash) AS fee_item_type
+          ,max(CASE WHEN fee_royalty_yn = 'fee' THEN offer_identifier END) OVER (PARTITION BY tx_hash) AS fee_id
+          ,max(CASE WHEN fee_royalty_yn = 'royalty' THEN offerer END) OVER (PARTITION BY tx_hash) AS royalty_offerer
+          ,max(CASE WHEN fee_royalty_yn = 'royalty' THEN recipient END) OVER (PARTITION BY tx_hash) AS royalty_recipient
+          ,max(CASE WHEN fee_royalty_yn = 'royalty' THEN offer_token END) OVER (PARTITION BY tx_hash) AS royalty_token
+          ,max(CASE WHEN fee_royalty_yn = 'royalty' THEN offer_amount END) OVER (PARTITION BY tx_hash) / nft_transfer_count AS royalty_amount
+          ,max(CASE WHEN fee_royalty_yn = 'royalty' THEN offer_item_type END) OVER (PARTITION BY tx_hash) AS royalty_item_type
+          ,max(CASE WHEN fee_royalty_yn = 'royalty' THEN offer_identifier END) OVER (PARTITION BY tx_hash) AS royalty_id
           ,a.*
-      FROM (SELECT case WHEN fee_royalty_idx = 1 THEN 'price'
+      FROM (SELECT CASE WHEN fee_royalty_idx = 1 THEN 'price'
                         WHEN fee_royalty_idx = 2 THEN 'fee'
                         WHEN fee_royalty_idx = 3 THEN 'royalty'
                    END AS fee_royalty_yn
                   ,a.*
-              FROM (SELECT count(case WHEN offer_item_type in ('2', '3') THEN 1 END) OVER (PARTITION BY tx_hash) AS nft_transfer_count
-                          ,sum(case WHEN offer_item_type in ('0', '1') THEN 1 END) OVER (PARTITION BY tx_hash ORDER BY sub_idx) AS fee_royalty_idx
+              FROM (SELECT count(CASE WHEN offer_item_type in ('2', '3') THEN 1 END) OVER (PARTITION BY tx_hash) AS nft_transfer_count
+                          ,sum(CASE WHEN offer_item_type in ('0', '1') THEN 1 END) OVER (PARTITION BY tx_hash ORDER BY sub_idx) AS fee_royalty_idx
                           ,a.*
                       FROM p4_call a
                     ) a
@@ -886,10 +886,10 @@ with p1_call AS (
           ,a.nft_token_id AS token_id
           ,n.name AS collection
           ,a.attempt_amount / power(10,t1.decimals) * p1.price AS amount_usd
-          ,case WHEN offer_item_type = '2' THEN 'erc721'
+          ,CASE WHEN offer_item_type = '2' THEN 'erc721'
                 WHEN offer_item_type = '3' THEN 'erc1155'
            END AS token_standard
-          ,case WHEN order_type = 'Bulk Purchase' THEN 'Bulk Purchase'
+          ,CASE WHEN order_type = 'Bulk Purchase' THEN 'Bulk Purchase'
                 WHEN nft_transfer_count = 1 THEN 'Single Item Trade'
                 ELSE 'Bundle Trade'
            END AS trade_type
@@ -901,11 +901,11 @@ with p1_call AS (
             ELSE concat('0x',SUBSTR(buyer,3,40)) END AS buyer
           ,a.attempt_amount / power(10,t1.decimals) AS amount_original
           ,a.attempt_amount AS amount_raw
-          ,case WHEN concat('0x',SUBSTR(a.price_token,3,40)) =
+          ,CASE WHEN concat('0x',SUBSTR(a.price_token,3,40)) =
           '0x0000000000000000000000000000000000000000' THEN 'ETH'
                 ELSE t1.symbol
            END AS currency_symbol
-          ,case WHEN concat('0x',SUBSTR(a.price_token,3,40)) =
+          ,CASE WHEN concat('0x',SUBSTR(a.price_token,3,40)) =
           '0x0000000000000000000000000000000000000000' THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 ELSE concat('0x',SUBSTR(a.price_token,3,40))
            END AS currency_contract
@@ -924,9 +924,9 @@ with p1_call AS (
           ,a.evt_royalty_amount / power(10,t1.decimals) AS royalty_fee_amount
           ,a.evt_royalty_amount / power(10,t1.decimals) * p1.price AS royalty_fee_amount_usd
           , (a.evt_royalty_amount / a.attempt_amount * 100)::STRING  AS royalty_fee_percentage
-          ,case WHEN evt_royalty_amount > 0 THEN concat('0x',SUBSTR(evt_royalty_recipient,3,40)) END AS
+          ,CASE WHEN evt_royalty_amount > 0 THEN concat('0x',SUBSTR(evt_royalty_recipient,3,40)) END AS
           royalty_fee_receive_address
-          ,case WHEN evt_royalty_amount > 0 AND concat('0x',SUBSTR(a.evt_royalty_token,3,40)) =
+          ,CASE WHEN evt_royalty_amount > 0 AND concat('0x',SUBSTR(a.evt_royalty_token,3,40)) =
           '0x0000000000000000000000000000000000000000' THEN 'ETH'
                 WHEN evt_royalty_amount > 0 THEN t1.symbol
           END AS royalty_fee_currency_symbol
@@ -972,14 +972,14 @@ with p1_call AS (
         ON n.contract_address = concat('0x',SUBSTR(a.nft_address,3,40)) AND n.blockchain = 'ethereum'
     LEFT JOIN {{ ref('tokens_erc20') }} t1
         ON t1.contract_address =
-            case WHEN concat('0x',SUBSTR(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
+            CASE WHEN concat('0x',SUBSTR(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
             THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
             ELSE concat('0x',SUBSTR(a.price_token,3,40))
             END
         AND t1.blockchain = 'ethereum'
         LEFT JOIN {{ source('prices', 'usd') }} p1
         ON p1.contract_address =
-            case WHEN concat('0x',SUBSTR(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
+            CASE WHEN concat('0x',SUBSTR(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
             THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
             ELSE concat('0x',SUBSTR(a.price_token,3,40))
             END

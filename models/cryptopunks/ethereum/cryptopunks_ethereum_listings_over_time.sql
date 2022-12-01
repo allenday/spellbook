@@ -11,7 +11,7 @@
 with all_listings AS (
     SELECT  `punkIndex` AS punk_id
             , 'Listing' AS event_type
-            , case WHEN `toAddress` = '0x0000000000000000000000000000000000000000' THEN 'Public Listing'
+            , CASE WHEN `toAddress` = '0x0000000000000000000000000000000000000000' THEN 'Public Listing'
                     ELSE 'Private Listing'
                 END AS event_sub_type
             , `minValue` / 1e18 AS listed_price
@@ -25,7 +25,7 @@ with all_listings AS (
 , all_no_longer_for_sale_events (
     SELECT  `punkIndex` AS punk_id
             , 'No Longer For Sale' AS event_type
-            , case WHEN evt_tx_hash in (SELECT evt_tx_hash FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkBought') }}) THEN 'Punk Bought'
+            , CASE WHEN evt_tx_hash in (SELECT evt_tx_hash FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkBought') }}) THEN 'Punk Bought'
                     ELSE 'Other'
                 END AS event_sub_type
             , NULL AS listed_price
@@ -84,7 +84,7 @@ with all_listings AS (
 , aggregated_punk_on_off_data AS (
     SELECT date_trunc('day',a.evt_block_time) AS day
             , a.punk_id
-            , case WHEN event_type = 'Listing' THEN 'Active' ELSE 'Not Listed' END AS listed_bool
+            , CASE WHEN event_type = 'Listing' THEN 'Active' ELSE 'Not Listed' END AS listed_bool
     FROM all_punk_events a
     inner join (    SELECT date_trunc('day', evt_block_time) AS day
                             , punk_id
@@ -95,7 +95,7 @@ with all_listings AS (
     ON date_trunc('day',a.evt_block_time) = b.day AND a.punk_id = b.punk_id AND a.punk_event_index = b.max_event
 )
 SELECT day
-        , sum(case WHEN bool_fill_in = 'Active' THEN 1 ELSE 0 END) AS listed_count
+        , sum(CASE WHEN bool_fill_in = 'Active' THEN 1 ELSE 0 END) AS listed_count
 FROM
 (   SELECT c.*
             , last_value(listed_bool,true) OVER (PARTITION BY punk_id ORDER BY day ASC ) AS bool_fill_in
