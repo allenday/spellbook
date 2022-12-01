@@ -27,7 +27,7 @@ with p1_call AS (
           ,call_block_time AS block_time
           ,call_block_number AS block_number
           ,max(get_json_object(parameters, "$.basicOrderType")) AS order_type_id
-      FROM {{ source('seaport_ethereum','Seaport_call_fulfillBasicOrder') }}
+      FROM {{ source('seaport_ethereum', 'Seaport_call_fulfillBasicOrder') }}
       {% if is_incremental() %} -- this filter will only be applied ON an incremental run
       where call_block_time >= (SELECT max(block_time) FROM {{ this }})
       {% endif %}
@@ -52,7 +52,7 @@ with p1_call AS (
           ,e.contract_address AS exchange_contract_address
           ,e.evt_index
       FROM
-          (SELECT *, posexplode(offer) AS (offer_idx, offer2) FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }}
+          (SELECT *, posexplode(offer) AS (offer_idx, offer2) FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }}
                {% if is_incremental() %} -- this filter will only be applied ON an incremental run
                where evt_block_time >= (SELECT max(block_time) FROM {{ this }})
                {% endif %}
@@ -76,7 +76,7 @@ with p1_call AS (
           ,e.contract_address AS exchange_contract_address
           ,e.evt_index
       FROM
-        (SELECT *, posexplode(consideration) AS (consideration_idx, consideration2) FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }}
+        (SELECT *, posexplode(consideration) AS (consideration_idx, consideration2) FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }}
             {% if is_incremental() %} -- this filter will only be applied ON an incremental run
             where evt_block_time >= (SELECT max(block_time) FROM {{ this }})
             {% endif %}
@@ -108,8 +108,8 @@ with p1_call AS (
                         else 'Buy'
                    end AS order_type
                   ,a.*
-              FROM (SELECT (count(case when item_type in ('2','3') then 1 end) over (partition BY tx_hash, evt_index)) AS nft_transfer_count
-                          , (sum(case when item_type in ('0','1') then 1 end) over (partition BY tx_hash, evt_index, sub_type order BY sub_idx)) AS fee_royalty_idx
+              FROM (SELECT (count(case when item_type in ('2', '3') then 1 end) over (partition BY tx_hash, evt_index)) AS nft_transfer_count
+                          , (sum(case when item_type in ('0', '1') then 1 end) over (partition BY tx_hash, evt_index, sub_type order BY sub_idx)) AS fee_royalty_idx
                           ,case when max(case when (sub_type,sub_idx,item_type) in (('offer',0,'1')) then 1 else 0 end) over (partition BY tx_hash) = 1 then 'Offer Accepted'
                                 else 'Buy'
                            end AS purchase_method
@@ -152,7 +152,7 @@ with p1_call AS (
           ,item_type
           ,order_type_id
       FROM p1_add_rn a
-     where item_type in ('2','3')
+     where item_type in ('2', '3')
 )
 
 
@@ -215,7 +215,7 @@ with p1_call AS (
           STRING) AS unique_trade_id,
           a.zone
       FROM p1_txn_level a
-        inner join {{ source('ethereum','transactions') }} tx
+        inner join {{ source('ethereum', 'transactions') }} tx
             ON tx.hash = a.tx_hash
             {% if NOT is_incremental() %}
             AND tx.block_number > 14801608
@@ -229,7 +229,7 @@ with p1_call AS (
             ON agg.contract_address = tx.to AND agg.blockchain = 'ethereum'
         LEFT JOIN {{ ref('tokens_nft') }} n
             ON n.contract_address = nft_contract_address AND n.blockchain = 'ethereum'
-        LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
+        LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
             AND nft_contract_address=erct2.contract_address
             AND erct2.evt_tx_hash=a.tx_hash
             AND erct2.tokenId=a.nft_token_id
@@ -240,7 +240,7 @@ with p1_call AS (
             {% if is_incremental() %}
             AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
-        LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
+        LEFT JOIN {{ source('erc1155_ethereum', 'evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
             AND nft_contract_address=erct3.contract_address
             AND erct3.evt_tx_hash=a.tx_hash
             AND erct3.id=a.nft_token_id
@@ -290,7 +290,7 @@ with p1_call AS (
           ,c.call_block_time AS block_time
           ,c.call_block_number AS block_number
           ,c.contract_address AS exchange_contract_address
-      FROM (SELECT *, posexplode(advancedOrders) AS (idx, each) from {{ source('seaport_ethereum','Seaport_call_fulfillAvailableAdvancedOrders') }}
+      FROM (SELECT *, posexplode(advancedOrders) AS (idx, each) from {{ source('seaport_ethereum', 'Seaport_call_fulfillAvailableAdvancedOrders') }}
       {% if is_incremental() %} -- this filter will only be applied ON an incremental run
       where call_block_time >= (SELECT max(block_time) FROM {{ this }})
       {% endif %}
@@ -316,7 +316,7 @@ with p1_call AS (
           ,c.call_block_time AS block_time
           ,c.call_block_number AS block_number
           ,c.contract_address AS exchange_contract_address
-      FROM (SELECT *, posexplode(orders) AS (idx, each) from {{ source('seaport_ethereum','Seaport_call_fulfillAvailableOrders') }}
+      FROM (SELECT *, posexplode(orders) AS (idx, each) from {{ source('seaport_ethereum', 'Seaport_call_fulfillAvailableOrders') }}
       {% if is_incremental() %} -- this filter will only be applied ON an incremental run
       where call_block_time >= (SELECT max(block_time) FROM {{ this }})
       {% endif %}
@@ -345,7 +345,7 @@ with p1_call AS (
           ,get_json_object(consideration[2], "$.identifier") AS evt_royalty_identifier
           ,e.evt_index
       FROM p2_call c
-            inner join {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }} e
+            inner join {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }} e
             ON e.evt_tx_hash = c.tx_hash
             AND e.offerer = concat('0x',substr(c.offerer,3,40))
             AND get_json_object(e.offer[0], "$.token") = c.offer_token
@@ -446,7 +446,7 @@ with p1_call AS (
           STRING) AS unique_trade_id,
           a.zone
       FROM p2_transfer_level a
-        inner join {{ source('ethereum','transactions') }} tx
+        inner join {{ source('ethereum', 'transactions') }} tx
             ON tx.hash = a.tx_hash
             {% if NOT is_incremental() %}
             AND tx.block_number > 14801608
@@ -454,7 +454,7 @@ with p1_call AS (
             {% if is_incremental() %}
             AND tx.block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
-        LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
+        LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
             AND concat('0x',substr(a.nft_address,3,40))=erct2.contract_address
             AND erct2.evt_tx_hash=a.tx_hash
             AND erct2.tokenId=a.nft_token_id
@@ -465,7 +465,7 @@ with p1_call AS (
             {% if is_incremental() %}
             AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
-        LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
+        LEFT JOIN {{ source('erc1155_ethereum', 'evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
             AND concat('0x',substr(a.nft_address,3,40))=erct3.contract_address
             AND erct3.evt_tx_hash=a.tx_hash
             AND erct3.id=a.nft_token_id
@@ -506,7 +506,7 @@ with p1_call AS (
           ,call_block_time AS block_time
           ,call_block_number AS block_number
           ,max(get_json_object(get_json_object(order, "$.parameters"), "$.orderType")) AS order_type_id
-      FROM {{ source('seaport_ethereum','Seaport_call_fulfillOrder') }}
+      FROM {{ source('seaport_ethereum', 'Seaport_call_fulfillOrder') }}
       {% if is_incremental() %} -- this filter will only be applied ON an incremental run
       where call_block_time >= (SELECT max(block_time) FROM {{ this }})
       {% endif %}
@@ -517,7 +517,7 @@ with p1_call AS (
           ,call_block_time AS block_time
           ,call_block_number AS block_number
           ,max(get_json_object(get_json_object(advancedOrder, "$.parameters"), "$.orderType")) AS order_type_id
-      FROM {{ source('seaport_ethereum','Seaport_call_fulfillAdvancedOrder') }}
+      FROM {{ source('seaport_ethereum', 'Seaport_call_fulfillAdvancedOrder') }}
       {% if is_incremental() %} -- this filter will only be applied ON an incremental run
       where call_block_time >= (SELECT max(block_time) FROM {{ this }})
       {% endif %}
@@ -540,7 +540,7 @@ with p1_call AS (
             ,e.contract_address AS exchange_contract_address
             ,e.evt_index
         FROM
-        (SELECT *, posexplode(offer) AS (offer_idx, offer2) FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }}
+        (SELECT *, posexplode(offer) AS (offer_idx, offer2) FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }}
         {% if is_incremental() %} -- this filter will only be applied ON an incremental run
         where evt_block_time >= (SELECT max(block_time) FROM {{ this }})
         {% endif %}
@@ -564,7 +564,7 @@ with p1_call AS (
             ,e.contract_address AS exchange_contract_address
             ,e.evt_index
         FROM
-        (SELECT *, posexplode(consideration) AS (consideration_idx, consideration2) FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }}
+        (SELECT *, posexplode(consideration) AS (consideration_idx, consideration2) FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }}
           {% if is_incremental() %} -- this filter will only be applied ON an incremental run
           where evt_block_time >= (SELECT max(block_time) FROM {{ this }})
           {% endif %}
@@ -596,8 +596,8 @@ with p1_call AS (
                         else 'Buy'
                    end AS order_type
                   ,a.*
-              FROM (SELECT count(case when item_type in ('2','3') then 1 end) over (partition BY tx_hash, evt_index) AS nft_transfer_count
-                          ,sum(case when item_type in ('0','1') then 1 end) over (partition BY tx_hash, evt_index, sub_type order BY sub_idx) AS fee_royalty_idx
+              FROM (SELECT count(case when item_type in ('2', '3') then 1 end) over (partition BY tx_hash, evt_index) AS nft_transfer_count
+                          ,sum(case when item_type in ('0', '1') then 1 end) over (partition BY tx_hash, evt_index, sub_type order BY sub_idx) AS fee_royalty_idx
                           ,case when max(case when (sub_type,sub_idx,item_type) in (('offer',0,'1')) then 1 else 0 end) over (partition BY tx_hash) = 1 then 'Offer Accepted'
                                 else 'Buy'
                            end AS purchase_method
@@ -642,7 +642,7 @@ with p1_call AS (
           ,item_type
           ,order_type_id
       FROM p3_add_rn a
-     where item_type in ('2','3')
+     where item_type in ('2', '3')
 )
 
 ,p3_seaport_transfers AS (SELECT
@@ -703,7 +703,7 @@ with p1_call AS (
           STRING) AS unique_trade_id,
           a.zone
       FROM p3_txn_level a
-        inner join {{ source('ethereum','transactions') }} tx
+        inner join {{ source('ethereum', 'transactions') }} tx
             ON tx.hash = a.tx_hash
             {% if NOT is_incremental() %}
             AND tx.block_number > 14801608
@@ -717,7 +717,7 @@ with p1_call AS (
                 ON LEFT(tx.data, CHARINDEX(agg_m.hash_marker, tx.data) + LENGTH(agg_m.hash_marker)) LIKE '%' || agg_m.hash_marker
         LEFT JOIN {{ ref('tokens_nft') }} n
             ON n.contract_address = nft_contract_address AND n.blockchain = 'ethereum'
-        LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
+        LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
             AND nft_contract_address=erct2.contract_address
             AND erct2.evt_tx_hash=a.tx_hash
             AND erct2.tokenId=a.nft_token_id
@@ -728,7 +728,7 @@ with p1_call AS (
             {% if is_incremental() %}
             AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
-        LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
+        LEFT JOIN {{ source('erc1155_ethereum', 'evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
             AND nft_contract_address=erct3.contract_address
             AND erct3.evt_tx_hash=a.tx_hash
             AND erct3.id=a.nft_token_id
@@ -773,7 +773,7 @@ with p1_call AS (
           ,c.call_block_time AS block_time
           ,c.call_block_number AS block_number
           ,c.contract_address AS exchange_contract_address
-     FROM (SELECT *, posexplode(output_executions) AS (idx, each) from {{ source('seaport_ethereum','Seaport_call_matchOrders') }}
+     FROM (SELECT *, posexplode(output_executions) AS (idx, each) from {{ source('seaport_ethereum', 'Seaport_call_matchOrders') }}
      {% if is_incremental() %} -- this filter will only be applied ON an incremental run
      where call_block_time >= (SELECT max(block_time) FROM {{ this }})
      {% endif %}
@@ -795,7 +795,7 @@ with p1_call AS (
           ,c.call_block_time AS block_time
           ,c.call_block_number AS block_number
           ,c.contract_address AS exchange_contract_address
-    FROM (SELECT *, posexplode(output_executions) AS (idx, each) from {{ source('seaport_ethereum','Seaport_call_matchAdvancedOrders') }}
+    FROM (SELECT *, posexplode(output_executions) AS (idx, each) from {{ source('seaport_ethereum', 'Seaport_call_matchAdvancedOrders') }}
     {% if is_incremental() %} -- this filter will only be applied ON an incremental run
     where call_block_time >= (SELECT max(block_time) FROM {{ this }})
     {% endif %}
@@ -828,8 +828,8 @@ with p1_call AS (
                         when fee_royalty_idx = 3 then 'royalty'
                    end AS fee_royalty_yn
                   ,a.*
-              FROM (SELECT count(case when offer_item_type in ('2','3') then 1 end) over (partition BY tx_hash) AS nft_transfer_count
-                          ,sum(case when offer_item_type in ('0','1') then 1 end) over (partition BY tx_hash order BY sub_idx) AS fee_royalty_idx
+              FROM (SELECT count(case when offer_item_type in ('2', '3') then 1 end) over (partition BY tx_hash) AS nft_transfer_count
+                          ,sum(case when offer_item_type in ('0', '1') then 1 end) over (partition BY tx_hash order BY sub_idx) AS fee_royalty_idx
                           ,a.*
                       FROM p4_call a
                     ) a
@@ -872,7 +872,7 @@ with p1_call AS (
           ,'Buy' AS purchase_method
           ,nft_transfer_count
       FROM p4_add_rn a
-     where offer_item_type in ('2','3')
+     where offer_item_type in ('2', '3')
 )
 
 ,p4_seaport_transfers AS (
@@ -934,7 +934,7 @@ with p1_call AS (
           STRING) AS unique_trade_id,
           a.zone
     FROM p4_transfer_level a
-    inner join {{ source('ethereum','transactions') }} tx
+    inner join {{ source('ethereum', 'transactions') }} tx
         ON tx.hash = a.tx_hash
         {% if NOT is_incremental() %}
         AND tx.block_number > 14801608
@@ -942,7 +942,7 @@ with p1_call AS (
         {% if is_incremental() %}
         AND tx.block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
-    LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
+    LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
         AND concat('0x',substr(a.nft_address,3,40))=erct2.contract_address
         AND erct2.evt_tx_hash=a.tx_hash
         AND erct2.tokenId=a.nft_token_id
@@ -953,7 +953,7 @@ with p1_call AS (
         {% if is_incremental() %}
         AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
-    LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
+    LEFT JOIN {{ source('erc1155_ethereum', 'evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
         AND concat('0x',substr(a.nft_address,3,40))=erct3.contract_address
         AND erct3.evt_tx_hash=a.tx_hash
         AND erct3.id=a.nft_token_id

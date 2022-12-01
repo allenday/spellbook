@@ -27,7 +27,7 @@ SELECT
   END AS project_contract_address,
   'Trade' AS evt_type,
   signatures[0] || '-' || id AS unique_trade_id
-FROM {{ source('solana','transactions') }}
+FROM {{ source('solana', 'transactions') }}
 LEFT JOIN {{ source('prices', 'usd') }} p
   ON p.minute = date_trunc('minute', block_time)
   AND p.blockchain is NULL

@@ -18,4 +18,4 @@ SELECT
 FROM {{ source('aave_v3_optimism', 'Pool_evt_ReserveDataUpdated') }} AS a
 LEFT JOIN {{ ref('tokens_optimism_erc20') }} AS t
 ON a.reserve = t.contract_address
-GROUP BY 1,2,3
+GROUP BY 1, 2, 3

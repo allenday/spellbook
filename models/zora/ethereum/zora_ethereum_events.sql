@@ -27,8 +27,8 @@ WITH zora_trades AS (
     , z3_o1_ee.evt_tx_hash AS tx_hash
     , z3_o1_rp.amount AS royalty_fee_amount_raw
     , z3_o1_rp.recipient AS royalty_fee_receive_address
-    FROM {{ source('zora_v3_ethereum','OffersV1_evt_ExchangeExecuted') }} z3_o1_ee
-    LEFT JOIN {{ source('zora_v3_ethereum','OffersV1_evt_RoyaltyPayout') }} z3_o1_rp ON z3_o1_ee.evt_block_time=z3_o1_rp.evt_block_time
+    FROM {{ source('zora_v3_ethereum', 'OffersV1_evt_ExchangeExecuted') }} z3_o1_ee
+    LEFT JOIN {{ source('zora_v3_ethereum', 'OffersV1_evt_RoyaltyPayout') }} z3_o1_rp ON z3_o1_ee.evt_block_time=z3_o1_rp.evt_block_time
         AND z3_o1_ee.evt_tx_hash=z3_o1_rp.evt_tx_hash
         AND get_json_object(z3_o1_ee.a, '$.tokenContract')=z3_o1_rp.tokenContract
         AND get_json_object(z3_o1_ee.a, '$.tokenId')=z3_o1_rp.tokenId
@@ -50,8 +50,8 @@ WITH zora_trades AS (
     , z3_a0_ee.evt_tx_hash AS tx_hash
     , z3_a0_rp.amount AS royalty_fee_amount_raw
     , z3_a0_rp.recipient AS royalty_fee_receive_address
-    FROM {{ source('zora_v3_ethereum','AsksV1_0_evt_ExchangeExecuted') }} z3_a0_ee
-    LEFT JOIN {{ source('zora_v3_ethereum','AsksV1_0_evt_RoyaltyPayout') }} z3_a0_rp ON z3_a0_ee.evt_block_time=z3_a0_rp.evt_block_time
+    FROM {{ source('zora_v3_ethereum', 'AsksV1_0_evt_ExchangeExecuted') }} z3_a0_ee
+    LEFT JOIN {{ source('zora_v3_ethereum', 'AsksV1_0_evt_RoyaltyPayout') }} z3_a0_rp ON z3_a0_ee.evt_block_time=z3_a0_rp.evt_block_time
         AND z3_a0_ee.evt_tx_hash=z3_a0_rp.evt_tx_hash
         AND get_json_object(z3_a0_ee.a, '$.tokenContract')=z3_a0_rp.tokenContract
         AND get_json_object(z3_a0_ee.a, '$.tokenId')=z3_a0_rp.tokenId
@@ -73,8 +73,8 @@ WITH zora_trades AS (
     , z3_a1_ee.evt_tx_hash AS tx_hash
     , z3_a1_rp.amount AS royalty_fee_amount_raw
     , z3_a1_rp.recipient AS royalty_fee_receive_address
-    FROM {{ source('zora_v3_ethereum','AsksV1_1_evt_ExchangeExecuted') }} z3_a1_ee
-    LEFT JOIN {{ source('zora_v3_ethereum','AsksV1_1_evt_RoyaltyPayout') }} z3_a1_rp ON z3_a1_ee.evt_block_time=z3_a1_rp.evt_block_time
+    FROM {{ source('zora_v3_ethereum', 'AsksV1_1_evt_ExchangeExecuted') }} z3_a1_ee
+    LEFT JOIN {{ source('zora_v3_ethereum', 'AsksV1_1_evt_RoyaltyPayout') }} z3_a1_rp ON z3_a1_ee.evt_block_time=z3_a1_rp.evt_block_time
         AND z3_a1_ee.evt_tx_hash=z3_a1_rp.evt_tx_hash
         AND get_json_object(z3_a1_ee.a, '$.tokenContract')=z3_a1_rp.tokenContract
         AND get_json_object(z3_a1_ee.a, '$.tokenId')=z3_a1_rp.tokenId
@@ -96,8 +96,8 @@ WITH zora_trades AS (
     , z3_rafe_ae.evt_tx_hash AS tx_hash
     , z3_rafe_rp.amount AS royalty_fee_amount_raw
     , z3_rafe_rp.recipient AS royalty_fee_receive_address
-    FROM {{ source('zora_v3_ethereum','ReserveAuctionFindersEth_evt_AuctionEnded') }} z3_rafe_ae
-    LEFT JOIN {{ source('zora_v3_ethereum','ReserveAuctionFindersEth_evt_RoyaltyPayout') }} z3_rafe_rp ON z3_rafe_ae.evt_block_time=z3_rafe_rp.evt_block_time
+    FROM {{ source('zora_v3_ethereum', 'ReserveAuctionFindersEth_evt_AuctionEnded') }} z3_rafe_ae
+    LEFT JOIN {{ source('zora_v3_ethereum', 'ReserveAuctionFindersEth_evt_RoyaltyPayout') }} z3_rafe_rp ON z3_rafe_ae.evt_block_time=z3_rafe_rp.evt_block_time
         AND z3_rafe_ae.evt_tx_hash=z3_rafe_rp.evt_tx_hash
         AND z3_rafe_ae.tokenContract=z3_rafe_rp.tokenContract
         AND z3_rafe_ae.tokenId=z3_rafe_rp.tokenId
@@ -119,8 +119,8 @@ WITH zora_trades AS (
     , z3_ape_af.evt_tx_hash AS tx_hash
     , z3_ape_rp.amount AS royalty_fee_amount_raw
     , z3_ape_rp.recipient AS royalty_fee_receive_address
-    FROM {{ source('zora_v3_ethereum','AsksPrivateEth_evt_AskFilled') }} z3_ape_af
-    LEFT JOIN {{ source('zora_v3_ethereum','AsksPrivateEth_evt_RoyaltyPayout') }} z3_ape_rp ON z3_ape_af.evt_block_time=z3_ape_rp.evt_block_time
+    FROM {{ source('zora_v3_ethereum', 'AsksPrivateEth_evt_AskFilled') }} z3_ape_af
+    LEFT JOIN {{ source('zora_v3_ethereum', 'AsksPrivateEth_evt_RoyaltyPayout') }} z3_ape_rp ON z3_ape_af.evt_block_time=z3_ape_rp.evt_block_time
         AND z3_ape_af.evt_tx_hash=z3_ape_rp.evt_tx_hash
         AND z3_ape_af.tokenContract=z3_ape_rp.tokenContract
         AND z3_ape_af.tokenId=z3_ape_rp.tokenId
@@ -142,8 +142,8 @@ WITH zora_trades AS (
     , z3_ace_af.evt_tx_hash AS tx_hash
     , z3_ace_rp.amount AS royalty_fee_amount_raw
     , z3_ace_rp.recipient AS royalty_fee_receive_address
-    FROM {{ source('zora_v3_ethereum','AsksCoreEth_evt_AskFilled') }} z3_ace_af
-    LEFT JOIN {{ source('zora_v3_ethereum','AsksCoreEth_evt_RoyaltyPayout') }} z3_ace_rp ON z3_ace_af.evt_block_time=z3_ace_rp.evt_block_time
+    FROM {{ source('zora_v3_ethereum', 'AsksCoreEth_evt_AskFilled') }} z3_ace_af
+    LEFT JOIN {{ source('zora_v3_ethereum', 'AsksCoreEth_evt_RoyaltyPayout') }} z3_ace_rp ON z3_ace_af.evt_block_time=z3_ace_rp.evt_block_time
         AND z3_ace_af.evt_tx_hash=z3_ace_rp.evt_tx_hash
         AND z3_ace_af.tokenContract=z3_ace_rp.tokenContract
         AND z3_ace_af.tokenId=z3_ace_rp.tokenId
@@ -165,8 +165,8 @@ WITH zora_trades AS (
     , z3_race_ae.evt_tx_hash AS tx_hash
     , z3_race_rp.amount AS royalty_fee_amount_raw
     , z3_race_rp.recipient AS royalty_fee_receive_address
-    FROM {{ source('zora_v3_ethereum','ReserveAuctionCoreEth_evt_AuctionEnded') }} z3_race_ae
-    LEFT JOIN {{ source('zora_v3_ethereum','ReserveAuctionCoreEth_evt_RoyaltyPayout') }} z3_race_rp ON z3_race_ae.evt_block_time=z3_race_rp.evt_block_time
+    FROM {{ source('zora_v3_ethereum', 'ReserveAuctionCoreEth_evt_AuctionEnded') }} z3_race_ae
+    LEFT JOIN {{ source('zora_v3_ethereum', 'ReserveAuctionCoreEth_evt_RoyaltyPayout') }} z3_race_rp ON z3_race_ae.evt_block_time=z3_race_rp.evt_block_time
         AND z3_race_ae.evt_tx_hash=z3_race_rp.evt_tx_hash
         AND z3_race_ae.tokenContract=z3_race_rp.tokenContract
         AND z3_race_ae.tokenId=z3_race_rp.tokenId
@@ -188,8 +188,8 @@ WITH zora_trades AS (
     , z3_racerc_ae.evt_tx_hash AS tx_hash
     , z3_racerc_rp.amount AS royalty_fee_amount_raw
     , z3_racerc_rp.recipient AS royalty_fee_receive_address
-    FROM {{ source('zora_v3_ethereum','ReserveAuctionCoreErc20_evt_AuctionEnded') }} z3_racerc_ae
-    LEFT JOIN {{ source('zora_v3_ethereum','ReserveAuctionCoreErc20_evt_RoyaltyPayout') }} z3_racerc_rp ON z3_racerc_ae.evt_block_time=z3_racerc_rp.evt_block_time
+    FROM {{ source('zora_v3_ethereum', 'ReserveAuctionCoreErc20_evt_AuctionEnded') }} z3_racerc_ae
+    LEFT JOIN {{ source('zora_v3_ethereum', 'ReserveAuctionCoreErc20_evt_RoyaltyPayout') }} z3_racerc_rp ON z3_racerc_ae.evt_block_time=z3_racerc_rp.evt_block_time
         AND z3_racerc_ae.evt_tx_hash=z3_racerc_rp.evt_tx_hash
         AND z3_racerc_ae.tokenContract=z3_racerc_rp.tokenContract
         AND z3_racerc_ae.tokenId=z3_racerc_rp.tokenId
@@ -211,8 +211,8 @@ WITH zora_trades AS (
     , z3_raferc_ae.evt_tx_hash AS tx_hash
     , z3_raferc_rp.amount AS royalty_fee_amount_raw
     , z3_raferc_rp.recipient AS royalty_fee_receive_address
-    FROM {{ source('zora_v3_ethereum','ReserveAuctionFindersErc20_evt_AuctionEnded') }} z3_raferc_ae
-    LEFT JOIN {{ source('zora_v3_ethereum','ReserveAuctionFindersErc20_evt_RoyaltyPayout') }} z3_raferc_rp ON z3_raferc_ae.evt_block_time=z3_raferc_rp.evt_block_time
+    FROM {{ source('zora_v3_ethereum', 'ReserveAuctionFindersErc20_evt_AuctionEnded') }} z3_raferc_ae
+    LEFT JOIN {{ source('zora_v3_ethereum', 'ReserveAuctionFindersErc20_evt_RoyaltyPayout') }} z3_raferc_rp ON z3_raferc_ae.evt_block_time=z3_raferc_rp.evt_block_time
         AND z3_raferc_ae.evt_tx_hash=z3_raferc_rp.evt_tx_hash
         AND z3_raferc_ae.tokenContract=z3_raferc_rp.tokenContract
         AND z3_raferc_ae.tokenId=z3_raferc_rp.tokenId
@@ -234,8 +234,8 @@ WITH zora_trades AS (
     , z3_rale_ae.evt_tx_hash AS tx_hash
     , z3_rale_rp.amount AS royalty_fee_amount_raw
     , z3_rale_rp.recipient AS royalty_fee_receive_address
-    FROM {{ source('zora_v3_ethereum','ReserveAuctionListingEth_evt_AuctionEnded') }} z3_rale_ae
-    LEFT JOIN {{ source('zora_v3_ethereum','ReserveAuctionListingEth_evt_RoyaltyPayout') }} z3_rale_rp ON z3_rale_ae.evt_block_time=z3_rale_rp.evt_block_time
+    FROM {{ source('zora_v3_ethereum', 'ReserveAuctionListingEth_evt_AuctionEnded') }} z3_rale_ae
+    LEFT JOIN {{ source('zora_v3_ethereum', 'ReserveAuctionListingEth_evt_RoyaltyPayout') }} z3_rale_rp ON z3_rale_ae.evt_block_time=z3_rale_rp.evt_block_time
         AND z3_rale_ae.evt_tx_hash=z3_rale_rp.evt_tx_hash
         AND z3_rale_ae.tokenContract=z3_rale_rp.tokenContract
         AND z3_rale_ae.tokenId=z3_rale_rp.tokenId
@@ -257,8 +257,8 @@ WITH zora_trades AS (
     , z3_rale_ae.evt_tx_hash AS tx_hash
     , z3_rale_rp.amount AS royalty_fee_amount_raw
     , z3_rale_rp.recipient AS royalty_fee_receive_address
-    FROM {{ source('zora_v3_ethereum','ReserveAuctionListingErc20_evt_AuctionEnded') }} z3_rale_ae
-    LEFT JOIN {{ source('zora_v3_ethereum','ReserveAuctionListingErc20_evt_RoyaltyPayout') }} z3_rale_rp ON z3_rale_ae.evt_block_time=z3_rale_rp.evt_block_time
+    FROM {{ source('zora_v3_ethereum', 'ReserveAuctionListingErc20_evt_AuctionEnded') }} z3_rale_ae
+    LEFT JOIN {{ source('zora_v3_ethereum', 'ReserveAuctionListingErc20_evt_RoyaltyPayout') }} z3_rale_rp ON z3_rale_ae.evt_block_time=z3_rale_rp.evt_block_time
         AND z3_rale_ae.evt_tx_hash=z3_rale_rp.evt_tx_hash
         AND z3_rale_ae.tokenContract=z3_rale_rp.tokenContract
         AND z3_rale_ae.tokenId=z3_rale_rp.tokenId
@@ -280,7 +280,7 @@ WITH zora_trades AS (
     , z2_ae.evt_tx_hash AS tx_hash
     , 0 AS royalty_fee_amount_raw
     , NULL AS royalty_fee_receive_address
-    FROM {{ source('zora_ethereum','AuctionHouse_evt_AuctionEnded') }} z2_ae
+    FROM {{ source('zora_ethereum', 'AuctionHouse_evt_AuctionEnded') }} z2_ae
     {% if is_incremental() %}
     WHERE z2_ae.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -299,8 +299,8 @@ WITH zora_trades AS (
     , z1_bf.evt_tx_hash AS tx_hash
     , 0 AS royalty_fee_amount_raw
     , NULL AS royalty_fee_receive_address
-    FROM {{ source('zora_ethereum','Market_evt_BidFinalized') }} z1_bf
-    LEFT JOIN {{ source('zora_ethereum','Media_evt_Transfer') }} z1_mt ON z1_bf.evt_block_time = z1_mt.evt_block_time
+    FROM {{ source('zora_ethereum', 'Market_evt_BidFinalized') }} z1_bf
+    LEFT JOIN {{ source('zora_ethereum', 'Media_evt_Transfer') }} z1_mt ON z1_bf.evt_block_time = z1_mt.evt_block_time
         AND z1_bf.evt_tx_hash = z1_mt.evt_tx_hash
         AND z1_bf.tokenId = z1_mt.tokenId
     {% if is_incremental() %}
@@ -355,14 +355,14 @@ SELECT distinct 'ethereum' AS blockchain
         ELSE pu.symbol END AS royalty_fee_currency_symbol
     , 'ethereumzora' || COALESCE(version, '-1') || COALESCE(zt.tx_hash, '-1') || COALESCE(zt.nft_contract_address, '-1') || COALESCE(zt.token_id, '-1') || COALESCE(zt.buyer, '-1') || COALESCE(zt.seller, '-1') AS unique_trade_id
 FROM zora_trades zt
-LEFT JOIN {{ source('ethereum','transactions') }} et ON et.block_time=zt.block_time
+LEFT JOIN {{ source('ethereum', 'transactions') }} et ON et.block_time=zt.block_time
     AND et.hash=zt.tx_hash
     {% if is_incremental() %}
     AND et.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ ref('nft_aggregators') }} agg ON agg.blockchain='ethereum'
     AND agg.contract_address=et.to
-LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erc721 ON erc721.evt_block_time=zt.block_time
+LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erc721 ON erc721.evt_block_time=zt.block_time
     AND erc721.evt_tx_hash=zt.tx_hash
     AND erc721.contract_address=zt.nft_contract_address
     AND erc721.tokenId=zt.token_id
@@ -370,7 +370,7 @@ LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erc721 ON erc721.evt_bl
     {% if is_incremental() %}
     AND erc721.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ source('prices','usd') }} pu ON pu.blockchain='ethereum'
+LEFT JOIN {{ source('prices', 'usd') }} pu ON pu.blockchain='ethereum'
     AND pu.minute=date_trunc('minute', zt.block_time)
     AND (pu.contract_address=zt.currency_contract
     OR (pu.contract_address='0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'

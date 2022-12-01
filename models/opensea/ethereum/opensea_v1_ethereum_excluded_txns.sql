@@ -6,7 +6,7 @@
 
 SELECT call_tx_hash
     FROM
-        {{ source('opensea_ethereum','wyvernexchange_call_atomicmatch_') }}
+        {{ source('opensea_ethereum', 'wyvernexchange_call_atomicmatch_') }}
     WHERE (
             addrs[3] = '0x5b3256965e7c3cf26e11fcaf296dfc8807c01073'
             OR addrs[10] = '0x5b3256965e7c3cf26e11fcaf296dfc8807c01073'

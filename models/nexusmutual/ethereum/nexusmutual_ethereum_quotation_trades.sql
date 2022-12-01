@@ -67,7 +67,7 @@ SELECT quo_evt.cid,
        to_timestamp(quo_evt.expiry)                                AS evt_expiry_date,
        TRY_CAST(date_trunc('DAY', quo_evt.evt_block_time) AS date) AS block_date
 FROM quo_evt
-INNER JOIN {{ source('ethereum','transactions') }} tx
+INNER JOIN {{ source('ethereum', 'transactions') }} tx
     ON quo_evt.evt_tx_hash = tx.hash
     AND tx.success is TRUE
     {% if NOT is_incremental() %}

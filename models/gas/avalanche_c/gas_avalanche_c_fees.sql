@@ -48,13 +48,13 @@ SELECT
      txns.gas_used / txns.gas_limit * 100 AS gas_usage_percent,
      difficulty,
      type AS transaction_type
-FROM {{ source('avalanche_c','transactions') }} txns
-JOIN {{ source('avalanche_c','blocks') }} blocks ON blocks.number = txns.block_number
+FROM {{ source('avalanche_c', 'transactions') }} txns
+JOIN {{ source('avalanche_c', 'blocks') }} blocks ON blocks.number = txns.block_number
 {% if is_incremental() %}
 AND block_time >= date_trunc("day", now() - interval '2 days')
 AND blocks.time >= date_trunc("day", now() - interval '2 days')
 {% endif %}
-LEFT JOIN {{ source('prices','usd') }} p ON p.minute = date_trunc('minute', block_time)
+LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', block_time)
 AND p.symbol = 'AVAX'
 {% if is_incremental() %}
 AND p.minute >= date_trunc("day", now() - interval '2 days')

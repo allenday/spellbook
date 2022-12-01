@@ -55,7 +55,7 @@ SELECT
   END AS call_trace_address,
   addrs [6] AS currency_contract_original
 FROM
-  {{ source('opensea_ethereum','wyvernexchange_call_atomicmatch_') }} wc
+  {{ source('opensea_ethereum', 'wyvernexchange_call_atomicmatch_') }} wc
 WHERE
 (addrs[3] = '0x5b3256965e7c3cf26e11fcaf296dfc8807c01073'
         OR addrs[10] = '0x5b3256965e7c3cf26e11fcaf296dfc8807c01073')
@@ -109,7 +109,7 @@ erc_transfers AS
         OR erc1155.to = '0x000000000000000000000000000000000000dead' THEN 'Burn'
         ELSE 'Trade' END AS evt_type,
         evt_index
-        FROM {{ source('erc1155_ethereum','evt_transfersingle') }} erc1155
+        FROM {{ source('erc1155_ethereum', 'evt_transfersingle') }} erc1155
         GROUP BY evt_tx_hash,value,id,evt_index, erc1155.FROM, erc1155.to
             UNION ALL
 SELECT evt_tx_hash,
@@ -124,7 +124,7 @@ SELECT evt_tx_hash,
         OR erc721.to = '0x000000000000000000000000000000000000dead' THEN 'Burn'
         ELSE 'Trade' END AS evt_type,
         evt_index
-        FROM {{ source('erc721_ethereum','evt_transfer') }} erc721
+        FROM {{ source('erc721_ethereum', 'evt_transfer') }} erc721
         GROUP BY evt_tx_hash,tokenId,evt_index, erc721.FROM, erc721.to)
 
 SELECT DISTINCT
@@ -151,12 +151,12 @@ SELECT DISTINCT
       WHEN wa.token_standard = 'erc721' THEN erc_transfers.count_erc
       ELSE (SELECT
               count(1)::bigint cnt
-          FROM {{ source('erc721_ethereum','evt_transfer') }} erc721
+          FROM {{ source('erc721_ethereum', 'evt_transfer') }} erc721
           WHERE erc721.evt_tx_hash = wa.call_tx_hash
         ) +
         (SELECT
              count(1)::bigint cnt
-          FROM {{ source('erc1155_ethereum','evt_transfersingle') }} erc1155
+          FROM {{ source('erc1155_ethereum', 'evt_transfersingle') }} erc1155
           WHERE erc1155.evt_tx_hash = wa.call_tx_hash
         ) END AS number_of_items,
   'Buy' AS trade_category,
@@ -190,7 +190,7 @@ SELECT DISTINCT
   wa.fee_currency_symbol AS royalty_fee_currency_symbol,
   'opensea' || '-' || wa.call_tx_hash || '-' || coalesce(token_id_erc_uncapped, wa.token_id, '') || '-' ||  wa.seller || '-' || coalesce(erc_transfers.evt_index::STRING, '') || '-' || coalesce(wa.call_trace_address::string,'') AS unique_trade_id
 FROM wyvern_all wa
-INNER JOIN {{ source('ethereum','transactions') }} tx ON wa.call_tx_hash = tx.hash
+INNER JOIN {{ source('ethereum', 'transactions') }} tx ON wa.call_tx_hash = tx.hash
     {% if is_incremental() %}
     AND tx.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -198,7 +198,7 @@ LEFT JOIN erc_transfers ON erc_transfers.evt_tx_hash = wa.call_tx_hash AND (wa.t
 OR wa.token_id = NULL)
 LEFT JOIN {{ ref('tokens_nft') }} tokens_nft ON tokens_nft.contract_address = wa.nft_contract_address AND tokens_nft.blockchain = 'ethereum'
 LEFT JOIN {{ ref('nft_aggregators') }} agg ON agg.contract_address = tx.to AND agg.blockchain = 'ethereum'
-LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_block_time=tx.block_time
+LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct2 ON erct2.evt_block_time=tx.block_time
     AND wa.nft_contract_address=erct2.contract_address
     AND erct2.evt_tx_hash=wa.call_tx_hash
     AND erct2.tokenId=coalesce(token_id_erc, wa.token_id)
@@ -206,7 +206,7 @@ LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_bloc
     {% if is_incremental() %}
     AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=tx.block_time
+LEFT JOIN {{ source('erc1155_ethereum', 'evt_transfersingle') }} erct3 ON erct3.evt_block_time=tx.block_time
     AND wa.nft_contract_address=erct3.contract_address
     AND erct3.evt_tx_hash=wa.call_tx_hash
     AND erct3.id=coalesce(token_id_erc, wa.token_id)

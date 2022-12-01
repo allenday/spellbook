@@ -19,7 +19,7 @@
 
 with source_polygon_transactions AS (
     SELECT *
-    FROM {{ source('polygon','transactions') }}
+    FROM {{ source('polygon', 'transactions') }}
     {% if NOT is_incremental() %}
     where block_time >= date '{{c_seaport_first_date}}'  -- seaport first txn
     {% endif %}

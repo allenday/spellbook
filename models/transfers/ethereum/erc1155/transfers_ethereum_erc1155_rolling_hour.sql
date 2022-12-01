@@ -10,7 +10,7 @@
             token_address,
             tokenId,
             cast(current_timestamp AS timestamp) AS updated_at,
-            row_number() over (partition BY token_address, tokenId, wallet_address order BY hour desc) AS recency_index,
+            row_number() over (partition BY token_address, tokenId, wallet_address order BY hour DESC) AS recency_index,
             sum(amount) over (
                 partition BY token_address, wallet_address order BY hour
             ) AS amount

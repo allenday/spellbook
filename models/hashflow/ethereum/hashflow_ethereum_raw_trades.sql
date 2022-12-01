@@ -17,8 +17,8 @@
 with ethereum_traces AS (
     SELECT *
     FROM {{ source('ethereum', 'traces') }}
-    where `to` in ('0x455a3b3be6e7c8843f2b03a1ca22a5a5727ef5c4','0x9d4fc735e1a596420d24a266b7b5402fe4ec153c',
-                   '0x2405cb057a9baf85daa11ce9832baed839b6871c','0x043389f397ad72619d05946f5f35426a7ace6613',
+    where `to` in ('0x455a3b3be6e7c8843f2b03a1ca22a5a5727ef5c4', '0x9d4fc735e1a596420d24a266b7b5402fe4ec153c',
+                   '0x2405cb057a9baf85daa11ce9832baed839b6871c', '0x043389f397ad72619d05946f5f35426a7ace6613',
                    '0xa18607ca4a3804cc3cd5730eafefcc47a7641643', '0x6ad3dac99c9a4a480748c566ce7b3503506e3d71')
         AND block_time >= '{{ project_start_date }}'
     {% if is_incremental() %}
@@ -277,8 +277,8 @@ legacy_routers AS (
     LEFT JOIN prices_usd tp ON tp.minute = date_trunc('minute', t.block_time) AND tp.contract_address = substring(input, 81, 20)
     LEFT JOIN prices_usd mp ON mp.minute = date_trunc('minute', t.block_time) AND mp.contract_address = substring(input, 113, 20)
     where cast(trace_address AS STRING) = '{}'
-        AND `to` in ('0x455a3B3Be6e7C8843f2b03A1cA22A5a5727ef5C4','0x9d4fc735e1a596420d24a266b7b5402fe4ec153c', '0x2405cb057a9baf85daa11ce9832baed839b6871c','0x043389f397ad72619d05946f5f35426a7ace6613')
-        AND substring(input, 1, 4) in ('0x064f0410','0x4d0246ad') -- token to token
+        AND `to` in ('0x455a3B3Be6e7C8843f2b03A1cA22A5a5727ef5C4', '0x9d4fc735e1a596420d24a266b7b5402fe4ec153c', '0x2405cb057a9baf85daa11ce9832baed839b6871c', '0x043389f397ad72619d05946f5f35426a7ace6613')
+        AND substring(input, 1, 4) in ('0x064f0410', '0x4d0246ad') -- token to token
 
     union all
 
@@ -311,7 +311,7 @@ legacy_routers AS (
     LEFT JOIN prices_usd p ON minute = date_trunc('minute', t.block_time)
     LEFT JOIN erc20_tokens e ON e.contract_address = substring(input, 81, 20)
     where cast(trace_address AS STRING) = '{}'
-        AND `to` in ('0x455a3B3Be6e7C8843f2b03A1cA22A5a5727ef5C4','0x043389f397ad72619d05946f5f35426a7ace6613')
+        AND `to` in ('0x455a3B3Be6e7C8843f2b03A1cA22A5a5727ef5C4', '0x043389f397ad72619d05946f5f35426a7ace6613')
         AND substring(input, 1, 4) in ('0xd0529c02',  -- token to eth
                                        '0xe43d9733') -- eth to token
         AND p.symbol = 'WETH'

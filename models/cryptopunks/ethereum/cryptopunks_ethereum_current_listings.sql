@@ -20,7 +20,7 @@ with all_listings AS (
             , evt_index
             , evt_block_time
             , evt_tx_hash
-    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkOffered') }}
+    FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkOffered') }}
 )
 , all_no_longer_for_sale_events (
     SELECT  `punkIndex` AS punk_id
@@ -34,7 +34,7 @@ with all_listings AS (
             , evt_index
             , evt_block_time
             , evt_tx_hash
-    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkNoLongerForSale') }}
+    FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkNoLongerForSale') }}
 )
 , all_buys AS (
     SELECT  `punkIndex` AS punk_id
@@ -46,7 +46,7 @@ with all_listings AS (
             , evt_index
             , evt_block_time
             , evt_tx_hash
-    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkBought') }}
+    FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkBought') }}
 )
 , all_transfers AS (
     SELECT  `punkIndex` AS punk_id
@@ -58,7 +58,7 @@ with all_listings AS (
             , evt_index
             , evt_block_time
             , evt_tx_hash
-    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkTransfer') }}
+    FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkTransfer') }}
 )
 
 SELECT b.punk_id
@@ -67,7 +67,7 @@ SELECT b.punk_id
 FROM
 (
     SELECT *
-            , row_number() over (partition BY punk_id order BY evt_block_number desc, evt_index desc ) AS punk_event_index
+            , row_number() over (partition BY punk_id order BY evt_block_number DESC, evt_index DESC ) AS punk_event_index
     FROM
     (
     SELECT * FROM all_listings
@@ -78,4 +78,4 @@ FROM
 ) b
 
 where punk_event_index = 1 AND event_type = 'Listing' AND event_sub_type = 'Public Listing'
-order BY listed_price asc, evt_block_time desc 
+ORDER BY listed_price ASC, evt_block_time DESC 

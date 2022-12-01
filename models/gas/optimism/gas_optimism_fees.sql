@@ -4,7 +4,7 @@
     materialized = 'incremental',
     file_format = 'delta',
     incremental_strategy = 'merge',
-    unique_key = ['tx_hash','block_number']
+    unique_key = ['tx_hash', 'block_number']
     )
 }}
 
@@ -41,13 +41,13 @@ SELECT
      + 4 * ( length( decode(unhex(substring(data,3)), 'US-ASCII') ) - length(replace( decode(unhex(substring(data,3)), 'US-ASCII') , chr(0), '')) ) --4 * zero bytes
      AS calldata_gas,
      type AS transaction_type
-FROM {{ source('optimism','transactions') }} txns
-JOIN {{ source('optimism','blocks') }} blocks ON blocks.number = txns.block_number
+FROM {{ source('optimism', 'transactions') }} txns
+JOIN {{ source('optimism', 'blocks') }} blocks ON blocks.number = txns.block_number
 {% if is_incremental() %}
 AND block_time >= date_trunc("day", now() - interval '2 days')
 AND blocks.time >= date_trunc("day", now() - interval '2 days')
 {% endif %}
-LEFT JOIN {{ source('prices','usd') }} p ON p.minute = date_trunc('minute', block_time)
+LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', block_time)
 AND p.blockchain = 'optimism'
 AND p.symbol = 'WETH'
 {% if is_incremental() %}

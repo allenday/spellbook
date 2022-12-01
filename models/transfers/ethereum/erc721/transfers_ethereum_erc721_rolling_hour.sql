@@ -9,5 +9,5 @@
             token_address,
             tokenId,
             current_timestamp() AS updated_at,
-            row_number() over (partition BY token_address, tokenId order BY hour desc) AS recency_index
+            row_number() over (partition BY token_address, tokenId order BY hour DESC) AS recency_index
         FROM {{ ref('transfers_ethereum_erc721_agg_hour') }}

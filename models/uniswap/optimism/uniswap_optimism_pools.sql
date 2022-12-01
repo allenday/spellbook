@@ -752,7 +752,7 @@ with uniswap_v3_poolcreated AS (
             "token1": "0xe0BB0D3DE8c10976511e5030cA403dBf4c25165B",
             "fee": 10000
           }
-        ]','array<struct<oldAddress:STRING,newAddress:string,token0:string, token1:string, fee:int>>'
+        ]', 'array<struct<oldAddress:STRING,newAddress:string,token0:string, token1:string, fee:int>>'
       )
     )
 )

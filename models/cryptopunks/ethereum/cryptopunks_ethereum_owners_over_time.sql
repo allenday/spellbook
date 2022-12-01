@@ -312,7 +312,7 @@ with original_holders AS (
     SELECT  date_trunc('day',evt_block_time) AS day
             , `FROM` AS wallet
             , count(*)*-1.0 AS punk_balance
-    FROM {{ source('erc20_ethereum','evt_transfer') }}
+    FROM {{ source('erc20_ethereum', 'evt_transfer') }}
     where contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks
     GROUP BY 1,2
 
@@ -321,7 +321,7 @@ with original_holders AS (
     SELECT  date_trunc('day',evt_block_time) AS day
             , `to` AS wallet
             , count(*) AS punk_balance
-    FROM {{ source('erc20_ethereum','evt_transfer') }}
+    FROM {{ source('erc20_ethereum', 'evt_transfer') }}
     where contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks
     GROUP BY 1,2
 )

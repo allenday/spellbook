@@ -26,7 +26,7 @@ with iv_availadv AS (
           ,exec_idx AS evt_index
       FROM (SELECT *
                   ,posexplode(output_executions) AS (exec_idx, exec)
-              FROM {{ source('seaport_ethereum','Seaport_call_fulfillAvailableAdvancedOrders') }} a
+              FROM {{ source('seaport_ethereum', 'Seaport_call_fulfillAvailableAdvancedOrders') }} a
              where call_success
             )
 )
@@ -48,7 +48,7 @@ with iv_availadv AS (
           ,evt_index
     FROM (SELECT *
                 ,posexplode(offer) AS (rn, each_offer)
-            FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }}  a
+            FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }}  a
            where 1=1
             AND recipient != '0x0000000000000000000000000000000000000000'
          )
@@ -70,7 +70,7 @@ with iv_availadv AS (
           ,evt_index
       FROM (SELECT *
                   ,posexplode(consideration) AS (rn, each_consideration)
-              FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }} a
+              FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }} a
              where 1=1
               AND recipient != '0x0000000000000000000000000000000000000000'
           )
@@ -92,13 +92,13 @@ with iv_availadv AS (
           ,a.evt_index
      FROM (SELECT *
                   ,posexplode(consideration) AS (rn, each_consideration)
-              FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }} a
+              FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }} a
              where 1=1
                AND recipient = '0x0000000000000000000000000000000000000000'
            ) a
           inner join  (SELECT *
                               ,posexplode(offer) AS (rn, each_offer)
-                          FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }} a
+                          FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }} a
                          where 1=1
                            AND recipient = '0x0000000000000000000000000000000000000000'
                        ) e ON a.recipient = e.recipient
@@ -112,14 +112,14 @@ with iv_availadv AS (
     SELECT a.*
       FROM iv_transfer_level_pre a
            LEFT JOIN iv_availadv b ON b.tx_hash = a.tx_hash
-                                   AND b.item_type in ('2','3')
+                                   AND b.item_type in ('2', '3')
                                    AND b.token_contract_address = a.token_contract_address
                                    AND b.token_id = a.token_id
                                    AND b.sender = a.sender
                                    AND b.receiver = a.receiver
-           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillAvailableAdvancedOrders') }} c ON c.call_tx_hash = a.tx_hash
+           LEFT JOIN {{ source('seaport_ethereum', 'Seaport_call_fulfillAvailableAdvancedOrders') }} c ON c.call_tx_hash = a.tx_hash
      where 1=1
-       AND NOT (a.item_type in ('2','3') AND b.tx_hash is NULL AND c.call_tx_hash is not null)
+       AND NOT (a.item_type in ('2', '3') AND b.tx_hash is NULL AND c.call_tx_hash is not null)
 )
 ,iv_txn_level AS (
     SELECT tx_hash
@@ -129,8 +129,8 @@ with iv_availadv AS (
           ,category
           ,exchange_contract_address
           ,zone
-          ,max(case when item_type in ('2','3') then sender end) AS seller
-          ,max(case when item_type in ('2','3') then receiver end) AS buyer
+          ,max(case when item_type in ('2', '3') then sender end) AS seller
+          ,max(case when item_type in ('2', '3') then receiver end) AS buyer
           ,sum(case when category = 'auction' AND sub_idx in (1,2) then original_amount
                     when category = 'offer accepted' AND sub_type = 'offer' AND sub_idx = 1 then original_amount
                     when category = 'click buy now' AND sub_type = 'consideration' then original_amount
@@ -171,21 +171,21 @@ with iv_availadv AS (
                             when category = 'click buy now' AND sub_type = 'consideration' AND sub_idx = 2 then token_contract_address
                       end)
           end AS currency_contract2
-          ,max(case when nft_transfer_count = 1 AND item_type in ('2','3') then token_contract_address
+          ,max(case when nft_transfer_count = 1 AND item_type in ('2', '3') then token_contract_address
               end) AS nft_contract_address
-          ,max(case when nft_transfer_count = 1 AND item_type in ('2','3') then token_id
+          ,max(case when nft_transfer_count = 1 AND item_type in ('2', '3') then token_id
               end) AS nft_token_id
           ,count(case when item_type = '2' then 1 end) AS erc721_transfer_count
           ,count(case when item_type = '3' then 1 end) AS erc1155_transfer_count
-          ,count(case when item_type in ('2','3') then 1 end) AS nft_transfer_count
+          ,count(case when item_type in ('2', '3') then 1 end) AS nft_transfer_count
           ,coalesce(sum(case when item_type = '2' then original_amount end),0) AS erc721_item_count
           ,coalesce(sum(case when item_type = '3' then original_amount end),0) AS erc1155_item_count
-          ,coalesce(sum(case when item_type in ('2','3') then original_amount end),0) AS nft_item_count
+          ,coalesce(sum(case when item_type in ('2', '3') then original_amount end),0) AS nft_item_count
       FROM (
             SELECT a.*
-                  ,count(case when item_type in ('2','3') then 1 end) over (partition BY tx_hash) AS nft_transfer_count
+                  ,count(case when item_type in ('2', '3') then 1 end) over (partition BY tx_hash) AS nft_transfer_count
                   ,case when main_type = 'advanced' then 'auction'
-                        when max(case when item_type in ('0','1') then item_type end) over (partition BY tx_hash) = '0' then 'click buy now'
+                        when max(case when item_type in ('0', '1') then item_type end) over (partition BY tx_hash) = '0' then 'click buy now'
                         else 'offer accepted'
                   end AS category
                   ,case when (item_type, sub_idx) in (('2',1), ('3',1)) then True
@@ -267,7 +267,7 @@ with iv_availadv AS (
            end AS order_type
 
       FROM iv_txn_level a
-          LEFT JOIN {{ source('ethereum','transactions') }} tx ON tx.hash = a.tx_hash
+          LEFT JOIN {{ source('ethereum', 'transactions') }} tx ON tx.hash = a.tx_hash
                                               AND tx.block_number > 14801608
           LEFT JOIN {{ ref('tokens_ethereum_nft') }} n ON n.contract_address = a.nft_contract_address
           LEFT JOIN {{ ref('tokens_ethereum_erc20') }} e1 ON e1.contract_address = a.currency_contract
@@ -280,12 +280,12 @@ with iv_availadv AS (
                                   AND p2.minute = date_trunc('minute', a.block_time)
                                   AND p2.minute >= '2022-05-15'
                                   AND p2.blockchain = 'ethereum'
-           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillOrder') }} spc1 ON spc1.call_tx_hash = a.tx_hash
-           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillBasicOrder') }} spc2 ON spc2.call_tx_hash = a.tx_hash
-           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillAdvancedOrder') }} spc3 ON spc3.call_tx_hash = a.tx_hash
-           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillAvailableAdvancedOrders') }} spc4 ON spc4.call_tx_hash = a.tx_hash
-           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillAvailableOrders') }} spc5 ON spc5.call_tx_hash = a.tx_hash
-           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_matchOrders') }} spc6 ON spc6.call_tx_hash = a.tx_hash
+           LEFT JOIN {{ source('seaport_ethereum', 'Seaport_call_fulfillOrder') }} spc1 ON spc1.call_tx_hash = a.tx_hash
+           LEFT JOIN {{ source('seaport_ethereum', 'Seaport_call_fulfillBasicOrder') }} spc2 ON spc2.call_tx_hash = a.tx_hash
+           LEFT JOIN {{ source('seaport_ethereum', 'Seaport_call_fulfillAdvancedOrder') }} spc3 ON spc3.call_tx_hash = a.tx_hash
+           LEFT JOIN {{ source('seaport_ethereum', 'Seaport_call_fulfillAvailableAdvancedOrders') }} spc4 ON spc4.call_tx_hash = a.tx_hash
+           LEFT JOIN {{ source('seaport_ethereum', 'Seaport_call_fulfillAvailableOrders') }} spc5 ON spc5.call_tx_hash = a.tx_hash
+           LEFT JOIN {{ source('seaport_ethereum', 'Seaport_call_matchOrders') }} spc6 ON spc6.call_tx_hash = a.tx_hash
 )
 SELECT block_time
       ,nft_project_name

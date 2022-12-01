@@ -32,8 +32,8 @@ WITH aggregator_routed_x2y2_txs AS (
     , COALESCE(get_json_object(inv.item, '$.price')*get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.percentage') / 1e6, 0) AS royalty_fee_amount_raw
     , COALESCE(get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.percentage') / 1e6, 0) AS royalty_fee_percentage
     , get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.to') AS royalty_fee_receive_address
-    FROM {{ source('x2y2_ethereum','X2Y2_r1_evt_EvProfit') }} prof
-    INNER JOIN {{ source('x2y2_ethereum','X2Y2_r1_evt_EvInventory') }} inv  ON inv.evt_block_time=prof.evt_block_time
+    FROM {{ source('x2y2_ethereum', 'X2Y2_r1_evt_EvProfit') }} prof
+    INNER JOIN {{ source('x2y2_ethereum', 'X2Y2_r1_evt_EvInventory') }} inv  ON inv.evt_block_time=prof.evt_block_time
         AND inv.itemHash = prof.itemHash
     LEFT JOIN {{ ref('tokens_nft') }} tokens ON ('0x' || substring(get_json_object(inv.item, '$.data'), 155, 40)) = tokens.contract_address AND tokens.blockchain = 'ethereum'
     LEFT JOIN {{ ref('nft_ethereum_aggregators') }} agg ON agg.contract_address=taker
@@ -64,11 +64,11 @@ WITH aggregator_routed_x2y2_txs AS (
     , COALESCE(get_json_object(inv.item, '$.price')*get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.percentage') / 1e6, 0) AS royalty_fee_amount_raw
     , COALESCE(get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.percentage') / 1e6, 0) AS royalty_fee_percentage
     , get_json_object(get_json_object(inv.detail, '$.fees[1]'), '$.to') AS royalty_fee_receive_address
-    FROM  {{ source('x2y2_ethereum','X2Y2_r1_evt_EvProfit') }} prof
-    INNER JOIN {{ source('x2y2_ethereum','X2Y2_r1_evt_EvInventory') }} inv  ON inv.evt_block_time=prof.evt_block_time
+    FROM  {{ source('x2y2_ethereum', 'X2Y2_r1_evt_EvProfit') }} prof
+    INNER JOIN {{ source('x2y2_ethereum', 'X2Y2_r1_evt_EvInventory') }} inv  ON inv.evt_block_time=prof.evt_block_time
         AND inv.itemHash=prof.itemHash
     LEFT JOIN {{ ref('tokens_nft') }} tokens ON ('0x' || substring(get_json_object(inv.item, '$.data'), 155, 40)) = tokens.contract_address AND tokens.blockchain = 'ethereum'
-    LEFT JOIN {{ source('ethereum','transactions') }} et ON inv.evt_block_time = et.block_time
+    LEFT JOIN {{ source('ethereum', 'transactions') }} et ON inv.evt_block_time = et.block_time
         AND inv.evt_tx_hash = et.hash
         {% if is_incremental() %}
         AND et.block_time >= date_trunc("day", now() - interval '1 week')
@@ -104,7 +104,7 @@ WITH aggregator_routed_x2y2_txs AS (
     , royalty_fee_percentage
     , royalty_fee_receive_address
     FROM aggregator_routed_x2y2_txs txs
-    LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} e721 ON txs.block_time = e721.evt_block_time
+    LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} e721 ON txs.block_time = e721.evt_block_time
         AND txs.tx_hash = e721.evt_tx_hash
         AND CAST(txs.token_id AS int) = e721.tokenId
         AND e721.contract_address = txs.project_contract_address
@@ -209,19 +209,19 @@ SELECT 'ethereum' AS blockchain
     END AS royalty_fee_currency_symbol
 , 'x2y2-' || COALESCE(txs.tx_hash, -1) || '-' || COALESCE(txs.nft_contract_address, -1) || COALESCE(txs.token_id, -1) || '-' || COALESCE(txs.seller, -1) || '-' || COALESCE(txs.evt_index, -1) || COALESCE(erct.evt_index, -1) || 'Trade' AS unique_trade_id
 FROM all_x2y2_txs txs
-INNER JOIN {{ source('ethereum','transactions') }} et ON et.block_time=txs.block_time
+INNER JOIN {{ source('ethereum', 'transactions') }} et ON et.block_time=txs.block_time
     AND et.hash=txs.tx_hash
     {% if is_incremental() %}
     AND et.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ source('prices','usd') }} pu ON pu.blockchain='ethereum'
+LEFT JOIN {{ source('prices', 'usd') }} pu ON pu.blockchain='ethereum'
     AND date_trunc('minute', pu.minute)=date_trunc('minute', txs.block_time)
     AND (pu.contract_address=txs.currency_contract
         OR (pu.contract_address='0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' AND txs.currency_contract='0x0000000000000000000000000000000000000000'))
     {% if is_incremental() %}
     AND pu.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct ON erct.evt_block_time=txs.block_time
+LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct ON erct.evt_block_time=txs.block_time
     AND txs.nft_contract_address=erct.contract_address
     AND erct.evt_tx_hash=txs.tx_hash
     AND erct.tokenId=txs.token_id
@@ -229,7 +229,7 @@ LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct ON erct.evt_block_
     {% if is_incremental() %}
     AND erct.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_block_time=txs.block_time
+LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct2 ON erct2.evt_block_time=txs.block_time
     AND txs.nft_contract_address=erct2.contract_address
     AND erct2.evt_tx_hash=txs.tx_hash
     AND erct2.tokenId=txs.token_id
@@ -237,7 +237,7 @@ LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_bloc
     {% if is_incremental() %}
     AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=txs.block_time
+LEFT JOIN {{ source('erc1155_ethereum', 'evt_transfersingle') }} erct3 ON erct3.evt_block_time=txs.block_time
     AND txs.nft_contract_address=erct3.contract_address
     AND erct3.evt_tx_hash=txs.tx_hash
     AND erct3.id=txs.token_id

@@ -24,7 +24,7 @@ WITH
             , cost AS amount_raw
             , currency AS currency_contract
             , tradeId AS unique_trade_id
-        FROM {{ source('archipelago_ethereum','ArchipelagoMarket_evt_Trade') }}
+        FROM {{ source('archipelago_ethereum', 'ArchipelagoMarket_evt_Trade') }}
         {% if is_incremental() %}
         WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
@@ -42,7 +42,7 @@ WITH
             , tokenAddress AS nft_contract_address
             , tokenId AS token_id
             , tradeId AS unique_trade_id
-        FROM {{ source('archipelago_ethereum','ArchipelagoMarket_evt_TokenTrade') }}
+        FROM {{ source('archipelago_ethereum', 'ArchipelagoMarket_evt_TokenTrade') }}
         {% if is_incremental() %}
         WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
@@ -67,7 +67,7 @@ WITH
                 or upper(recipient) = upper('0x1fC12C9f68A6B0633Ba5897A40A8e61ed9274dC9')
                 ) then true else false end
                 AS is_protocol_fee
-        FROM {{ source('archipelago_ethereum','ArchipelagoMarket_evt_RoyaltyPayment') }}
+        FROM {{ source('archipelago_ethereum', 'ArchipelagoMarket_evt_RoyaltyPayment') }}
         {% if is_incremental() %}
         WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}

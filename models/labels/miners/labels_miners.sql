@@ -13,7 +13,7 @@ SELECT DISTINCT array('ethereum') AS blockchain,
        'query' AS source,
        date('2022-09-28') AS created_at,
        now() AS modified_at
-FROM {{ source('ethereum','blocks') }}
+FROM {{ source('ethereum', 'blocks') }}
 UNION
 SELECT DISTINCT array('gnosis') AS blockchain,
        miner,
@@ -23,7 +23,7 @@ SELECT DISTINCT array('gnosis') AS blockchain,
        'query' AS source,
        date('2022-09-28') AS created_at,
        now() AS modified_at
-FROM {{ source('gnosis','blocks') }}
+FROM {{ source('gnosis', 'blocks') }}
 UNION
 SELECT DISTINCT array('avalanche_c') AS blockchain,
        miner,
@@ -33,7 +33,7 @@ SELECT DISTINCT array('avalanche_c') AS blockchain,
        'query' AS source,
        date('2022-09-28') AS created_at,
        now() AS modified_at
-FROM {{ source('avalanche_c','blocks') }}
+FROM {{ source('avalanche_c', 'blocks') }}
 UNION
 SELECT DISTINCT array('arbitrum') AS blockchain,
        miner,
@@ -43,7 +43,7 @@ SELECT DISTINCT array('arbitrum') AS blockchain,
        'query' AS source,
        date('2022-09-28') AS created_at,
        now() AS modified_at
-FROM {{ source('arbitrum','blocks') }}
+FROM {{ source('arbitrum', 'blocks') }}
 UNION
 SELECT DISTINCT array('bnb') AS blockchain,
        miner,
@@ -53,7 +53,7 @@ SELECT DISTINCT array('bnb') AS blockchain,
        'query' AS source,
        date('2022-09-28') AS created_at,
        now() AS modified_at
-FROM {{ source('bnb','blocks') }}
+FROM {{ source('bnb', 'blocks') }}
 UNION
 SELECT DISTINCT array('optimism') AS blockchain,
        miner,
@@ -63,4 +63,4 @@ SELECT DISTINCT array('optimism') AS blockchain,
        'query' AS source,
        date('2022-09-28') AS created_at,
        now() AS modified_at
-FROM {{ source('optimism','blocks') }} 
+FROM {{ source('optimism', 'blocks') }} 

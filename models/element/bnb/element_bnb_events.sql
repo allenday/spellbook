@@ -30,7 +30,7 @@ WITH element_txs AS (
         , ee.contract_address AS project_contract_address
         , ee.evt_tx_hash AS tx_hash
         , ee.evt_block_number AS block_number
-        FROM {{ source('element_ex_bnb','ERC721OrdersFeature_evt_ERC721SellOrderFilled') }} ee
+        FROM {{ source('element_ex_bnb', 'ERC721OrdersFeature_evt_ERC721SellOrderFilled') }} ee
         {% if is_incremental() %}
         WHERE ee.evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
@@ -57,7 +57,7 @@ WITH element_txs AS (
         , ee.contract_address AS project_contract_address
         , ee.evt_tx_hash AS tx_hash
         , ee.evt_block_number AS block_number
-        FROM {{ source('element_ex_bnb','ERC721OrdersFeature_evt_ERC721BuyOrderFilled') }} ee
+        FROM {{ source('element_ex_bnb', 'ERC721OrdersFeature_evt_ERC721BuyOrderFilled') }} ee
         {% if is_incremental() %}
         WHERE ee.evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
@@ -84,7 +84,7 @@ WITH element_txs AS (
         , ee.contract_address AS project_contract_address
         , ee.evt_tx_hash AS tx_hash
         , ee.evt_block_number AS block_number
-        FROM {{ source('element_ex_bnb','ERC1155OrdersFeature_evt_ERC1155SellOrderFilled') }} ee
+        FROM {{ source('element_ex_bnb', 'ERC1155OrdersFeature_evt_ERC1155SellOrderFilled') }} ee
         {% if is_incremental() %}
         WHERE ee.evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
@@ -111,7 +111,7 @@ WITH element_txs AS (
         , ee.contract_address AS project_contract_address
         , ee.evt_tx_hash AS tx_hash
         , ee.evt_block_number AS block_number
-        FROM {{ source('element_ex_bnb','ERC1155OrdersFeature_evt_ERC1155BuyOrderFilled') }} ee
+        FROM {{ source('element_ex_bnb', 'ERC1155OrdersFeature_evt_ERC1155BuyOrderFilled') }} ee
         {% if is_incremental() %}
         WHERE ee.evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
@@ -164,7 +164,7 @@ LEFT JOIN {{ source('prices', 'usd') }} prices ON prices.minute=date_trunc('minu
         {% if is_incremental() %}
         AND prices.minute >= date_trunc("day", now() - interval '1 week')
         {% endif %}
-LEFT JOIN {{ source('bnb','transactions') }} bt ON bt.hash=alet.tx_hash
+LEFT JOIN {{ source('bnb', 'transactions') }} bt ON bt.hash=alet.tx_hash
     AND bt.block_time=alet.block_time
         {% if is_incremental() %}
         AND bt.block_time >= date_trunc("day", now() - interval '1 week')

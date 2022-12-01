@@ -4,7 +4,7 @@
     materialized = 'incremental',
     file_format = 'delta',
     incremental_strategy = 'merge',
-    unique_key = ['tx_hash','block_number']
+    unique_key = ['tx_hash', 'block_number']
     )
 }}
 
@@ -33,13 +33,13 @@ SELECT
      txns.gas_used / txns.gas_limit * 100 AS gas_usage_percent,
      gas_used_for_l1 AS l1_gas_used,
      type AS transaction_type
-FROM {{ source('arbitrum','transactions') }} txns
-JOIN {{ source('arbitrum','blocks') }} blocks ON blocks.number = txns.block_number
+FROM {{ source('arbitrum', 'transactions') }} txns
+JOIN {{ source('arbitrum', 'blocks') }} blocks ON blocks.number = txns.block_number
 {% if is_incremental() %}
 AND block_time >= date_trunc("day", now() - interval '2 days')
 AND blocks.time >= date_trunc("day", now() - interval '2 days')
 {% endif %}
-LEFT JOIN {{ source('prices','usd') }} p ON p.minute = date_trunc('minute', block_time)
+LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', block_time)
 AND p.blockchain = 'arbitrum'
 AND p.symbol = 'WETH'
 {% if is_incremental() %}

@@ -46,7 +46,7 @@ SELECT
     evt_index,
     evt_block_time,
     evt_block_number
-FROM {{ source('aave_ethereum','LendingPool_evt_Borrow') }}
+FROM {{ source('aave_ethereum', 'LendingPool_evt_Borrow') }}
 UNION ALL
 SELECT
     '1' AS version,
@@ -64,7 +64,7 @@ SELECT
     evt_index,
     evt_block_time,
     evt_block_number
-FROM {{ source('aave_ethereum','LendingPool_evt_Repay') }}
+FROM {{ source('aave_ethereum', 'LendingPool_evt_Repay') }}
 UNION ALL
 SELECT
     '1' AS version,
@@ -82,11 +82,11 @@ SELECT
     evt_index,
     evt_block_time,
     evt_block_number
-FROM {{ source('aave_ethereum','LendingPool_evt_LiquidationCall') }}
+FROM {{ source('aave_ethereum', 'LendingPool_evt_LiquidationCall') }}
 ) borrow
 LEFT JOIN {{ ref('tokens_ethereum_erc20') }} erc20
     ON borrow.token = erc20.contract_address
-LEFT JOIN {{ source('prices','usd') }} p
+LEFT JOIN {{ source('prices', 'usd') }} p
     ON p.minute = date_trunc('minute', borrow.evt_block_time)
     AND p.contract_address = borrow.token
     AND p.blockchain = 'ethereum'

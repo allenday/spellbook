@@ -24,9 +24,9 @@ with
                 contract_address AS pool_address
                 ,newFee AS pool_fee
                 ,evt_block_time AS update_time
-                ,row_number() over (partition BY contract_address order BY evt_block_number desc, tx.index desc) AS ordering
-            FROM {{ source('sudo_amm_ethereum','LSSVMPair_general_evt_FeeUpdate') }} evt
-            INNER JOIN {{ source('ethereum','transactions') }} tx ON tx.block_time = evt.evt_block_time
+                ,row_number() over (partition BY contract_address order BY evt_block_number DESC, tx.index DESC) AS ordering
+            FROM {{ source('sudo_amm_ethereum', 'LSSVMPair_general_evt_FeeUpdate') }} evt
+            INNER JOIN {{ source('ethereum', 'transactions') }} tx ON tx.block_time = evt.evt_block_time
             AND tx.hash = evt.evt_tx_hash
             {% if NOT is_incremental() %}
             AND tx.block_time >= '{{project_start_date}}'
@@ -50,9 +50,9 @@ with
                 contract_address AS pool_address
                 ,newDelta / 1e18 AS delta
                 ,evt_block_time AS update_time
-                ,row_number() over (partition BY contract_address order BY evt_block_number desc, tx.index desc) AS ordering
-            FROM {{ source('sudo_amm_ethereum','LSSVMPair_general_evt_DeltaUpdate') }} evt
-            INNER JOIN {{ source('ethereum','transactions') }} tx ON tx.block_time = evt.evt_block_time
+                ,row_number() over (partition BY contract_address order BY evt_block_number DESC, tx.index DESC) AS ordering
+            FROM {{ source('sudo_amm_ethereum', 'LSSVMPair_general_evt_DeltaUpdate') }} evt
+            INNER JOIN {{ source('ethereum', 'transactions') }} tx ON tx.block_time = evt.evt_block_time
             AND tx.hash = evt.evt_tx_hash
             {% if NOT is_incremental() %}
             AND tx.block_time >= '{{project_start_date}}'
@@ -76,9 +76,9 @@ with
                 contract_address AS pool_address
                 ,newSpotPrice / 1e18 AS spot_price
                 ,evt_block_time AS update_time
-                ,row_number() over (partition BY contract_address order BY evt_block_number desc, tx.index desc) AS ordering
-            FROM {{ source('sudo_amm_ethereum','LSSVMPair_general_evt_SpotPriceUpdate') }} evt
-            INNER JOIN {{ source('ethereum','transactions') }} tx ON tx.block_time = evt.evt_block_time
+                ,row_number() over (partition BY contract_address order BY evt_block_number DESC, tx.index DESC) AS ordering
+            FROM {{ source('sudo_amm_ethereum', 'LSSVMPair_general_evt_SpotPriceUpdate') }} evt
+            INNER JOIN {{ source('ethereum', 'transactions') }} tx ON tx.block_time = evt.evt_block_time
             AND tx.hash = evt.evt_tx_hash
             {% if NOT is_incremental() %}
             AND tx.block_time >= '{{project_start_date}}'

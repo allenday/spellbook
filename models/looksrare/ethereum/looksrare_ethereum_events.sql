@@ -27,7 +27,7 @@ WITH looksrare_trades AS (
     , ta.evt_block_number AS block_number
     , ta.evt_index
     , ta.strategy
-    FROM {{ source('looksrare_ethereum','looksrareexchange_evt_takerask') }} ta
+    FROM {{ source('looksrare_ethereum', 'looksrareexchange_evt_takerask') }} ta
     {% if is_incremental() %}
     WHERE ta.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -46,7 +46,7 @@ WITH looksrare_trades AS (
     , tb.evt_block_number AS block_number
     , tb.evt_index
     , tb.strategy
-    FROM {{ source('looksrare_ethereum','looksrareexchange_evt_takerbid') }} tb
+    FROM {{ source('looksrare_ethereum', 'looksrareexchange_evt_takerbid') }} tb
     {% if is_incremental() %}
     WHERE tb.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -55,23 +55,23 @@ WITH looksrare_trades AS (
 , platform_fees AS (
     SELECT distinct contract_address
     , output_0 / 100 AS fee_percentage
-    FROM {{ source('looksrare_ethereum','StrategyStandardSaleForFixedPrice_call_viewProtocolFee') }}
+    FROM {{ source('looksrare_ethereum', 'StrategyStandardSaleForFixedPrice_call_viewProtocolFee') }}
     UNION ALL
     SELECT distinct contract_address
     , output_0 / 100 AS fee_percentage
-    FROM {{ source('looksrare_ethereum','StrategyAnyItemFromCollectionForFixedPrice_call_viewProtocolFee') }}
+    FROM {{ source('looksrare_ethereum', 'StrategyAnyItemFromCollectionForFixedPrice_call_viewProtocolFee') }}
     UNION ALL
     SELECT distinct contract_address
     , output_0 / 100 AS fee_percentage
-    FROM {{ source('looksrare_ethereum','StrategyPrivateSale_call_viewProtocolFee') }}
+    FROM {{ source('looksrare_ethereum', 'StrategyPrivateSale_call_viewProtocolFee') }}
     UNION ALL
     SELECT distinct contract_address
     , output_0 / 100 AS fee_percentage
-    FROM {{ source('looksrare_ethereum','StrategyStandardSaleForFixedPriceV1B_call_viewProtocolFee') }}
+    FROM {{ source('looksrare_ethereum', 'StrategyStandardSaleForFixedPriceV1B_call_viewProtocolFee') }}
     UNION ALL
     SELECT distinct contract_address
     , output_0 / 100 AS fee_percentage
-    FROM {{ source('looksrare_ethereum','StrategyAnyItemFromCollectionForFixedPriceV1B_call_viewProtocolFee') }}
+    FROM {{ source('looksrare_ethereum', 'StrategyAnyItemFromCollectionForFixedPriceV1B_call_viewProtocolFee') }}
     )
 
 SELECT distinct 'ethereum' AS blockchain
@@ -120,14 +120,14 @@ LEFT JOIN {{ source('prices', 'usd') }} pu ON pu.blockchain='ethereum'
     {% if is_incremental() %}
     AND pu.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-INNER JOIN {{ source('ethereum','transactions') }} et ON lr.block_time=et.block_time
+INNER JOIN {{ source('ethereum', 'transactions') }} et ON lr.block_time=et.block_time
     AND lr.tx_hash=et.hash
     {% if is_incremental() %}
     AND et.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ ref('nft_ethereum_aggregators') }} agg ON et.to=agg.contract_address
 LEFT JOIN {{ ref('tokens_ethereum_nft') }} tok ON lr.nft_contract_address=tok.contract_address
-LEFT JOIN {{ source('looksrare_ethereum','looksrareexchange_evt_royaltypayment') }} roy ON roy.evt_block_time=lr.block_time
+LEFT JOIN {{ source('looksrare_ethereum', 'looksrareexchange_evt_royaltypayment') }} roy ON roy.evt_block_time=lr.block_time
     AND roy.evt_tx_hash=lr.tx_hash
     AND roy.collection=lr.nft_contract_address
     AND roy.tokenId=lr.token_id
@@ -161,7 +161,7 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} seller_fix ON lr.block_time=seller
     {% if is_incremental() %}
     AND seller_fix.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} standard ON lr.block_time=standard.evt_block_time
+LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} standard ON lr.block_time=standard.evt_block_time
     AND lr.tx_hash=standard.evt_tx_hash
     AND lr.nft_contract_address=standard.contract_address
     AND lr.token_id=standard.tokenId

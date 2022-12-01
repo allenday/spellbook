@@ -42,8 +42,8 @@ FROM
         , tc.leafIndex AS leaf_index
         , tc.evt_index
         , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
-        FROM {{ source('tornado_cash_ethereum','eth_evt_Deposit') }} tc
-        INNER JOIN {{ source('ethereum','transactions') }} et
+        FROM {{ source('tornado_cash_ethereum', 'eth_evt_Deposit') }} tc
+        INNER JOIN {{ source('ethereum', 'transactions') }} et
                 ON et.hash=tc.evt_tx_hash
                 {% if NOT is_incremental() %}
                 AND et.block_time >= '{{ethereum_start_date}}'
@@ -139,8 +139,8 @@ FROM
         , tc.leafIndex AS leaf_index
         , tc.evt_index
         , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
-        FROM {{ source('tornado_cash_ethereum','erc20_evt_Deposit') }} tc
-        INNER JOIN {{ source('ethereum','transactions') }} et
+        FROM {{ source('tornado_cash_ethereum', 'erc20_evt_Deposit') }} tc
+        INNER JOIN {{ source('ethereum', 'transactions') }} et
                 ON et.hash=tc.evt_tx_hash
                 {% if NOT is_incremental() %}
                 AND et.block_time >= '{{eth_erc20_pt1_start_date}}'
@@ -236,8 +236,8 @@ FROM
         , tc.leafIndex AS leaf_index
         , tc.evt_index
         , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
-        FROM {{ source('tornado_cash_ethereum','ERC20Tornado_evt_Deposit') }} tc
-        INNER JOIN {{ source('ethereum','transactions') }} et
+        FROM {{ source('tornado_cash_ethereum', 'ERC20Tornado_evt_Deposit') }} tc
+        INNER JOIN {{ source('ethereum', 'transactions') }} et
                 ON et.hash=tc.evt_tx_hash
                 {% if NOT is_incremental() %}
                 AND et.block_time >= '{{eth_erc20_pt2_start_date}}'
@@ -271,8 +271,8 @@ FROM
         , tc.leafIndex AS leaf_index
         , tc.evt_index
         , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
-        FROM {{ source('tornado_cash_bnb','TornadoCashBNB_evt_Deposit') }} tc
-        INNER JOIN {{ source('bnb','transactions') }} bt
+        FROM {{ source('tornado_cash_bnb', 'TornadoCashBNB_evt_Deposit') }} tc
+        INNER JOIN {{ source('bnb', 'transactions') }} bt
                 ON bt.hash=tc.evt_tx_hash
                 {% if NOT is_incremental() %}
                 AND bt.block_time >= '{{bnb_start_date}}'
@@ -306,8 +306,8 @@ FROM
         , tc.leafIndex AS leaf_index
         , tc.evt_index
         , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
-        FROM {{ source('tornado_cash_gnosis','eth_evt_Deposit') }} tc
-        INNER JOIN {{ source('gnosis','transactions') }} gt
+        FROM {{ source('tornado_cash_gnosis', 'eth_evt_Deposit') }} tc
+        INNER JOIN {{ source('gnosis', 'transactions') }} gt
                 ON gt.hash=tc.evt_tx_hash
                 {% if NOT is_incremental() %}
                 AND gt.block_time >= '{{gnosis_start_date}}'
@@ -342,8 +342,8 @@ FROM
         , tc.leafIndex AS leaf_index
         , tc.evt_index
         , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
-        FROM {{ source('tornado_cash_optimism','ETHTornado_evt_Deposit') }} tc
-        INNER JOIN {{ source('optimism','transactions') }} ot
+        FROM {{ source('tornado_cash_optimism', 'ETHTornado_evt_Deposit') }} tc
+        INNER JOIN {{ source('optimism', 'transactions') }} ot
                 ON ot.hash=tc.evt_tx_hash
                 {% if NOT is_incremental() %}
                 AND ot.block_time >= '{{optimism_start_date}}'
@@ -376,8 +376,8 @@ FROM
         , tc.leafIndex AS leaf_index
         , tc.evt_index
         , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
-        FROM {{ source('tornado_cash_avalanche_c','ETHTornado_evt_Deposit') }} tc
-        INNER JOIN {{ source('avalanche_c','transactions') }} at
+        FROM {{ source('tornado_cash_avalanche_c', 'ETHTornado_evt_Deposit') }} tc
+        INNER JOIN {{ source('avalanche_c', 'transactions') }} at
                 ON at.hash=tc.evt_tx_hash
                 {% if NOT is_incremental() %}
                 AND at.block_time >= '{{avalanche_start_date}}'
@@ -411,8 +411,8 @@ FROM
         , tc.leafIndex AS leaf_index
         , tc.evt_index
         , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
-        FROM {{ source('tornado_cash_arbitrum','ETHTornado_evt_Deposit') }} tc
-        INNER JOIN {{ source('arbitrum','transactions') }} at
+        FROM {{ source('tornado_cash_arbitrum', 'ETHTornado_evt_Deposit') }} tc
+        INNER JOIN {{ source('arbitrum', 'transactions') }} at
                 ON at.hash=tc.evt_tx_hash
                 {% if NOT is_incremental() %}
                 AND at.block_time >= '{{arbitrum_start_date}}'
@@ -446,8 +446,8 @@ FROM
         , tc.leafIndex AS leaf_index
         , tc.evt_index
         , TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
-        FROM {{ source('tornado_cash_polygon','TornadoCashMatic_evt_Deposit') }} tc
-        INNER JOIN {{ source('polygon','transactions') }} pt
+        FROM {{ source('tornado_cash_polygon', 'TornadoCashMatic_evt_Deposit') }} tc
+        INNER JOIN {{ source('polygon', 'transactions') }} pt
                 ON pt.hash=tc.evt_tx_hash
                 {% if NOT is_incremental() %}
                 AND pt.block_time >= '{{polygon_start_date}}'

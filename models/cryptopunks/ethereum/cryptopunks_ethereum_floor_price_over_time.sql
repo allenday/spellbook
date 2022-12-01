@@ -20,12 +20,12 @@ with all_listings AS (
             , evt_index
             , evt_block_time
             , evt_tx_hash
-    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkOffered') }}
+    FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkOffered') }}
 )
 , all_no_longer_for_sale_events (
     SELECT  `punkIndex` AS punk_id
             , 'No Longer For Sale' AS event_type
-            , case when evt_tx_hash in (SELECT evt_tx_hash FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkBought') }}) then 'Punk Bought'
+            , case when evt_tx_hash in (SELECT evt_tx_hash FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkBought') }}) then 'Punk Bought'
                     else 'Other'
                 end AS event_sub_type
             , NULL AS listed_price
@@ -34,7 +34,7 @@ with all_listings AS (
             , evt_index
             , evt_block_time
             , evt_tx_hash
-    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkNoLongerForSale') }}
+    FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkNoLongerForSale') }}
 )
 , all_buys AS (
     SELECT  `punkIndex` AS punk_id
@@ -46,7 +46,7 @@ with all_listings AS (
             , evt_index
             , evt_block_time
             , evt_tx_hash
-    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkBought') }}
+    FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkBought') }}
 )
 , all_transfers AS (
     SELECT  `punkIndex` AS punk_id
@@ -58,7 +58,7 @@ with all_listings AS (
             , evt_index
             , evt_block_time
             , evt_tx_hash
-    FROM {{ source('cryptopunks_ethereum','CryptoPunksMarket_evt_PunkTransfer') }}
+    FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkTransfer') }}
 )
 , base_data AS (
     with all_days  AS (SELECT explode(sequence(to_date('2017-06-23'), to_date(now()), interval 1 day)) AS day)
@@ -71,7 +71,7 @@ with all_listings AS (
 )
 , all_punk_events AS (
     SELECT *
-          , row_number() over (partition BY punk_id order BY evt_block_number asc, evt_index asc ) AS punk_event_index
+          , row_number() over (partition BY punk_id order BY evt_block_number ASC, evt_index ASC ) AS punk_event_index
     FROM
     (
     SELECT * FROM all_listings
@@ -79,7 +79,7 @@ with all_listings AS (
     union all SELECT * FROM all_buys
     union all SELECT * FROM all_transfers
     ) a
-    order BY evt_block_number desc, evt_index desc
+    order BY evt_block_number DESC, evt_index DESC
 )
 , aggregated_punk_on_off_data AS (
     SELECT date_trunc('day',a.evt_block_time) AS day
@@ -104,8 +104,8 @@ FROM
             , min(price_fill_in) filter (where bool_fill_in = 'Active' AND price_fill_in > 0) AS floor_price_eth
     FROM
     (   SELECT c.*
-                , last_value(listed_price,true) over (partition BY punk_id order BY day asc ) AS price_fill_in
-                , last_value(listed_bool,true) over (partition BY punk_id order BY day asc ) AS bool_fill_in
+                , last_value(listed_price,true) over (partition BY punk_id order BY day ASC ) AS price_fill_in
+                , last_value(listed_bool,true) over (partition BY punk_id order BY day ASC ) AS bool_fill_in
         FROM
         (   SELECT a.day
                     , a.punk_id
@@ -123,4 +123,4 @@ LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', e.d
     AND p.contract_address = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
     AND p.blockchain = "ethereum"
 
-order BY day desc 
+order BY day DESC 

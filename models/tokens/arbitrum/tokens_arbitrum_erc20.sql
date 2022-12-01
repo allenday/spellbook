@@ -53,7 +53,7 @@ FROM (VALUES
         , ('0x99f40b01ba9c469193b360f72740e416b17ac332', 'MATH', 18)
         , ('0x031d35296154279dc1984dcd93e392b1f946737b', 'CAP', 18)
         , ('0x82af49447d8a07e3bd95bd0d56f35241523fbab1', 'WETH', 18)
-        , ('0x1622bf67e6e5747b81866fe0b85178a93c7f86e3','UMAMI', 9)
+        , ('0x1622bf67e6e5747b81866fe0b85178a93c7f86e3', 'UMAMI', 9)
         , ('0x5575552988a3a80504bbaeb1311674fcfd40ad4b', 'SPA', 18)
         , ('0xd74f5255d557944cf7dd0e45ff521520002d5748', 'USDs', 18)
         , ('0x539bde0d7dbd336b79148aa742883198bbf60342', 'MAGIC', 18)

@@ -27,7 +27,7 @@ WITH
       pool_address,
       SUM(CASE WHEN et.to = p.pool_address THEN 1 ELSE -1 END) AS nft_balance_change
     FROM
-      {{ source('erc721_ethereum','evt_transfer') }} et
+      {{ source('erc721_ethereum', 'evt_transfer') }} et
       INNER JOIN pools p ON p.nft_contract_address = et.contract_address
       AND (et.to = p.pool_address OR et.FROM = p.pool_address)
     {% if NOT is_incremental() %}
@@ -53,7 +53,7 @@ WITH
           , SUM(tr.value / 1e18) AS eth_balance_in
           , 0 AS eth_balance_out
         FROM
-          {{ source('ethereum','traces') }} tr
+          {{ source('ethereum', 'traces') }} tr
           INNER JOIN pools pc ON pc.pool_address = tr.to
         WHERE tr.success = true
           AND tr.type = 'call'
@@ -78,7 +78,7 @@ WITH
           , 0 AS eth_balance_in
           , SUM(tr.value / 1e18) AS eth_balance_out
         FROM
-          {{ source('ethereum','traces') }} tr
+          {{ source('ethereum', 'traces') }} tr
           INNER JOIN pools pc ON pc.pool_address = tr.FROM
         WHERE tr.success = true
           AND tr.type = 'call'

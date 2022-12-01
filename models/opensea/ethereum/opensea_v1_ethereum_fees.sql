@@ -13,7 +13,7 @@ SELECT
     'ETH' AS fee_currency_symbol
 FROM  {{ source('ethereum', 'traces') }} source_fees
 WHERE
-FROM IN ('0x7be8076f4ea4a4ad08075c2508e481d6c946d12b','0x7f268357a8c2552623316e2562d90e642bb538e5')
+FROM IN ('0x7be8076f4ea4a4ad08075c2508e481d6c946d12b', '0x7f268357a8c2552623316e2562d90e642bb538e5')
 AND to = '0x5b3256965e7c3cf26e11fcaf296dfc8807c01073' -- OpenSea Wallet
 GROUP BY 1,2,3,5,6
 

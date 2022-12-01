@@ -33,7 +33,7 @@ WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_
     (lower('0x8876819535b48b551c9e97ebc07332c7482b4b2d'), 'DODO', 'USDT', lower('0x43dfc4159d86f3a37a5a4b3d4580b888ad7d4ddd'), lower('0xdac17f958d2ee523a2206206994597c13d831ec7')),
     (lower('0x9d9793e1e18cdee6cf63818315d55244f73ec006'), 'FIN', 'USDT',  lower('0x054f76beed60ab6dbeb23502178c52d6c5debe40'), lower('0xdac17f958d2ee523a2206206994597c13d831ec7')),
     (lower('0x94512fd4fb4feb63a6c0f4bedecc4a00ee260528'), 'AAVE', 'USDC', lower('0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9'), lower('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48')),
-    (lower('0x85f9569b69083c3e6aeffd301bb2c65606b5d575'), 'wCRESt','USDT',lower('0xa0afaa285ce85974c3c881256cb7f225e3a1178a'), lower('0xdac17f958d2ee523a2206206994597c13d831ec7')),
+    (lower('0x85f9569b69083c3e6aeffd301bb2c65606b5d575'), 'wCRESt', 'USDT',lower('0xa0afaa285ce85974c3c881256cb7f225e3a1178a'), lower('0xdac17f958d2ee523a2206206994597c13d831ec7')),
     (lower('0x3058ef90929cb8180174d74c507176cca6835d73'), 'DAI', 'USDT',  lower('0x6b175474e89094c44da98b954eedeac495271d0f'), lower('0xdac17f958d2ee523a2206206994597c13d831ec7')),
     (lower('0xd84820f0e66187c4f3245e1fe5ccc40655dbacc9'), 'sUSD', 'USDT', lower('0x57ab1ec28d129707052df4df418d58a2d46d5f51'), lower('0xdac17f958d2ee523a2206206994597c13d831ec7'))
 )
@@ -83,7 +83,7 @@ WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_
             '' AS trace_address,
             b.evt_index
         FROM
-            {{ source('dodo_ethereum','DODO_evt_BuyBaseToken')}} b
+            {{ source('dodo_ethereum', 'DODO_evt_BuyBaseToken')}} b
         LEFT JOIN dodo_view_markets m
             ON b.contract_address = m.market_contract_address
         WHERE b.buyer <> '0xa356867fdcea8e71aeaf87805808803806231fdc'
@@ -158,7 +158,7 @@ WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_
             '' AS trace_address,
             evt_index
         FROM
-            {{ source('dodo_ethereum','DODOV2Proxy02_evt_OrderHistory')}}
+            {{ source('dodo_ethereum', 'DODOV2Proxy02_evt_OrderHistory')}}
         {% if is_incremental() %}
         WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}

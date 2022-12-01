@@ -3,7 +3,7 @@
     materialized = 'incremental',
     file_format = 'delta',
     incremental_strategy = 'merge',
-    unique_key = ['node','block_time','evt_index'],
+    unique_key = ['node', 'block_time', 'evt_index'],
     post_hook='{{ expose_spells(\'["ethereum"]\',
                             "project",
                             "ens",
@@ -18,7 +18,7 @@ with resolver_records AS (
     ,evt_block_time AS block_time
     ,evt_tx_hash AS tx_hash
     ,evt_index
-    FROM {{ source('ethereumnameservice_ethereum','PublicResolver_evt_AddrChanged') }}
+    FROM {{ source('ethereumnameservice_ethereum', 'PublicResolver_evt_AddrChanged') }}
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}

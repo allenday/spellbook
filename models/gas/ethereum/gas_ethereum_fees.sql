@@ -43,13 +43,13 @@ SELECT
      txns.gas_used / txns.gas_limit * 100 AS gas_usage_percent,
      difficulty,
      type AS transaction_type
-FROM {{ source('ethereum','transactions') }} txns
-JOIN {{ source('ethereum','blocks') }} blocks ON blocks.number = txns.block_number
+FROM {{ source('ethereum', 'transactions') }} txns
+JOIN {{ source('ethereum', 'blocks') }} blocks ON blocks.number = txns.block_number
 {% if is_incremental() %}
 AND block_time >= date_trunc("day", now() - interval '2 days')
 AND blocks.time >= date_trunc("day", now() - interval '2 days')
 {% endif %}
-LEFT JOIN {{ source('prices','usd') }} p ON p.minute = date_trunc('minute', block_time)
+LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', block_time)
 AND p.blockchain = 'ethereum'
 AND p.symbol = 'WETH'
 {% if is_incremental() %}

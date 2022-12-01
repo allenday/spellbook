@@ -92,7 +92,7 @@ SELECT
   instructions,
   signatures,
   log_messages
-FROM {{ source('solana','transactions') }}
+FROM {{ source('solana', 'transactions') }}
 LEFT JOIN prices.usd p
   ON p.minute = date_trunc('minute', block_time)
   AND p.blockchain is NULL

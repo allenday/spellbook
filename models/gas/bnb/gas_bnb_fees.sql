@@ -33,8 +33,8 @@ SELECT
     txns.gas_limit,
     difficulty,
     type AS transaction_type
-FROM {{ source('bnb','transactions') }} txns
-JOIN {{ source('bnb','blocks') }} blocks ON blocks.number = txns.block_number
+FROM {{ source('bnb', 'transactions') }} txns
+JOIN {{ source('bnb', 'blocks') }} blocks ON blocks.number = txns.block_number
 {% if is_incremental() %}
 AND block_time >= date_trunc("day", now() - interval '2 days')
 AND blocks.time >= date_trunc("day", now() - interval '2 days')

@@ -62,7 +62,7 @@ FROM
             mintvalues:feeAmount                                  AS fee_amount,
             evt_tx_hash,
             evt_index
-    FROM {{ source('jarvis_network_polygon','SynthereumMultiLpLiquidityPool_evt_Minted') }}
+    FROM {{ source('jarvis_network_polygon', 'SynthereumMultiLpLiquidityPool_evt_Minted') }}
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -83,7 +83,7 @@ FROM
             redeemvalues:feeAmount                                AS fee_amount,
             evt_tx_hash,
             evt_index
-    FROM {{ source('jarvis_network_polygon','SynthereumMultiLpLiquidityPool_evt_Redeemed') }}
+    FROM {{ source('jarvis_network_polygon', 'SynthereumMultiLpLiquidityPool_evt_Redeemed') }}
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -104,7 +104,7 @@ FROM
             feePaid                                               AS fee_amount,
             evt_tx_hash,
             evt_index
-    FROM {{ source('jarvis_network_polygon','SynthereumPoolOnChainPriceFeed_evt_Mint') }}
+    FROM {{ source('jarvis_network_polygon', 'SynthereumPoolOnChainPriceFeed_evt_Mint') }}
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -125,7 +125,7 @@ FROM
             feePaid                                               AS fee_amount,
             evt_tx_hash,
             evt_index
-    FROM {{ source('jarvis_network_polygon','SynthereumPoolOnChainPriceFeed_evt_Redeem') }}
+    FROM {{ source('jarvis_network_polygon', 'SynthereumPoolOnChainPriceFeed_evt_Redeem') }}
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
@@ -146,7 +146,7 @@ FROM
             feePaid AS fee_amount,
             evt_tx_hash,
             evt_index
-    FROM {{ source('jarvis_network_polygon','SynthereumPoolOnChainPriceFeed_evt_Exchange') }}
+    FROM {{ source('jarvis_network_polygon', 'SynthereumPoolOnChainPriceFeed_evt_Exchange') }}
     {% if is_incremental() %}
     WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}

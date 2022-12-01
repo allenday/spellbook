@@ -1,4 +1,4 @@
- {{
+{{
   config(
         alias='fees',
         post_hook='{{ expose_spells(\'["ethereum"]\',
@@ -6,7 +6,6 @@
                                     "archipelago",
                                     \'["0xRob"]\') }}')
 }}
-
 SELECT
       blockchain,
       project,

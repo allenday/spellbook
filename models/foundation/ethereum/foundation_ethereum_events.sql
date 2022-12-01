@@ -35,8 +35,8 @@ WITH all_foundation_trades AS (
     , f.protocolFee / POWER(10, 18) AS platform_fee_amount
     , f.creatorFee AS royalty_fee_amount_raw
     , f.creatorFee / POWER(10, 18) royalty_fee_amount
-    FROM {{ source('foundation_ethereum','market_evt_ReserveAuctionFinalized') }} f
-    LEFT JOIN {{ source('foundation_ethereum','market_evt_ReserveAuctionCreated') }} c ON c.auctionId=f.auctionId AND c.evt_block_time<=f.evt_block_time
+    FROM {{ source('foundation_ethereum', 'market_evt_ReserveAuctionFinalized') }} f
+    LEFT JOIN {{ source('foundation_ethereum', 'market_evt_ReserveAuctionCreated') }} c ON c.auctionId=f.auctionId AND c.evt_block_time<=f.evt_block_time
      {% if is_incremental() %} -- this filter will only be applied ON an incremental run
      WHERE f.evt_block_time >= (SELECT max(block_time) FROM {{ this }})
      {% endif %}
@@ -63,7 +63,7 @@ WITH all_foundation_trades AS (
     , protocolFee / POWER(10, 18) AS platform_fee_amount
     , creatorFee AS royalty_fee_amount_raw
     , creatorFee / POWER(10, 18) AS royalty_fee_amount
-    FROM {{ source('foundation_ethereum','market_evt_BuyPriceAccepted') }} f
+    FROM {{ source('foundation_ethereum', 'market_evt_BuyPriceAccepted') }} f
      {% if is_incremental() %} -- this filter will only be applied ON an incremental run
      WHERE f.evt_block_time >= (SELECT max(block_time) FROM {{ this }})
      {% endif %}
@@ -90,7 +90,7 @@ WITH all_foundation_trades AS (
     , protocolFee / POWER(10, 18) AS platform_fee_amount
     , creatorFee AS royalty_fee_amount_raw
     , creatorFee / POWER(10, 18) AS royalty_fee_amount
-    FROM {{ source('foundation_ethereum','market_evt_OfferAccepted') }} f
+    FROM {{ source('foundation_ethereum', 'market_evt_OfferAccepted') }} f
      {% if is_incremental() %} -- this filter will only be applied ON an incremental run
      WHERE f.evt_block_time >= (SELECT max(block_time) FROM {{ this }})
      {% endif %}
@@ -117,7 +117,7 @@ WITH all_foundation_trades AS (
     , protocolFee / POWER(10, 18) AS platform_fee_amount
     , creatorFee AS royalty_fee_amount_raw
     , creatorFee / POWER(10, 18) AS royalty_fee_amount
-    FROM {{ source('foundation_ethereum','market_evt_PrivateSaleFinalized') }} f
+    FROM {{ source('foundation_ethereum', 'market_evt_PrivateSaleFinalized') }} f
      {% if is_incremental() %} -- this filter will only be applied ON an incremental run
      WHERE f.evt_block_time >= (SELECT max(block_time) FROM {{ this }})
      {% endif %}
@@ -175,7 +175,7 @@ SELECT DISTINCT t.blockchain
 , t.blockchain || t.project || t.version || t.tx_hash || t.project_contract_address || t.token_id || t.buyer || t.seller AS unique_trade_id
 FROM all_foundation_trades t
 LEFT JOIN {{ ref('tokens_ethereum_nft') }} nft ON t.nft_contract_address=nft.contract_address
-LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} nft_t ON nft_t.evt_block_time=t.block_time
+LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} nft_t ON nft_t.evt_block_time=t.block_time
     AND nft_t.evt_tx_hash=t.tx_hash
     AND nft_t.tokenId=t.token_id
     AND nft_t.FROM=t.seller
@@ -185,7 +185,7 @@ LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} nft_t ON nft_t.evt_bloc
     -- this filter will only be applied ON an incremental run
     AND nft_t.evt_block_time >=  date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ source('ethereum','transactions') }} et ON et.block_time=t.block_time
+LEFT JOIN {{ source('ethereum', 'transactions') }} et ON et.block_time=t.block_time
     AND et.hash=t.tx_hash
     {% if NOT is_incremental() %}
     AND et.block_time > '2021-02-01'
@@ -200,7 +200,7 @@ LEFT JOIN {{ source('prices', 'usd') }} pu ON pu.minute=date_trunc('minute', t.b
     {% if is_incremental() %}
     AND pu.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ source('ethereum','traces') }} ett ON ett.block_time=t.block_time
+LEFT JOIN {{ source('ethereum', 'traces') }} ett ON ett.block_time=t.block_time
     AND ett.tx_hash=t.tx_hash
     AND ett.FROM = t.project_contract_address
     AND cast(ett.value AS STRING) = cast(t.royalty_fee_amount_raw AS string)

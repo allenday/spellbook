@@ -10,7 +10,7 @@
             token_address,
             symbol,
             current_timestamp() AS last_updated,
-            row_number() over (partition BY token_address, wallet_address order BY hour desc) AS recency_index,
+            row_number() over (partition BY token_address, wallet_address order BY hour DESC) AS recency_index,
             sum(amount_raw) over (
                 partition BY token_address, wallet_address order BY hour
             ) AS amount_raw,

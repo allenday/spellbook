@@ -47,7 +47,7 @@ with iv_offer_consideration AS (
     (
         SELECT *
             ,posexplode(offer) AS (offer_idx, offer_item)
-        FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }}
+        FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }}
     )
     union all
     SELECT evt_block_time AS block_time
@@ -93,53 +93,53 @@ with iv_offer_consideration AS (
     (
         SELECT *
             ,posexplode(consideration) AS (consideration_idx, consideration_item)
-        FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }}
+        FROM {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }}
     )
 )
 ,iv_base_pairs AS (
     SELECT a.*
             ,case when offer_first_item_type = 'erc20' then 'offer accepted'
-                when offer_first_item_type in ('erc721','erc1155') then 'buy'
+                when offer_first_item_type in ('erc721', 'erc1155') then 'buy'
                 else 'etc' -- some txns has no nfts
             end AS order_type
             ,case when offer_first_item_type = 'erc20' AND sub_type = 'offer' AND item_type = 'erc20' then true
-                when offer_first_item_type in ('erc721','erc1155') AND sub_type = 'consideration' AND item_type in ('native','erc20') then true
+                when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND item_type in ('native', 'erc20') then true
                 else false
             end is_price
             ,case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND eth_erc_idx = 0 then true  -- offer accepted has no price at all. it has to be calculated.
-                when offer_first_item_type in ('erc721','erc1155') AND sub_type = 'consideration' AND eth_erc_idx = 1 then true
+                when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND eth_erc_idx = 1 then true
                 else false
             end is_netprice
             ,case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND eth_erc_idx = 1 then true
-                when offer_first_item_type in ('erc721','erc1155') AND sub_type = 'consideration' AND eth_erc_idx = 2 then true
+                when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND eth_erc_idx = 2 then true
                 else false
             end is_platform_fee
             ,case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND eth_erc_idx > 1 then true
-                when offer_first_item_type in ('erc721','erc1155') AND sub_type = 'consideration' AND eth_erc_idx > 2 then true
+                when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND eth_erc_idx > 2 then true
                 else false
             end is_creator_fee
             ,case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND eth_erc_idx > 1 then eth_erc_idx - 1
-                when offer_first_item_type in ('erc721','erc1155') AND sub_type = 'consideration' AND eth_erc_idx > 2 then eth_erc_idx - 2
+                when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND eth_erc_idx > 2 then eth_erc_idx - 2
             end creator_fee_idx
-            ,case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc721','erc1155') then true
-                when offer_first_item_type in ('erc721','erc1155') AND sub_type = 'offer' AND item_type in ('erc721','erc1155') then true
+            ,case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc721', 'erc1155') then true
+                when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'offer' AND item_type in ('erc721', 'erc1155') then true
                 else false
             end is_traded_nft
-            ,case when offer_first_item_type in ('erc721','erc1155') AND sub_type = 'consideration' AND item_type in ('erc721','erc1155') then true
+            ,case when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND item_type in ('erc721', 'erc1155') then true
                 else false
             end is_moved_nft
     FROM
     (
         SELECT a.*
-            ,case when item_type in ('native','erc20') then sum(case when item_type in ('native','erc20') then 1 end) over (partition BY tx_hash, evt_index, sub_type order BY sub_idx) end AS eth_erc_idx
-            ,sum(case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc721','erc1155') then 1
-                        when offer_first_item_type in ('erc721','erc1155') AND sub_type = 'offer' AND item_type in ('erc721','erc1155') then 1
+            ,case when item_type in ('native', 'erc20') then sum(case when item_type in ('native', 'erc20') then 1 end) over (partition BY tx_hash, evt_index, sub_type order BY sub_idx) end AS eth_erc_idx
+            ,sum(case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc721', 'erc1155') then 1
+                        when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'offer' AND item_type in ('erc721', 'erc1155') then 1
                 end) over (partition BY tx_hash, evt_index) AS nft_cnt
             ,sum(case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc721') then 1
-                        when offer_first_item_type in ('erc721','erc1155') AND sub_type = 'offer' AND item_type in ('erc721') then 1
+                        when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'offer' AND item_type in ('erc721') then 1
                 end) over (partition BY tx_hash, evt_index) AS erc721_cnt
             ,sum(case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc1155') then 1
-                        when offer_first_item_type in ('erc721','erc1155') AND sub_type = 'offer' AND item_type in ('erc1155') then 1
+                        when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'offer' AND item_type in ('erc1155') then 1
                 end) over (partition BY tx_hash, evt_index) AS erc1155_cnt
         FROM iv_offer_consideration a
     ) a

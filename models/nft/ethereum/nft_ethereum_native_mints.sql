@@ -13,7 +13,7 @@
 WITH namespaces AS (
     SELECT address
     , FIRST(namespace) AS namespace
-	FROM {{ source('ethereum','contracts') }}
+	FROM {{ source('ethereum', 'contracts') }}
 	GROUP BY address
 	)
 
@@ -69,7 +69,7 @@ SELECT distinct 'ethereum' AS blockchain
 , 'ethereum' || '-' || COALESCE(ec.namespace, 'Unknown') || '-Mint-' || COALESCE(nft_mints.tx_hash, '-1') || '-' || COALESCE(nft_mints.to, '-1') || '-' ||  COALESCE(nft_mints.contract_address, '-1') || '-' || COALESCE(nft_mints.token_id, '-1') || '-' || COALESCE(erc20s.contract_address, '0x0000000000000000000000000000000000000000') || '-' || COALESCE(nft_mints.evt_index, '-1') AS unique_trade_id
 FROM {{ ref('nft_ethereum_transfers') }} nft_mints
 LEFT JOIN nfts_per_tx nft_count ON nft_count.tx_hash=nft_mints.tx_hash
-LEFT JOIN {{ source('ethereum','traces') }} et ON et.block_time=nft_mints.block_time
+LEFT JOIN {{ source('ethereum', 'traces') }} et ON et.block_time=nft_mints.block_time
     AND et.tx_hash=nft_mints.tx_hash
     AND et.FROM=nft_mints.to
     AND (et.call_type NOT IN ('delegatecall', 'callcode', 'staticcall') OR et.call_type IS NULL)
@@ -78,24 +78,24 @@ LEFT JOIN {{ source('ethereum','traces') }} et ON et.block_time=nft_mints.block_
     {% if is_incremental() %}
     AND  et.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ source('prices','usd') }} pu_eth ON pu_eth.blockchain='ethereum'
+LEFT JOIN {{ source('prices', 'usd') }} pu_eth ON pu_eth.blockchain='ethereum'
     AND pu_eth.minute=date_trunc('minute', et.block_time)
     AND pu_eth.contract_address='0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
     {% if is_incremental() %}
     AND  pu_eth.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ source('erc20_ethereum','evt_transfer') }} erc20s ON erc20s.evt_block_time=nft_mints.block_time
+LEFT JOIN {{ source('erc20_ethereum', 'evt_transfer') }} erc20s ON erc20s.evt_block_time=nft_mints.block_time
     AND erc20s.FROM=nft_mints.to
     {% if is_incremental() %}
     AND  erc20s.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ source('prices','usd') }} pu_erc20s ON pu_erc20s.blockchain='ethereum'
+LEFT JOIN {{ source('prices', 'usd') }} pu_erc20s ON pu_erc20s.blockchain='ethereum'
     AND pu_erc20s.minute=date_trunc('minute', erc20s.evt_block_time)
     AND erc20s.contract_address=pu_erc20s.contract_address
     {% if is_incremental() %}
     AND  pu_erc20s.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ source('ethereum','transactions') }} etxs ON etxs.block_time=nft_mints.block_time
+LEFT JOIN {{ source('ethereum', 'transactions') }} etxs ON etxs.block_time=nft_mints.block_time
     AND etxs.hash=nft_mints.tx_hash
     {% if is_incremental() %}
     AND  etxs.block_time >= date_trunc("day", now() - interval '1 week')

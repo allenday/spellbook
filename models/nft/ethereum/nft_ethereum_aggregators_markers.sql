@@ -11,7 +11,7 @@
  WITH reservoir AS (
     SELECT distinct substring(unhex(regexp_replace(data, '^.*00', '')), 2, length(unhex(regexp_replace(data, '^.*00', '')))-2) AS router_website
     , regexp_replace(data, '^.*00', '') AS hash_marker
-    FROM {{ source('ethereum','transactions') }}
+    FROM {{ source('ethereum', 'transactions') }}
     WHERE to IN (
         '0x00000000006c3852cbef3e08e8df289169ede581', --seaport
         '0x74312363e45dcaba76c59ec49a7aa8a65a67eed3', --x2y2

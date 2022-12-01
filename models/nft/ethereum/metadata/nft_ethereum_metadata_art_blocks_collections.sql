@@ -357,7 +357,7 @@
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 357, 1000000, 'D-D-Dots', 'tuplart', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-357')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 358, 1000000, 'Arcadia', 'Zachariah Watson', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-358')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 359, 1000000, 'Ode to Untitled', 'artplusbrad', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-359')
-        , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 361, 1000000, 'flora, fauna, false gods & floods', 'Ryan Green', 'Presents', 'N / A','0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-361')
+        , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 361, 1000000, 'flora, fauna, false gods & floods', 'Ryan Green', 'Presents', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-361')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 362, 1000000, 'Erratic', 'Owen Moore', 'Playground', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-362')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 364, 1000000, 'Act of Emotion', 'Kelly Milligan', 'Curated', '8', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-364')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 365, 1000000, 'Stains ON a Canvas', 'Omar Lobato', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-365')
@@ -391,14 +391,14 @@
         , ('0x99a9b7c1116f9ceeb1652de04d5969cce509b069', 397, 1000000, 'Through Curved Air', 'Jacob Gold', 'Presents', 'N / A', '0x99a9b7c1116f9ceeb1652de04d5969cce509b069-397')
 
         -- explorations
-        , ('0x942bc2d3e7a589fe5bd4a5c6ef9727dfd82f5c8a',0,1000000,'Friendship Bracelets','Alexis André','Explorations','N / A','0x942bc2d3e7a589fe5bd4a5c6ef9727dfd82f5c8a-0')
-        , ('0x942bc2d3e7a589fe5bd4a5c6ef9727dfd82f5c8a',1,1000000,'Marfa Yucca','Daniel Calderon Arenas','Explorations','N / A','0x942bc2d3e7a589fe5bd4a5c6ef9727dfd82f5c8a-1')
+        , ('0x942bc2d3e7a589fe5bd4a5c6ef9727dfd82f5c8a',0,1000000,'Friendship Bracelets', 'Alexis André', 'Explorations', 'N / A', '0x942bc2d3e7a589fe5bd4a5c6ef9727dfd82f5c8a-0')
+        , ('0x942bc2d3e7a589fe5bd4a5c6ef9727dfd82f5c8a',1,1000000,'Marfa Yucca', 'Daniel Calderon Arenas', 'Explorations', 'N / A', '0x942bc2d3e7a589fe5bd4a5c6ef9727dfd82f5c8a-1')
 
         -- collaborations
-        , ('0x64780ce53f6e966e18a22af13a2f97369580ec11',0,1000000,'Petro National','John Gerrard','Art Blocks x Pace','N / A','0x64780ce53f6e966e18a22af13a2f97369580ec11-0')
-        , ('0x64780ce53f6e966e18a22af13a2f97369580ec11',2,1000000,'QWERTY','Tara Donovan','Art Blocks x Pace','N / A','0x64780ce53f6e966e18a22af13a2f97369580ec11-2')
-        , ('0x64780ce53f6e966e18a22af13a2f97369580ec11',3,1000000,'Contractions','Loie Hollowell','Art Blocks x Pace','N / A','0x64780ce53f6e966e18a22af13a2f97369580ec11-3')
+        , ('0x64780ce53f6e966e18a22af13a2f97369580ec11',0,1000000,'Petro National', 'John Gerrard', 'Art Blocks x Pace', 'N / A', '0x64780ce53f6e966e18a22af13a2f97369580ec11-0')
+        , ('0x64780ce53f6e966e18a22af13a2f97369580ec11',2,1000000,'QWERTY', 'Tara Donovan', 'Art Blocks x Pace', 'N / A', '0x64780ce53f6e966e18a22af13a2f97369580ec11-2')
+        , ('0x64780ce53f6e966e18a22af13a2f97369580ec11',3,1000000,'Contractions', 'Loie Hollowell', 'Art Blocks x Pace', 'N / A', '0x64780ce53f6e966e18a22af13a2f97369580ec11-3')
 
     ) AS temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, art_blocks_project_type, art_blocks_curated_season, art_collection_unique_id)
 
-order BY project_id asc 
+order BY project_id ASC 

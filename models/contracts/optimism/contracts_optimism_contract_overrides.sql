@@ -8,7 +8,6 @@
                               \'["msilb7", "chuxin"]\') }}'
     )
 }}
-
 SELECT
   lower(contract_address) AS contract_address
   ,contract_project

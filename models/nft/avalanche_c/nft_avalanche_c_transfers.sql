@@ -19,7 +19,7 @@
 , t.to
 , t.evt_tx_hash AS tx_hash
 , 'avalanche_c' || t.evt_tx_hash || '-erc721-' || t.contract_address || '-' || t.tokenId || '-' || t.FROM || '-' || t.to || '-' || '1' || '-' || t.evt_index AS unique_transfer_id
-FROM {{ source('erc721_avalanche_c','evt_transfer') }} t
+FROM {{ source('erc721_avalanche_c', 'evt_transfer') }} t
 {% if is_incremental() %}
     ANTI JOIN {{this}} anti_table
         ON t.evt_tx_hash = anti_table.tx_hash
@@ -41,7 +41,7 @@ SELECT t.evt_block_time AS block_time
 , t.to
 , t.evt_tx_hash AS tx_hash
 , 'avalanche_c' || t.evt_tx_hash || '-erc721-' || t.contract_address || '-' || t.id || '-' || t.FROM || '-' || t.to || '-' || t.value || '-' || t.evt_index AS unique_transfer_id
-FROM {{ source('erc1155_avalanche_c','evt_transfersingle') }} t
+FROM {{ source('erc1155_avalanche_c', 'evt_transfersingle') }} t
 {% if is_incremental() %}
     ANTI JOIN {{this}} anti_table
         ON t.evt_tx_hash = anti_table.tx_hash

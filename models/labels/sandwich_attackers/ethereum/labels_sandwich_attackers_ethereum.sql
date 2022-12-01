@@ -16,7 +16,7 @@ with
             AND buy.token_bought_amount_raw = sell.token_sold_amount_raw
     inner join {{source('ethereum', 'transactions')}} et_buy
         ON et_buy.hash = buy.tx_hash
-    inner join {{source('ethereum','transactions')}} et_sell
+    inner join {{source('ethereum', 'transactions')}} et_sell
         ON et_sell.hash = sell.tx_hash
     where
         buy.blockchain = 'ethereum'

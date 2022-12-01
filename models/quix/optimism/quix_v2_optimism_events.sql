@@ -26,7 +26,7 @@ with events_raw AS (
             ,seller
             ,erc721address AS nft_contract_address
             ,price AS amount_raw
-        FROM {{ source('quixotic_v2_optimism','ExchangeV2_evt_BuyOrderFilled') }}
+        FROM {{ source('quixotic_v2_optimism', 'ExchangeV2_evt_BuyOrderFilled') }}
         {% if is_incremental() %} -- this filter will only be applied ON an incremental run
         where evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
@@ -43,7 +43,7 @@ with events_raw AS (
             ,seller
             ,erc721address AS nft_contract_address
             ,price AS amount_raw
-        FROM {{ source('quixotic_v2_optimism','ExchangeV2_evt_DutchAuctionFilled') }}
+        FROM {{ source('quixotic_v2_optimism', 'ExchangeV2_evt_DutchAuctionFilled') }}
         {% if is_incremental() %} -- this filter will only be applied ON an incremental run
         where evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
@@ -60,7 +60,7 @@ with events_raw AS (
             ,seller
             ,erc721address AS nft_contract_address
             ,price AS amount_raw
-        FROM {{ source('quixotic_v2_optimism','ExchangeV2_evt_SellOrderFilled') }}
+        FROM {{ source('quixotic_v2_optimism', 'ExchangeV2_evt_SellOrderFilled') }}
         {% if is_incremental() %} -- this filter will only be applied ON an incremental run
         where evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
@@ -103,7 +103,7 @@ with events_raw AS (
       ,erc20.value
       ,erc20.to
     FROM events_raw AS er
-    join {{ source('erc20_optimism','evt_transfer') }} AS erc20
+    join {{ source('erc20_optimism', 'evt_transfer') }} AS erc20
       ON er.tx_hash = erc20.evt_tx_hash
       AND er.block_number = erc20.evt_block_number
       AND erc20.value is NOT NULL
@@ -174,7 +174,7 @@ SELECT
             then 'ETH' else t1.symbol end
         end AS royalty_fee_currency_symbol
 FROM events_raw AS er
-join {{ source('optimism','transactions') }} AS tx
+join {{ source('optimism', 'transactions') }} AS tx
     ON er.tx_hash = tx.hash
     AND er.block_number = tx.block_number
     {% if NOT is_incremental() %}
@@ -190,7 +190,7 @@ LEFT JOIN {{ ref('nft_aggregators') }} AS agg
 LEFT JOIN {{ ref('tokens_nft') }} n
     ON n.contract_address = er.nft_contract_address
     AND n.blockchain = 'optimism'
-LEFT JOIN {{ source('erc721_optimism','evt_transfer') }} AS erct2
+LEFT JOIN {{ source('erc721_optimism', 'evt_transfer') }} AS erct2
     ON erct2.evt_block_time=er.block_time
     AND er.nft_contract_address=erct2.contract_address
     AND erct2.evt_tx_hash=er.tx_hash
@@ -203,7 +203,7 @@ LEFT JOIN {{ source('erc721_optimism','evt_transfer') }} AS erct2
     {% if is_incremental() %}
     AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ source('erc20_optimism','evt_transfer') }} AS erc20
+LEFT JOIN {{ source('erc20_optimism', 'evt_transfer') }} AS erc20
     ON erc20.evt_block_time=er.block_time
     AND erc20.evt_tx_hash=er.tx_hash
     AND erc20.to=er.seller

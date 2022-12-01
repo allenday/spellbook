@@ -23,7 +23,7 @@ WITH
             , output_pair AS pair_address
             , call_block_time AS block_time
             , contract_address AS protocolfee_recipient -- the factory used to create the pair is the protocol fee recipient
-        FROM {{ source('sudo_amm_ethereum','LSSVMPairFactory_call_createPairETH') }}
+        FROM {{ source('sudo_amm_ethereum', 'LSSVMPairFactory_call_createPairETH') }}
         WHERE call_success
     )
 
@@ -42,7 +42,7 @@ WITH
                 , 'Sell' AS trade_category
                 , isRouter AS called_from_router
                 , routerCaller AS router_caller
-            FROM {{ source('sudo_amm_ethereum','LSSVMPair_general_call_swapNFTsForToken') }}
+            FROM {{ source('sudo_amm_ethereum', 'LSSVMPair_general_call_swapNFTsForToken') }}
             WHERE call_success = true
             {% if is_incremental() %}
             -- this filter will only be applied ON an incremental run. We only want to update with new swaps.
@@ -61,7 +61,7 @@ WITH
                 , 'Buy' AS trade_category
                 , isRouter AS called_from_router
                 , routerCaller AS router_caller
-            FROM {{ source('sudo_amm_ethereum','LSSVMPair_general_call_swapTokenForAnyNFTs') }}
+            FROM {{ source('sudo_amm_ethereum', 'LSSVMPair_general_call_swapTokenForAnyNFTs') }}
             WHERE call_success = true
             {% if is_incremental() %}
             -- this filter will only be applied ON an incremental run. We only want to update with new swaps.
@@ -80,7 +80,7 @@ WITH
                 , 'Buy' AS trade_category
                 , isRouter AS called_from_router
                 , routerCaller AS router_caller
-            FROM {{ source('sudo_amm_ethereum','LSSVMPair_general_call_swapTokenForSpecificNFTs') }}
+            FROM {{ source('sudo_amm_ethereum', 'LSSVMPair_general_call_swapTokenForSpecificNFTs') }}
             WHERE call_success = true
             {% if is_incremental() %}
             -- this filter will only be applied ON an incremental run. We only want to update with new swaps.
@@ -110,19 +110,19 @@ WITH
     ,pool_fee_update AS (
         SELECT
             *
-        FROM {{ source('sudo_amm_ethereum','LSSVMPair_general_evt_FeeUpdate') }}
+        FROM {{ source('sudo_amm_ethereum', 'LSSVMPair_general_evt_FeeUpdate') }}
     )
 
     ,protocol_fee_update AS (
         SELECT
             *
-        FROM {{ source('sudo_amm_ethereum','LSSVMPairFactory_evt_ProtocolFeeMultiplierUpdate') }}
+        FROM {{ source('sudo_amm_ethereum', 'LSSVMPairFactory_evt_ProtocolFeeMultiplierUpdate') }}
     )
 
     ,asset_recipient_update AS (
         SELECT
             *
-        FROM {{ source('sudo_amm_ethereum','LSSVMPair_general_evt_AssetRecipientChange') }}
+        FROM {{ source('sudo_amm_ethereum', 'LSSVMPair_general_evt_AssetRecipientChange') }}
     )
 
     ,tokens_ethereum_nft AS (
@@ -160,7 +160,7 @@ WITH
                 , asset_recip
                 , trade_recipient
                 , project_contract_address
-                , row_number() OVER (partition BY call_tx_hash, contract_address, call_trace_address order BY fee_update_time desc, protocolfee_update_time desc, asset_recip_update_time desc) AS ordering
+                , row_number() OVER (partition BY call_tx_hash, contract_address, call_trace_address order BY fee_update_time DESC, protocolfee_update_time DESC, asset_recip_update_time DESC) AS ordering
             FROM (
                 SELECT
                     swaps.*

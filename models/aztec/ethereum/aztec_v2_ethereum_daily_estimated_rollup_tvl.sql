@@ -29,7 +29,7 @@ rollup_balance_changes AS (
   SELECT date
     , symbol
     , token_address
-    , sum(net_value_norm) over (partition BY symbol,token_address order BY date asc rows between unbounded preceding AND current row) AS balance
+    , sum(net_value_norm) over (partition BY symbol,token_address order BY date ASC rows between unbounded preceding AND current row) AS balance
     , lead(date, 1) over (partition BY token_address order BY date) AS next_date
   FROM rollup_balance_changes
 )
