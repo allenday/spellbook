@@ -21,7 +21,7 @@ WITH dexs AS
         'mstable' AS project,
         'masset' AS version,
         swapper AS taker,
-        cast(NULL AS string) AS maker,
+        cast(NULL AS STRING) AS maker,
         `outputAmount` AS token_bought_amount_raw,
         cast(NULL AS double) AS token_sold_amount_raw,
         CASE WHEN `output` = lower('0x0000000000000000000000000000000000000000') THEN
@@ -47,7 +47,7 @@ WITH dexs AS
         'mstable' AS project,
         'feederpool' AS version,
         swapper AS taker,
-        cast(NULL AS string) AS maker,
+        cast(NULL AS STRING) AS maker,
         `outputAmount` AS token_bought_amount_raw,
         cast(NULL AS double) AS token_sold_amount_raw,
         CASE WHEN `output` = lower('0x0000000000000000000000000000000000000000') THEN

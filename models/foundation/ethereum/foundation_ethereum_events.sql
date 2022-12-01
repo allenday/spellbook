@@ -170,7 +170,7 @@ SELECT DISTINCT t.blockchain
 , CASE WHEN t.royalty_fee_amount / t.amount_original < 0.5 THEN CAST(100.0*ROUND(t.royalty_fee_amount/t.amount_original, 2) AS DOUBLE)
     ELSE CAST(0 AS DOUBLE)
     END AS royalty_fee_percentage
-, CASE WHEN t.royalty_fee_amount_raw = 0 THEN cast(NULL AS string) ELSE ett.to END AS royalty_fee_receive_address
+, CASE WHEN t.royalty_fee_amount_raw = 0 THEN cast(NULL AS STRING) ELSE ett.to END AS royalty_fee_receive_address
 , t.currency_symbol AS royalty_fee_currency_symbol
 , t.blockchain || t.project || t.version || t.tx_hash || t.project_contract_address || t.token_id || t.buyer || t.seller AS unique_trade_id
 FROM all_foundation_trades t
@@ -203,7 +203,7 @@ LEFT JOIN {{ source('prices', 'usd') }} pu ON pu.minute=date_trunc('minute', t.b
 LEFT JOIN {{ source('ethereum','traces') }} ett ON ett.block_time=t.block_time
     AND ett.tx_hash=t.tx_hash
     AND ett.from = t.project_contract_address
-    AND cast(ett.value AS string) = cast(t.royalty_fee_amount_raw AS string)
+    AND cast(ett.value AS STRING) = cast(t.royalty_fee_amount_raw AS string)
     AND ett.to!=t.project_contract_address
     AND t.royalty_fee_amount / t.amount_original < 0.5
     and ett.success = true

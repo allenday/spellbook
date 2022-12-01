@@ -11,7 +11,7 @@ with
           ids
           ORDER BY
             ids
-        ) AS string
+        ) AS STRING
       ) AS unique_transfer_id
     FROM {{source('erc1155_ethereum', 'evt_transferbatch')}}
       limit 100
@@ -29,7 +29,7 @@ with
           ids
           ORDER BY
             ids
-        ) AS string
+        ) AS STRING
       ) AS unique_transfer_id
     FROM {{source('erc1155_ethereum', 'evt_transferbatch')}}
             limit 100

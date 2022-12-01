@@ -17,10 +17,10 @@ SELECT
   signatures[0] AS tx_hash,
   block_date,
   block_time,
-  block_slot::string AS block_number,
+  block_slot::STRING AS block_number,
   abs(post_balances[0] / 1e9 - pre_balances[0] / 1e9) * p.price AS amount_usd,
   abs(post_balances[0] / 1e9 - pre_balances[0] / 1e9) AS amount_original,
-  abs(post_balances[0] - pre_balances[0])::string AS amount_raw,
+  abs(post_balances[0] - pre_balances[0])::STRING AS amount_raw,
   p.symbol AS currency_symbol,
   p.contract_address AS currency_contract,
   'metaplex' AS token_standard,
@@ -43,29 +43,29 @@ SELECT
   ELSE 'Other' END AS evt_type,
   CASE WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
          AND array_contains(log_messages, 'Program log: Instruction: ExecuteSale')
-         AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN instructions[1].account_arguments[2]::string
+         AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN instructions[1].account_arguments[2]::STRING
        WHEN (array_contains(account_keys, 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb'))
          AND array_contains(log_messages, 'Program log: Instruction: SetAuthority') THEN COALESCE(instructions[6].account_arguments[9], instructions[5].account_arguments[9],
-         instructions[4].account_arguments[9], instructions[2].account_arguments[7], instructions[1].account_arguments[10], instructions[0].account_arguments[10])::string
+         instructions[4].account_arguments[9], instructions[2].account_arguments[7], instructions[1].account_arguments[10], instructions[0].account_arguments[10])::STRING
        END AS token_id,
-  NULL::string AS collection,
+  NULL::STRING AS collection,
   CASE WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
          AND array_contains(log_messages, 'Program log: Instruction: ExecuteSale')
-         AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN 'Single Item Trade' ELSE NULL::string
+         AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN 'Single Item Trade' ELSE NULL::STRING
          END AS trade_type,
   '1' AS number_of_items,
-  NULL::string AS trade_category,
+  NULL::STRING AS trade_category,
   signer AS buyer,
   CASE WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
          AND array_contains(log_messages, 'Program log: Instruction: ExecuteSale')
-         AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN instructions[2].account_arguments[1]::string
+         AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN instructions[2].account_arguments[1]::STRING
        WHEN (array_contains(account_keys, 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb')) THEN '' END AS seller,
-  NULL::string AS nft_contract_address,
-  NULL::string AS aggregator_name,
-  NULL::string AS aggregator_address,
-  NULL::string AS tx_from,
-  NULL::string AS tx_to,
-  2*(abs(post_balances[0] - pre_balances[0])::string) / 100 AS platform_fee_amount_raw,
+  NULL::STRING AS nft_contract_address,
+  NULL::STRING AS aggregator_name,
+  NULL::STRING AS aggregator_address,
+  NULL::STRING AS tx_from,
+  NULL::STRING AS tx_to,
+  2*(abs(post_balances[0] - pre_balances[0])::STRING) / 100 AS platform_fee_amount_raw,
   2*(abs(post_balances[0] / 1e9 - pre_balances[0] / 1e9))/100 AS platform_fee_amount,
   2*(abs(post_balances[0] / 1e9 - pre_balances[0] / 1e9) * p.price)/100 AS platform_fee_amount_usd,
   '2' AS platform_fee_percentage,
@@ -87,8 +87,8 @@ SELECT
   CASE WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
          AND array_contains(log_messages, 'Program log: Instruction: ExecuteSale')
          AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN 'SOL'
-         ELSE NULL::string END AS royalty_fee_currency_symbol,
-  signatures[0] || '-' || id || '-' || instructions[0]::string AS unique_trade_id,
+         ELSE NULL::STRING END AS royalty_fee_currency_symbol,
+  signatures[0] || '-' || id || '-' || instructions[0]::STRING AS unique_trade_id,
   instructions,
   signatures,
   log_messages

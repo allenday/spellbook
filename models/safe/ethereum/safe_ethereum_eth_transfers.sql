@@ -26,7 +26,7 @@ join {{ ref('safe_ethereum_safes') }} s on et.from = s.address
     and et.from != et.to -- exclude calls to self to guarantee unique key property
     and et.success = true
     and (lower(et.call_type) NOT in ('delegatecall', 'callcode', 'staticcall') or et.call_type is NULL)
-    and cast(et.value AS decimal(38,0)) > 0 -- value is of type string. exclude 0 value traces
+    and cast(et.value AS decimal(38,0)) > 0 -- value is of type STRING. exclude 0 value traces
 {% if NOT is_incremental() %}
 where et.block_time > '2018-11-24' -- for initial query optimisation
 {% endif %}
@@ -49,7 +49,7 @@ join {{ ref('safe_ethereum_safes') }} s on et.to = s.address
     and et.from != et.to -- exclude calls to self to guarantee unique key property
     and et.success = true
     and (lower(et.call_type) NOT in ('delegatecall', 'callcode', 'staticcall') or et.call_type is NULL)
-    and cast(et.value AS decimal(38,0)) > 0 -- value is of type string. exclude 0 value traces
+    and cast(et.value AS decimal(38,0)) > 0 -- value is of type STRING. exclude 0 value traces
 {% if NOT is_incremental() %}
 where et.block_time > '2018-11-24' -- for initial query optimisation
 {% endif %}

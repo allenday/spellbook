@@ -52,7 +52,7 @@ SELECT
 	, s.fromAmount / power(10, erc20_s.decimals) AS token_sold_amount
     , coalesce(s.`to`, tx.from) AS taker
 	, '' AS maker
-	, cast(s.contract_address AS string) AS project_contract_address
+	, cast(s.contract_address AS STRING) AS project_contract_address
 	, s.evt_tx_hash AS tx_hash
     , tx.from AS tx_from
     , tx.to AS tx_to

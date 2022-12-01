@@ -71,7 +71,7 @@ ethereum_logs AS (
 new_router AS (
     SELECT
         cast(coalesce(l.evt_index, -1) AS int) AS composite_index,
-        cast(get_json_object(quote,'$.flag') AS string) AS source,
+        cast(get_json_object(quote,'$.flag') AS STRING) AS source,
         t.call_block_time AS block_time,
         t.call_tx_hash AS tx_hash,
         t.call_success AS fill_status,
@@ -173,7 +173,7 @@ legacy_router_w_integration AS (
         and mp.contract_address =
             case when substring(input, 113, 20) = '0x0000000000000000000000000000000000000000'
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' else substring(input, 113, 20) end
-    where -- cast(trace_address AS string) = '{}'  --top level call -- removed this because of 1inch integration
+    where -- cast(trace_address AS STRING) = '{}'  --top level call -- removed this because of 1inch integration
         t.to in ('0xa18607ca4a3804cc3cd5730eafefcc47a7641643')
         and substring(input, 1, 4) in ('0xba93c39c') -- swap
         and t.block_number <= 13803909 -- block of last trade of this legacy router
@@ -248,7 +248,7 @@ legacy_routers AS (
     from ethereum_traces t
     LEFT JOIN prices_usd p on minute = date_trunc('minute', t.block_time)
     LEFT JOIN erc20_tokens e on e.contract_address = substring(input, 81, 20)
-    where cast(trace_address AS string) = '{}'  --top level call
+    where cast(trace_address AS STRING) = '{}'  --top level call
         and `to` in ('0x9d4fc735e1a596420d24a266b7b5402fe4ec153c', '0x2405cb057a9baf85daa11ce9832baed839b6871c')
         and substring(input, 1, 4) in ('0x9ec7605b',  -- token to eth
                                        '0xc7f6b19d') -- eth to token
@@ -276,7 +276,7 @@ legacy_routers AS (
     from ethereum_traces t
     LEFT JOIN prices_usd tp on tp.minute = date_trunc('minute', t.block_time) and tp.contract_address = substring(input, 81, 20)
     LEFT JOIN prices_usd mp on mp.minute = date_trunc('minute', t.block_time) and mp.contract_address = substring(input, 113, 20)
-    where cast(trace_address AS string) = '{}'
+    where cast(trace_address AS STRING) = '{}'
         and `to` in ('0x455a3B3Be6e7C8843f2b03A1cA22A5a5727ef5C4','0x9d4fc735e1a596420d24a266b7b5402fe4ec153c', '0x2405cb057a9baf85daa11ce9832baed839b6871c','0x043389f397ad72619d05946f5f35426a7ace6613')
         and substring(input, 1, 4) in ('0x064f0410','0x4d0246ad') -- token to token
 
@@ -310,7 +310,7 @@ legacy_routers AS (
     from ethereum_traces t
     LEFT JOIN prices_usd p on minute = date_trunc('minute', t.block_time)
     LEFT JOIN erc20_tokens e on e.contract_address = substring(input, 81, 20)
-    where cast(trace_address AS string) = '{}'
+    where cast(trace_address AS STRING) = '{}'
         and `to` in ('0x455a3B3Be6e7C8843f2b03A1cA22A5a5727ef5C4','0x043389f397ad72619d05946f5f35426a7ace6613')
         and substring(input, 1, 4) in ('0xd0529c02',  -- token to eth
                                        '0xe43d9733') -- eth to token

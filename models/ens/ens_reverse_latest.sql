@@ -41,7 +41,7 @@ with node_names AS (
             or  to = '0x084b1c3c81545d370f3634392de611caabff8148' -- ReverseRegistrar v2
         )
         and substring(input,1,10) in (
-            '0xc47f0027' -- setName(string)
+            '0xc47f0027' -- setName(STRING)
             ,'0x0f5a5466' -- claimWithResolver(address,address)
             ,'0x1e83409a' -- claim(address)
             )

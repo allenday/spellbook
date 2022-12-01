@@ -278,9 +278,9 @@ WITH
             , NULL::double AS royalty_fee_amount_raw
             , NULL::double AS royalty_fee_amount
             , NULL::double AS royalty_fee_percentage
-            , NULL::string AS royalty_fee_receive_address
+            , NULL::STRING AS royalty_fee_receive_address
             , NULL::double AS royalty_fee_amount_usd
-            , NULL::string AS royalty_fee_currency_symbol
+            , NULL::STRING AS royalty_fee_currency_symbol
             -- these 2 are used for matching the aggregator address, dropped later
             , router_caller
             , call_from
@@ -373,5 +373,5 @@ WITH
 --final SELECT CTE
 SELECT
     *
-    , 'sudoswap-' || tx_hash || '-' || nft_contract_address || token_id::string || '-' || seller || '-' || amount_original::string || 'Trade' AS unique_trade_id
+    , 'sudoswap-' || tx_hash || '-' || nft_contract_address || token_id::STRING || '-' || seller || '-' || amount_original::string || 'Trade' AS unique_trade_id
 FROM swaps_exploded
