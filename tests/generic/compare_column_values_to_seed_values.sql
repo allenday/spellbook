@@ -19,4 +19,4 @@
     from unit_test
     where generic_column_test = False
 
-{% endtest %} 
+{% endtest %}

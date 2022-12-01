@@ -1,9 +1,17 @@
-
-WITH unit_tests as
-(
-    SELECT case when get_href('https://etherscan.io/', 'etherscan') = concat('<a href="', 'https://etherscan.io/', '"target ="_blank">', 'etherscan') then True
-     else False end test
+WITH unit_tests AS (
+    SELECT COALESCE(
+            GET_HREF(
+                'https://etherscan.io/', 'etherscan'
+            ) = CONCAT(
+                '<a href="',
+                'https://etherscan.io/',
+                '"target ="_blank">',
+                'etherscan'
+            ),
+            FALSE) AS test
 )
-select count(case when test = false then 1 else null end) as count_rows
-from unit_tests
-having count(case when test = false then 1 else null end) > 0
+
+SELECT COUNT(CASE WHEN test = FALSE THEN 1 END) AS count_rows
+FROM unit_tests
+HAVING
+    COUNT(CASE WHEN test = FALSE THEN 1 END) > 0

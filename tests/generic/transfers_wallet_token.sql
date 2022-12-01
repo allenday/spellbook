@@ -19,5 +19,4 @@
         select *
         from unit_test
         where wallet_token_test = False
-
 {% endtest %}

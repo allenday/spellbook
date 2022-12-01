@@ -21,5 +21,4 @@
     select *
     from unit_test
     where creator_tool_test = False
-
 {% endtest %}

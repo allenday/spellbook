@@ -1,17 +1,21 @@
 -- Bootstrapped correctness test against values downloaded from the Dune App 
 -- The first 10 values were also manually checked using Solscan API
 
-WITH unit_tests as
-(SELECT case when test_data.amount = me_trades.amount_original then True else False end as price_test
-FROM {{ ref('nft_trades') }} me_trades
-JOIN {{ ref('magiceden_solana_trades_solscan') }} test_data ON test_data.tx_hash = me_trades.tx_hash
-AND test_data.block_time = me_trades.block_time
-WHERE me_trades.block_time > '2021-10-23' and me_trades.block_time < '2021-10-25'
-and me_trades.project = 'magiceden' and me_trades.blockchain = 'solana'
+WITH unit_tests AS (
+    SELECT COALESCE(test_data.amount = me_trades.amount_original,
+        FALSE) AS price_test
+    FROM {{ ref('nft_trades') }} AS me_trades
+    INNER JOIN
+        {{ ref('magiceden_solana_trades_solscan') }} AS test_data ON
+            test_data.tx_hash = me_trades.tx_hash
+            AND test_data.block_time = me_trades.block_time
+    WHERE
+        me_trades.block_time > '2021-10-23' AND me_trades.block_time < '2021-10-25'
+        AND me_trades.project = 'magiceden' AND me_trades.blockchain = 'solana'
 )
 
-select count(case when price_test = false then 1 else null end)/count(*) as pct_mismatch, count(*) as count_rows
-from unit_tests
-having count(case when price_test = false then 1 else null end) > count(*)*0.1
-
-
+SELECT
+    COUNT(CASE WHEN price_test = FALSE THEN 1 END) / COUNT(*) AS pct_mismatch,
+    COUNT(*) AS count_rows
+FROM unit_tests
+HAVING COUNT(CASE WHEN price_test = FALSE THEN 1 END) > COUNT(*) * 0.1

@@ -1,11 +1,12 @@
 -- Check for multiple holders
 
-select blockchain,
+SELECT
+    blockchain,
     day,
     token_address,
-    tokenId,
+    tokenid,
     count(*)
-from {{ ref('balances_ethereum_erc721_day') }}
-where day >= now() - interval '2 days'
-group by blockchain, day, token_address, tokenId
-having count(*) > 1
+FROM {{ ref('balances_ethereum_erc721_day') }}
+WHERE day >= now() - INTERVAL '2 days'
+GROUP BY blockchain, day, token_address, tokenid
+HAVING count(*) > 1

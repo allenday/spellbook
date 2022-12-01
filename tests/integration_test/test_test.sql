@@ -1,13 +1,16 @@
 -- Bootstrapped correctness test against legacy Postgres values.
 -- Also manually check etherscan info for the first 5 rows
 
-WITH unit_tests as
-(SELECT case when test_data_v1.tokenid = transfers_v2.tokenId then True else False end as test
-FROM {{ ref('test_view') }} transfers_v2
-JOIN {{ ref('test_seed') }} test_data_v1
-ON test_data_v1.evt_tx_hash = transfers_v2.evt_tx_hash
-AND test_data_v1.value = abs(transfers_v2.amount)
+WITH unit_tests AS (
+    SELECT COALESCE(test_data_v1.tokenid = transfers_v2.tokenid, FALSE) AS test
+    FROM {{ ref('test_view') }} AS transfers_v2
+    INNER JOIN {{ ref('test_seed') }} AS test_data_v1
+        ON test_data_v1.evt_tx_hash = transfers_v2.evt_tx_hash
+            AND test_data_v1.value = ABS(transfers_v2.amount)
 )
-select count(case when test = false then 1 else null end)/count(*) as pct_mismatch, count(*) as count_rows
-from unit_tests
-having count(case when test = false then 1 else null end) > count(*)*0.05
+
+SELECT
+    COUNT(CASE WHEN test = FALSE THEN 1 END) / COUNT(*) AS pct_mismatch,
+    COUNT(*) AS count_rows
+FROM unit_tests
+HAVING COUNT(CASE WHEN test = FALSE THEN 1 END) > COUNT(*) * 0.05
