@@ -1,0 +1,9 @@
+[sqlfluff]
+templater = dbt
+dialect = sparksql
+[sqlfluff:rules]
+layout:type:comma:line_position = leading
+[sqlfluff:rules:L010]
+capitalisation_policy = upper
+[sqlfluff:rules:L030]
+capitalisation_policy = upper
