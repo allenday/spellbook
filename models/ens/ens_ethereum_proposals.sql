@@ -39,13 +39,13 @@ GROUP BY proposalId)
 
 SELECT DISTINCT
     '{{ blockchain }}' AS blockchain,
-    '{{project}}' AS project,
+    '{{ project }}' AS project,
     cast(NULL AS STRING) AS version,
     pcr.evt_block_time AS created_at,
     date_trunc('DAY', pcr.evt_block_time) AS block_date,
     pcr.evt_tx_hash AS tx_hash, -- Proposal Created tx hash
-    '{{dao_name}}' AS dao_name,
-    '{{dao_address}}' AS dao_address,
+    '{{ dao_name }}' AS dao_name,
+    '{{ dao_address }}' AS dao_address,
     proposer,
     pcr.proposalId AS proposal_id,
     csv.votes_for,

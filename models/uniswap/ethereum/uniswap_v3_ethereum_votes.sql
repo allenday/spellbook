@@ -27,13 +27,13 @@ GROUP BY proposalId)
 
 SELECT
     '{{ blockchain }}' AS blockchain,
-    '{{project}}' AS project,
+    '{{ project }}' AS project,
     '{{project_version}}' AS version,
     vc.evt_block_time AS block_time,
     date_trunc('DAY', vc.evt_block_time) AS block_date,
     vc.evt_tx_hash AS tx_hash,
-    '{{dao_name}}' AS dao_name,
-    '{{dao_address}}' AS dao_address,
+    '{{ dao_name }}' AS dao_name,
+    '{{ dao_address }}' AS dao_address,
     vc.proposalId AS proposal_id,
     vc.votes / 1e18 AS votes,
     (votes / 1e18) * (100) / (csv.sum_votes) AS votes_share,
