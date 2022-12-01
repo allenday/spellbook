@@ -89,7 +89,7 @@ WITH
         ) s
     )
 
-    -- this join should be removed in the future when more call trace info is added to the _call_ tables, we need the call_from field to track down the eth traces.
+    -- this join should be removed in the future WHEN more call trace info is added to the _call_ tables, we need the call_from field to track down the eth traces.
     , swaps_with_calldata AS (
         SELECT s.*
         , tr.from AS call_from
@@ -291,7 +291,7 @@ WITH
         SELECT
             sc.*
             , tokens.name AS collection
-            , case when lower(right(tx.data, 8)) = '72db8c0b' then 'Gem' else agg.name end AS aggregator_name
+            , case WHEN lower(right(tx.data, 8)) = '72db8c0b' THEN 'Gem' ELSE agg.name END AS aggregator_name
             , agg.contract_address AS aggregator_address
             , sc.amount_original*pu.price AS amount_usd
             , sc.pool_fee_amount*pu.price AS pool_fee_amount_usd
@@ -316,7 +316,7 @@ WITH
             {% if NOT is_incremental() %}
             AND pu.minute >= '2022-4-1'
             {% endif %}
-            --add in `pu.contract_address = sc.currency_address` in the future when ERC20 pairs are added in.
+            --add in `pu.contract_address = sc.currency_address` in the future WHEN ERC20 pairs are added in.
         LEFT JOIN {{ ref('nft_aggregators') }} agg
             ON (agg.contract_address = sc.call_from OR agg.contract_address = sc.router_caller) -- aggregator will either call pool directly or call the router
             AND agg.blockchain = 'ethereum'

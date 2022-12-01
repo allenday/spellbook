@@ -49,9 +49,9 @@ SELECT
      , bep20a.symbol                                             AS token_bought_symbol
      , bep20b.symbol                                             AS token_sold_symbol
      , case
-           when lower(bep20a.symbol) > lower(bep20b.symbol) then concat(bep20b.symbol, '-', bep20a.symbol)
-           else concat(bep20a.symbol, '-', bep20b.symbol)
-       end                                                       AS token_pair
+           WHEN lower(bep20a.symbol) > lower(bep20b.symbol) THEN concat(bep20b.symbol, '-', bep20a.symbol)
+           ELSE concat(bep20a.symbol, '-', bep20b.symbol)
+       END                                                       AS token_pair
      , dexs.token_bought_amount_raw / power(10, bep20a.decimals) AS token_bought_amount
      , dexs.token_sold_amount_raw / power(10, bep20b.decimals)   AS token_sold_amount
      , CAST(dexs.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw

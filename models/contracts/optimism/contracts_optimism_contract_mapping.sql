@@ -97,14 +97,14 @@ with base_level AS (
       ,coalesce(u.creator_address, b.creator_address) AS creator_address
       {% if loop.first -%}
       ,case
-        when u.creator_address is NULL then NULL
-        else b.creator_address
-      end AS contract_factory
-      {% else -%}
+        WHEN u.creator_address is NULL THEN NULL
+        ELSE b.creator_address
+      END AS contract_factory
+      {% ELSE -%}
       ,case
-        when u.creator_address is NULL then b.contract_factory
-        else b.creator_address
-      end AS contract_factory
+        WHEN u.creator_address is NULL THEN b.contract_factory
+        ELSE b.creator_address
+      END AS contract_factory
       {% endif %}
       ,b.contract_address
       ,b.created_time
@@ -114,7 +114,7 @@ with base_level AS (
     FROM base_level AS b
     LEFT JOIN base_level AS u
       ON b.creator_address = u.contract_address
-    {% else -%}
+    {% ELSE -%}
     FROM level{{i-1}} AS b
     LEFT JOIN base_level AS u
       ON b.creator_address = u.contract_address

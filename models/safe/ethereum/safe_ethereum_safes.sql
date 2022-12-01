@@ -17,12 +17,12 @@
 SELECT
     et.from AS address,
     case
-        when et.to = '0x8942595a2dc5181df0465af0d7be08c8f23c93af' then '0.1.0'
-        when et.to = '0xb6029ea3b2c51d09a50b53ca8012feeb05bda35a' then '1.0.0'
-        when et.to = '0xae32496491b53841efb51829d6f886387708f99b' then '1.1.0'
-        when et.to = '0x34cfac646f301356faa8b21e94227e3583fe3f5f' then '1.1.1'
-        when et.to = '0x6851d6fdfafd08c0295c392436245e5bc78b0185' then '1.2.0'
-    end AS creation_version,
+        WHEN et.to = '0x8942595a2dc5181df0465af0d7be08c8f23c93af' THEN '0.1.0'
+        WHEN et.to = '0xb6029ea3b2c51d09a50b53ca8012feeb05bda35a' THEN '1.0.0'
+        WHEN et.to = '0xae32496491b53841efb51829d6f886387708f99b' THEN '1.1.0'
+        WHEN et.to = '0x34cfac646f301356faa8b21e94227e3583fe3f5f' THEN '1.1.1'
+        WHEN et.to = '0x6851d6fdfafd08c0295c392436245e5bc78b0185' THEN '1.2.0'
+    END AS creation_version,
     try_cast(date_trunc('day', et.block_time) AS date) AS block_date,
     et.block_time AS creation_time,
     et.tx_hash

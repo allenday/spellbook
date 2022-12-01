@@ -50,7 +50,7 @@ SELECT
   WHEN contains('0x23b872dd', substring(calldataBuy,1,4)) THEN conv(substr(calldataBuy,139,64),16,10)::STRING
   WHEN contains('0xf242432a', substring(calldataBuy,1,4)) THEN conv(substr(calldataBuy,139,64),16,10)::STRING
   END AS token_id,
-  CASE WHEN size(call_trace_address) = 0 then array(3::bigint) -- for bundle join
+  CASE WHEN size(call_trace_address) = 0 THEN array(3::bigint) -- for bundle join
   ELSE call_trace_address
   END AS call_trace_address,
   addrs [6] AS currency_contract_original

@@ -21,11 +21,11 @@ with dexs AS (
             t.evt_block_time AS block_time,
             t.to AS taker,
             '' AS maker,
-            case when amount0Out  = 0 then amount1Out else amount0Out end AS token_bought_amount_raw,
-            case when amount0In = 0 then amount1In else amount0In end AS token_sold_amount_raw,
+            case WHEN amount0Out  = 0 THEN amount1Out ELSE amount0Out END AS token_bought_amount_raw,
+            case WHEN amount0In = 0 THEN amount1In ELSE amount0In END AS token_sold_amount_raw,
             NULL AS amount_usd,
-            case when amount0Out  = 0 then f.token1 else f.token0 end AS token_bought_address,
-            case when amount0In = 0 then f.token1 else f.token0 end AS token_sold_address,
+            case WHEN amount0Out  = 0 THEN f.token1 ELSE f.token0 END AS token_bought_address,
+            case WHEN amount0In = 0 THEN f.token1 ELSE f.token0 END AS token_sold_address,
             t.contract_address AS project_contract_address,
             t.evt_tx_hash AS tx_hash,
             '' AS trace_address,
@@ -44,9 +44,9 @@ SELECT
     erc20a.symbol AS token_bought_symbol,
     erc20b.symbol AS token_sold_symbol,
     case
-        when lower(erc20a.symbol) > lower(erc20b.symbol) then concat(erc20b.symbol, '-', erc20a.symbol)
-        else concat(erc20a.symbol, '-', erc20b.symbol)
-    end AS token_pair,
+        WHEN lower(erc20a.symbol) > lower(erc20b.symbol) THEN concat(erc20b.symbol, '-', erc20a.symbol)
+        ELSE concat(erc20a.symbol, '-', erc20b.symbol)
+    END AS token_pair,
     dexs.token_bought_amount_raw / power(10, erc20a.decimals) AS token_bought_amount,
     dexs.token_sold_amount_raw / power(10, erc20b.decimals) AS token_sold_amount,
     CAST(dexs.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw,

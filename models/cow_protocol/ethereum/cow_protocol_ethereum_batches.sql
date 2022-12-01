@@ -23,13 +23,13 @@ batch_counts AS (
            name,
            sum(
                case
-                   when selector != '0x2e1a7d4d' -- unwrap
+                   WHEN selector != '0x2e1a7d4d' -- unwrap
                     AND selector != '0x095ea7b3' -- approval
-                       then 1
-                   else 0
-                end)                                                AS dex_swaps,
-           sum(case when selector = '0x2e1a7d4d' then 1 else 0 end) AS unwraps,
-           sum(case when selector = '0x095ea7b3' then 1 else 0 end) AS token_approvals
+                       THEN 1
+                   ELSE 0
+                END)                                                AS dex_swaps,
+           sum(case WHEN selector = '0x2e1a7d4d' THEN 1 ELSE 0 END) AS unwraps,
+           sum(case WHEN selector = '0x095ea7b3' THEN 1 ELSE 0 END) AS token_approvals
     FROM {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Settlement') }} s
         left outer join {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Interaction') }} i
             ON i.evt_tx_hash = s.evt_tx_hash

@@ -978,7 +978,7 @@ FROM (VALUES
       ('0x3d1c7196bf2b7acacc32654b2fb068f6cac7648e', 'Everyday People', 'ERDAY', 'erc721', ''),
       ('0x34b3d63eaa54f90ad8be61506cae7e65abf6d4f0', 'BB Whales', 'BBS', 'erc721', ''),
       ('0x1bf29f37ef96bfbcd2d794d0696ebe0b3d253385', 'lil pepes', 'LP', 'erc721', ''),
-      ('0x4ecc413917ad73d951d51329cedb5c3661a76a54', 'Everything else', 'JAV', 'erc721', ''),
+      ('0x4ecc413917ad73d951d51329cedb5c3661a76a54', 'Everything ELSE', 'JAV', 'erc721', ''),
       ('0x409ea5f7e98bffee8b6fb9f7ce7b222a674630fc', 'IN YOUR FACE', 'GLITCH', 'erc721', ''),
       ('0x880dec1766334a39e3ab39f701aa34654ac227f7', 'beHAPPY', 'BHPY', 'erc721', ''),
       ('0xea5dbd6236cbd8596fbf4f5bff06f9d98cf7a344', 'Them', 'THEM', 'erc721', ''),

@@ -44,9 +44,9 @@ SELECT
     ,t_bought.symbol AS token_bought_symbol
     ,t_sold.symbol AS token_sold_symbol
     ,case
-        when lower(t_bought.symbol) > lower(t_sold.symbol) then concat(t_sold.symbol, '-', t_bought.symbol)
-        else concat(t_bought.symbol, '-', t_sold.symbol)
-    end AS token_pair
+        WHEN lower(t_bought.symbol) > lower(t_sold.symbol) THEN concat(t_sold.symbol, '-', t_bought.symbol)
+        ELSE concat(t_bought.symbol, '-', t_sold.symbol)
+    END AS token_pair
     ,e.token_bought_amount_raw / power(10, t_bought.decimals) AS token_bought_amount
     ,e.token_sold_amount_raw / power(10, t_sold.decimals) AS token_sold_amount
     , CAST(e.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw

@@ -62,10 +62,10 @@ WITH
             , recipient AS fee_receive_address
             , micros / pow(10,4) AS fee_percentage
             , tradeId AS unique_trade_id
-            , case when (
+            , case WHEN (
                 upper(recipient) = upper('0xA76456bb6aBC50FB38e17c042026bc27a95C3314')
                 or upper(recipient) = upper('0x1fC12C9f68A6B0633Ba5897A40A8e61ed9274dC9')
-                ) then true else false end
+                ) THEN true ELSE false END
                 AS is_protocol_fee
         FROM {{ source('archipelago_ethereum', 'ArchipelagoMarket_evt_RoyaltyPayment') }}
         {% if is_incremental() %}
@@ -202,7 +202,7 @@ SELECT
     , te.token_standard
     , 1 AS number_of_items
     , 'Single Item Trade' AS trade_type
-    , case when te.tx_from = COALESCE(seller_fix.from, te.seller) then 'Offer Accepted' else 'Buy' end AS trade_category
+    , case WHEN te.tx_from = COALESCE(seller_fix.from, te.seller) THEN 'Offer Accepted' ELSE 'Buy' END AS trade_category
     , 'Trade' AS evt_type
     , COALESCE(seller_fix.from, te.seller) AS seller
     , COALESCE(buyer_fix.to, te.buyer) AS buyer

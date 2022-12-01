@@ -25,9 +25,9 @@ daily_transfers AS (
         , contract_address AS token_address
         , count(*) AS num_tfers -- number of transfers
         , count(distinct evt_tx_hash) AS num_rollups -- number of rollups
-        , sum(case when spec_txn_type in ('Bridge to Protocol', 'Protocol to Bridge') then value_norm else 0 end ) AS abs_value_norm
-        , sum(case when spec_txn_type = 'Bridge to Protocol' then value_norm else 0 end ) AS input_value_norm
-        , sum(case when spec_txn_type = 'Protocol to Bridge' then value_norm else 0 end ) AS output_value_norm
+        , sum(case WHEN spec_txn_type in ('Bridge to Protocol', 'Protocol to Bridge') THEN value_norm ELSE 0 END ) AS abs_value_norm
+        , sum(case WHEN spec_txn_type = 'Bridge to Protocol' THEN value_norm ELSE 0 END ) AS input_value_norm
+        , sum(case WHEN spec_txn_type = 'Protocol to Bridge' THEN value_norm ELSE 0 END ) AS output_value_norm
     FROM {{ref('aztec_v2_ethereum_rollupbridge_transfers')}}
     where bridge_protocol is NOT NULL -- exclude all txns that don't interact with the bridges
     GROUP BY 1,2,3,4

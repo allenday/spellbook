@@ -11,38 +11,38 @@ with iv_offer_consideration AS (
             ,'offer' AS sub_type
             ,offer_idx + 1 AS sub_idx
             ,case offer[0]:itemType
-                when '0' then 'native'
-                when '1' then 'erc20'
-                when '2' then 'erc721'
-                when '3' then 'erc1155'
-                else 'etc'
-            end AS offer_first_item_type
+                WHEN '0' THEN 'native'
+                WHEN '1' THEN 'erc20'
+                WHEN '2' THEN 'erc721'
+                WHEN '3' THEN 'erc1155'
+                ELSE 'etc'
+            END AS offer_first_item_type
             ,case consideration[0]:itemType
-                when '0' then 'native'
-                when '1' then 'erc20'
-                when '2' then 'erc721'
-                when '3' then 'erc1155'
-                else 'etc'
-            end AS consideration_first_item_type
+                WHEN '0' THEN 'native'
+                WHEN '1' THEN 'erc20'
+                WHEN '2' THEN 'erc721'
+                WHEN '3' THEN 'erc1155'
+                ELSE 'etc'
+            END AS consideration_first_item_type
             ,offerer AS sender
             ,recipient AS receiver
             ,zone
             ,offer_item:token AS token_contract_address
             ,offer_item:amount::numeric(38) AS original_amount
             ,case offer_item:itemType
-                when '0' then 'native'
-                when '1' then 'erc20'
-                when '2' then 'erc721'
-                when '3' then 'erc1155'
-                else 'etc'
-            end AS item_type
+                WHEN '0' THEN 'native'
+                WHEN '1' THEN 'erc20'
+                WHEN '2' THEN 'erc721'
+                WHEN '3' THEN 'erc1155'
+                ELSE 'etc'
+            END AS item_type
             ,offer_item:identifier AS token_id
             ,contract_address AS platform_contract_address
             ,size(offer) AS offer_cnt
             ,size(consideration) AS consideration_cnt
-            ,case when recipient = '0x0000000000000000000000000000000000000000' then true
-                else false
-            end AS is_private
+            ,case WHEN recipient = '0x0000000000000000000000000000000000000000' THEN true
+                ELSE false
+            END AS is_private
     FROM
     (
         SELECT *
@@ -57,38 +57,38 @@ with iv_offer_consideration AS (
             ,'consideration' AS sub_type
             ,consideration_idx + 1 AS sub_idx
             ,case offer[0]:itemType
-                when '0' then 'native'
-                when '1' then 'erc20'
-                when '2' then 'erc721'
-                when '3' then 'erc1155'
-                else 'etc'
-            end AS offer_first_item_type
+                WHEN '0' THEN 'native'
+                WHEN '1' THEN 'erc20'
+                WHEN '2' THEN 'erc721'
+                WHEN '3' THEN 'erc1155'
+                ELSE 'etc'
+            END AS offer_first_item_type
             ,case consideration[0]:itemType
-                when '0' then 'native'
-                when '1' then 'erc20'
-                when '2' then 'erc721'
-                when '3' then 'erc1155'
-                else 'etc'
-            end AS consideration_first_item_type
+                WHEN '0' THEN 'native'
+                WHEN '1' THEN 'erc20'
+                WHEN '2' THEN 'erc721'
+                WHEN '3' THEN 'erc1155'
+                ELSE 'etc'
+            END AS consideration_first_item_type
             ,recipient AS sender
             ,consideration_item:recipient AS receiver
             ,zone
             ,consideration_item:token AS token_contract_address
             ,consideration_item:amount::numeric(38) AS original_amount
             ,case consideration_item:itemType
-                when '0' then 'native'
-                when '1' then 'erc20'
-                when '2' then 'erc721'
-                when '3' then 'erc1155'
-                else 'etc' -- actually NOT exists
-            end AS item_type
+                WHEN '0' THEN 'native'
+                WHEN '1' THEN 'erc20'
+                WHEN '2' THEN 'erc721'
+                WHEN '3' THEN 'erc1155'
+                ELSE 'etc' -- actually NOT exists
+            END AS item_type
             ,consideration_item:identifier AS token_id
             ,contract_address AS platform_contract_address
             ,size(offer) AS offer_cnt
             ,size(consideration) AS consideration_cnt
-            ,case when recipient = '0x0000000000000000000000000000000000000000' then true
-                else false
-            end AS is_private
+            ,case WHEN recipient = '0x0000000000000000000000000000000000000000' THEN true
+                ELSE false
+            END AS is_private
     FROM
     (
         SELECT *
@@ -98,49 +98,49 @@ with iv_offer_consideration AS (
 )
 ,iv_base_pairs AS (
     SELECT a.*
-            ,case when offer_first_item_type = 'erc20' then 'offer accepted'
-                when offer_first_item_type in ('erc721', 'erc1155') then 'buy'
-                else 'etc' -- some txns has no nfts
-            end AS order_type
-            ,case when offer_first_item_type = 'erc20' AND sub_type = 'offer' AND item_type = 'erc20' then true
-                when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND item_type in ('native', 'erc20') then true
-                else false
-            end is_price
-            ,case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND eth_erc_idx = 0 then true  -- offer accepted has no price at all. it has to be calculated.
-                when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND eth_erc_idx = 1 then true
-                else false
-            end is_netprice
-            ,case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND eth_erc_idx = 1 then true
-                when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND eth_erc_idx = 2 then true
-                else false
-            end is_platform_fee
-            ,case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND eth_erc_idx > 1 then true
-                when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND eth_erc_idx > 2 then true
-                else false
-            end is_creator_fee
-            ,case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND eth_erc_idx > 1 then eth_erc_idx - 1
-                when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND eth_erc_idx > 2 then eth_erc_idx - 2
-            end creator_fee_idx
-            ,case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc721', 'erc1155') then true
-                when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'offer' AND item_type in ('erc721', 'erc1155') then true
-                else false
-            end is_traded_nft
-            ,case when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND item_type in ('erc721', 'erc1155') then true
-                else false
-            end is_moved_nft
+            ,case WHEN offer_first_item_type = 'erc20' THEN 'offer accepted'
+                WHEN offer_first_item_type in ('erc721', 'erc1155') THEN 'buy'
+                ELSE 'etc' -- some txns has no nfts
+            END AS order_type
+            ,case WHEN offer_first_item_type = 'erc20' AND sub_type = 'offer' AND item_type = 'erc20' THEN true
+                WHEN offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND item_type in ('native', 'erc20') THEN true
+                ELSE false
+            END is_price
+            ,case WHEN offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND eth_erc_idx = 0 THEN true  -- offer accepted has no price at all. it has to be calculated.
+                WHEN offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND eth_erc_idx = 1 THEN true
+                ELSE false
+            END is_netprice
+            ,case WHEN offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND eth_erc_idx = 1 THEN true
+                WHEN offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND eth_erc_idx = 2 THEN true
+                ELSE false
+            END is_platform_fee
+            ,case WHEN offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND eth_erc_idx > 1 THEN true
+                WHEN offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND eth_erc_idx > 2 THEN true
+                ELSE false
+            END is_creator_fee
+            ,case WHEN offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND eth_erc_idx > 1 THEN eth_erc_idx - 1
+                WHEN offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND eth_erc_idx > 2 THEN eth_erc_idx - 2
+            END creator_fee_idx
+            ,case WHEN offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc721', 'erc1155') THEN true
+                WHEN offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'offer' AND item_type in ('erc721', 'erc1155') THEN true
+                ELSE false
+            END is_traded_nft
+            ,case WHEN offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'consideration' AND item_type in ('erc721', 'erc1155') THEN true
+                ELSE false
+            END is_moved_nft
     FROM
     (
         SELECT a.*
-            ,case when item_type in ('native', 'erc20') then sum(case when item_type in ('native', 'erc20') then 1 end) over (partition BY tx_hash, evt_index, sub_type order BY sub_idx) end AS eth_erc_idx
-            ,sum(case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc721', 'erc1155') then 1
-                        when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'offer' AND item_type in ('erc721', 'erc1155') then 1
-                end) over (partition BY tx_hash, evt_index) AS nft_cnt
-            ,sum(case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc721') then 1
-                        when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'offer' AND item_type in ('erc721') then 1
-                end) over (partition BY tx_hash, evt_index) AS erc721_cnt
-            ,sum(case when offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc1155') then 1
-                        when offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'offer' AND item_type in ('erc1155') then 1
-                end) over (partition BY tx_hash, evt_index) AS erc1155_cnt
+            ,case WHEN item_type in ('native', 'erc20') THEN sum(case WHEN item_type in ('native', 'erc20') THEN 1 END) over (partition BY tx_hash, evt_index, sub_type order BY sub_idx) END AS eth_erc_idx
+            ,sum(case WHEN offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc721', 'erc1155') THEN 1
+                        WHEN offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'offer' AND item_type in ('erc721', 'erc1155') THEN 1
+                END) over (partition BY tx_hash, evt_index) AS nft_cnt
+            ,sum(case WHEN offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc721') THEN 1
+                        WHEN offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'offer' AND item_type in ('erc721') THEN 1
+                END) over (partition BY tx_hash, evt_index) AS erc721_cnt
+            ,sum(case WHEN offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc1155') THEN 1
+                        WHEN offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'offer' AND item_type in ('erc1155') THEN 1
+                END) over (partition BY tx_hash, evt_index) AS erc1155_cnt
         FROM iv_offer_consideration a
     ) a
 )

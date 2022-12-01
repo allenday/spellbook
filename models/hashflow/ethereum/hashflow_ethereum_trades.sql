@@ -46,9 +46,9 @@ SELECT
     hashflow_trades.block_time,
     hashflow_trades.maker_symbol AS token_bought_symbol,
     hashflow_trades.taker_symbol AS token_sold_symbol,
-    case when lower(hashflow_trades.maker_symbol) > lower(hashflow_trades.taker_symbol)
-            then concat(hashflow_trades.taker_symbol, '-', hashflow_trades.maker_symbol)
-        else concat(hashflow_trades.maker_symbol, '-', hashflow_trades.taker_symbol) end AS token_pair,
+    case WHEN lower(hashflow_trades.maker_symbol) > lower(hashflow_trades.taker_symbol)
+            THEN concat(hashflow_trades.taker_symbol, '-', hashflow_trades.maker_symbol)
+        ELSE concat(hashflow_trades.maker_symbol, '-', hashflow_trades.taker_symbol) END AS token_pair,
     hashflow_trades.maker_token_amount AS token_bought_amount,
     hashflow_trades.taker_token_amount AS token_sold_amount,
     CAST(hashflow_trades.maker_token_amount * power(10, erc20a.decimals) AS DECIMAL(38,0)) AS token_bought_amount_raw,
@@ -63,7 +63,7 @@ SELECT
     tx.from AS tx_from,
     tx.to AS tx_to,
     '' AS trace_address,
-    case when hashflow_trades.composite_index <> -1 then hashflow_trades.composite_index end AS evt_index
+    case WHEN hashflow_trades.composite_index <> -1 THEN hashflow_trades.composite_index END AS evt_index
 FROM hashflow_trades
 inner join ethereum_transactions tx
     ON hashflow_trades.tx_hash = tx.hash

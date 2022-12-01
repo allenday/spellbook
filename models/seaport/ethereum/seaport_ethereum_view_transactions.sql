@@ -129,68 +129,68 @@ with iv_availadv AS (
           ,category
           ,exchange_contract_address
           ,zone
-          ,max(case when item_type in ('2', '3') then sender end) AS seller
-          ,max(case when item_type in ('2', '3') then receiver end) AS buyer
-          ,sum(case when category = 'auction' AND sub_idx in (1,2) then original_amount
-                    when category = 'offer accepted' AND sub_type = 'offer' AND sub_idx = 1 then original_amount
-                    when category = 'click buy now' AND sub_type = 'consideration' then original_amount
-              end) AS original_amount
-          ,max(case when category = 'auction' AND sub_idx in (1,2) then token_contract_address
-                    when category = 'offer accepted' AND sub_type = 'offer' AND sub_idx = 1 then token_contract_address
-                    when category = 'click buy now' AND sub_type = 'consideration' then token_contract_address
-              end) AS original_currency_contract
-          ,case when max(case when category = 'auction' AND sub_idx in (1,2) then token_contract_address
-                            when category = 'offer accepted' AND sub_type = 'offer' AND sub_idx = 1 then token_contract_address
-                            when category = 'click buy now' AND sub_type = 'consideration' then token_contract_address
-                      end) = '0x0000000000000000000000000000000000000000'
-                then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-                else max(case when category = 'auction' AND sub_idx in (1,2) then token_contract_address
-                            when category = 'offer accepted' AND sub_type = 'offer' AND sub_idx = 1 then token_contract_address
-                            when category = 'click buy now' AND sub_type = 'consideration' then token_contract_address
-                      end)
-            end AS currency_contract
-          ,max(case when category = 'auction' AND sub_idx = 2 then receiver
-                    when category = 'offer accepted' AND sub_type = 'consideration' AND item_type = '1' then receiver
-                    when category = 'click buy now' AND sub_type = 'consideration' AND sub_idx = 2 then receiver
-              end) AS fee_receive_address
-          ,sum(case when category = 'auction' AND sub_idx = 2 then original_amount
-                    when category = 'offer accepted' AND sub_type = 'consideration' AND item_type = '1' then original_amount
-                    when category = 'click buy now' AND sub_type = 'consideration' AND sub_idx = 2 then original_amount
-              end) AS fee_amount
-          ,max(case when category = 'auction' AND sub_idx = 2 then token_contract_address
-                    when category = 'offer accepted' AND sub_type = 'consideration' AND item_type = '1' then token_contract_address
-                    when category = 'click buy now' AND sub_type = 'consideration' AND sub_idx = 2 then token_contract_address
-              end) AS fee_currency_contract
-          ,case when max(case when category = 'auction' AND sub_idx = 2 then token_contract_address
-                            when category = 'offer accepted' AND sub_type = 'consideration' AND item_type = '1' then token_contract_address
-                            when category = 'click buy now' AND sub_type = 'consideration' AND sub_idx = 2 then token_contract_address
-                      end) = '0x0000000000000000000000000000000000000000'
-                then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-                else max(case when category = 'auction' AND sub_idx = 2 then token_contract_address
-                            when category = 'offer accepted' AND sub_type = 'consideration' AND item_type = '1' then token_contract_address
-                            when category = 'click buy now' AND sub_type = 'consideration' AND sub_idx = 2 then token_contract_address
-                      end)
-          end AS currency_contract2
-          ,max(case when nft_transfer_count = 1 AND item_type in ('2', '3') then token_contract_address
-              end) AS nft_contract_address
-          ,max(case when nft_transfer_count = 1 AND item_type in ('2', '3') then token_id
-              end) AS nft_token_id
-          ,count(case when item_type = '2' then 1 end) AS erc721_transfer_count
-          ,count(case when item_type = '3' then 1 end) AS erc1155_transfer_count
-          ,count(case when item_type in ('2', '3') then 1 end) AS nft_transfer_count
-          ,coalesce(sum(case when item_type = '2' then original_amount end),0) AS erc721_item_count
-          ,coalesce(sum(case when item_type = '3' then original_amount end),0) AS erc1155_item_count
-          ,coalesce(sum(case when item_type in ('2', '3') then original_amount end),0) AS nft_item_count
+          ,max(case WHEN item_type in ('2', '3') THEN sender END) AS seller
+          ,max(case WHEN item_type in ('2', '3') THEN receiver END) AS buyer
+          ,sum(case WHEN category = 'auction' AND sub_idx in (1,2) THEN original_amount
+                    WHEN category = 'offer accepted' AND sub_type = 'offer' AND sub_idx = 1 THEN original_amount
+                    WHEN category = 'click buy now' AND sub_type = 'consideration' THEN original_amount
+              END) AS original_amount
+          ,max(case WHEN category = 'auction' AND sub_idx in (1,2) THEN token_contract_address
+                    WHEN category = 'offer accepted' AND sub_type = 'offer' AND sub_idx = 1 THEN token_contract_address
+                    WHEN category = 'click buy now' AND sub_type = 'consideration' THEN token_contract_address
+              END) AS original_currency_contract
+          ,case WHEN max(case WHEN category = 'auction' AND sub_idx in (1,2) THEN token_contract_address
+                            WHEN category = 'offer accepted' AND sub_type = 'offer' AND sub_idx = 1 THEN token_contract_address
+                            WHEN category = 'click buy now' AND sub_type = 'consideration' THEN token_contract_address
+                      END) = '0x0000000000000000000000000000000000000000'
+                THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+                ELSE max(case WHEN category = 'auction' AND sub_idx in (1,2) THEN token_contract_address
+                            WHEN category = 'offer accepted' AND sub_type = 'offer' AND sub_idx = 1 THEN token_contract_address
+                            WHEN category = 'click buy now' AND sub_type = 'consideration' THEN token_contract_address
+                      END)
+            END AS currency_contract
+          ,max(case WHEN category = 'auction' AND sub_idx = 2 THEN receiver
+                    WHEN category = 'offer accepted' AND sub_type = 'consideration' AND item_type = '1' THEN receiver
+                    WHEN category = 'click buy now' AND sub_type = 'consideration' AND sub_idx = 2 THEN receiver
+              END) AS fee_receive_address
+          ,sum(case WHEN category = 'auction' AND sub_idx = 2 THEN original_amount
+                    WHEN category = 'offer accepted' AND sub_type = 'consideration' AND item_type = '1' THEN original_amount
+                    WHEN category = 'click buy now' AND sub_type = 'consideration' AND sub_idx = 2 THEN original_amount
+              END) AS fee_amount
+          ,max(case WHEN category = 'auction' AND sub_idx = 2 THEN token_contract_address
+                    WHEN category = 'offer accepted' AND sub_type = 'consideration' AND item_type = '1' THEN token_contract_address
+                    WHEN category = 'click buy now' AND sub_type = 'consideration' AND sub_idx = 2 THEN token_contract_address
+              END) AS fee_currency_contract
+          ,case WHEN max(case WHEN category = 'auction' AND sub_idx = 2 THEN token_contract_address
+                            WHEN category = 'offer accepted' AND sub_type = 'consideration' AND item_type = '1' THEN token_contract_address
+                            WHEN category = 'click buy now' AND sub_type = 'consideration' AND sub_idx = 2 THEN token_contract_address
+                      END) = '0x0000000000000000000000000000000000000000'
+                THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+                ELSE max(case WHEN category = 'auction' AND sub_idx = 2 THEN token_contract_address
+                            WHEN category = 'offer accepted' AND sub_type = 'consideration' AND item_type = '1' THEN token_contract_address
+                            WHEN category = 'click buy now' AND sub_type = 'consideration' AND sub_idx = 2 THEN token_contract_address
+                      END)
+          END AS currency_contract2
+          ,max(case WHEN nft_transfer_count = 1 AND item_type in ('2', '3') THEN token_contract_address
+              END) AS nft_contract_address
+          ,max(case WHEN nft_transfer_count = 1 AND item_type in ('2', '3') THEN token_id
+              END) AS nft_token_id
+          ,count(case WHEN item_type = '2' THEN 1 END) AS erc721_transfer_count
+          ,count(case WHEN item_type = '3' THEN 1 END) AS erc1155_transfer_count
+          ,count(case WHEN item_type in ('2', '3') THEN 1 END) AS nft_transfer_count
+          ,coalesce(sum(case WHEN item_type = '2' THEN original_amount END),0) AS erc721_item_count
+          ,coalesce(sum(case WHEN item_type = '3' THEN original_amount END),0) AS erc1155_item_count
+          ,coalesce(sum(case WHEN item_type in ('2', '3') THEN original_amount END),0) AS nft_item_count
       FROM (
             SELECT a.*
-                  ,count(case when item_type in ('2', '3') then 1 end) over (partition BY tx_hash) AS nft_transfer_count
-                  ,case when main_type = 'advanced' then 'auction'
-                        when max(case when item_type in ('0', '1') then item_type end) over (partition BY tx_hash) = '0' then 'click buy now'
-                        else 'offer accepted'
-                  end AS category
-                  ,case when (item_type, sub_idx) in (('2',1), ('3',1)) then True
-                        when main_type = 'advanced' AND sub_idx = 3 then True
-                  end AS first_item
+                  ,count(case WHEN item_type in ('2', '3') THEN 1 END) over (partition BY tx_hash) AS nft_transfer_count
+                  ,case WHEN main_type = 'advanced' THEN 'auction'
+                        WHEN max(case WHEN item_type in ('0', '1') THEN item_type END) over (partition BY tx_hash) = '0' THEN 'click buy now'
+                        ELSE 'offer accepted'
+                  END AS category
+                  ,case WHEN (item_type, sub_idx) in (('2',1), ('3',1)) THEN True
+                        WHEN main_type = 'advanced' AND sub_idx = 3 THEN True
+                  END AS first_item
               FROM iv_transfer_level a
             ) a
      GROUP BY 1,2,3,4,5,6,7
@@ -199,25 +199,25 @@ with iv_availadv AS (
     SELECT a.block_time
           ,n.name AS nft_project_name
           ,nft_token_id
-          ,case when erc721_transfer_count > 0 AND erc1155_transfer_count = 0 then 'erc721'
-                when erc721_transfer_count = 0 AND erc1155_transfer_count > 0 then 'erc1155'
-                when erc721_transfer_count > 0 AND erc1155_transfer_count > 0 then 'mixed'
-           end AS erc_standard
-          ,case when a.zone in ('0xf397619df7bfd4d1657ea9bdd9df7ff888731a11'
+          ,case WHEN erc721_transfer_count > 0 AND erc1155_transfer_count = 0 THEN 'erc721'
+                WHEN erc721_transfer_count = 0 AND erc1155_transfer_count > 0 THEN 'erc1155'
+                WHEN erc721_transfer_count > 0 AND erc1155_transfer_count > 0 THEN 'mixed'
+           END AS erc_standard
+          ,case WHEN a.zone in ('0xf397619df7bfd4d1657ea9bdd9df7ff888731a11'
                                ,'0x9b814233894cd227f561b78cc65891aa55c62ad2'
                                ,'0x004c00500000ad104d7dbd00e3ae0a5c00560c00'
                                )
-                then 'OpenSea'
-           end AS platform
-          ,case when a.zone in ('0xf397619df7bfd4d1657ea9bdd9df7ff888731a11'
+                THEN 'OpenSea'
+           END AS platform
+          ,case WHEN a.zone in ('0xf397619df7bfd4d1657ea9bdd9df7ff888731a11'
                                ,'0x9b814233894cd227f561b78cc65891aa55c62ad2'
                                ,'0x004c00500000ad104d7dbd00e3ae0a5c00560c00'
                                )
-                then 3
-           end AS platform_version
-          ,case when nft_transfer_count = 1 then 'Single Item Trade'
-                else 'Bundle Trade'
-           end AS trade_type
+                THEN 3
+           END AS platform_version
+          ,case WHEN nft_transfer_count = 1 THEN 'Single Item Trade'
+                ELSE 'Bundle Trade'
+           END AS trade_type
           ,nft_item_count AS number_of_items
           ,'Trade' AS evt_type
           ,a.original_amount / power(10, e1.decimals) * p1.price AS usd_amount
@@ -225,9 +225,9 @@ with iv_availadv AS (
           ,buyer
           ,a.original_amount / power(10, e1.decimals) AS original_amount
           ,a.original_amount AS original_amount_raw
-          ,case when a.original_currency_contract = '0x0000000000000000000000000000000000000000' then 'ETH'
-                else p1.symbol
-          end AS original_currency
+          ,case WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000' THEN 'ETH'
+                ELSE p1.symbol
+          END AS original_currency
           ,a.original_currency_contract
           ,a.currency_contract
           ,a.nft_contract_address
@@ -239,32 +239,32 @@ with iv_availadv AS (
           ,a.evt_index
           ,1 AS trade_id
           ,a.fee_receive_address
-          ,case when a.fee_currency_contract = '0x0000000000000000000000000000000000000000' then 'ETH'
-                else p2.symbol
-          end AS fee_currency
+          ,case WHEN a.fee_currency_contract = '0x0000000000000000000000000000000000000000' THEN 'ETH'
+                ELSE p2.symbol
+          END AS fee_currency
           ,a.fee_amount AS fee_amount_raw
           ,a.fee_amount / power(10, e2.decimals) AS fee_amount
           ,a.fee_amount / power(10, e2.decimals) * p2.price AS fee_usd_amount
           ,a.zone AS zone_address
-          ,case when spc1.call_tx_hash is NOT NULL then 'Auction Settled'
-                when spc2.call_tx_hash is NOT NULL AND spc2.parameters:basicOrderType::integer between 16 AND 23 then 'Auction Settled'
-                when spc2.call_tx_hash is NOT NULL AND spc2.parameters:basicOrderType::integer between 0 AND 7 then 'Buy'
-                when spc2.call_tx_hash is NOT NULL then 'Buy'
-                when spc3.call_tx_hash is NOT NULL AND spc3.advancedOrder:parameters:consideration[0]:identifierOrCriteria > '0' then 'Trait Offer Accepted'
-                when spc3.call_tx_hash is NOT NULL then 'Collection Offer Accepted'
-                else 'Private Sale'
-           end AS category
-          ,case when spc1.call_tx_hash is NOT NULL then 'Collection / Trait Offer Accepted' -- include English Auction AND Dutch Auction
-                when spc2.call_tx_hash is NOT NULL AND spc2.parameters:basicOrderType::integer between 0 AND 15 then 'Buy' -- Buy it directly
-                when spc2.call_tx_hash is NOT NULL AND spc2.parameters:basicOrderType::integer between 16 AND 23 AND spc2.parameters:considerationIdentifier = a.nft_token_id then 'Individual Offer Accepted'
-                when spc2.call_tx_hash is NOT NULL then 'Buy'
-                when spc3.call_tx_hash is NOT NULL AND a.original_currency_contract = '0x0000000000000000000000000000000000000000' then 'Buy'
-                when spc3.call_tx_hash is NOT NULL then 'Collection / Trait Offer Accepted' -- offer for collection
-                when spc4.call_tx_hash is NOT NULL then 'Bulk Purchase' -- bundles of NFTs are purchased through aggregators or in a cart
-                when spc5.call_tx_hash is NOT NULL then 'Bulk Purchase' -- bundles of NFTs are purchased through aggregators or in a cart
-                when spc6.call_tx_hash is NOT NULL then 'Private Sale' -- sales for designated address
-                else 'Buy'
-           end AS order_type
+          ,case WHEN spc1.call_tx_hash is NOT NULL THEN 'Auction Settled'
+                WHEN spc2.call_tx_hash is NOT NULL AND spc2.parameters:basicOrderType::integer between 16 AND 23 THEN 'Auction Settled'
+                WHEN spc2.call_tx_hash is NOT NULL AND spc2.parameters:basicOrderType::integer between 0 AND 7 THEN 'Buy'
+                WHEN spc2.call_tx_hash is NOT NULL THEN 'Buy'
+                WHEN spc3.call_tx_hash is NOT NULL AND spc3.advancedOrder:parameters:consideration[0]:identifierOrCriteria > '0' THEN 'Trait Offer Accepted'
+                WHEN spc3.call_tx_hash is NOT NULL THEN 'Collection Offer Accepted'
+                ELSE 'Private Sale'
+           END AS category
+          ,case WHEN spc1.call_tx_hash is NOT NULL THEN 'Collection / Trait Offer Accepted' -- include English Auction AND Dutch Auction
+                WHEN spc2.call_tx_hash is NOT NULL AND spc2.parameters:basicOrderType::integer between 0 AND 15 THEN 'Buy' -- Buy it directly
+                WHEN spc2.call_tx_hash is NOT NULL AND spc2.parameters:basicOrderType::integer between 16 AND 23 AND spc2.parameters:considerationIdentifier = a.nft_token_id THEN 'Individual Offer Accepted'
+                WHEN spc2.call_tx_hash is NOT NULL THEN 'Buy'
+                WHEN spc3.call_tx_hash is NOT NULL AND a.original_currency_contract = '0x0000000000000000000000000000000000000000' THEN 'Buy'
+                WHEN spc3.call_tx_hash is NOT NULL THEN 'Collection / Trait Offer Accepted' -- offer for collection
+                WHEN spc4.call_tx_hash is NOT NULL THEN 'Bulk Purchase' -- bundles of NFTs are purchased through aggregators or in a cart
+                WHEN spc5.call_tx_hash is NOT NULL THEN 'Bulk Purchase' -- bundles of NFTs are purchased through aggregators or in a cart
+                WHEN spc6.call_tx_hash is NOT NULL THEN 'Private Sale' -- sales for designated address
+                ELSE 'Buy'
+           END AS order_type
 
       FROM iv_txn_level a
           LEFT JOIN {{ source('ethereum', 'transactions') }} tx ON tx.hash = a.tx_hash

@@ -108,9 +108,9 @@ with source_polygon_transactions AS (
         ,a.offer_first_item_type
         ,a.consideration_first_item_type
         ,a.sender
-        ,case when b.tx_hash is NOT NULL then b.receiver
-              else a.receiver
-          end AS receiver
+        ,case WHEN b.tx_hash is NOT NULL THEN b.receiver
+              ELSE a.receiver
+          END AS receiver
         ,a.zone
         ,a.token_contract_address
         ,a.original_amount
@@ -151,18 +151,18 @@ with source_polygon_transactions AS (
         ,tx_hash
         ,evt_index
         ,max(token_contract_address) AS token_contract_address
-        ,sum(case when is_price then original_amount end) AS price_amount_raw
-        ,sum(case when is_platform_fee then original_amount end) AS platform_fee_amount_raw
-        ,max(case when is_platform_fee then receiver end) AS platform_fee_receiver
-        ,sum(case when is_creator_fee then original_amount end) AS creator_fee_amount_raw
-        ,sum(case when is_creator_fee AND creator_fee_idx = 1 then original_amount end) AS creator_fee_amount_raw_1
-        ,sum(case when is_creator_fee AND creator_fee_idx = 2 then original_amount end) AS creator_fee_amount_raw_2
-        ,sum(case when is_creator_fee AND creator_fee_idx = 3 then original_amount end) AS creator_fee_amount_raw_3
-        ,sum(case when is_creator_fee AND creator_fee_idx = 4 then original_amount end) AS creator_fee_amount_raw_4
-        ,max(case when is_creator_fee AND creator_fee_idx = 1 then receiver end) AS creator_fee_receiver_1
-        ,max(case when is_creator_fee AND creator_fee_idx = 2 then receiver end) AS creator_fee_receiver_2
-        ,max(case when is_creator_fee AND creator_fee_idx = 3 then receiver end) AS creator_fee_receiver_3
-        ,max(case when is_creator_fee AND creator_fee_idx = 4 then receiver end) AS creator_fee_receiver_4
+        ,sum(case WHEN is_price THEN original_amount END) AS price_amount_raw
+        ,sum(case WHEN is_platform_fee THEN original_amount END) AS platform_fee_amount_raw
+        ,max(case WHEN is_platform_fee THEN receiver END) AS platform_fee_receiver
+        ,sum(case WHEN is_creator_fee THEN original_amount END) AS creator_fee_amount_raw
+        ,sum(case WHEN is_creator_fee AND creator_fee_idx = 1 THEN original_amount END) AS creator_fee_amount_raw_1
+        ,sum(case WHEN is_creator_fee AND creator_fee_idx = 2 THEN original_amount END) AS creator_fee_amount_raw_2
+        ,sum(case WHEN is_creator_fee AND creator_fee_idx = 3 THEN original_amount END) AS creator_fee_amount_raw_3
+        ,sum(case WHEN is_creator_fee AND creator_fee_idx = 4 THEN original_amount END) AS creator_fee_amount_raw_4
+        ,max(case WHEN is_creator_fee AND creator_fee_idx = 1 THEN receiver END) AS creator_fee_receiver_1
+        ,max(case WHEN is_creator_fee AND creator_fee_idx = 2 THEN receiver END) AS creator_fee_receiver_2
+        ,max(case WHEN is_creator_fee AND creator_fee_idx = 3 THEN receiver END) AS creator_fee_receiver_3
+        ,max(case WHEN is_creator_fee AND creator_fee_idx = 4 THEN receiver END) AS creator_fee_receiver_4
   FROM iv_base_pairs_priv a
   where 1=1
     AND eth_erc_idx > 0
@@ -176,9 +176,9 @@ with source_polygon_transactions AS (
         ,a.block_number
         ,a.sender AS seller
         ,a.receiver AS buyer
-        ,case when nft_cnt > 1 then 'bundle trade'
-              else 'single item trade'
-          end AS trade_type
+        ,case WHEN nft_cnt > 1 THEN 'bundle trade'
+              ELSE 'single item trade'
+          END AS trade_type
         ,a.order_type
         ,a.token_contract_address AS nft_contract_address
         ,a.original_amount AS nft_token_amount
@@ -199,9 +199,9 @@ with source_polygon_transactions AS (
         ,creator_fee_receiver_2
         ,creator_fee_receiver_3
         ,creator_fee_receiver_4
-        ,case when nft_cnt > 1 then true
-              else false
-          end AS estimated_price
+        ,case WHEN nft_cnt > 1 THEN true
+              ELSE false
+          END AS estimated_price
         ,is_private
         ,sub_type
         ,sub_idx
@@ -218,12 +218,12 @@ with source_polygon_transactions AS (
           ,t.`FROM` AS tx_from
           ,t.`to` AS tx_to
           ,right(t.data,8) AS right_hash
-          ,case when a.token_contract_address = '{{c_native_token_address}}' then '{{c_native_symbol}}'
-                else e.symbol
-           end AS token_symbol
-          ,case when a.token_contract_address = '{{c_native_token_address}}' then '{{c_alternative_token_address}}'
-                else a.token_contract_address
-           end AS token_alternative_symbol
+          ,case WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_native_symbol}}'
+                ELSE e.symbol
+           END AS token_symbol
+          ,case WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_alternative_token_address}}'
+                ELSE a.token_contract_address
+           END AS token_alternative_symbol
           ,e.decimals AS price_token_decimals
           ,a.price_amount_raw / power(10, e.decimals) AS price_amount
           ,a.price_amount_raw / power(10, e.decimals) * p.price AS price_amount_usd
@@ -237,12 +237,12 @@ with source_polygon_transactions AS (
   FROM iv_nfts a
   inner join source_polygon_transactions t ON t.hash = a.tx_hash
   LEFT JOIN ref_tokens_nft n ON n.contract_address = nft_contract_address
-  LEFT JOIN ref_tokens_erc20 e ON e.contract_address = case when a.token_contract_address = '{{c_native_token_address}}' then '{{c_alternative_token_address}}'
-                                                            else a.token_contract_address
-                                                      end
-  LEFT JOIN source_prices_usd p ON p.contract_address = case when a.token_contract_address = '{{c_native_token_address}}' then '{{c_alternative_token_address}}'
-                                                            else a.token_contract_address
-                                                        end
+  LEFT JOIN ref_tokens_erc20 e ON e.contract_address = case WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_alternative_token_address}}'
+                                                            ELSE a.token_contract_address
+                                                      END
+  LEFT JOIN source_prices_usd p ON p.contract_address = case WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_alternative_token_address}}'
+                                                            ELSE a.token_contract_address
+                                                        END
     AND p.minute = date_trunc('minute', a.block_time)
   LEFT JOIN ref_nft_aggregators agg ON agg.contract_address = t.to
 )

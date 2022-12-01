@@ -686,7 +686,7 @@ VALUES
     ("pdt-paragonsdao", "ethereum", "PDT", "0x375abb85c329753b1ba849a601438ae77eec9893", 18),
     ("wait-wait", "ethereum", "WAIT", "0xb5588c411ba0bb7d38865fdc51d082d004e519f7", 0),
     ("nation-nation3", "ethereum", "NATION", "0x333a4823466879eef910a04d473505da62142069", 18),
-    ("o-childhoods-end", "ethereum", "O", "0xb53ecf1345cabee6ea1a65100ebb153cebcac40f", 18),
+    ("o-childhoods-END", "ethereum", "O", "0xb53ecf1345cabee6ea1a65100ebb153cebcac40f", 18),
     ("id-everest", "ethereum", "ID", "0xebd9d99a3982d547c5bb4db7e3b1f9f14b67eb83", 18),
     ("sdl-saddle-finance", "ethereum", "SDL", "0xf1dc500fde233a4055e25e5bbf516372bc4f6871", 18),
     ("myc-mycelium", "ethereum", "MYC", "0x4b13006980acb09645131b91d259eaa111eaf5ba", 18),

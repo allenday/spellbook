@@ -136,21 +136,21 @@ SELECT
     ,'Trade' AS evt_type
     ,er.seller
     ,case
-    when er.buyer = agg.contract_address then erct2.to
-    else er.buyer
-    end AS buyer
+    WHEN er.buyer = agg.contract_address THEN erct2.to
+    ELSE er.buyer
+    END AS buyer
     ,er.amount_raw / power(10, t1.decimals) AS amount_original
     ,er.amount_raw
     ,case
-        when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
-            then 'ETH'
-            else t1.symbol
-        end AS currency_symbol
+        WHEN (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
+            THEN 'ETH'
+            ELSE t1.symbol
+        END AS currency_symbol
     ,case
-        when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
-            then '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000'
-            else erc20.contract_address
-        end AS currency_contract
+        WHEN (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
+            THEN '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000'
+            ELSE erc20.contract_address
+        END AS currency_contract
     ,er.nft_contract_address
     ,er.project_contract_address
     ,agg.name AS aggregator_name
@@ -168,11 +168,11 @@ SELECT
     ,tr.value / power(10, t1.decimals) AS royalty_fee_amount
     ,tr.value / power(10, t1.decimals) * p1.price AS royalty_fee_amount_usd
     , (tr.value / er.amount_raw * 100) AS royalty_fee_percentage
-    ,case when tr.value is NOT NULL then tr.to end AS royalty_fee_receive_address
-    ,case when tr.value is NOT NULL
-        then case when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
-            then 'ETH' else t1.symbol end
-        end AS royalty_fee_currency_symbol
+    ,case WHEN tr.value is NOT NULL THEN tr.to END AS royalty_fee_receive_address
+    ,case WHEN tr.value is NOT NULL
+        THEN case WHEN (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
+            THEN 'ETH' ELSE t1.symbol END
+        END AS royalty_fee_currency_symbol
 FROM events_raw AS er
 join {{ source('optimism', 'transactions') }} AS tx
     ON er.tx_hash = tx.hash
@@ -216,17 +216,17 @@ LEFT JOIN {{ source('erc20_optimism', 'evt_transfer') }} AS erc20
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} AS t1
     ON t1.contract_address =
-        case when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
-        then '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000'
-        else erc20.contract_address
-        end
+        case WHEN (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
+        THEN '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000'
+        ELSE erc20.contract_address
+        END
     AND t1.blockchain = 'optimism'
     LEFT JOIN {{ source('prices', 'usd') }} AS p1
     ON p1.contract_address =
-        case when (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
-        then '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000'
-        else erc20.contract_address
-        end
+        case WHEN (erc20.contract_address = '0x0000000000000000000000000000000000000000' or erc20.contract_address is NULL)
+        THEN '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000'
+        ELSE erc20.contract_address
+        END
     AND p1.minute = date_trunc('minute', er.block_time)
     AND p1.blockchain = 'optimism'
     {% if is_incremental() %}

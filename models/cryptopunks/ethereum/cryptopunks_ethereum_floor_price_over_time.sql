@@ -11,9 +11,9 @@
 with all_listings AS (
     SELECT  `punkIndex` AS punk_id
             , 'Listing' AS event_type
-            , case when `toAddress` = '0x0000000000000000000000000000000000000000' then 'Public Listing'
-                    else 'Private Listing'
-                end AS event_sub_type
+            , case WHEN `toAddress` = '0x0000000000000000000000000000000000000000' THEN 'Public Listing'
+                    ELSE 'Private Listing'
+                END AS event_sub_type
             , `minValue` / 1e18 AS listed_price
             , `toAddress` AS listing_offered_to
             , evt_block_number
@@ -25,9 +25,9 @@ with all_listings AS (
 , all_no_longer_for_sale_events (
     SELECT  `punkIndex` AS punk_id
             , 'No Longer For Sale' AS event_type
-            , case when evt_tx_hash in (SELECT evt_tx_hash FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkBought') }}) then 'Punk Bought'
-                    else 'Other'
-                end AS event_sub_type
+            , case WHEN evt_tx_hash in (SELECT evt_tx_hash FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkBought') }}) THEN 'Punk Bought'
+                    ELSE 'Other'
+                END AS event_sub_type
             , NULL AS listed_price
             , NULL AS listing_offered_to
             , evt_block_number
@@ -85,7 +85,7 @@ with all_listings AS (
     SELECT date_trunc('day',a.evt_block_time) AS day
             , a.punk_id
             , listed_price
-            , case when event_sub_type = 'Public Listing' then 'Active' else 'Not Listed' end AS listed_bool
+            , case WHEN event_sub_type = 'Public Listing' THEN 'Active' ELSE 'Not Listed' END AS listed_bool
     FROM all_punk_events a
     inner join (    SELECT date_trunc('day', evt_block_time) AS day
                             , punk_id

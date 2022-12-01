@@ -757,9 +757,9 @@ SELECT
     ,erc20a.symbol AS token_bought_symbol
     ,erc20b.symbol AS token_sold_symbol
     ,case
-        when lower(erc20a.symbol) > lower(erc20b.symbol) then concat(erc20b.symbol, '-', erc20a.symbol)
-        else concat(erc20a.symbol, '-', erc20b.symbol)
-    end AS token_pair
+        WHEN lower(erc20a.symbol) > lower(erc20b.symbol) THEN concat(erc20b.symbol, '-', erc20a.symbol)
+        ELSE concat(erc20a.symbol, '-', erc20b.symbol)
+    END AS token_pair
     ,dexs.token_bought_amount_raw / power(10, erc20a.decimals) AS token_bought_amount
     ,dexs.token_sold_amount_raw / power(10, erc20b.decimals) AS token_sold_amount
     , CAST(dexs.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw
@@ -784,7 +784,7 @@ INNER JOIN {{ source('ethereum', 'transactions') }} tx
     ON tx.hash = dexs.tx_hash
     {% if NOT is_incremental() %}
     -- The date below is derrived FROM `SELECT min(evt_block_time) from uniswap_ethereum.Factory_evt_NewExchange;`
-    -- If dexs above is changed then this will also need to be changed.
+    -- If dexs above is changed THEN this will also need to be changed.
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -797,7 +797,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_bought ON p_bought.minute = date_trunc
     AND p_bought.blockchain = 'ethereum'
     {% if NOT is_incremental() %}
     -- The date below is derrived FROM `SELECT min(evt_block_time) from uniswap_ethereum.Factory_evt_NewExchange;`
-    -- If dexs above is changed then this will also need to be changed.
+    -- If dexs above is changed THEN this will also need to be changed.
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
@@ -808,7 +808,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold ON p_sold.minute = date_trunc('mi
     AND p_sold.blockchain = 'ethereum'
     {% if NOT is_incremental() %}
     -- The date below is derrived FROM `SELECT min(evt_block_time) from uniswap_ethereum.Factory_evt_NewExchange;`
-    -- If dexs above is changed then this will also need to be changed.
+    -- If dexs above is changed THEN this will also need to be changed.
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}

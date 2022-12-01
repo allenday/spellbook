@@ -22,7 +22,7 @@ WITH dexs AS
         t.evt_block_time AS block_time
         ,t.recipient AS taker
         ,'' AS maker
-        ,CASE WHEN amount0 < '0' THEN abs(amount0) ELSE abs(amount1) END AS token_bought_amount_raw -- when amount0 is negative it means trader_a is buying token0 FROM the pool
+        ,CASE WHEN amount0 < '0' THEN abs(amount0) ELSE abs(amount1) END AS token_bought_amount_raw -- WHEN amount0 is negative it means trader_a is buying token0 FROM the pool
         ,CASE WHEN amount0 < '0' THEN abs(amount1) ELSE abs(amount0) END AS token_sold_amount_raw
         ,NULL AS amount_usd
         ,CASE WHEN amount0 < '0' THEN f.token0 ELSE f.token1 END AS token_bought_address
@@ -48,9 +48,9 @@ SELECT
     ,erc20a.symbol AS token_bought_symbol
     ,erc20b.symbol AS token_sold_symbol
     ,case
-        when lower(erc20a.symbol) > lower(erc20b.symbol) then concat(erc20b.symbol, '-', erc20a.symbol)
-        else concat(erc20a.symbol, '-', erc20b.symbol)
-    end AS token_pair
+        WHEN lower(erc20a.symbol) > lower(erc20b.symbol) THEN concat(erc20b.symbol, '-', erc20a.symbol)
+        ELSE concat(erc20a.symbol, '-', erc20b.symbol)
+    END AS token_pair
     ,dexs.token_bought_amount_raw / power(10, erc20a.decimals) AS token_bought_amount
     ,dexs.token_sold_amount_raw / power(10, erc20b.decimals) AS token_sold_amount
     , CAST(dexs.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw

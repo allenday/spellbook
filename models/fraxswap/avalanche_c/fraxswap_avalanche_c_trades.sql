@@ -35,7 +35,7 @@ fraxswap_dex AS (
         ON t.contract_address = p.pair
     {% if is_incremental() %}
     WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
-    {% else %}
+    {% ELSE %}
     WHERE t.evt_block_time >= '{{ project_start_date }}'
     {% endif %}
 )
@@ -75,7 +75,7 @@ INNER JOIN {{ source('avalanche_c', 'transactions') }} tx
     ON fraxswap_dex.tx_hash = tx.hash
     {% if is_incremental() %}
     AND tx.block_time >= date_trunc("day", now() - interval '1 week')
-    {% else %}
+    {% ELSE %}
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} erc20a
@@ -90,7 +90,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_bought
     AND p_bought.blockchain = 'avalanche_c'
     {% if is_incremental() %}
     AND p_bought.minute >= date_trunc("day", now() - interval '1 week')
-    {% else %}
+    {% ELSE %}
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p_sold
@@ -99,7 +99,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold
     AND p_sold.blockchain = 'avalanche_c'
     {% if is_incremental() %}
     AND p_sold.minute >= date_trunc("day", now() - interval '1 week')
-    {% else %}
+    {% ELSE %}
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
 ;

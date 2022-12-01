@@ -32,7 +32,7 @@ WITH sushiswap_dex AS (
         ON f.pair = t.contract_address
     {% if is_incremental() %}
     WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
-    {% else %}
+    {% ELSE %}
     WHERE t.evt_block_time >= '{{ project_start_date }}'
     {% endif %}
 )
@@ -73,7 +73,7 @@ INNER JOIN {{ source('gnosis', 'transactions') }} tx
     ON sushiswap_dex.tx_hash = tx.hash
     {% if NOT is_incremental() %}
     AND tx.block_time >= '{{project_start_date}}'
-    {% else %}
+    {% ELSE %}
     AND tx.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} erc20a
@@ -88,7 +88,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_bought
     AND p_bought.blockchain = 'gnosis'
     {% if NOT is_incremental() %}
     AND p_bought.minute >= '{{project_start_date}}'
-    {% else %}
+    {% ELSE %}
     AND p_bought.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p_sold
@@ -97,7 +97,7 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold
     AND p_sold.blockchain = 'gnosis'
     {% if NOT is_incremental() %}
     AND p_sold.minute >= '{{project_start_date}}'
-    {% else %}
+    {% ELSE %}
     AND p_sold.minute >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 ;

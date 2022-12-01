@@ -45,9 +45,9 @@ SELECT
 	, erc20_b.symbol AS token_bought_symbol
 	, erc20_s.symbol AS token_sold_symbol
 	, case
-        when lower(erc20_b.symbol) > lower(erc20_s.symbol) then concat(erc20_s.symbol, '-', erc20_b.symbol)
-        else concat(erc20_b.symbol, '-', erc20_s.symbol)
-    end AS token_pair
+        WHEN lower(erc20_b.symbol) > lower(erc20_s.symbol) THEN concat(erc20_s.symbol, '-', erc20_b.symbol)
+        ELSE concat(erc20_b.symbol, '-', erc20_s.symbol)
+    END AS token_pair
 	, s.toAmount / power(10, erc20_b.decimals) AS token_bought_amount
 	, s.fromAmount / power(10, erc20_s.decimals) AS token_sold_amount
     , coalesce(s.`to`, tx.from) AS taker

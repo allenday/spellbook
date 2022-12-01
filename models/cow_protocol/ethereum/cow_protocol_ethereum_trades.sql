@@ -76,7 +76,7 @@ trades_with_token_units AS (
            sell_amount                       AS atoms_sold,
            buy_amount / pow(10, tb.decimals)  AS units_bought,
            buy_amount                        AS atoms_bought,
-           -- We use sell value when possible AND buy value when NOT
+           -- We use sell value WHEN possible AND buy value WHEN NOT
            fee_amount / pow(10, ts.decimals)  AS fee,
            fee_amount                        AS fee_atoms,
            sell_price,
@@ -155,19 +155,19 @@ valued_trades AS (
            buy_token_address,
            buy_token,
            case
-                 when lower(buy_token) > lower(sell_token) then concat(sell_token, '-', buy_token)
-                 else concat(buy_token, '-', sell_token)
-               end AS token_pair,
+                 WHEN lower(buy_token) > lower(sell_token) THEN concat(sell_token, '-', buy_token)
+                 ELSE concat(buy_token, '-', sell_token)
+               END AS token_pair,
            units_sold,
            atoms_sold,
            units_bought,
            atoms_bought,
            (CASE
                 WHEN sell_price IS NOT NULL THEN
-                    -- Choose the larger of two prices when both NOT NULL.
+                    -- Choose the larger of two prices WHEN both NOT NULL.
                     CASE
                         WHEN buy_price IS NOT NULL AND buy_price * units_bought > sell_price * units_sold
-                            then buy_price * units_bought
+                            THEN buy_price * units_bought
                         ELSE sell_price * units_sold
                         END
                 WHEN sell_price IS NULL AND buy_price IS NOT NULL THEN buy_price * units_bought
@@ -183,7 +183,7 @@ valued_trades AS (
                 WHEN sell_price IS NOT NULL THEN
                     CASE
                         WHEN buy_price IS NOT NULL AND buy_price * units_bought > sell_price * units_sold
-                            then buy_price * units_bought * fee / units_sold
+                            THEN buy_price * units_bought * fee / units_sold
                         ELSE sell_price * fee
                         END
                 WHEN sell_price IS NULL AND buy_price IS NOT NULL
