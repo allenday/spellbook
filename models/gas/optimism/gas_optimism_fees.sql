@@ -35,10 +35,10 @@ SELECT
      l1_fee_scalar,
      (l1_gas_price * txns.gas_used) / 1e18 AS tx_fee_equivalent_on_l1_native,
      (l1_gas_price * txns.gas_used) / 1e18 * p.price AS tx_fee_equivalent_on_l1_usd,
-     (length( decode(unhex(substring(data,3)), 'US-ASCII') ) - length(replace(decode(unhex(substring(data,3)), 'US-ASCII') , chr(0), ''))) AS num_zero_bytes,
-     (length( replace(decode(unhex(substring(data,3)), 'US-ASCII'), chr(0), '')) ) AS num_nonzero_bytes,
-     16 * (length( replace( decode(unhex(substring(data,3)), 'US-ASCII') , chr(0), ''))) --16 * nonzero bytes
-     + 4 * ( length( decode(unhex(substring(data,3)), 'US-ASCII') ) - length(replace( decode(unhex(substring(data,3)), 'US-ASCII') , chr(0), '')) ) --4 * zero bytes
+     (length( decode(unhex(SUBSTRING(data,3)), 'US-ASCII') ) - length(replace(decode(unhex(SUBSTRING(data,3)), 'US-ASCII') , chr(0), ''))) AS num_zero_bytes,
+     (length( replace(decode(unhex(SUBSTRING(data,3)), 'US-ASCII'), chr(0), '')) ) AS num_nonzero_bytes,
+     16 * (length( replace( decode(unhex(SUBSTRING(data,3)), 'US-ASCII') , chr(0), ''))) --16 * nonzero bytes
+     + 4 * ( length( decode(unhex(SUBSTRING(data,3)), 'US-ASCII') ) - length(replace( decode(unhex(SUBSTRING(data,3)), 'US-ASCII') , chr(0), '')) ) --4 * zero bytes
      AS calldata_gas,
      type AS transaction_type
 FROM {{ source('optimism', 'transactions') }} txns

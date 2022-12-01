@@ -30,7 +30,7 @@ WITH zeroex_tx AS (
         FROM {{ source('zeroex_v3_ethereum', 'Exchange_evt_Fill') }} v3
         WHERE (  -- nuo
                 v3.takerAddress = '0x63305728359c088a52b0b0eeec235db4d31a67fc'
-                OR -- contains a bridge ORDER
+                OR -- CONTAINS a bridge ORDER
                 (
                     v3.feeRecipientAddress = '0x1000000000000000000000000000000000000011'
                     AND SUBSTRING(v3.makerAssetData, 1, 10) = '0xdc1600f3'
@@ -197,12 +197,12 @@ ERC20BridgeTransfer AS (
             INDEX                                   AS evt_index,
             logs.contract_address,
             block_time                              AS block_time,
-            '0x' || substring(DATA, 283, 40)        AS maker,
-            '0x' || substring(DATA, 347, 40)        AS taker,
-            '0x' || substring(DATA, 27, 40)         AS taker_token,
-            '0x' || substring(DATA, 91, 40)         AS maker_token,
-            bytea2numeric(substring(DATA, 155, 40)) AS taker_token_amount_raw,
-            bytea2numeric(substring(DATA, 219, 40)) AS maker_token_amount_raw,
+            '0x' || SUBSTRING(DATA, 283, 40)        AS maker,
+            '0x' || SUBSTRING(DATA, 347, 40)        AS taker,
+            '0x' || SUBSTRING(DATA, 27, 40)         AS taker_token,
+            '0x' || SUBSTRING(DATA, 91, 40)         AS maker_token,
+            bytea2numeric(SUBSTRING(DATA, 155, 40)) AS taker_token_amount_raw,
+            bytea2numeric(SUBSTRING(DATA, 219, 40)) AS maker_token_amount_raw,
             'ERC20BridgeTransfer'                   AS type,
             zeroex_tx.affiliate_address             AS affiliate_address,
             TRUE                                    AS swap_flag,
@@ -225,12 +225,12 @@ BridgeFill AS (
             INDEX                                           AS evt_index,
             logs.contract_address,
             block_time                                      AS block_time,
-            '0x' || substring(DATA, 27, 40)                 AS maker,
+            '0x' || SUBSTRING(DATA, 27, 40)                 AS maker,
             '0xdef1c0ded9bec7f1a1670819833240f027b25eff'    AS taker,
-            '0x' || substring(DATA, 91, 40)                 AS taker_token,
-            '0x' || substring(DATA, 155, 40)                AS maker_token,
-            bytea2numeric('0x' || substring(DATA, 219, 40)) AS taker_token_amount_raw,
-            bytea2numeric('0x' || substring(DATA, 283, 40)) AS maker_token_amount_raw,
+            '0x' || SUBSTRING(DATA, 91, 40)                 AS taker_token,
+            '0x' || SUBSTRING(DATA, 155, 40)                AS maker_token,
+            bytea2numeric('0x' || SUBSTRING(DATA, 219, 40)) AS taker_token_amount_raw,
+            bytea2numeric('0x' || SUBSTRING(DATA, 283, 40)) AS maker_token_amount_raw,
             'BridgeFill'                                    AS type,
             zeroex_tx.affiliate_address                     AS affiliate_address,
             TRUE                                            AS swap_flag,
@@ -253,12 +253,12 @@ NewBridgeFill AS (
             INDEX                                           AS evt_index,
             logs.contract_address,
             block_time                                      AS block_time,
-            '0x' || substring(DATA, 27, 40)                 AS maker,
+            '0x' || SUBSTRING(DATA, 27, 40)                 AS maker,
             '0xdef1c0ded9bec7f1a1670819833240f027b25eff'    AS taker,
-            '0x' || substring(DATA, 91, 40)                 AS taker_token,
-            '0x' || substring(DATA, 155, 40)                AS maker_token,
-            bytea2numeric('0x' || substring(DATA, 219, 40)) AS taker_token_amount_raw,
-            bytea2numeric('0x' || substring(DATA, 283, 40)) AS maker_token_amount_raw,
+            '0x' || SUBSTRING(DATA, 91, 40)                 AS taker_token,
+            '0x' || SUBSTRING(DATA, 155, 40)                AS maker_token,
+            bytea2numeric('0x' || SUBSTRING(DATA, 219, 40)) AS taker_token_amount_raw,
+            bytea2numeric('0x' || SUBSTRING(DATA, 283, 40)) AS maker_token_amount_raw,
             'NewBridgeFill'                                 AS type,
             zeroex_tx.affiliate_address                     AS affiliate_address,
             TRUE                                            AS swap_flag,

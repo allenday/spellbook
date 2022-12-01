@@ -11,8 +11,8 @@
 SELECT
   'solana' AS blockchain,
   'magiceden' AS project,
-  CASE WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K')) THEN 'v2'
-  WHEN (array_contains(account_keys, 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb')) THEN 'launchpad_v3'
+  CASE WHEN (array_CONTAINS(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K')) THEN 'v2'
+  WHEN (array_CONTAINS(account_keys, 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb')) THEN 'launchpad_v3'
   END AS version,
   signatures[0] AS tx_hash,
   block_date,
@@ -24,42 +24,42 @@ SELECT
   p.symbol AS currency_symbol,
   p.contract_address AS currency_contract,
   'metaplex' AS token_standard,
-  CASE WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K')) THEN 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'
-       WHEN (array_contains(account_keys, 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb')) THEN 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb'
+  CASE WHEN (array_CONTAINS(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K')) THEN 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'
+       WHEN (array_CONTAINS(account_keys, 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb')) THEN 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb'
        END AS project_contract_address,
-  CASE WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
-       AND array_contains(log_messages, 'Program log: Instruction: ExecuteSale')
-       AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN 'Trade'
-  WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
-       AND array_contains(log_messages, 'Program log: Instruction: Sell') THEN 'List'
-  WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
-       AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN 'Bid'
-  WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
-       AND array_contains(log_messages, 'Program log: Instruction: CancelBuy') THEN 'Cancel Bid'
-  WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
-       AND array_contains(log_messages, 'Program log: Instruction: CancelSell') THEN 'Cancel Listing'
-  WHEN (array_contains(account_keys, 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb'))
-       AND array_contains(log_messages, 'Program log: Instruction: SetAuthority') THEN 'Mint'
+  CASE WHEN (array_CONTAINS(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
+       AND array_CONTAINS(log_messages, 'Program log: Instruction: ExecuteSale')
+       AND array_CONTAINS(log_messages, 'Program log: Instruction: Buy') THEN 'Trade'
+  WHEN (array_CONTAINS(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
+       AND array_CONTAINS(log_messages, 'Program log: Instruction: Sell') THEN 'List'
+  WHEN (array_CONTAINS(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
+       AND array_CONTAINS(log_messages, 'Program log: Instruction: Buy') THEN 'Bid'
+  WHEN (array_CONTAINS(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
+       AND array_CONTAINS(log_messages, 'Program log: Instruction: CancelBuy') THEN 'Cancel Bid'
+  WHEN (array_CONTAINS(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
+       AND array_CONTAINS(log_messages, 'Program log: Instruction: CancelSell') THEN 'Cancel Listing'
+  WHEN (array_CONTAINS(account_keys, 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb'))
+       AND array_CONTAINS(log_messages, 'Program log: Instruction: SetAuthority') THEN 'Mint'
   ELSE 'Other' END AS evt_type,
-  CASE WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
-         AND array_contains(log_messages, 'Program log: Instruction: ExecuteSale')
-         AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN instructions[1].account_arguments[2]::STRING
-       WHEN (array_contains(account_keys, 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb'))
-         AND array_contains(log_messages, 'Program log: Instruction: SetAuthority') THEN COALESCE(instructions[6].account_arguments[9], instructions[5].account_arguments[9],
+  CASE WHEN (array_CONTAINS(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
+         AND array_CONTAINS(log_messages, 'Program log: Instruction: ExecuteSale')
+         AND array_CONTAINS(log_messages, 'Program log: Instruction: Buy') THEN instructions[1].account_arguments[2]::STRING
+       WHEN (array_CONTAINS(account_keys, 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb'))
+         AND array_CONTAINS(log_messages, 'Program log: Instruction: SetAuthority') THEN COALESCE(instructions[6].account_arguments[9], instructions[5].account_arguments[9],
          instructions[4].account_arguments[9], instructions[2].account_arguments[7], instructions[1].account_arguments[10], instructions[0].account_arguments[10])::STRING
        END AS token_id,
   NULL::STRING AS collection,
-  CASE WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
-         AND array_contains(log_messages, 'Program log: Instruction: ExecuteSale')
-         AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN 'Single Item Trade' ELSE NULL::STRING
+  CASE WHEN (array_CONTAINS(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
+         AND array_CONTAINS(log_messages, 'Program log: Instruction: ExecuteSale')
+         AND array_CONTAINS(log_messages, 'Program log: Instruction: Buy') THEN 'Single Item Trade' ELSE NULL::STRING
          END AS trade_type,
   '1' AS number_of_items,
   NULL::STRING AS trade_category,
   signer AS buyer,
-  CASE WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
-         AND array_contains(log_messages, 'Program log: Instruction: ExecuteSale')
-         AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN instructions[2].account_arguments[1]::STRING
-       WHEN (array_contains(account_keys, 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb')) THEN '' END AS seller,
+  CASE WHEN (array_CONTAINS(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
+         AND array_CONTAINS(log_messages, 'Program log: Instruction: ExecuteSale')
+         AND array_CONTAINS(log_messages, 'Program log: Instruction: Buy') THEN instructions[2].account_arguments[1]::STRING
+       WHEN (array_CONTAINS(account_keys, 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb')) THEN '' END AS seller,
   NULL::STRING AS nft_contract_address,
   NULL::STRING AS aggregator_name,
   NULL::STRING AS aggregator_address,
@@ -84,9 +84,9 @@ SELECT
   +abs(post_balances[14] / 1e9 - pre_balances[14] / 1e9)
   +abs(post_balances[15] / 1e9 - pre_balances[15] / 1e9)) / ((abs(post_balances[0] / 1e9 - pre_balances[0] / 1e9)-0.00204928)) * 100),2) AS royalty_fee_percentage,
   NULL::double AS royalty_fee_receive_address,
-  CASE WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
-         AND array_contains(log_messages, 'Program log: Instruction: ExecuteSale')
-         AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN 'SOL'
+  CASE WHEN (array_CONTAINS(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
+         AND array_CONTAINS(log_messages, 'Program log: Instruction: ExecuteSale')
+         AND array_CONTAINS(log_messages, 'Program log: Instruction: Buy') THEN 'SOL'
          ELSE NULL::STRING END AS royalty_fee_currency_symbol,
   signatures[0] || '-' || id || '-' || instructions[0]::STRING AS unique_trade_id,
   instructions,
@@ -101,8 +101,8 @@ LEFT JOIN prices.usd p
   AND p.minute >= date_trunc("day", now() - interval '1 week')
   {% endif %}
 WHERE (
-     array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K') -- magic eden v2
-     OR array_contains(account_keys, 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb')
+     array_CONTAINS(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K') -- magic eden v2
+     OR array_CONTAINS(account_keys, 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb')
      )
      AND success = 'True'
      {% if NOT is_incremental() %}

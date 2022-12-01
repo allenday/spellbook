@@ -45,7 +45,7 @@ with p1_call AS (
           ,e.offerer AS sender
           ,e.recipient AS receiver
           ,e.zone
-          ,concat('0x',substr(get_json_object(offer2, "$.token"),3,40)) AS token_contract_address
+          ,concat('0x',SUBSTR(get_json_object(offer2, "$.token"),3,40)) AS token_contract_address
           ,get_json_object(offer2, "$.amount") AS original_amount
           ,get_json_object(offer2, "$.itemType") AS item_type
           ,get_json_object(offer2, "$.identifier") AS token_id
@@ -67,9 +67,9 @@ with p1_call AS (
           ,'consideration' AS sub_type
           ,consideration_idx AS sub_idx
           ,e.recipient AS sender
-          ,concat('0x',substr(get_json_object(consideration2, "$.recipient"),3,40)) AS receiver
+          ,concat('0x',SUBSTR(get_json_object(consideration2, "$.recipient"),3,40)) AS receiver
           ,e.zone
-          ,concat('0x',substr(get_json_object(consideration2, "$.token"),3,40)) AS token_contract_address
+          ,concat('0x',SUBSTR(get_json_object(consideration2, "$.token"),3,40)) AS token_contract_address
           ,get_json_object(consideration2, "$.amount") AS original_amount
           ,get_json_object(consideration2, "$.itemType") AS item_type
           ,get_json_object(consideration2, "$.identifier") AS token_id
@@ -178,9 +178,9 @@ with p1_call AS (
           ,nft_item_count AS number_of_items
           ,a.purchase_method AS trade_category
           ,'Trade' AS evt_type
-          ,concat('0x',substr(seller,3,40)) AS seller
-          , CASE WHEN concat('0x',substr(buyer,3,40))=agg.contract_address THEN COALESCE(erct2.to, erct3.to)
-            ELSE concat('0x',substr(buyer,3,40)) END AS buyer
+          ,concat('0x',SUBSTR(seller,3,40)) AS seller
+          , CASE WHEN concat('0x',SUBSTR(buyer,3,40))=agg.contract_address THEN COALESCE(erct2.to, erct3.to)
+            ELSE concat('0x',SUBSTR(buyer,3,40)) END AS buyer
           ,a.original_amount / power(10,t1.decimals) AS amount_original
           ,a.original_amount AS amount_raw
           ,case WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000' THEN 'ETH'
@@ -210,7 +210,7 @@ with p1_call AS (
           '0x0000000000000000000000000000000000000000' THEN 'ETH'
                 WHEN royalty_amount > 0 THEN t1.symbol
           END AS royalty_fee_currency_symbol
-          ,a.tx_hash || '-' || a.nft_token_id || '-' || a.original_amount::STRING || '-' ||  concat('0x',substr(seller,3,40)) || '-' ||
+          ,a.tx_hash || '-' || a.nft_token_id || '-' || a.original_amount::STRING || '-' ||  concat('0x',SUBSTR(seller,3,40)) || '-' ||
           order_type_id::STRING || '-' || cast(ROW_NUMBER () OVER (PARTITION BY a.tx_hash ORDER BY sub_idx) AS
           STRING) AS unique_trade_id,
           a.zone
@@ -233,7 +233,7 @@ with p1_call AS (
             AND nft_contract_address=erct2.contract_address
             AND erct2.evt_tx_hash=a.tx_hash
             AND erct2.tokenId=a.nft_token_id
-            AND erct2.from=concat('0x',substr(buyer,3,40))
+            AND erct2.from=concat('0x',SUBSTR(buyer,3,40))
             {% if NOT is_incremental() %}
             AND erct2.evt_block_number > 14801608
             {% endif %}
@@ -244,7 +244,7 @@ with p1_call AS (
             AND nft_contract_address=erct3.contract_address
             AND erct3.evt_tx_hash=a.tx_hash
             AND erct3.id=a.nft_token_id
-            AND erct3.from=concat('0x',substr(buyer,3,40))
+            AND erct3.from=concat('0x',SUBSTR(buyer,3,40))
             {% if NOT is_incremental() %}
             AND erct3.evt_block_number > 14801608
             {% endif %}
@@ -347,7 +347,7 @@ with p1_call AS (
       FROM p2_call c
             inner join {{ source('seaport_ethereum', 'Seaport_evt_OrderFulfilled') }} e
             ON e.evt_tx_hash = c.tx_hash
-            AND e.offerer = concat('0x',substr(c.offerer,3,40))
+            AND e.offerer = concat('0x',SUBSTR(c.offerer,3,40))
             AND get_json_object(e.offer[0], "$.token") = c.offer_token
             AND get_json_object(e.offer[0], "$.identifier") = c.offer_identifier
             AND get_json_object(e.offer[0], "$.itemType") = c.offer_item_type
@@ -407,20 +407,20 @@ with p1_call AS (
           ,evt_token_amount AS number_of_items
           ,a.purchase_method AS trade_category
           ,'Trade' AS evt_type
-          ,concat('0x',substr(seller,3,40)) AS seller
-          , CASE WHEN concat('0x',substr(buyer,3,40))=agg.contract_address THEN COALESCE(erct2.to, erct3.to)
-            ELSE concat('0x',substr(buyer,3,40)) END AS buyer
+          ,concat('0x',SUBSTR(seller,3,40)) AS seller
+          , CASE WHEN concat('0x',SUBSTR(buyer,3,40))=agg.contract_address THEN COALESCE(erct2.to, erct3.to)
+            ELSE concat('0x',SUBSTR(buyer,3,40)) END AS buyer
           ,a.attempt_amount / power(10,t1.decimals) AS amount_original
           ,a.attempt_amount AS amount_raw
-          ,case WHEN concat('0x',substr(a.price_token,3,40)) =
+          ,case WHEN concat('0x',SUBSTR(a.price_token,3,40)) =
           '0x0000000000000000000000000000000000000000' THEN 'ETH'
                 ELSE t1.symbol
            END AS currency_symbol
-          ,case WHEN concat('0x',substr(a.price_token,3,40)) =
+          ,case WHEN concat('0x',SUBSTR(a.price_token,3,40)) =
           '0x0000000000000000000000000000000000000000' THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-                ELSE concat('0x',substr(a.price_token,3,40))
+                ELSE concat('0x',SUBSTR(a.price_token,3,40))
            END AS currency_contract
-          ,concat('0x',substr(a.nft_address,3,40)) AS nft_contract_address
+          ,concat('0x',SUBSTR(a.nft_address,3,40)) AS nft_contract_address
           ,a.exchange_contract_address AS project_contract_address
           ,coalesce(agg_m.aggregator_name, agg.name) AS aggregator_name
           ,agg.contract_address AS aggregator_address
@@ -435,13 +435,13 @@ with p1_call AS (
           ,a.evt_royalty_amount / power(10,t1.decimals) AS royalty_fee_amount
           ,a.evt_royalty_amount / power(10,t1.decimals) * p1.price AS royalty_fee_amount_usd
           , (a.evt_royalty_amount / a.attempt_amount * 100)::STRING  AS royalty_fee_percentage
-          ,case WHEN evt_royalty_amount > 0 THEN concat('0x',substr(evt_royalty_recipient,3,40)) END AS
+          ,case WHEN evt_royalty_amount > 0 THEN concat('0x',SUBSTR(evt_royalty_recipient,3,40)) END AS
           royalty_fee_receive_address
-          ,case WHEN evt_royalty_amount > 0 AND concat('0x',substr(a.evt_royalty_token,3,40)) =
+          ,case WHEN evt_royalty_amount > 0 AND concat('0x',SUBSTR(a.evt_royalty_token,3,40)) =
           '0x0000000000000000000000000000000000000000' THEN 'ETH'
                 WHEN evt_royalty_amount > 0 THEN t1.symbol
           END AS royalty_fee_currency_symbol
-          ,a.tx_hash || '-' || a.nft_token_id || '-' || a.attempt_amount::STRING || '-' ||  concat('0x',substr(seller,3,40)) || '-' ||
+          ,a.tx_hash || '-' || a.nft_token_id || '-' || a.attempt_amount::STRING || '-' ||  concat('0x',SUBSTR(seller,3,40)) || '-' ||
           cast(ROW_NUMBER () OVER (PARTITION BY a.tx_hash ORDER BY sub_idx) AS
           STRING) AS unique_trade_id,
           a.zone
@@ -455,10 +455,10 @@ with p1_call AS (
             AND tx.block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
-            AND concat('0x',substr(a.nft_address,3,40))=erct2.contract_address
+            AND concat('0x',SUBSTR(a.nft_address,3,40))=erct2.contract_address
             AND erct2.evt_tx_hash=a.tx_hash
             AND erct2.tokenId=a.nft_token_id
-            AND erct2.from=concat('0x',substr(buyer,3,40))
+            AND erct2.from=concat('0x',SUBSTR(buyer,3,40))
             {% if NOT is_incremental() %}
             AND erct2.evt_block_number > 14801608
             {% endif %}
@@ -466,10 +466,10 @@ with p1_call AS (
             AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         LEFT JOIN {{ source('erc1155_ethereum', 'evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
-            AND concat('0x',substr(a.nft_address,3,40))=erct3.contract_address
+            AND concat('0x',SUBSTR(a.nft_address,3,40))=erct3.contract_address
             AND erct3.evt_tx_hash=a.tx_hash
             AND erct3.id=a.nft_token_id
-            AND erct3.from=concat('0x',substr(buyer,3,40))
+            AND erct3.from=concat('0x',SUBSTR(buyer,3,40))
             {% if NOT is_incremental() %}
             AND erct3.evt_block_number > 14801608
             {% endif %}
@@ -481,18 +481,18 @@ with p1_call AS (
         LEFT JOIN {{ ref('nft_aggregators') }} agg
             ON agg.contract_address = tx.to AND agg.blockchain = 'ethereum'
         LEFT JOIN {{ ref('tokens_nft') }} n
-            ON n.contract_address = concat('0x',substr(a.nft_address,3,40)) AND n.blockchain = 'ethereum'
+            ON n.contract_address = concat('0x',SUBSTR(a.nft_address,3,40)) AND n.blockchain = 'ethereum'
         LEFT JOIN {{ ref('tokens_erc20') }} t1
             ON t1.contract_address =
-                case WHEN concat('0x',substr(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
+                case WHEN concat('0x',SUBSTR(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-                ELSE concat('0x',substr(a.price_token,3,40))
+                ELSE concat('0x',SUBSTR(a.price_token,3,40))
                 END AND t1.blockchain = 'ethereum'
           LEFT JOIN {{ source('prices', 'usd') }} p1
             ON p1.contract_address =
-                case WHEN concat('0x',substr(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
+                case WHEN concat('0x',SUBSTR(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
                 THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-                ELSE concat('0x',substr(a.price_token,3,40))
+                ELSE concat('0x',SUBSTR(a.price_token,3,40))
                 END
             AND p1.minute = date_trunc('minute', a.block_time)
             AND p1.blockchain = 'ethereum'
@@ -533,7 +533,7 @@ with p1_call AS (
             ,e.offerer AS sender
             ,e.recipient AS receiver
             ,e.zone
-            ,concat('0x',substr(get_json_object(offer2, "$.token"),3,40)) AS token_contract_address
+            ,concat('0x',SUBSTR(get_json_object(offer2, "$.token"),3,40)) AS token_contract_address
             ,get_json_object(offer2, "$.amount") AS original_amount
             ,get_json_object(offer2, "$.itemType") AS item_type
             ,get_json_object(offer2, "$.identifier") AS token_id
@@ -555,9 +555,9 @@ with p1_call AS (
             ,'consideration' AS sub_type
             ,consideration_idx AS sub_idx
             ,e.recipient AS sender
-            ,concat('0x',substr(get_json_object(consideration2, "$.recipient"),3,40)) AS receiver
+            ,concat('0x',SUBSTR(get_json_object(consideration2, "$.recipient"),3,40)) AS receiver
             ,e.zone
-            ,concat('0x',substr(get_json_object(consideration2, "$.token"),3,40)) AS token_contract_address
+            ,concat('0x',SUBSTR(get_json_object(consideration2, "$.token"),3,40)) AS token_contract_address
             ,get_json_object(consideration2, "$.amount") AS original_amount
             ,get_json_object(consideration2, "$.itemType") AS item_type
             ,get_json_object(consideration2, "$.identifier") AS token_id
@@ -665,9 +665,9 @@ with p1_call AS (
           ,nft_transfer_count AS number_of_items
           ,a.purchase_method AS trade_category
           ,'Trade' AS evt_type
-          ,concat('0x',substr(seller,3,40)) AS seller
-          , CASE WHEN concat('0x',substr(buyer,3,40))=agg.contract_address THEN COALESCE(erct2.to, erct3.to)
-            ELSE concat('0x',substr(buyer,3,40)) END AS buyer
+          ,concat('0x',SUBSTR(seller,3,40)) AS seller
+          , CASE WHEN concat('0x',SUBSTR(buyer,3,40))=agg.contract_address THEN COALESCE(erct2.to, erct3.to)
+            ELSE concat('0x',SUBSTR(buyer,3,40)) END AS buyer
           ,a.attempt_amount / power(10,t1.decimals) AS amount_original
           ,a.attempt_amount AS amount_raw
           ,case WHEN a.original_currency_contract = '0x0000000000000000000000000000000000000000' THEN 'ETH'
@@ -698,7 +698,7 @@ with p1_call AS (
           '0x0000000000000000000000000000000000000000' THEN 'ETH'
           WHEN royalty_amount > 0 THEN t1.symbol
           END AS royalty_fee_currency_symbol
-          ,a.tx_hash || '-' || a.attempt_amount::STRING || '-' || a.nft_token_id || '-' ||  concat('0x',substr(seller,3,40)) || '-' ||
+          ,a.tx_hash || '-' || a.attempt_amount::STRING || '-' || a.nft_token_id || '-' ||  concat('0x',SUBSTR(seller,3,40)) || '-' ||
           order_type_id::STRING || '-' || cast(ROW_NUMBER () OVER (PARTITION BY a.tx_hash ORDER BY sub_idx) AS
           STRING) AS unique_trade_id,
           a.zone
@@ -721,7 +721,7 @@ with p1_call AS (
             AND nft_contract_address=erct2.contract_address
             AND erct2.evt_tx_hash=a.tx_hash
             AND erct2.tokenId=a.nft_token_id
-            AND erct2.from=concat('0x',substr(buyer,3,40))
+            AND erct2.from=concat('0x',SUBSTR(buyer,3,40))
             {% if NOT is_incremental() %}
             AND erct2.evt_block_number > 14801608
             {% endif %}
@@ -732,7 +732,7 @@ with p1_call AS (
             AND nft_contract_address=erct3.contract_address
             AND erct3.evt_tx_hash=a.tx_hash
             AND erct3.id=a.nft_token_id
-            AND erct3.from=concat('0x',substr(buyer,3,40))
+            AND erct3.from=concat('0x',SUBSTR(buyer,3,40))
             {% if NOT is_incremental() %}
             AND erct3.evt_block_number > 14801608
             {% endif %}
@@ -896,20 +896,20 @@ with p1_call AS (
           ,nft_token_amount AS number_of_items
           ,a.purchase_method AS trade_category
           ,'Trade' AS evt_type
-          ,concat('0x',substr(seller,3,40)) AS seller
-          , CASE WHEN concat('0x',substr(buyer,3,40))=agg.contract_address THEN COALESCE(erct2.to, erct3.to)
-            ELSE concat('0x',substr(buyer,3,40)) END AS buyer
+          ,concat('0x',SUBSTR(seller,3,40)) AS seller
+          , CASE WHEN concat('0x',SUBSTR(buyer,3,40))=agg.contract_address THEN COALESCE(erct2.to, erct3.to)
+            ELSE concat('0x',SUBSTR(buyer,3,40)) END AS buyer
           ,a.attempt_amount / power(10,t1.decimals) AS amount_original
           ,a.attempt_amount AS amount_raw
-          ,case WHEN concat('0x',substr(a.price_token,3,40)) =
+          ,case WHEN concat('0x',SUBSTR(a.price_token,3,40)) =
           '0x0000000000000000000000000000000000000000' THEN 'ETH'
                 ELSE t1.symbol
            END AS currency_symbol
-          ,case WHEN concat('0x',substr(a.price_token,3,40)) =
+          ,case WHEN concat('0x',SUBSTR(a.price_token,3,40)) =
           '0x0000000000000000000000000000000000000000' THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-                ELSE concat('0x',substr(a.price_token,3,40))
+                ELSE concat('0x',SUBSTR(a.price_token,3,40))
            END AS currency_contract
-          ,concat('0x',substr(a.nft_address,3,40)) AS nft_contract_address
+          ,concat('0x',SUBSTR(a.nft_address,3,40)) AS nft_contract_address
           ,a.exchange_contract_address AS project_contract_address
           ,coalesce(agg_m.aggregator_name, agg.name) AS aggregator_name
           ,agg.contract_address AS aggregator_address
@@ -924,13 +924,13 @@ with p1_call AS (
           ,a.evt_royalty_amount / power(10,t1.decimals) AS royalty_fee_amount
           ,a.evt_royalty_amount / power(10,t1.decimals) * p1.price AS royalty_fee_amount_usd
           , (a.evt_royalty_amount / a.attempt_amount * 100)::STRING  AS royalty_fee_percentage
-          ,case WHEN evt_royalty_amount > 0 THEN concat('0x',substr(evt_royalty_recipient,3,40)) END AS
+          ,case WHEN evt_royalty_amount > 0 THEN concat('0x',SUBSTR(evt_royalty_recipient,3,40)) END AS
           royalty_fee_receive_address
-          ,case WHEN evt_royalty_amount > 0 AND concat('0x',substr(a.evt_royalty_token,3,40)) =
+          ,case WHEN evt_royalty_amount > 0 AND concat('0x',SUBSTR(a.evt_royalty_token,3,40)) =
           '0x0000000000000000000000000000000000000000' THEN 'ETH'
                 WHEN evt_royalty_amount > 0 THEN t1.symbol
           END AS royalty_fee_currency_symbol
-          ,a.tx_hash || '-' || a.nft_token_id || '-' || a.attempt_amount::STRING || '-' || concat('0x',substr(seller,3,40)) || '-' || cast(ROW_NUMBER () OVER (PARTITION BY a.tx_hash ORDER BY sub_idx) AS
+          ,a.tx_hash || '-' || a.nft_token_id || '-' || a.attempt_amount::STRING || '-' || concat('0x',SUBSTR(seller,3,40)) || '-' || cast(ROW_NUMBER () OVER (PARTITION BY a.tx_hash ORDER BY sub_idx) AS
           STRING) AS unique_trade_id,
           a.zone
     FROM p4_transfer_level a
@@ -943,10 +943,10 @@ with p1_call AS (
         AND tx.block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
     LEFT JOIN {{ source('erc721_ethereum', 'evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
-        AND concat('0x',substr(a.nft_address,3,40))=erct2.contract_address
+        AND concat('0x',SUBSTR(a.nft_address,3,40))=erct2.contract_address
         AND erct2.evt_tx_hash=a.tx_hash
         AND erct2.tokenId=a.nft_token_id
-        AND erct2.from=concat('0x',substr(buyer,3,40))
+        AND erct2.from=concat('0x',SUBSTR(buyer,3,40))
         {% if NOT is_incremental() %}
         AND erct2.evt_block_number > 14801608
         {% endif %}
@@ -954,10 +954,10 @@ with p1_call AS (
         AND erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
     LEFT JOIN {{ source('erc1155_ethereum', 'evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
-        AND concat('0x',substr(a.nft_address,3,40))=erct3.contract_address
+        AND concat('0x',SUBSTR(a.nft_address,3,40))=erct3.contract_address
         AND erct3.evt_tx_hash=a.tx_hash
         AND erct3.id=a.nft_token_id
-        AND erct3.from=concat('0x',substr(buyer,3,40))
+        AND erct3.from=concat('0x',SUBSTR(buyer,3,40))
         {% if NOT is_incremental() %}
         AND erct3.evt_block_number > 14801608
         {% endif %}
@@ -969,19 +969,19 @@ with p1_call AS (
     LEFT JOIN {{ ref('nft_aggregators') }} agg
         ON agg.contract_address = tx.to AND agg.blockchain = 'ethereum'
     LEFT JOIN {{ ref('tokens_nft') }} n
-        ON n.contract_address = concat('0x',substr(a.nft_address,3,40)) AND n.blockchain = 'ethereum'
+        ON n.contract_address = concat('0x',SUBSTR(a.nft_address,3,40)) AND n.blockchain = 'ethereum'
     LEFT JOIN {{ ref('tokens_erc20') }} t1
         ON t1.contract_address =
-            case WHEN concat('0x',substr(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
+            case WHEN concat('0x',SUBSTR(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
             THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-            ELSE concat('0x',substr(a.price_token,3,40))
+            ELSE concat('0x',SUBSTR(a.price_token,3,40))
             END
         AND t1.blockchain = 'ethereum'
         LEFT JOIN {{ source('prices', 'usd') }} p1
         ON p1.contract_address =
-            case WHEN concat('0x',substr(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
+            case WHEN concat('0x',SUBSTR(a.price_token,3,40)) = '0x0000000000000000000000000000000000000000'
             THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-            ELSE concat('0x',substr(a.price_token,3,40))
+            ELSE concat('0x',SUBSTR(a.price_token,3,40))
             END
         AND p1.minute = date_trunc('minute', a.block_time)
         AND p1.blockchain = 'ethereum'

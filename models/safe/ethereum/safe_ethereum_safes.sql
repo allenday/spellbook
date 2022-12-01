@@ -30,13 +30,13 @@ FROM {{ source('ethereum', 'traces') }} et
 where et.success = true
     AND et.call_type = 'delegatecall' -- the delegate call to the master copy is the Safe address
     AND (
-            (substring(et.input, 0, 10) = '0x0ec78d9e' -- setup methods of v0.1.0
+            (SUBSTRING(et.input, 0, 10) = '0x0ec78d9e' -- setup methods of v0.1.0
                 AND et.to = '0x8942595a2dc5181df0465af0d7be08c8f23c93af') -- mastercopy v0.1.0
             or
-            (substring(et.input, 0, 10) = '0xa97ab18a' -- setup methods of v1.0.0
+            (SUBSTRING(et.input, 0, 10) = '0xa97ab18a' -- setup methods of v1.0.0
                 AND et.to = '0xb6029ea3b2c51d09a50b53ca8012feeb05bda35a') -- mastercopy v1.0.0
             or
-            (substring(et.input, 0, 10) = '0xb63e800d' -- setup methods of v1.1.0, v1.1.1, 1.2.0
+            (SUBSTRING(et.input, 0, 10) = '0xb63e800d' -- setup methods of v1.1.0, v1.1.1, 1.2.0
                 AND et.to in (
                     '0xae32496491b53841efb51829d6f886387708f99b',  -- mastercopy v1.1.0
                     '0x34cfac646f301356faa8b21e94227e3583fe3f5f',  -- mastercopy v1.1.1

@@ -13,19 +13,19 @@ WITH wyvern_call_data AS (
 SELECT
   call_tx_hash,
   call_block_time,
-  CASE WHEN contains('0x68f0bcaa', substring(calldataBuy,1,4)) THEN 'Bundle Trade'
+  CASE WHEN CONTAINS('0x68f0bcaa', SUBSTRING(calldataBuy,1,4)) THEN 'Bundle Trade'
         ELSE 'Single Item Trade'
   END AS trade_type,
-  CASE WHEN contains('0xfb16a595', substring(calldataBuy,1,4)) THEN 'erc721'
-        WHEN contains('0x23b872dd', substring(calldataBuy,1,4)) THEN 'erc721'
-        WHEN contains('0x96809f90', substring(calldataBuy,1,4)) THEN 'erc1155'
-        WHEN contains('0xf242432a', substring(calldataBuy,1,4)) THEN 'erc1155'
+  CASE WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy,1,4)) THEN 'erc721'
+        WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy,1,4)) THEN 'erc721'
+        WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy,1,4)) THEN 'erc1155'
+        WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy,1,4)) THEN 'erc1155'
   END AS token_standard,
   addrs [0] AS project_contract_address,
-  CASE WHEN contains('0xfb16a595', substring(calldataBuy,1,4)) THEN '0x'||substr(calldataBuy,163,40)
-        WHEN contains('0x96809f90', substring(calldataBuy,1,4)) THEN '0x'||substr(calldataBuy,163,40)
-        WHEN contains('0x23b872dd', substring(calldataBuy,1,4)) THEN addrs [4]
-        WHEN contains('0xf242432a', substring(calldataBuy,1,4)) THEN addrs [4]
+  CASE WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy,1,4)) THEN '0x'||SUBSTR(calldataBuy,163,40)
+        WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy,1,4)) THEN '0x'||SUBSTR(calldataBuy,163,40)
+        WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy,1,4)) THEN addrs [4]
+        WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy,1,4)) THEN addrs [4]
         END AS nft_contract_address,
   CASE -- Replace `ETH` with `WETH` for ERC20 lookup later
       WHEN addrs [6] = '0x0000000000000000000000000000000000000000' THEN '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
@@ -37,18 +37,18 @@ SELECT
   addrs [8] AS seller,
   -- Temporary fix for token ID until we implement a UDF equivalent for bytea2numeric that works for numbers higher than 64 bits
   -- We check if token ID in hex is longer than 16, because 2**64 can be represented in hex with 16 digits (log_16(2**64) = 16).
-  CASE WHEN contains('0xfb16a595', substring(calldataBuy,1,4)) AND length(ltrim('0', substr(calldataBuy,203,64))) > 16
+  CASE WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy,1,4)) AND length(ltrim('0', SUBSTR(calldataBuy,203,64))) > 16
   THEN 'Token ID is larger than 64 bits AND can NOT be displayed'
-  WHEN contains('0x96809f90', substring(calldataBuy,1,4)) AND length(ltrim('0', substr(calldataBuy,203,64))) > 16
+  WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy,1,4)) AND length(ltrim('0', SUBSTR(calldataBuy,203,64))) > 16
   THEN 'Token ID is larger than 64 bits AND can NOT be displayed'
-  WHEN contains('0x23b872dd', substring(calldataBuy,1,4)) AND length(ltrim('0', substr(calldataBuy,139,64))) > 16
+  WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy,1,4)) AND length(ltrim('0', SUBSTR(calldataBuy,139,64))) > 16
   THEN 'Token ID is larger than 64 bits AND can NOT be displayed'
-  WHEN contains('0xf242432a', substring(calldataBuy,1,4)) AND length(ltrim('0', substr(calldataBuy,139,64))) > 16
+  WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy,1,4)) AND length(ltrim('0', SUBSTR(calldataBuy,139,64))) > 16
   THEN 'Token ID is larger than 64 bits AND can NOT be displayed'
-  WHEN contains('0xfb16a595', substring(calldataBuy,1,4)) THEN conv(substr(calldataBuy,203,64),16,10)::STRING
-  WHEN contains('0x96809f90', substring(calldataBuy,1,4)) THEN conv(substr(calldataBuy,203,64),16,10)::STRING
-  WHEN contains('0x23b872dd', substring(calldataBuy,1,4)) THEN conv(substr(calldataBuy,139,64),16,10)::STRING
-  WHEN contains('0xf242432a', substring(calldataBuy,1,4)) THEN conv(substr(calldataBuy,139,64),16,10)::STRING
+  WHEN CONTAINS('0xfb16a595', SUBSTRING(calldataBuy,1,4)) THEN conv(SUBSTR(calldataBuy,203,64),16,10)::STRING
+  WHEN CONTAINS('0x96809f90', SUBSTRING(calldataBuy,1,4)) THEN conv(SUBSTR(calldataBuy,203,64),16,10)::STRING
+  WHEN CONTAINS('0x23b872dd', SUBSTRING(calldataBuy,1,4)) THEN conv(SUBSTR(calldataBuy,139,64),16,10)::STRING
+  WHEN CONTAINS('0xf242432a', SUBSTRING(calldataBuy,1,4)) THEN conv(SUBSTR(calldataBuy,139,64),16,10)::STRING
   END AS token_id,
   CASE WHEN size(call_trace_address) = 0 THEN array(3::bigint) -- for bundle join
   ELSE call_trace_address

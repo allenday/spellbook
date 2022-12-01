@@ -22,8 +22,8 @@ SELECT
   p.symbol AS currency_symbol,
   p.contract_address AS currency_contract,
   'metaplex' AS token_standard,
-  CASE WHEN (array_contains(account_keys, '3o9d13qUvEuuauhFrVom1vuCzgNsJifeaBYDPquaT73Y')) THEN '3o9d13qUvEuuauhFrVom1vuCzgNsJifeaBYDPquaT73Y'
-  WHEN (array_contains(account_keys, 'pAHAKoTJsAAe2ZcvTZUxoYzuygVAFAmbYmJYdWT886r')) THEN 'pAHAKoTJsAAe2ZcvTZUxoYzuygVAFAmbYmJYdWT886r'
+  CASE WHEN (array_CONTAINS(account_keys, '3o9d13qUvEuuauhFrVom1vuCzgNsJifeaBYDPquaT73Y')) THEN '3o9d13qUvEuuauhFrVom1vuCzgNsJifeaBYDPquaT73Y'
+  WHEN (array_CONTAINS(account_keys, 'pAHAKoTJsAAe2ZcvTZUxoYzuygVAFAmbYmJYdWT886r')) THEN 'pAHAKoTJsAAe2ZcvTZUxoYzuygVAFAmbYmJYdWT886r'
   END AS project_contract_address,
   'Trade' AS evt_type,
   signatures[0] || '-' || id AS unique_trade_id
@@ -35,8 +35,8 @@ LEFT JOIN {{ source('prices', 'usd') }} p
   {% if is_incremental() %}
   AND p.minute >= date_trunc("day", now() - interval '1 week')
   {% endif %}
-WHERE (array_contains(account_keys, '3o9d13qUvEuuauhFrVom1vuCzgNsJifeaBYDPquaT73Y')
-       OR array_contains(account_keys, 'pAHAKoTJsAAe2ZcvTZUxoYzuygVAFAmbYmJYdWT886r'))
+WHERE (array_CONTAINS(account_keys, '3o9d13qUvEuuauhFrVom1vuCzgNsJifeaBYDPquaT73Y')
+       OR array_CONTAINS(account_keys, 'pAHAKoTJsAAe2ZcvTZUxoYzuygVAFAmbYmJYdWT886r'))
 {% if NOT is_incremental() %}
 AND block_date > '2022-04-06'
 AND block_slot > 128251864

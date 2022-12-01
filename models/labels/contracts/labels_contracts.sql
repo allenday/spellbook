@@ -7,7 +7,7 @@
 
 SELECT array('ethereum') AS blockchain,
        address,
-       concat(upper(substring(namespace, 1, 1)), substring(namespace, 2)) || ': ' || name AS name,
+       concat(upper(SUBSTRING(namespace, 1, 1)), SUBSTRING(namespace, 2)) || ': ' || name AS name,
        'contracts' AS category,
        'soispoke' AS contributor,
        'query' AS source,
@@ -17,7 +17,7 @@ FROM {{ source('ethereum', 'contracts') }}
 UNION
 SELECT array('gnosis') AS blockchain,
        address,
-       concat(upper(substring(namespace, 1, 1)), substring(namespace, 2)) || ': ' || name AS name,
+       concat(upper(SUBSTRING(namespace, 1, 1)), SUBSTRING(namespace, 2)) || ': ' || name AS name,
        'contracts' AS category,
        'soispoke' AS contributor,
        'query' AS source,
@@ -27,7 +27,7 @@ FROM {{ source('gnosis', 'contracts') }}
 UNION
 SELECT array('avalanche_c') AS blockchain,
        address,
-       concat(upper(substring(namespace, 1, 1)), substring(namespace, 2)) || ': ' || name AS name,
+       concat(upper(SUBSTRING(namespace, 1, 1)), SUBSTRING(namespace, 2)) || ': ' || name AS name,
        'contracts' AS category,
        'soispoke' AS contributor,
        'query' AS source,
@@ -37,7 +37,7 @@ FROM {{ source('avalanche_c', 'contracts') }}
 UNION
 SELECT array('arbitrum') AS blockchain,
        address,
-       concat(upper(substring(namespace, 1, 1)), substring(namespace, 2)) || ': ' || name AS name,
+       concat(upper(SUBSTRING(namespace, 1, 1)), SUBSTRING(namespace, 2)) || ': ' || name AS name,
        'contracts' AS category,
        'soispoke' AS contributor,
        'query' AS source,
@@ -47,7 +47,7 @@ FROM {{ source('arbitrum', 'contracts') }}
 UNION
 SELECT array('bnb') AS blockchain,
        address,
-       concat(upper(substring(namespace, 1, 1)), substring(namespace, 2)) || ': ' || name AS name,
+       concat(upper(SUBSTRING(namespace, 1, 1)), SUBSTRING(namespace, 2)) || ': ' || name AS name,
        'contracts' AS category,
        'soispoke' AS contributor,
        'query' AS source,
@@ -57,7 +57,7 @@ FROM {{ source('bnb', 'contracts') }}
 UNION
 SELECT array('optimism') AS blockchain,
        address,
-       concat(upper(substring(namespace, 1, 1)), substring(namespace, 2)) || ': ' || name AS name,
+       concat(upper(SUBSTRING(namespace, 1, 1)), SUBSTRING(namespace, 2)) || ': ' || name AS name,
        'contracts' AS category,
        'soispoke' AS contributor,
        'query' AS source,

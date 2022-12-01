@@ -17,11 +17,11 @@ WITH aggregator_routed_x2y2_txs AS (
     , inv.evt_block_number AS block_number
     , inv.taker AS buyer
     , prof.to AS seller
-    , ROUND(bytea2numeric_v2(substring(get_json_object(inv.item, '$.data'), 195,64)),0) AS token_id
+    , ROUND(bytea2numeric_v2(SUBSTRING(get_json_object(inv.item, '$.data'), 195,64)),0) AS token_id
     , get_json_object(inv.item, '$.price') AS amount_raw
     , prof.currency AS currency_contract
     , prof.contract_address AS project_contract_address
-    , '0x' || substring(get_json_object(inv.item, '$.data'), 155, 40) AS nft_contract_address
+    , '0x' || SUBSTRING(get_json_object(inv.item, '$.data'), 155, 40) AS nft_contract_address
     , tokens.name AS collection
     , agg.name AS aggregator_name
     , agg.contract_address AS aggregator_address
@@ -35,7 +35,7 @@ WITH aggregator_routed_x2y2_txs AS (
     FROM {{ source('x2y2_ethereum', 'X2Y2_r1_evt_EvProfit') }} prof
     INNER JOIN {{ source('x2y2_ethereum', 'X2Y2_r1_evt_EvInventory') }} inv  ON inv.evt_block_time=prof.evt_block_time
         AND inv.itemHash = prof.itemHash
-    LEFT JOIN {{ ref('tokens_nft') }} tokens ON ('0x' || substring(get_json_object(inv.item, '$.data'), 155, 40)) = tokens.contract_address AND tokens.blockchain = 'ethereum'
+    LEFT JOIN {{ ref('tokens_nft') }} tokens ON ('0x' || SUBSTRING(get_json_object(inv.item, '$.data'), 155, 40)) = tokens.contract_address AND tokens.blockchain = 'ethereum'
     LEFT JOIN {{ ref('nft_ethereum_aggregators') }} agg ON agg.contract_address=taker
     WHERE taker IN (SELECT contract_address FROM {{ ref('nft_ethereum_aggregators') }})
     {% if is_incremental() %}
@@ -49,11 +49,11 @@ WITH aggregator_routed_x2y2_txs AS (
     , inv.evt_block_number AS block_number
     , inv.taker AS buyer
     , prof.to AS seller
-    , ROUND(bytea2numeric_v2(substring(get_json_object(inv.item, '$.data'), 195,64)),0) AS token_id
+    , ROUND(bytea2numeric_v2(SUBSTRING(get_json_object(inv.item, '$.data'), 195,64)),0) AS token_id
     , get_json_object(inv.item, '$.price') AS amount_raw
     , prof.currency AS currency_contract
     , prof.contract_address AS project_contract_address
-    , '0x' || substring(get_json_object(inv.item, '$.data'), 155, 40) AS nft_contract_address
+    , '0x' || SUBSTRING(get_json_object(inv.item, '$.data'), 155, 40) AS nft_contract_address
     , tokens.name AS collection
     , agg_m.aggregator_name AS aggregator_name
     , NULL AS aggregator_address
@@ -67,7 +67,7 @@ WITH aggregator_routed_x2y2_txs AS (
     FROM  {{ source('x2y2_ethereum', 'X2Y2_r1_evt_EvProfit') }} prof
     INNER JOIN {{ source('x2y2_ethereum', 'X2Y2_r1_evt_EvInventory') }} inv  ON inv.evt_block_time=prof.evt_block_time
         AND inv.itemHash=prof.itemHash
-    LEFT JOIN {{ ref('tokens_nft') }} tokens ON ('0x' || substring(get_json_object(inv.item, '$.data'), 155, 40)) = tokens.contract_address AND tokens.blockchain = 'ethereum'
+    LEFT JOIN {{ ref('tokens_nft') }} tokens ON ('0x' || SUBSTRING(get_json_object(inv.item, '$.data'), 155, 40)) = tokens.contract_address AND tokens.blockchain = 'ethereum'
     LEFT JOIN {{ source('ethereum', 'transactions') }} et ON inv.evt_block_time = et.block_time
         AND inv.evt_tx_hash = et.hash
         {% if is_incremental() %}

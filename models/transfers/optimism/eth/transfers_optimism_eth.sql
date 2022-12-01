@@ -23,7 +23,7 @@ with eth_transfers AS (
         ,r.trace_address
         ,r.block_time AS tx_block_time
         ,r.block_number AS tx_block_number
-        ,substring(t.data, 1, 10) AS tx_method_id
+        ,SUBSTRING(t.data, 1, 10) AS tx_method_id
         ,r.tx_hash || '-' || r.trace_address::STRING AS unique_transfer_id
     FROM {{ source('optimism', 'traces') }} AS r
     join {{ source('optimism', 'transactions') }} AS t
@@ -52,7 +52,7 @@ with eth_transfers AS (
         ,array(r.evt_index) AS trace_address
         ,r.evt_block_time AS tx_block_time
         ,r.evt_block_number AS tx_block_number
-        ,substring(t.data, 1, 10) AS tx_method_id
+        ,SUBSTRING(t.data, 1, 10) AS tx_method_id
         ,r.evt_tx_hash || '-' || array(r.evt_index)::STRING AS unique_transfer_id
     FROM {{ source('erc20_optimism', 'evt_transfer') }} AS r
     join {{ source('optimism', 'transactions') }} AS t

@@ -34,7 +34,7 @@ FROM
 	    , cfa.feed_name
 	    , AVG(
             conv( --handle for multiple updates in the same block
-            substring(l.topic2,3,64)
+            SUBSTRING(l.topic2,3,64)
             ,16,10)
  / POWER(10, cfa.decimals)
             ) AS oracle_price

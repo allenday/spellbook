@@ -204,7 +204,7 @@ WITH
                 CASE WHEN (tr.to = sb.protocolfee_recipient) THEN value
                 ELSE 0 END
                  ) AS protocol_fee_amount -- what the buyer paid
-            , ARRAY_AGG(distinct CASE WHEN substring(input,1,10)='0x42842e0e' THEN bytea2numeric_v2(substring(input,139,64))::int ELSE NULL::int END)
+            , ARRAY_AGG(distinct CASE WHEN SUBSTRING(input,1,10)='0x42842e0e' THEN bytea2numeric_v2(SUBSTRING(input,139,64))::int ELSE NULL::int END)
                 AS token_id
             , sb.call_tx_hash
             , sb.trade_recipient

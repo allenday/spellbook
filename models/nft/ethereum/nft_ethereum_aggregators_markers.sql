@@ -9,7 +9,7 @@
 }}
 
  WITH reservoir AS (
-    SELECT distinct substring(unhex(regexp_replace(data, '^.*00', '')), 2, length(unhex(regexp_replace(data, '^.*00', '')))-2) AS router_website
+    SELECT distinct SUBSTRING(unhex(regexp_replace(data, '^.*00', '')), 2, length(unhex(regexp_replace(data, '^.*00', '')))-2) AS router_website
     , regexp_replace(data, '^.*00', '') AS hash_marker
     FROM {{ source('ethereum', 'transactions') }}
     WHERE to IN (
