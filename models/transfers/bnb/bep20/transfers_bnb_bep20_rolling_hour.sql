@@ -10,12 +10,12 @@ SELECT
     token_address,
     symbol,
     current_timestamp() AS last_updated,
-    row_number() over (partition BY token_address, wallet_address order BY hour DESC) AS recency_index,
-    sum(amount_raw) over (
-        partition BY token_address, wallet_address order BY hour
+    ROW_NUMBER() OVER (PARTITION BY token_address, wallet_address ORDER BY hour DESC) AS recency_index,
+    sum(amount_raw) OVER (
+        PARTITION BY token_address, wallet_address ORDER BY hour
     ) AS amount_raw,
-    sum(amount) over (
-        partition BY token_address, wallet_address order BY hour
+    sum(amount) OVER (
+        PARTITION BY token_address, wallet_address ORDER BY hour
     ) AS amount
 FROM {{ ref('transfers_bnb_bep20_agg_hour') }}
 ;

@@ -19,7 +19,7 @@ The Fee GLP contract can be found here: https: / /arbiscan.io/address/0x4e971a87
 * / 
 fglp_balances AS -- This CTE returns the accuals of WETH tokens in the Fee GLP contract in a designated minute
     (
-    SELECT -- This subquery aggregates the cumulative balance of WETH tokens in the Fee GLP contract over the minute series
+    SELECT -- This subquery aggregates the cumulative balance of WETH tokens in the Fee GLP contract OVER the minute series
         b.minute,
         b.weth_transfer_value,
         SUM(b.weth_transfer_value) OVER (ORDER BY b.minute ASC) AS weth_cum_balance

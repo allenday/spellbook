@@ -160,7 +160,7 @@ WITH
                 , asset_recip
                 , trade_recipient
                 , project_contract_address
-                , row_number() OVER (partition BY call_tx_hash, contract_address, call_trace_address order BY fee_update_time DESC, protocolfee_update_time DESC, asset_recip_update_time DESC) AS ordering
+                , ROW_NUMBER() OVER (PARTITION BY call_tx_hash, contract_address, call_trace_address ORDER BY fee_update_time DESC, protocolfee_update_time DESC, asset_recip_update_time DESC) AS ordering
             FROM (
                 SELECT
                     swaps.*

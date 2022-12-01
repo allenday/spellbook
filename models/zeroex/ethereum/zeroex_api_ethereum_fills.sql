@@ -30,7 +30,7 @@ WITH zeroex_tx AS (
         FROM {{ source('zeroex_v3_ethereum', 'Exchange_evt_Fill') }} v3
         WHERE (  -- nuo
                 v3.takerAddress = '0x63305728359c088a52b0b0eeec235db4d31a67fc'
-                OR -- contains a bridge order
+                OR -- contains a bridge ORDER
                 (
                     v3.feeRecipientAddress = '0x1000000000000000000000000000000000000011'
                     AND SUBSTRING(v3.makerAssetData, 1, 10) = '0xdc1600f3'

@@ -19,7 +19,7 @@ The GLP Manager contract can be found here: https: / /arbiscan.io/address/0x321F
 * / 
 glp_balances AS -- This CTE returns the accuals of WETH tokens in the Fee GLP contract in a designated minute
     (
-    SELECT -- This subquery aggregates the mints AND burns of GLP tokens over the minute series
+    SELECT -- This subquery aggregates the mints AND burns of GLP tokens OVER the minute series
         b.minute,
         b.glp_mint_burn_value,
         SUM(b.glp_mint_burn_value) OVER (ORDER BY b.minute ASC) AS glp_cum_balance

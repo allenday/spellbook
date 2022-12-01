@@ -10,8 +10,8 @@
             token_address,
             tokenId,
             current_timestamp() AS updated_at,
-            row_number() over (partition BY token_address, tokenId, wallet_address order BY day DESC) AS recency_index,
-            sum(amount) over (
-                partition BY token_address, wallet_address order BY day
+            ROW_NUMBER() OVER (PARTITION BY token_address, tokenId, wallet_address ORDER BY day DESC) AS recency_index,
+            sum(amount) OVER (
+                PARTITION BY token_address, wallet_address ORDER BY day
             ) AS amount
         FROM {{ ref('test_incremental_table') }}

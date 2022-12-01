@@ -343,7 +343,7 @@ with original_holders AS (
 , combined_table AS (
     SELECT base_data.day
             , base_data.wallet
-            , sum(coalesce(daily_transfer_sum, 0)) over (partition BY base_data.wallet order BY base_data.day) AS holding
+            , sum(coalesce(daily_transfer_sum, 0)) OVER (PARTITION BY base_data.wallet ORDER BY base_data.day) AS holding
     FROM base_data
     LEFT JOIN punk_transfer_summary ON base_data.day = punk_transfer_summary.day AND base_data.wallet = punk_transfer_summary.wallet
 )

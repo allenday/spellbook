@@ -6,7 +6,7 @@ with
       *,
       explode(ids) AS explode_id,
       evt_tx_hash || '-' || cast(
-        row_number() OVER (
+        ROW_NUMBER() OVER (
           PARTITION BY evt_tx_hash,
           ids
           ORDER BY
@@ -23,7 +23,7 @@ with
         values
       ) AS explode_value,
       evt_tx_hash || '-' || cast(
-        row_number() OVER (
+        ROW_NUMBER() OVER (
           PARTITION BY evt_tx_hash,
           ids
           ORDER BY

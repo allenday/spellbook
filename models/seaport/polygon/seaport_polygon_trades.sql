@@ -256,7 +256,7 @@ with source_polygon_transactions AS (
     ,'seaport' AS project
     ,'v1' AS version
 
-    -- order info
+    -- ORDER info
     ,block_date
     ,block_time
     ,seller

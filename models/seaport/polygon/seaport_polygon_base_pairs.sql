@@ -175,16 +175,16 @@ with iv_offer_consideration AS (
     FROM
     (
         SELECT a.*
-            ,case WHEN item_type in ('native', 'erc20') THEN sum(case WHEN item_type in ('native', 'erc20') THEN 1 END) over (partition BY tx_hash, evt_index, sub_type order BY sub_idx) END AS eth_erc_idx
+            ,case WHEN item_type in ('native', 'erc20') THEN sum(case WHEN item_type in ('native', 'erc20') THEN 1 END) OVER (PARTITION BY tx_hash, evt_index, sub_type ORDER BY sub_idx) END AS eth_erc_idx
             ,sum(case WHEN offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc721', 'erc1155') THEN 1
                         WHEN offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'offer' AND item_type in ('erc721', 'erc1155') THEN 1
-                END) over (partition BY tx_hash, evt_index) AS nft_cnt
+                END) OVER (PARTITION BY tx_hash, evt_index) AS nft_cnt
             ,sum(case WHEN offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc721') THEN 1
                         WHEN offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'offer' AND item_type in ('erc721') THEN 1
-                END) over (partition BY tx_hash, evt_index) AS erc721_cnt
+                END) OVER (PARTITION BY tx_hash, evt_index) AS erc721_cnt
             ,sum(case WHEN offer_first_item_type = 'erc20' AND sub_type = 'consideration' AND item_type in ('erc1155') THEN 1
                         WHEN offer_first_item_type in ('erc721', 'erc1155') AND sub_type = 'offer' AND item_type in ('erc1155') THEN 1
-                END) over (partition BY tx_hash, evt_index) AS erc1155_cnt
+                END) OVER (PARTITION BY tx_hash, evt_index) AS erc1155_cnt
         FROM iv_offer_consideration a
     ) a
 )

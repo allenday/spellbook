@@ -240,7 +240,7 @@ SELECT
   c.contract_address
   , initcap(
       replace(
-      -- priority order: Override name, Mapped vs Dune, Raw / Actual names
+      -- priority ORDER: Override name, Mapped vs Dune, Raw / Actual names
         coalesce(
           co.contract_project
           , dnm.mapped_name

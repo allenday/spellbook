@@ -71,7 +71,7 @@ with all_listings AS (
 )
 , all_punk_events AS (
     SELECT *
-          , row_number() over (partition BY punk_id order BY evt_block_number ASC, evt_index ASC ) AS punk_event_index
+          , ROW_NUMBER() OVER (PARTITION BY punk_id ORDER BY evt_block_number ASC, evt_index ASC ) AS punk_event_index
     FROM
     (
     SELECT * FROM all_listings
@@ -79,7 +79,7 @@ with all_listings AS (
     union all SELECT * FROM all_buys
     union all SELECT * FROM all_transfers
     ) a
-    order BY evt_block_number DESC, evt_index DESC
+    ORDER BY evt_block_number DESC, evt_index DESC
 )
 , aggregated_punk_on_off_data AS (
     SELECT date_trunc('day',a.evt_block_time) AS day
@@ -98,7 +98,7 @@ SELECT day
         , sum(case WHEN bool_fill_in = 'Active' THEN 1 ELSE 0 END) AS listed_count
 FROM
 (   SELECT c.*
-            , last_value(listed_bool,true) over (partition BY punk_id order BY day ASC ) AS bool_fill_in
+            , last_value(listed_bool,true) OVER (PARTITION BY punk_id ORDER BY day ASC ) AS bool_fill_in
     FROM
     (   SELECT a.day
                 , a.punk_id
@@ -109,4 +109,4 @@ FROM
     ) c
 ) d
 GROUP BY 1
-order BY day DESC 
+ORDER BY day DESC

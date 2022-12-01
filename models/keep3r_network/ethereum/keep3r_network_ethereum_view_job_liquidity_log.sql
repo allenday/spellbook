@@ -125,7 +125,7 @@ migration_out AS (
         CASE
             WHEN event = 'JobMigrationOut' THEN SUM(
                 - amount
-            ) over (
+            ) OVER (
                 PARTITION BY keep3r,
                 job,
                 token rows unbounded preceding
@@ -140,7 +140,7 @@ migration_in AS (
         CASE
             WHEN event = 'JobMigrationIn' THEN LAG(
                 - migration_out
-            ) over (
+            ) OVER (
                 PARTITION BY tx_hash,
                 keep3r,
                 token

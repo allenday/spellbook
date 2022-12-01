@@ -895,7 +895,7 @@ FROM
         COALESCE(x.dai_getMinPrice,0) AS dai_getMinPrice
     FROM
         (
-        SELECT -- This subquery collates all the data extracted FROM the vault contract functions, joins them to the minute series, AND uses last data to extrapolate over NULL values
+        SELECT -- This subquery collates all the data extracted FROM the vault contract functions, joins them to the minute series, AND uses last data to extrapolate OVER NULL values
             a.minute,
 
             last(b1.amount, true) OVER (ORDER BY a.minute ASC) AS frax_poolAmounts,

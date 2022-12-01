@@ -68,4 +68,4 @@ FROM
 aragon_daos ad
 LEFT JOIN
 get_aragon_wallets gw
-    ON ad.dao = gw.dao 
+    ON ad.dao = gw.dao

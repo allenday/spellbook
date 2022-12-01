@@ -66,4 +66,4 @@ with eth_transfers AS (
         AND t.block_time >= date_trunc('day', now() - interval '1 week')
         {% endif %}
 )
-SELECT * FROM eth_transfers order BY tx_block_time
+SELECT * FROM eth_transfers ORDER BY tx_block_time

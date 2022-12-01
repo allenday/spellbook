@@ -91,4 +91,4 @@ SELECT
     DISTINCT(mw.*)
 FROM
 mapped_wallets mw
-WHERE dao_wallet_address IS NOT NULL 
+WHERE dao_wallet_address IS NOT NULL

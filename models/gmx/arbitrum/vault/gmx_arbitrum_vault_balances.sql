@@ -21,7 +21,7 @@ GMX vault address is: https: / /arbiscan.io/address/0x489ee077994B6658eAfA855C30
 * / 
 vault_balances_frax AS -- This CTE returns the balance of FRAX tokens in the GMX Arbitrum Vault in a designated minute
     (
-    SELECT -- This query aggregates the cumulative balance of FRAX tokens in the GMX Arbitrum Vault over the minute series
+    SELECT -- This query aggregates the cumulative balance of FRAX tokens in the GMX Arbitrum Vault OVER the minute series
         b.minute,
         SUM(b.transfer_value) OVER (ORDER BY b.minute ASC) AS balance
     FROM
@@ -59,7 +59,7 @@ vault_balances_frax AS -- This CTE returns the balance of FRAX tokens in the GMX
 
 vault_balances_usdt AS -- This CTE returns the balance of USDT tokens in the GMX Arbitrum Vault in a designated minute
     (
-    SELECT -- This query aggregates the cumulative balance of USDT tokens in the GMX Arbitrum Vault over the minute series
+    SELECT -- This query aggregates the cumulative balance of USDT tokens in the GMX Arbitrum Vault OVER the minute series
         b.minute,
         SUM(b.transfer_value) OVER (ORDER BY b.minute ASC) AS balance
     FROM
@@ -97,7 +97,7 @@ vault_balances_usdt AS -- This CTE returns the balance of USDT tokens in the GMX
 
 vault_balances_wbtc AS -- This CTE returns the balance of WBTC tokens in the GMX Arbitrum Vault in a designated minute
     (
-    SELECT -- This query aggregates the cumulative balance of WBTC tokens in the GMX Arbitrum Vault over the minute series
+    SELECT -- This query aggregates the cumulative balance of WBTC tokens in the GMX Arbitrum Vault OVER the minute series
         b.minute,
         SUM(b.transfer_value) OVER (ORDER BY b.minute ASC) AS balance
     FROM
@@ -135,7 +135,7 @@ vault_balances_wbtc AS -- This CTE returns the balance of WBTC tokens in the GMX
 
 vault_balances_usdc AS -- This CTE returns the balance of USDC tokens in the GMX Arbitrum Vault in a designated minute
     (
-    SELECT -- This query aggregates the cumulative balance of USDC tokens in the GMX Arbitrum Vault over the minute series
+    SELECT -- This query aggregates the cumulative balance of USDC tokens in the GMX Arbitrum Vault OVER the minute series
         b.minute,
         SUM(b.transfer_value) OVER (ORDER BY b.minute ASC) AS balance
     FROM
@@ -173,7 +173,7 @@ vault_balances_usdc AS -- This CTE returns the balance of USDC tokens in the GMX
 
 vault_balances_uni AS -- This CTE returns the balance of UNI tokens in the GMX Arbitrum Vault in a designated minute
     (
-    SELECT -- This query aggregates the cumulative balance of UNI tokens in the GMX Arbitrum Vault over the minute series
+    SELECT -- This query aggregates the cumulative balance of UNI tokens in the GMX Arbitrum Vault OVER the minute series
         b.minute,
         SUM(b.transfer_value) OVER (ORDER BY b.minute ASC) AS balance
     FROM
@@ -211,7 +211,7 @@ vault_balances_uni AS -- This CTE returns the balance of UNI tokens in the GMX A
 
 vault_balances_link AS -- This CTE returns the balance of LINK tokens in the GMX Arbitrum Vault in a designated minute
     (
-    SELECT -- This query aggregates the cumulative balance of LINK tokens in the GMX Arbitrum Vault over the minute series
+    SELECT -- This query aggregates the cumulative balance of LINK tokens in the GMX Arbitrum Vault OVER the minute series
         b.minute,
         SUM(b.transfer_value) OVER (ORDER BY b.minute ASC) AS balance
     FROM
@@ -249,7 +249,7 @@ vault_balances_link AS -- This CTE returns the balance of LINK tokens in the GMX
 
 vault_balances_weth AS -- This CTE returns the balance of WETH tokens in the GMX Arbitrum Vault in a designated minute
     (
-    SELECT -- This query aggregates the cumulative balance of WETH tokens in the GMX Arbitrum Vault over the minute series
+    SELECT -- This query aggregates the cumulative balance of WETH tokens in the GMX Arbitrum Vault OVER the minute series
         b.minute,
         SUM(b.transfer_value) OVER (ORDER BY b.minute ASC) AS balance
     FROM
@@ -287,7 +287,7 @@ vault_balances_weth AS -- This CTE returns the balance of WETH tokens in the GMX
 
 vault_balances_dai AS -- This CTE returns the balance of DAI tokens in the GMX Arbitrum Vault in a designated minute
     (
-    SELECT -- This query aggregates the cumulative balance of DAI tokens in the GMX Arbitrum Vault over the minute series
+    SELECT -- This query aggregates the cumulative balance of DAI tokens in the GMX Arbitrum Vault OVER the minute series
         b.minute,
         SUM(b.transfer_value) OVER (ORDER BY b.minute ASC) AS balance
     FROM
@@ -335,7 +335,7 @@ SELECT -- This CTE returns the balance of all supported tokens in the GMX Arbitr
     COALESCE(x.dai_balance,0) AS dai_balance -- Removes NULL values
 FROM
     (
-    SELECT -- This subquery collates all the data extracted FROM the vault balance CTE, joins them to the minute series, AND uses last data to extrapolate over NULL values
+    SELECT -- This subquery collates all the data extracted FROM the vault balance CTE, joins them to the minute series, AND uses last data to extrapolate OVER NULL values
         a.minute,
         last(b.balance, true) OVER (ORDER BY a.minute ASC) AS frax_balance,
         last(c.balance, true) OVER (ORDER BY a.minute ASC) AS usdt_balance,

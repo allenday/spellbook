@@ -13,7 +13,7 @@
 
 with cryptopunks_bids_and_sales AS (
     SELECT *
-            , row_number() over (partition BY punk_id order BY evt_block_number ASC, evt_index ASC) AS punk_id_event_number
+            , ROW_NUMBER() OVER (PARTITION BY punk_id ORDER BY evt_block_number ASC, evt_index ASC) AS punk_id_event_number
     FROM
     (
     SELECT  "PunkBought" AS event_type
@@ -79,7 +79,7 @@ with cryptopunks_bids_and_sales AS (
     ON a.punk_id = c.punk_id AND c.event_type = "PunkBidEntered" AND c.punk_id_event_number < a.punk_id_event_number AND c.bid_from_address = b.`to`
 
     where a.sale_price = 0 AND a.to_address = '0x0000000000000000000000000000000000000000'
-    GROUP BY 1,2,4,5,6,7,8,9
+    GROUP BY 1, 2, 4, 5, 6, 7, 8, 9
 )
 , regular_sales AS (
     SELECT  "Buy" AS event_type

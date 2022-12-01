@@ -401,4 +401,4 @@
 
     ) AS temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, art_blocks_project_type, art_blocks_curated_season, art_collection_unique_id)
 
-order BY project_id ASC 
+ORDER BY project_id ASC 

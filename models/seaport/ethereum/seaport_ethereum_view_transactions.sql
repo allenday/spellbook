@@ -183,9 +183,9 @@ with iv_availadv AS (
           ,coalesce(sum(case WHEN item_type in ('2', '3') THEN original_amount END),0) AS nft_item_count
       FROM (
             SELECT a.*
-                  ,count(case WHEN item_type in ('2', '3') THEN 1 END) over (partition BY tx_hash) AS nft_transfer_count
+                  ,count(case WHEN item_type in ('2', '3') THEN 1 END) OVER (PARTITION BY tx_hash) AS nft_transfer_count
                   ,case WHEN main_type = 'advanced' THEN 'auction'
-                        WHEN max(case WHEN item_type in ('0', '1') THEN item_type END) over (partition BY tx_hash) = '0' THEN 'click buy now'
+                        WHEN max(case WHEN item_type in ('0', '1') THEN item_type END) OVER (PARTITION BY tx_hash) = '0' THEN 'click buy now'
                         ELSE 'offer accepted'
                   END AS category
                   ,case WHEN (item_type, sub_idx) in (('2',1), ('3',1)) THEN True

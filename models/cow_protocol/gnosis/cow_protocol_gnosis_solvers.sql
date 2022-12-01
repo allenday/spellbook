@@ -19,7 +19,7 @@ solver_activation_events AS (
 -- Sorting BY (evt_block_number, evt_index) allows us to pick the most recent activation status of each unique solver
 ranked_solver_events AS (
     SELECT
-        rank() over (partition BY solver order BY evt_block_number DESC, evt_index DESC) AS rk,
+        rank() OVER (PARTITION BY solver ORDER BY evt_block_number DESC, evt_index DESC) AS rk,
         solver,
         evt_block_number,
         evt_index,

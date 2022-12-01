@@ -10020,7 +10020,7 @@ SELECT punk_id
         , evt_block_time AS last_transfer_time
 FROM
 (   SELECT *
-            , row_number() over (partition BY punk_id order BY evt_block_number DESC, evt_index DESC) AS punk_id_tx_rank
+            , ROW_NUMBER() OVER (PARTITION BY punk_id ORDER BY evt_block_number DESC, evt_index DESC) AS punk_id_tx_rank
     FROM
     (
         SELECT  NULL AS `FROM`
@@ -10051,4 +10051,4 @@ FROM
     ) a
 ) b
 where punk_id_tx_rank = 1
-order BY cast(punk_id AS int) ASC 
+ORDER BY cast(punk_id AS int) ASC 

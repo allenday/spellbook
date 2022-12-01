@@ -14,14 +14,14 @@
 --latest Node <> Name relations
 with node_names AS (
     SELECT
-    name,node,block_time,tx_hash
+    name, node, block_time, tx_hash
     FROM (
         SELECT
         case WHEN _name = '0x0000000000000000000000000000000000000000' THEN NULL ELSE _name END AS name
-        ,node
-        ,call_block_time AS block_time
-        ,call_tx_hash AS tx_hash
-        ,row_number() over (partition BY node order BY call_block_time DESC) AS ordering --in theory we should also order BY tx_index here
+        , node
+        , call_block_time AS block_time
+        , call_tx_hash AS tx_hash
+        , ROW_NUMBER() OVER (PARTITION BY node ORDER BY call_block_time DESC) AS ordering --in theory we should also ORDER BY tx_index here
         FROM {{ source('ethereumnameservice_ethereum', 'DefaultReverseResolver_call_setName') }}
         where call_success
         {% if is_incremental() %}

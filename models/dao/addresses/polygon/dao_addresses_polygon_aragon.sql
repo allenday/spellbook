@@ -65,4 +65,4 @@ FROM
 aragon_daos ad
 LEFT JOIN
 get_aragon_wallets gw  -- LEFT JOIN to get the dao address mapped to the app address
-    ON ad.dao = gw.dao 
+    ON ad.dao = gw.dao
