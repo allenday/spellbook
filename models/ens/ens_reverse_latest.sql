@@ -21,7 +21,7 @@ with node_names AS (
         ,node
         ,call_block_time AS block_time
         ,call_tx_hash AS tx_hash
-        ,row_number() over (partition by node order by call_block_time desc) AS ordering --in theory we should also order by tx_index here
+        ,row_number() over (partition BY node order BY call_block_time desc) AS ordering --in theory we should also order BY tx_index here
         FROM {{ source('ethereumnameservice_ethereum', 'DefaultReverseResolver_call_setName') }}
         where call_success
         {% if is_incremental() %}

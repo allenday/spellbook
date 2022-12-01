@@ -31,7 +31,7 @@ get_daohaus_molochs AS ( -- molochs are daos AND this is getting a list of moloc
         AND contract_address = '0x38064f40b20347d58b326e767791a6f79cdeddce' -- dao haus moloch v2.1 contract address
 ),
 
-get_minion_creations AS ( -- minions are created by molochs to manage funds (this is a gnosis safe that's controlled with zodiac's reality.eth module)
+get_minion_creations AS ( -- minions are created BY molochs to manage funds (this is a gnosis safe that's controlled with zodiac's reality.eth module)
         SELECT
             CONCAT('0x', RIGHT(topic3, 40)) AS moloch,
             CONCAT('0x', RIGHT(topic2, 40)) AS wallet_address

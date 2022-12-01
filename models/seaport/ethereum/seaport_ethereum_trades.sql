@@ -131,7 +131,7 @@ with source_ethereum_transactions AS (
         ,a.is_traded_nft
         ,a.is_moved_nft
   FROM ref_seaport_ethereum_base_pairs a
-  LEFT JOIN ref_seaport_ethereum_base_pairs b on b.tx_hash = a.tx_hash
+  LEFT JOIN ref_seaport_ethereum_base_pairs b ON b.tx_hash = a.tx_hash
     AND b.evt_index = a.evt_index
     AND b.block_time = a.block_time -- for performance
     AND b.token_contract_address = a.token_contract_address
@@ -163,7 +163,7 @@ with source_ethereum_transactions AS (
   FROM iv_base_pairs_priv a
   where 1=1
     AND eth_erc_idx > 0
-  group by 1,2,3
+  GROUP BY 1,2,3
 )
 ,iv_nfts AS (
   SELECT a.block_time
@@ -201,7 +201,7 @@ with source_ethereum_transactions AS (
         ,is_private
         ,sub_idx
   FROM iv_base_pairs_priv a
-  LEFT JOIN iv_volume b on b.block_time = a.block_time  -- tx_hash AND evt_index is PK, but for performance, block_time is included
+  LEFT JOIN iv_volume b ON b.block_time = a.block_time  -- tx_hash AND evt_index is PK, but for performance, block_time is included
     AND b.tx_hash = a.tx_hash
     AND b.evt_index = a.evt_index
   where 1=1
@@ -234,16 +234,16 @@ with source_ethereum_transactions AS (
           ,agg.contract_address AS aggregator_address
           ,'seaport-' || tx_hash || '-' || evt_index || '-' || nft_contract_address || '-' || nft_token_id || '-' || sub_idx AS unique_trade_id
   FROM iv_nfts a
-  inner join source_ethereum_transactions t on t.hash = a.tx_hash
-  LEFT JOIN ref_tokens_nft n on n.contract_address = nft_contract_address
-  LEFT JOIN ref_tokens_erc20 e on e.contract_address = case when a.token_contract_address = '{{c_native_token_address}}' then '{{c_alternative_token_address}}'
+  inner join source_ethereum_transactions t ON t.hash = a.tx_hash
+  LEFT JOIN ref_tokens_nft n ON n.contract_address = nft_contract_address
+  LEFT JOIN ref_tokens_erc20 e ON e.contract_address = case when a.token_contract_address = '{{c_native_token_address}}' then '{{c_alternative_token_address}}'
                                                             else a.token_contract_address
                                                       end
-  LEFT JOIN source_prices_usd p on p.contract_address = case when a.token_contract_address = '{{c_native_token_address}}' then '{{c_alternative_token_address}}'
+  LEFT JOIN source_prices_usd p ON p.contract_address = case when a.token_contract_address = '{{c_native_token_address}}' then '{{c_alternative_token_address}}'
                                                             else a.token_contract_address
                                                         end
     AND p.minute = date_trunc('minute', a.block_time)
-  LEFT JOIN ref_nft_aggregators agg on agg.contract_address = t.to
+  LEFT JOIN ref_nft_aggregators agg ON agg.contract_address = t.to
 )
 ,iv_columns AS (
   -- Rename column to align other *.trades tables

@@ -173,8 +173,8 @@ glp_dai_poolAmounts AS -- This CTE returns the average amount of DAI tokens in t
     ) ,
 
  / *
-reservedAmounts are the amount of supported tokens that are reserved to cover long positions on the supported tokens.
-FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts on those tokens.
+reservedAmounts are the amount of supported tokens that are reserved to cover long positions ON the supported tokens.
+FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts ON those tokens.
 * / 
 glp_wbtc_reservedAmounts AS -- This CTE returns the average amount of reserved WBTC tokens in the pool for a designated minute
     (
@@ -255,7 +255,7 @@ glp_weth_reservedAmounts AS -- This CTE returns the average amount of reserved W
  / *
 guaranteedUSD are the total value of the long positions valued at the time of position entry.
 This is because AS soon AS a long position opens, the asset's USD value (that's currently in the pool) effectively gets locked in.
-FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts on those tokens.
+FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts ON those tokens.
 * / 
 glp_wbtc_guaranteedUsd AS -- This CTE returns the guaranteed USD amount against WBTC tokens in the pool for a designated minute
     (
@@ -645,7 +645,7 @@ glp_dai_getMinPrice AS -- This CTE returns the minimum price of DAI tokens in th
 
  / *
 globalShortAveragePrices returns the volume weighted average price of all shorts.
-FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts on those tokens.
+FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts ON those tokens.
 * / 
 glp_wbtc_globalShortAveragePrices AS -- This CTE returns volume weighted average price of all WBTC shorts for a designated minute
     (
@@ -725,7 +725,7 @@ glp_weth_globalShortAveragePrices AS -- This CTE returns volume weighted average
 
  / *
 globalShortSizes returns the sum of all shorts reported in the asset currency.
-FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts on those tokens.
+FRAX, USDT, USDC AND DAI are NOT included AS you cannot open shorts ON those tokens.
 * / 
 glp_wbtc_globalShortSizes AS -- This CTE returns average sum of all WBTC shorts for a designated minute
     (

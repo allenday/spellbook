@@ -79,7 +79,7 @@ WITH zeroex_tx AS (
                 AND block_time >= '{{zeroex_v3_start_date}}'
                 {% endif %}
     ) temp
-    group by tx_hash
+    GROUP BY tx_hash
 
 ),
 v3_fills_no_bridge AS (
@@ -451,7 +451,7 @@ SELECT
         CASE
             WHEN taker = '0xdef1c0ded9bec7f1a1670819833240f027b25eff' THEN tx.FROM
             ELSE taker
-        END AS taker, -- fix the user masked by ProxyContract issue
+        END AS taker, -- fix the user masked BY ProxyContract issue
         taker_token,
         maker_token,
         taker_token_amount_raw / pow(10, tp.decimals) AS taker_token_amount,

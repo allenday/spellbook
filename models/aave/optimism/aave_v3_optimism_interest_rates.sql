@@ -11,7 +11,7 @@
 SELECT
   a.reserve,
   t.symbol,
-  DATE_TRUNC('hour',a.evt_block_time) AS hour,
+  DATE_TRUNC('hour', a.evt_block_time) AS hour,
   AVG(CAST(a.liquidityRate AS DOUBLE)) / 1e27 AS deposit_apy,
   AVG(CAST(a.stableBorrowRate AS DOUBLE)) / 1e27 AS stable_borrow_apy,
   AVG(CAST(a.variableBorrowRate AS DOUBLE)) / 1e27 AS variable_borrow_apy

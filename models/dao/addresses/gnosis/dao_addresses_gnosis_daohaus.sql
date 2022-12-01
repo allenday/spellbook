@@ -12,7 +12,7 @@
 
 {% set minion_start_date = '2021-09-13' %}
 
--- this code follows the same logic AS dao_addresses_ethereum_daohaus, Refer to that for comments on code.
+-- this code follows the same logic AS dao_addresses_ethereum_daohaus, Refer to that for comments ON code.
 
 WITH -- dune query here - https: / /dune.com/queries/1434676
 

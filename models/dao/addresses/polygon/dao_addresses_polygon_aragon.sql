@@ -12,7 +12,7 @@
 
 WITH -- dune query here  https: / /dune.com/queries/1527621
 
-aragon_daos AS ( -- decoded table for aragon on dune that returns the address of daos deployed on polygon
+aragon_daos AS ( -- decoded table for aragon ON dune that returns the address of daos deployed ON polygon
         SELECT
             evt_block_time AS created_block_time,
             date_trunc('day', evt_block_time) AS created_date,

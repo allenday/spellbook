@@ -38,10 +38,10 @@ synthetix_markets AS (
 		--finds the position of the first occurence '00' in the hex STRING which indicates NULL characters / padded zeroes
 		--characters before this position should be taken to get the asset's hex name; use 'unhex' to get the readable text
 
-		--if the position is on an even number, that means the first '0' is part of the hexed version of the asset's last letter
+		--if the position is ON an even number, that means the first '0' is part of the hexed version of the asset's last letter
 		--in this case, this zero should be included in the hex characters to be unhexed to get the complete asset's name
 
-		--substring starts on 3 to skip the '0x' at the beginning of the STRING
+		--substring starts ON 3 to skip the '0x' at the beginning of the STRING
 		CASE
 			WHEN MOD(POSITION('00' IN SUBSTRING(asset, 3)), 2) = 0 THEN UNHEX(SUBSTRING(asset, 3, POSITION('00' IN SUBSTRING(asset, 3))))
 			ELSE UNHEX(SUBSTRING(asset, 3, POSITION('00' IN SUBSTRING(asset, 3))-1))

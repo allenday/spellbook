@@ -67,11 +67,11 @@ with all_listings AS (
     SELECT  day
             , punk_id
     FROM all_days
-    full outer join all_punk_ids on true
+    full outer join all_punk_ids ON true
 )
 , all_punk_events AS (
     SELECT *
-          , row_number() over (partition by punk_id order by evt_block_number asc, evt_index asc ) AS punk_event_index
+          , row_number() over (partition BY punk_id order BY evt_block_number asc, evt_index asc ) AS punk_event_index
     FROM
     (
     SELECT * FROM all_listings
@@ -79,7 +79,7 @@ with all_listings AS (
     union all SELECT * FROM all_buys
     union all SELECT * FROM all_transfers
     ) a
-    order by evt_block_number desc, evt_index desc
+    order BY evt_block_number desc, evt_index desc
 )
 , aggregated_punk_on_off_data AS (
     SELECT date_trunc('day',a.evt_block_time) AS day
@@ -91,9 +91,9 @@ with all_listings AS (
                             , punk_id
                             , max(punk_event_index) AS max_event
                     FROM all_punk_events
-                    group by 1,2
+                    GROUP BY 1,2
                 ) b -- max event per punk per day
-    on date_trunc('day',a.evt_block_time) = b.day AND a.punk_id = b.punk_id AND a.punk_event_index = b.max_event
+    ON date_trunc('day',a.evt_block_time) = b.day AND a.punk_id = b.punk_id AND a.punk_event_index = b.max_event
 )
 
 SELECT day
@@ -104,8 +104,8 @@ FROM
             , min(price_fill_in) filter (where bool_fill_in = 'Active' AND price_fill_in > 0) AS floor_price_eth
     FROM
     (   SELECT c.*
-                , last_value(listed_price,true) over (partition by punk_id order by day asc ) AS price_fill_in
-                , last_value(listed_bool,true) over (partition by punk_id order by day asc ) AS bool_fill_in
+                , last_value(listed_price,true) over (partition BY punk_id order BY day asc ) AS price_fill_in
+                , last_value(listed_bool,true) over (partition BY punk_id order BY day asc ) AS bool_fill_in
         FROM
         (   SELECT a.day
                     , a.punk_id
@@ -113,14 +113,14 @@ FROM
                     , listed_bool
             FROM base_data  a
             left outer join aggregated_punk_on_off_data  b
-            on a.day = b.day AND a.punk_id = b.punk_id
+            ON a.day = b.day AND a.punk_id = b.punk_id
         ) c
     ) d
-    group by 1
+    GROUP BY 1
 ) e
 
-LEFT JOIN {{ source('prices', 'usd') }} p on p.minute = date_trunc('minute', e.day)
+LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', e.day)
     AND p.contract_address = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
     AND p.blockchain = "ethereum"
 
-order by day desc 
+order BY day desc 

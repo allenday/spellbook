@@ -39,6 +39,6 @@ SELECT
     timestamp('2022-08-24') AS created_at,
     now() AS updated_at
 FROM nft_trades
-  JOIN total on total.address = nft_trades.address
+  JOIN total ON total.address = nft_trades.address
 WHERE nft_trades.address is NOT NULL AND amount_usd is not null
 GROUP BY nft_trades.address, total_count

@@ -41,9 +41,9 @@ with nomad_bridge_domains(domain_id, domain_name, domain_type) AS (
           ,fastLiquidityEnabled AS fast_liquidity_enabled
           ,'0x0000000000000000000000000000000000000000' AS liquidity_provider
       FROM {{ source('nomad_ethereum','BridgeRouter_evt_Send') }} s
-      inner join nomad_bridge_domains d on d.domain_id = s.toDomain
-      LEFT JOIN {{ ref('tokens_erc20') }} e1 on e1.contract_address = s.token AND e1.blockchain = 'ethereum'
-      LEFT JOIN {{ source('prices', 'usd') }} p1 on p1.contract_address = s.token
+      inner join nomad_bridge_domains d ON d.domain_id = s.toDomain
+      LEFT JOIN {{ ref('tokens_erc20') }} e1 ON e1.contract_address = s.token AND e1.blockchain = 'ethereum'
+      LEFT JOIN {{ source('prices', 'usd') }} p1 ON p1.contract_address = s.token
             AND p1.minute = date_trunc('minute', s.evt_block_time)
             AND p1.minute >= '2022-01-01'
             AND p1.blockchain = 'ethereum'
@@ -68,12 +68,12 @@ with nomad_bridge_domains(domain_id, domain_name, domain_type) AS (
           ,false AS fast_liquidity_enabled
           ,liquidityProvider AS liquidity_provider
       FROM {{ source('nomad_ethereum', 'BridgeRouter_evt_Receive') }} r
-      inner join {{ source('ethereum','transactions') }} t on r.evt_block_number = t.block_number
+      inner join {{ source('ethereum','transactions') }} t ON r.evt_block_number = t.block_number
             AND r.evt_tx_hash = t.hash
             AND t.block_time >= '2022-01-01'
-      inner join nomad_bridge_domains d on d.domain_id = left(originAndNonce, 8)
-      LEFT JOIN {{ ref('tokens_erc20') }} e1 on e1.contract_address = r.token AND e1.blockchain = 'ethereum'
-      LEFT JOIN {{ source('prices', 'usd') }} p1 on p1.contract_address = r.token
+      inner join nomad_bridge_domains d ON d.domain_id = left(originAndNonce, 8)
+      LEFT JOIN {{ ref('tokens_erc20') }} e1 ON e1.contract_address = r.token AND e1.blockchain = 'ethereum'
+      LEFT JOIN {{ source('prices', 'usd') }} p1 ON p1.contract_address = r.token
             AND p1.minute = date_trunc('minute', r.evt_block_time)
             AND p1.minute >= '2022-01-01'
             AND p1.blockchain = 'ethereum'

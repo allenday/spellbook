@@ -10020,7 +10020,7 @@ SELECT punk_id
         , evt_block_time AS last_transfer_time
 FROM
 (   SELECT *
-            , row_number() over (partition by punk_id order by evt_block_number desc, evt_index desc) AS punk_id_tx_rank
+            , row_number() over (partition BY punk_id order BY evt_block_number desc, evt_index desc) AS punk_id_tx_rank
     FROM
     (
         SELECT  NULL AS `FROM`
@@ -10041,14 +10041,14 @@ FROM
                 , case when topic1 = '0x05af636b70da6819000c49f85b21fa82081c632069bb626f30932034099107d8' then cast(bytea2numeric_v2(substring(data FROM 3)) AS int)
                     else cast(bytea2numeric_v2(substring(topic2 FROM 3)) AS int) end AS punk_id
         FROM {{ source('erc20_ethereum','evt_transfer') }} a
-        inner join {{ source('ethereum','logs') }} b on a.evt_tx_hash = b.tx_hash -- AND topic1 = '0x58e5d5a525e3b40bc15abaa38b5882678db1ee68befd2f60bafe3a7fd06db9e3'
+        inner join {{ source('ethereum','logs') }} b ON a.evt_tx_hash = b.tx_hash -- AND topic1 = '0x58e5d5a525e3b40bc15abaa38b5882678db1ee68befd2f60bafe3a7fd06db9e3'
         where a.contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks contract
             AND topic1 in   (   '0xb0e0a660b4e50f26f0b7ce75c24655fc76cc66e3334a54ff410277229fa10bd4' -- PunkNoLongerForSale
                                 , '0x58e5d5a525e3b40bc15abaa38b5882678db1ee68befd2f60bafe3a7fd06db9e3' -- PunkBought
                                 , '0x05af636b70da6819000c49f85b21fa82081c632069bb626f30932034099107d8' -- PunkTransfer
                             )
-        group by 1,2,3,4,5,6
+        GROUP BY 1,2,3,4,5,6
     ) a
 ) b
 where punk_id_tx_rank = 1
-order by cast(punk_id AS int) asc 
+order BY cast(punk_id AS int) asc 

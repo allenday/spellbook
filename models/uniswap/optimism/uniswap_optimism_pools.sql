@@ -17,7 +17,7 @@ with uniswap_v3_poolcreated AS (
     ,token1
     ,fee
   FROM {{ source('uniswap_v3_optimism', 'factory_evt_poolcreated') }}
-  group by 1, 2, 3, 4
+  GROUP BY 1, 2, 3, 4
 )
 ,ovm1_legacy_pools_raw AS (
   SELECT

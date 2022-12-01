@@ -34,12 +34,12 @@ SELECT
   ,cr.trace_element
 FROM creates AS cr
 join {{ source('optimism', 'traces') }} AS sd
-  on cr.creation_tx_hash = sd.tx_hash
+  ON cr.creation_tx_hash = sd.tx_hash
   AND cr.created_time = sd.block_time
   AND cr.trace_element = sd.trace_address[0]
   AND sd.`type` = 'suicide'
   {% if is_incremental() %}
   AND sd.block_time >= date_trunc('day', now() - interval '1 week')
   {% endif %}
-group by 1, 2, 3, 4
+GROUP BY 1, 2, 3, 4
 ;

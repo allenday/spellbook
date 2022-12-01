@@ -305,7 +305,7 @@ with original_holders AS (
             , address AS wallet
             , sum(original_count) AS punk_balance
     FROM original_holders
-    group by 1,2
+    GROUP BY 1,2
 
     union all
 
@@ -314,7 +314,7 @@ with original_holders AS (
             , count(*)*-1.0 AS punk_balance
     FROM {{ source('erc20_ethereum','evt_transfer') }}
     where contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks
-    group by 1,2
+    GROUP BY 1,2
 
     union all
 
@@ -323,14 +323,14 @@ with original_holders AS (
             , count(*) AS punk_balance
     FROM {{ source('erc20_ethereum','evt_transfer') }}
     where contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks
-    group by 1,2
+    GROUP BY 1,2
 )
 , punk_transfer_summary AS (
     SELECT  day
             , wallet
             , sum(punk_balance) AS daily_transfer_sum
     FROM transfers
-    group by day, wallet
+    GROUP BY day, wallet
 )
 , base_data AS (
     with all_days  AS (SELECT explode(sequence(to_date('2017-06-22'), to_date(now()), interval 1 day)) AS day)
@@ -338,17 +338,17 @@ with original_holders AS (
 
     SELECT  day
             , wallet
-    FROM all_days full outer join all_wallets on true
+    FROM all_days full outer join all_wallets ON true
 )
 , combined_table AS (
     SELECT base_data.day
             , base_data.wallet
-            , sum(coalesce(daily_transfer_sum,0)) over (partition by base_data.wallet order by base_data.day) AS holding
+            , sum(coalesce(daily_transfer_sum,0)) over (partition BY base_data.wallet order BY base_data.day) AS holding
     FROM base_data
-    LEFT JOIN punk_transfer_summary on base_data.day = punk_transfer_summary.day AND base_data.wallet = punk_transfer_summary.wallet
+    LEFT JOIN punk_transfer_summary ON base_data.day = punk_transfer_summary.day AND base_data.wallet = punk_transfer_summary.wallet
 )
 
 SELECT day
         , count(wallet) filter (where holding > 0) AS unique_wallets
 FROM combined_table
-group by 1
+GROUP BY 1

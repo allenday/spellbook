@@ -16,8 +16,8 @@ SELECT
     wallet_address || '-' || date_trunc('hour', evt_block_time) || '-' || token_address || '-'  || tokenId AS unique_transfer_id
 FROM {{ ref('transfers_ethereum_erc721') }}
 {% if is_incremental() %}
--- this filter will only be applied on an incremental run
+-- this filter will only be applied ON an incremental run
 where evt_block_time >= date_trunc('day', now() - interval '1 week')
 {% endif %}
-group by 1,2,3,4,5
+GROUP BY 1,2,3,4,5
 having sum(amount) = 1

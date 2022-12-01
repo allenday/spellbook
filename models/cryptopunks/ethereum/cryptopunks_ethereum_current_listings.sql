@@ -67,7 +67,7 @@ SELECT b.punk_id
 FROM
 (
     SELECT *
-            , row_number() over (partition by punk_id order by evt_block_number desc, evt_index desc ) AS punk_event_index
+            , row_number() over (partition BY punk_id order BY evt_block_number desc, evt_index desc ) AS punk_event_index
     FROM
     (
     SELECT * FROM all_listings
@@ -78,4 +78,4 @@ FROM
 ) b
 
 where punk_event_index = 1 AND event_type = 'Listing' AND event_sub_type = 'Public Listing'
-order by listed_price asc, evt_block_time desc 
+order BY listed_price asc, evt_block_time desc 

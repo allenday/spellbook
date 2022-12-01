@@ -14,7 +14,7 @@ WITH minute AS  -- This CTE generates a series of minute values
     ) ,
 
  / *
-GLP tokens are minted AND burned by the GLP Manager contract by invoking addLiquidity() AND removeLiquidity()
+GLP tokens are minted AND burned BY the GLP Manager contract BY invoking addLiquidity() AND removeLiquidity()
 The GLP Manager contract can be found here: https: / /arbiscan.io/address/0x321F653eED006AD1C29D174e17d96351BDe22649
 * / 
 glp_balances AS -- This CTE returns the accuals of WETH tokens in the Fee GLP contract in a designated minute

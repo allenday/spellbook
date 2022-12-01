@@ -121,7 +121,7 @@ WITH
             ,unique_trade_id
         FROM fee_events
             where is_protocol_fee
-        group by block_number,unique_trade_id
+        GROUP BY block_number,unique_trade_id
     ),
 
     royalty_fees AS (
@@ -133,7 +133,7 @@ WITH
             ,unique_trade_id
         FROM fee_events
             where NOT is_protocol_fee
-        group by block_number,unique_trade_id
+        GROUP BY block_number,unique_trade_id
     ),
 
 
@@ -231,7 +231,7 @@ SELECT
     , CAST(te.royalty_fee_percentage AS DOUBLE) AS royalty_fee_percentage
     , te.unique_trade_id
 FROM trades_enhanced te
-LEFT JOIN {{ ref('nft_ethereum_transfers') }} buyer_fix on buyer_fix.block_time=te.block_time
+LEFT JOIN {{ ref('nft_ethereum_transfers') }} buyer_fix ON buyer_fix.block_time=te.block_time
     AND te.nft_contract_address=buyer_fix.contract_address
     AND buyer_fix.tx_hash=te.tx_hash
     AND te.token_id=buyer_fix.token_id
@@ -240,7 +240,7 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} buyer_fix on buyer_fix.block_time=
     {% if is_incremental() %}
     AND buyer_fix.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-LEFT JOIN {{ ref('nft_ethereum_transfers') }} seller_fix on seller_fix.block_time=te.block_time
+LEFT JOIN {{ ref('nft_ethereum_transfers') }} seller_fix ON seller_fix.block_time=te.block_time
     AND te.nft_contract_address=seller_fix.contract_address
     AND seller_fix.tx_hash=te.tx_hash
     AND te.token_id=seller_fix.token_id

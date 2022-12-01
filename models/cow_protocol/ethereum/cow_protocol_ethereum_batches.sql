@@ -32,16 +32,16 @@ batch_counts AS (
            sum(case when selector = '0x095ea7b3' then 1 else 0 end) AS token_approvals
     FROM {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Settlement') }} s
         left outer join {{ source('gnosis_protocol_v2_ethereum', 'GPv2Settlement_evt_Interaction') }} i
-            on i.evt_tx_hash = s.evt_tx_hash
+            ON i.evt_tx_hash = s.evt_tx_hash
             {% if is_incremental() %}
             AND i.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         join cow_protocol_ethereum.solvers
-            on solver = address
+            ON solver = address
     {% if is_incremental() %}
     WHERE s.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    group by s.evt_tx_hash, solver, s.evt_block_time, name
+    GROUP BY s.evt_tx_hash, solver, s.evt_block_time, name
 ),
 
 batch_values AS (
@@ -53,13 +53,13 @@ batch_values AS (
         price           AS eth_price
     FROM {{ ref('cow_protocol_ethereum_trades') }}
         left outer join {{ source('prices', 'usd') }} AS p
-            on p.contract_address = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+            ON p.contract_address = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
             AND p.minute = date_trunc('minute', block_time)
             AND blockchain = 'ethereum'
     {% if is_incremental() %}
     WHERE block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-    group by tx_hash, price
+    GROUP BY tx_hash, price
 ),
 
 combined_batch_info AS (
@@ -94,9 +94,9 @@ combined_batch_info AS (
         token_approvals
     FROM batch_counts b
         join batch_values t
-            on b.evt_tx_hash = t.tx_hash
+            ON b.evt_tx_hash = t.tx_hash
         inner join {{ source('ethereum', 'transactions') }} tx
-            on evt_tx_hash = hash
+            ON evt_tx_hash = hash
             {% if is_incremental() %}
             AND block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}

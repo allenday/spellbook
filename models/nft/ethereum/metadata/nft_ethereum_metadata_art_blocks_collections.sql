@@ -187,7 +187,7 @@
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 182, 1000000, 'Amoeba', 'last even', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-182')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 183, 1000000, 'Quarantine', 'Owen Moore', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-183')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 184, 1000000, 'Swing', 'Eltono', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-184')
-        , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 185, 1000000, 'little boxes on the hillsides, child', 'LIA', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-185')
+        , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 185, 1000000, 'little boxes ON the hillsides, child', 'LIA', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-185')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 187, 1000000, 'THE SOURCE CoDE', 'Ofir Liberman', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-187')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 188, 1000000, 'Blockbob Rorschach', 'eBoy', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-188')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 189, 1000000, 'CryptoNewYorker', 'Qian Qian', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-189')
@@ -360,7 +360,7 @@
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 361, 1000000, 'flora, fauna, false gods & floods', 'Ryan Green', 'Presents', 'N / A','0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-361')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 362, 1000000, 'Erratic', 'Owen Moore', 'Playground', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-362')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 364, 1000000, 'Act of Emotion', 'Kelly Milligan', 'Curated', '8', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-364')
-        , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 365, 1000000, 'Stains on a Canvas', 'Omar Lobato', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-365')
+        , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 365, 1000000, 'Stains ON a Canvas', 'Omar Lobato', 'Factory', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-365')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 366, 1000000, 'Sandaliya', 'Melissa Wiederrecht', 'Playground', 'N / A', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-366')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 367, 1000000, 'Fontana', 'Harvey Rayner', 'Curated', '8', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-367')
         , ('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270', 368, 1000000, 'Primitives', 'Aranda\Lasch', 'Curated', '8', '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270-368')
@@ -401,4 +401,4 @@
 
     ) AS temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, art_blocks_project_type, art_blocks_curated_season, art_collection_unique_id)
 
-order by project_id asc 
+order BY project_id asc 

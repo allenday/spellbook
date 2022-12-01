@@ -67,11 +67,11 @@ with all_listings AS (
     SELECT  day
             , punk_id
     FROM all_days
-    full outer join all_punk_ids on true
+    full outer join all_punk_ids ON true
 )
 , all_punk_events AS (
     SELECT *
-          , row_number() over (partition by punk_id order by evt_block_number asc, evt_index asc ) AS punk_event_index
+          , row_number() over (partition BY punk_id order BY evt_block_number asc, evt_index asc ) AS punk_event_index
     FROM
     (
     SELECT * FROM all_listings
@@ -79,7 +79,7 @@ with all_listings AS (
     union all SELECT * FROM all_buys
     union all SELECT * FROM all_transfers
     ) a
-    order by evt_block_number desc, evt_index desc
+    order BY evt_block_number desc, evt_index desc
 )
 , aggregated_punk_on_off_data AS (
     SELECT date_trunc('day',a.evt_block_time) AS day
@@ -90,23 +90,23 @@ with all_listings AS (
                             , punk_id
                             , max(punk_event_index) AS max_event
                     FROM all_punk_events
-                    group by 1,2
+                    GROUP BY 1,2
                 ) b -- max event per punk per day
-    on date_trunc('day',a.evt_block_time) = b.day AND a.punk_id = b.punk_id AND a.punk_event_index = b.max_event
+    ON date_trunc('day',a.evt_block_time) = b.day AND a.punk_id = b.punk_id AND a.punk_event_index = b.max_event
 )
 SELECT day
         , sum(case when bool_fill_in = 'Active' then 1 else 0 end) AS listed_count
 FROM
 (   SELECT c.*
-            , last_value(listed_bool,true) over (partition by punk_id order by day asc ) AS bool_fill_in
+            , last_value(listed_bool,true) over (partition BY punk_id order BY day asc ) AS bool_fill_in
     FROM
     (   SELECT a.day
                 , a.punk_id
                 , listed_bool
         FROM base_data  a
         left outer join aggregated_punk_on_off_data  b
-        on a.day = b.day AND a.punk_id = b.punk_id
+        ON a.day = b.day AND a.punk_id = b.punk_id
     ) c
 ) d
-group by 1
-order by day desc 
+GROUP BY 1
+order BY day desc 

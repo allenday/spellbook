@@ -70,15 +70,15 @@ inner join {{ source('avalanche_c', 'transactions') }} tx
     {% endif %}
 -- bought tokens
 LEFT JOIN {{ ref('tokens_erc20') }} erc20_b
-    on erc20_b.contract_address = s.toToken
+    ON erc20_b.contract_address = s.toToken
     AND erc20_b.blockchain = 'avalanche_c'
 -- sold tokens
 LEFT JOIN {{ ref('tokens_erc20') }} erc20_s
-    on erc20_s.contract_address = s.fromToken
+    ON erc20_s.contract_address = s.fromToken
     AND erc20_s.blockchain = 'avalanche_c'
 -- price of bought tokens
 LEFT JOIN {{ source('prices', 'usd') }} prices_b
-    on prices_b.minute = date_trunc('minute', s.evt_block_time)
+    ON prices_b.minute = date_trunc('minute', s.evt_block_time)
     AND prices_b.contract_address = s.toToken
     AND prices_b.blockchain = 'avalanche_c'
 	{% if NOT is_incremental() %}
@@ -89,7 +89,7 @@ LEFT JOIN {{ source('prices', 'usd') }} prices_b
     {% endif %}
 -- price of sold tokens
 LEFT JOIN {{ source('prices', 'usd') }} prices_s
-    on prices_s.minute = date_trunc('minute', s.evt_block_time)
+    ON prices_s.minute = date_trunc('minute', s.evt_block_time)
     AND prices_s.contract_address = s.fromToken
     AND prices_s.blockchain = 'avalanche_c'
 	{% if NOT is_incremental() %}

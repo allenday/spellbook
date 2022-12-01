@@ -101,9 +101,9 @@ order_ids AS (
              {% if is_incremental() %}
              where evt_block_time >= date_trunc("day", now() - interval '1 week')
              {% endif %}
-                     sort by evt_index
+                     sort BY evt_index
          ) AS _
-    group by evt_tx_hash
+    GROUP BY evt_tx_hash
 ),
 
 exploded_order_ids AS (
@@ -118,7 +118,7 @@ reduced_order_ids AS (
         collect_list(evt_tx_hash)[0] AS evt_tx_hash,
         collect_list(pos)[0] AS pos
     FROM exploded_order_ids
-    group by order_id
+    GROUP BY order_id
 ),
 
 trade_data AS (
@@ -138,7 +138,7 @@ uid_to_app_id AS (
         get_json_object(trades.col, '$.receiver') AS receiver
     FROM reduced_order_ids order_ids
              join trade_data trades
-                  on evt_tx_hash = call_tx_hash
+                  ON evt_tx_hash = call_tx_hash
                       AND order_ids.pos = trades.pos
 ),
 

@@ -679,7 +679,7 @@ VALUES
     ("x2y2-x2y2token", "ethereum", "X2Y2", "0x1e4ede388cbc9f4b5c79681b7f94d36a11abebc9", 18),
     ("tcr-tracer-dao", "ethereum", "TCR", "0x9c4a4204b79dd291d6b6571c5be8bbcd0622f050", 18),
     ("tsuka-dejitaru-tsuka", "ethereum", "TSUKA", "0xc5fb36dd2fb59d3b98deff88425a3f425ee469ed", 9),
-    -- ("caw-a-hunters-dream", "ethereum", "CAW", "0xf3b9569f82b18aef890de263b84189bd33ebe452", 18), Removed until feed fixed by cp
+    -- ("caw-a-hunters-dream", "ethereum", "CAW", "0xf3b9569f82b18aef890de263b84189bd33ebe452", 18), Removed until feed fixed BY cp
     ("inu-inu", "ethereum", "INU", "0x050d94685c6b0477e1fc555888af6e2bb8dfbda5", 18),
     ("metis-metis-token", "ethereum", "METIS", "0x9e32b13ce7f2e80a01932b42553652e053d6ed8e", 18),
     ("note-notional", "ethereum", "NOTE", "0xcfeaead4947f0705a14ec42ac3d44129e1ef3ed5", 8),
@@ -1046,7 +1046,7 @@ VALUES
     ('kif-kittenfinance', 'ethereum', 'KIF', '0x177ba0cac51bfc7ea24bad39d81dcefd59d74faa', 18),
     ('kine-kine-protocol', 'ethereum', 'KINE', '0xcbfef8fdd706cde6f208460f2bf39aa9c785f05d', 18),
     ('kst-ksm-starter', 'ethereum', 'KST', '0xbc17729fdf562723f0267f79ff25ade441056d87', 18),
-    ('labs-labs-group', 'ethereum', 'LABS', '0x8b0e42f366ba502d787bb134478adfae966c8798', 18),
+    ('labs-labs-GROUP', 'ethereum', 'LABS', '0x8b0e42f366ba502d787bb134478adfae966c8798', 18),
     ('lina-linear', 'ethereum', 'LINA', '0x3e9bc21c9b189c09df3ef1b824798658d5011937', 18),
     ('lit-litentry', 'ethereum', 'LIT', '0xb59490ab09a0f526cc7305822ac65f2ab12f9723', 18),
     ('lith-lithium-finance', 'ethereum', 'LITH', '0x188e817b02e635d482ae4d81e25dda98a97c4a42', 18),
@@ -1559,7 +1559,7 @@ VALUES
     ("usdc-usd-coin", "gnosis", "USDC", "0xddafbb505ad214d7b80b1f830fccc89b60fb7a83", 6),
     ("usdt-tether", "gnosis", "USDT", "0x4ecaba5870353805a9f068101a40e0f32ed605c6", 6),
     ("wbtc-wrapped-bitcoin", "gnosis", "WBTC", "0x8e5bbbb09ed1ebde8674cda39a0c169401db4252", 8),
-    --tokens NOT yet supported or are not active on coinpaprika are commented out
+    --tokens NOT yet supported or are not active ON coinpaprika are commented out
     ("eth-ethereum", "optimism", "ETH", "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", 18),
     ("eth-ethereum", "optimism", "ETH", "0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000",18),
     ("dai-dai", "optimism", "DAI", "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1", 18),

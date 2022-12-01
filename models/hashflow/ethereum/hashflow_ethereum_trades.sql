@@ -66,9 +66,9 @@ SELECT
     case when hashflow_trades.composite_index <> -1 then hashflow_trades.composite_index end AS evt_index
 FROM hashflow_trades
 inner join ethereum_transactions tx
-    on hashflow_trades.tx_hash = tx.hash
+    ON hashflow_trades.tx_hash = tx.hash
 LEFT JOIN erc20_tokens erc20a
-    on erc20a.contract_address = hashflow_trades.maker_token
+    ON erc20a.contract_address = hashflow_trades.maker_token
 LEFT JOIN erc20_tokens erc20b
-    on erc20b.contract_address = hashflow_trades.taker_token
+    ON erc20b.contract_address = hashflow_trades.taker_token
 ;

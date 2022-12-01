@@ -30,7 +30,7 @@ daily_transfers AS (
         , sum(case when spec_txn_type = 'Protocol to Bridge' then value_norm else 0 end ) AS output_value_norm
     FROM {{ref('aztec_v2_ethereum_rollupbridge_transfers')}}
     where bridge_protocol is NOT NULL -- exclude all txns that don't interact with the bridges
-    group by 1,2,3,4
+    GROUP BY 1,2,3,4
 ),
 
 token_addresses AS (
@@ -107,6 +107,6 @@ token_prices AS (
         , dt.output_value_norm * COALESCE(p.price_usd, b.eth_price) AS output_volume_usd
         , dt.output_value_norm * COALESCE(p.price_eth, 1) AS output_volume_eth
     FROM daily_transfers dt
-    inner join token_prices p on dt.date = p.day AND dt.token_address = p.token_address
-    LEFT JOIN token_prices b on dt.date = b.day AND dt.token_address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' -- using this to get price for missing ETH token
+    inner join token_prices p ON dt.date = p.day AND dt.token_address = p.token_address
+    LEFT JOIN token_prices b ON dt.date = b.day AND dt.token_address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' -- using this to get price for missing ETH token
 ;

@@ -39,7 +39,7 @@ WITH aggregator_routed_x2y2_txs AS (
     LEFT JOIN {{ ref('nft_ethereum_aggregators') }} agg ON agg.contract_address=taker
     WHERE taker IN (SELECT contract_address FROM {{ ref('nft_ethereum_aggregators') }})
     {% if is_incremental() %}
-    -- this filter will only be applied on an incremental run
+    -- this filter will only be applied ON an incremental run
     AND prof.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
     )
@@ -77,7 +77,7 @@ WITH aggregator_routed_x2y2_txs AS (
         ON LEFT(et.data, CHARINDEX(agg_m.hash_marker, et.data) + LENGTH(agg_m.hash_marker)) LIKE '%' || agg_m.hash_marker
     WHERE taker NOT IN (SELECT contract_address FROM {{ ref('nft_ethereum_aggregators') }})
     {% if is_incremental() %}
-    -- this filter will only be applied on an incremental run
+    -- this filter will only be applied ON an incremental run
     AND prof.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
     )
@@ -110,7 +110,7 @@ WITH aggregator_routed_x2y2_txs AS (
         AND e721.contract_address = txs.project_contract_address
         AND to NOT IN (SELECT contract_address FROM {{ ref('nft_ethereum_aggregators') }})
     {% if is_incremental() %}
-    -- this filter will only be applied on an incremental run
+    -- this filter will only be applied ON an incremental run
     AND e721.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
    )

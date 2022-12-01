@@ -14,7 +14,7 @@ WITH minute AS  -- This CTE generates a series of minute values
     ) ,
 
  / *
-GLP fees accrued to the Fee GLP contract AND can be claimed by invoking function_claim()
+GLP fees accrued to the Fee GLP contract AND can be claimed BY invoking function_claim()
 The Fee GLP contract can be found here: https: / /arbiscan.io/address/0x4e971a87900b931ff39d1aad67697f49835400b6
 * / 
 fglp_balances AS -- This CTE returns the accuals of WETH tokens in the Fee GLP contract in a designated minute

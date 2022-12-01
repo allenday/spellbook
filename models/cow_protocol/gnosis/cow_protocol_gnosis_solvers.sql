@@ -16,10 +16,10 @@ solver_activation_events AS (
     SELECT solver, evt_block_number, evt_index, False AS activated
     FROM {{ source('gnosis_protocol_v2_gnosis', 'GPv2AllowListAuthentication_evt_SolverRemoved') }}
 ),
--- Sorting by (evt_block_number, evt_index) allows us to pick the most recent activation status of each unique solver
+-- Sorting BY (evt_block_number, evt_index) allows us to pick the most recent activation status of each unique solver
 ranked_solver_events AS (
     SELECT
-        rank() over (partition by solver order by evt_block_number desc, evt_index desc) AS rk,
+        rank() over (partition BY solver order BY evt_block_number desc, evt_index desc) AS rk,
         solver,
         evt_block_number,
         evt_index,
@@ -63,4 +63,4 @@ SELECT solver AS address,
       case when name is NOT NULL then name else 'Uncatalogued' end      AS name,
       active
 FROM registered_solvers
-    left outer join known_solver_metadata on solver = lower(address);
+    left outer join known_solver_metadata ON solver = lower(address);

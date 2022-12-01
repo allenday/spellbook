@@ -12,7 +12,7 @@
     )
 }}
 
--- raw data table with all sales on superrare platform -- both primary AND secondary
+-- raw data table with all sales ON superrare platform -- both primary AND secondary
 with all_superrare_sales AS (
     SELECT  evt_block_time
             , `_originContract` AS contract_address
@@ -153,7 +153,7 @@ with all_superrare_sales AS (
         AND block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
 )
--- some items are sold in RARE currency on superrare. NOT available on coinpaprika, so using dex data to be able to convert to USD. usuing weekly average since dex data isn't fully populated on v2 right now (~1 / 8 of data vs. v1). switch back to daily once full data is available
+-- some items are sold in RARE currency ON superrare. NOT available ON coinpaprika, so using dex data to be able to convert to USD. usuing weekly average since dex data isn't fully populated ON v2 right now (~1 / 8 of data vs. v1). switch back to daily once full data is available
 , rare_token_price_eth AS (
     SELECT
         date_trunc('week', block_time) AS week,
@@ -183,7 +183,7 @@ with all_superrare_sales AS (
         {% if is_incremental() %}
         AND block_date >= date_trunc("day", now() - interval '1 week')
         {% endif %}
-    group by
+    GROUP BY
         1
 )
 , transfers_for_tokens_sold_from_auction AS (
@@ -201,7 +201,7 @@ with all_superrare_sales AS (
             , ROW_NUMBER() OVER (PARTITION BY evt.contract_address, evt.tokenId ORDER BY evt.evt_block_time DESC) AS transaction_rank
     FROM {{ source('erc721_ethereum','evt_transfer') }} evt
     inner join all_superrare_sales tsfa
-        on evt.contract_address = tsfa.contract_address
+        ON evt.contract_address = tsfa.contract_address
         AND evt.tokenId = tsfa.tokenId
         AND tsfa.seller = lower('0x8c9f364bf7a56ed058fc63ef81c6cf09c833e656')
     {% if is_incremental() %}
@@ -324,27 +324,27 @@ left outer join
             AND minute >= date_trunc("day", now() - interval '1 week')
             {% endif %}
     ) ep
-    on date_trunc('minute', a.evt_block_time) = ep.minute
+    ON date_trunc('minute', a.evt_block_time) = ep.minute
 left outer join rare_token_price_eth rp
-    on date_trunc('week', a.evt_block_time) = rp.week
+    ON date_trunc('week', a.evt_block_time) = rp.week
 inner join {{ source('ethereum','transactions') }} t
-    on a.evt_tx_hash = t.hash
+    ON a.evt_tx_hash = t.hash
     {% if is_incremental() %}
     AND t.block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-left outer join {{ source('erc721_ethereum','evt_transfer') }} evt on evt.contract_address = a.contract_address
+left outer join {{ source('erc721_ethereum','evt_transfer') }} evt ON evt.contract_address = a.contract_address
     AND evt.tokenId = a.tokenId
     AND evt.FROM = '0x0000000000000000000000000000000000000000'
     {% if is_incremental() %}
     AND evt.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-left outer join {{ source('erc20_ethereum','evt_transfer') }} erc20 on erc20.contract_address = a.contract_address
+left outer join {{ source('erc20_ethereum','evt_transfer') }} erc20 ON erc20.contract_address = a.contract_address
     AND erc20.value = a.tokenId
     AND erc20.FROM = '0x0000000000000000000000000000000000000000'
     {% if is_incremental() %}
     AND erc20.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
 left outer join transfers_for_tokens_sold_from_auction po -- if sold FROM auction house previous owner
-    on a.evt_tx_hash = po.evt_tx_hash
+    ON a.evt_tx_hash = po.evt_tx_hash
 where (a.amount / 1e18) > 0
 ;

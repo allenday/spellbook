@@ -6,7 +6,7 @@ with
         distinct buy.tx_to AS address
     FROM {{ref('dex_trades')}} buy
     inner join {{ref('dex_trades')}} sell
-        on sell.block_time = buy.block_time
+        ON sell.block_time = buy.block_time
             AND sell.tx_hash != buy.tx_hash
             AND buy.`tx_from` = sell.`tx_from`
             AND buy.`tx_to` = sell.`tx_to`
@@ -15,9 +15,9 @@ with
             AND buy.token_sold_address = sell.token_bought_address
             AND buy.token_bought_amount_raw = sell.token_sold_amount_raw
     inner join {{source('ethereum', 'transactions')}} et_buy
-        on et_buy.hash = buy.tx_hash
+        ON et_buy.hash = buy.tx_hash
     inner join {{source('ethereum','transactions')}} et_sell
-        on et_sell.hash = sell.tx_hash
+        ON et_sell.hash = sell.tx_hash
     where
         buy.blockchain = 'ethereum'
         AND sell.blockchain = 'ethereum'

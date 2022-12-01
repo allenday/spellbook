@@ -24,7 +24,7 @@ with
                 contract_address AS pool_address
                 ,newFee AS pool_fee
                 ,evt_block_time AS update_time
-                ,row_number() over (partition by contract_address order by evt_block_number desc, tx.index desc) AS ordering
+                ,row_number() over (partition BY contract_address order BY evt_block_number desc, tx.index desc) AS ordering
             FROM {{ source('sudo_amm_ethereum','LSSVMPair_general_evt_FeeUpdate') }} evt
             INNER JOIN {{ source('ethereum','transactions') }} tx ON tx.block_time = evt.evt_block_time
             AND tx.hash = evt.evt_tx_hash
@@ -50,7 +50,7 @@ with
                 contract_address AS pool_address
                 ,newDelta / 1e18 AS delta
                 ,evt_block_time AS update_time
-                ,row_number() over (partition by contract_address order by evt_block_number desc, tx.index desc) AS ordering
+                ,row_number() over (partition BY contract_address order BY evt_block_number desc, tx.index desc) AS ordering
             FROM {{ source('sudo_amm_ethereum','LSSVMPair_general_evt_DeltaUpdate') }} evt
             INNER JOIN {{ source('ethereum','transactions') }} tx ON tx.block_time = evt.evt_block_time
             AND tx.hash = evt.evt_tx_hash
@@ -76,7 +76,7 @@ with
                 contract_address AS pool_address
                 ,newSpotPrice / 1e18 AS spot_price
                 ,evt_block_time AS update_time
-                ,row_number() over (partition by contract_address order by evt_block_number desc, tx.index desc) AS ordering
+                ,row_number() over (partition BY contract_address order BY evt_block_number desc, tx.index desc) AS ordering
             FROM {{ source('sudo_amm_ethereum','LSSVMPair_general_evt_SpotPriceUpdate') }} evt
             INNER JOIN {{ source('ethereum','transactions') }} tx ON tx.block_time = evt.evt_block_time
             AND tx.hash = evt.evt_tx_hash
@@ -100,8 +100,8 @@ with
         ,spot_price
         ,coalesce(t1.update_time, t2.update_time, t3.update_time) AS latest_update_time
     FROM latest_spot_price t1
-    full join latest_delta t2 on t1.pool_address = t2.pool_address
-    full join latest_pool_fee t3 on t1.pool_address = t3.pool_address or t2.pool_address = t3.pool_address
+    full join latest_delta t2 ON t1.pool_address = t2.pool_address
+    full join latest_pool_fee t3 ON t1.pool_address = t3.pool_address or t2.pool_address = t3.pool_address
 )
 
 , initial_settings AS (
@@ -142,7 +142,7 @@ with
 {% endif %}
 
 
--- This happens on a full refresh, no backfill necesarry.
+-- This happens ON a full refresh, no backfill necesarry.
 {% if NOT is_incremental() %}
 , full_settings_backfilled AS (
     SELECT

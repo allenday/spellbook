@@ -48,13 +48,13 @@ with registrations AS (
     SELECT *
     FROM (
         SELECT *
-        ,row_number() over (partition by node order by block_time desc, evt_index desc) AS ordering2
+        ,row_number() over (partition BY node order BY block_time desc, evt_index desc) AS ordering2
         FROM (
             SELECT
             r.*
             ,n.address
             ,n.node
-            ,row_number() over (partition by r.tx_hash order by (r.evt_index - n.evt_index) asc) AS ordering
+            ,row_number() over (partition BY r.tx_hash order BY (r.evt_index - n.evt_index) asc) AS ordering
             FROM registrations r
             inner join node_info n
             ON r.block_number = n.block_number

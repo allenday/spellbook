@@ -45,7 +45,7 @@ WITH
             FROM {{ source('sudo_amm_ethereum','LSSVMPair_general_call_swapNFTsForToken') }}
             WHERE call_success = true
             {% if is_incremental() %}
-            -- this filter will only be applied on an incremental run. We only want to update with new swaps.
+            -- this filter will only be applied ON an incremental run. We only want to update with new swaps.
             AND call_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
 
@@ -64,7 +64,7 @@ WITH
             FROM {{ source('sudo_amm_ethereum','LSSVMPair_general_call_swapTokenForAnyNFTs') }}
             WHERE call_success = true
             {% if is_incremental() %}
-            -- this filter will only be applied on an incremental run. We only want to update with new swaps.
+            -- this filter will only be applied ON an incremental run. We only want to update with new swaps.
             AND call_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
 
@@ -83,7 +83,7 @@ WITH
             FROM {{ source('sudo_amm_ethereum','LSSVMPair_general_call_swapTokenForSpecificNFTs') }}
             WHERE call_success = true
             {% if is_incremental() %}
-            -- this filter will only be applied on an incremental run. We only want to update with new swaps.
+            -- this filter will only be applied ON an incremental run. We only want to update with new swaps.
             AND call_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         ) s
@@ -98,7 +98,7 @@ WITH
         inner join {{ source('ethereum', 'traces') }} tr
         ON tr.success AND s.call_block_number = tr.block_number AND s.call_tx_hash = tr.tx_hash AND s.call_trace_address = tr.trace_address
         {% if is_incremental() %}
-        -- this filter will only be applied on an incremental run. We only want to update with new swaps.
+        -- this filter will only be applied ON an incremental run. We only want to update with new swaps.
         AND tr.block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
         {% if NOT is_incremental() %}
@@ -160,13 +160,13 @@ WITH
                 , asset_recip
                 , trade_recipient
                 , project_contract_address
-                , row_number() OVER (partition by call_tx_hash, contract_address, call_trace_address order by fee_update_time desc, protocolfee_update_time desc, asset_recip_update_time desc) AS ordering
+                , row_number() OVER (partition BY call_tx_hash, contract_address, call_trace_address order BY fee_update_time desc, protocolfee_update_time desc, asset_recip_update_time desc) AS ordering
             FROM (
                 SELECT
                     swaps.*
-                    , COALESCE(fu.newfee, pc.initialfee) / 1e18 AS pool_fee --most recent pool_fee, depends on bonding curve to implement it correctly. See explanation in fee table schema.
+                    , COALESCE(fu.newfee, pc.initialfee) / 1e18 AS pool_fee --most recent pool_fee, depends ON bonding curve to implement it correctly. See explanation in fee table schema.
                     , COALESCE(fu.evt_block_time, pc.block_time) AS fee_update_time
-                    , pfu.newMultiplier / 1e18 AS protocolfee --most recent protocolfee, depends on bonding curve to implement it correctly. See explanation in fee table schema.
+                    , pfu.newMultiplier / 1e18 AS protocolfee --most recent protocolfee, depends ON bonding curve to implement it correctly. See explanation in fee table schema.
                     , pfu.evt_block_time AS protocolfee_update_time
                     , pc.protocolfee_recipient
                     , pc.nftcontractaddress
@@ -178,14 +178,14 @@ WITH
                 -- should NOT matter a lot since # of changes per pool should be small
                 LEFT JOIN pool_fee_update fu ON swaps.call_block_time >= fu.evt_block_time AND swaps.contract_address = fu.contract_address
                 LEFT JOIN protocol_fee_update pfu ON swaps.call_block_time >= pfu.evt_block_time
-                LEFT JOIN asset_recipient_update aru on swaps.call_block_time >= aru.evt_block_time AND swaps.contract_address = aru.contract_address
+                LEFT JOIN asset_recipient_update aru ON swaps.call_block_time >= aru.evt_block_time AND swaps.contract_address = aru.contract_address
             ) a
         ) b
         WHERE ordering = 1 --we want to keep the most recent pool_fee AND protocol fee for each individual call (trade)
     )
 
     ,swaps_w_traces AS (
-        -- we traces to get NFT AND ETH transfer data because sudoswap doesn't emit any data in events for swaps, so we have to piece it together manually based on trace_address.
+        -- we traces to get NFT AND ETH transfer data because sudoswap doesn't emit any data in events for swaps, so we have to piece it together manually based ON trace_address.
         SELECT
             sb.call_block_time
             , sb.call_block_number
@@ -197,7 +197,7 @@ WITH
                     WHEN (tr.to = sb.call_from AND sb.call_from != sb.asset_recip) THEN -value --refunds unless the caller is also the asset recipient, no way to discriminate there.
                     ELSE 0 END)
                 ELSE ( -- caller sells, AMM buys
-                    CASE WHEN tr.FROM = sb.pair_address THEN value -- all ETH leaving the pool, nothing should be coming in on a sell.
+                    CASE WHEN tr.FROM = sb.pair_address THEN value -- all ETH leaving the pool, nothing should be coming in ON a sell.
                     ELSE 0 END)
                 END ) AS trade_price -- what the buyer paid (incl all fees)
             , SUM(
@@ -274,7 +274,7 @@ WITH
             , (trade_price-protocol_fee_amount) / (1+pool_fee)*pool_fee AS pool_fee_amount_raw
             , (trade_price-protocol_fee_amount) / (1+pool_fee)*pool_fee/1e18 AS pool_fee_amount
             , pool_fee AS pool_fee_percentage
-            -- royalties don't currently exist on the AMM,
+            -- royalties don't currently exist ON the AMM,
             , NULL::double AS royalty_fee_amount_raw
             , NULL::double AS royalty_fee_amount
             , NULL::double AS royalty_fee_percentage

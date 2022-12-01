@@ -39,7 +39,7 @@ linked_address_nft_trade AS (
         address_b,
         count(*) AS cnt
     FROM nft_trade_address
-    group by 1, 2, 3
+    GROUP BY 1, 2, 3
     having count(*) > 1
 ),
 
@@ -59,7 +59,7 @@ linked_address_sorted AS (
 linked_address_sorted_row_num AS (
     SELECT blockchain, master_address, alternative_address,
         master_address || '-' || alternative_address AS linked_address_id,
-        row_number() over (partition by blockchain, alternative_address order by master_address) AS row_num
+        row_number() over (partition BY blockchain, alternative_address order BY master_address) AS row_num
     FROM linked_address_sorted
 )
 

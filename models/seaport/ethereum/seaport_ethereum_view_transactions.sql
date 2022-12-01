@@ -101,7 +101,7 @@ with iv_availadv AS (
                           FROM {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }} a
                          where 1=1
                            AND recipient = '0x0000000000000000000000000000000000000000'
-                       ) e on a.recipient = e.recipient
+                       ) e ON a.recipient = e.recipient
                           AND a.evt_tx_hash = e.evt_tx_hash
                           AND a.each_consideration:token = e.each_offer:token
                           AND a.each_consideration:itemType = e.each_offer:itemType
@@ -111,13 +111,13 @@ with iv_availadv AS (
 ,iv_transfer_level AS (
     SELECT a.*
       FROM iv_transfer_level_pre a
-           LEFT JOIN iv_availadv b on b.tx_hash = a.tx_hash
+           LEFT JOIN iv_availadv b ON b.tx_hash = a.tx_hash
                                    AND b.item_type in ('2','3')
                                    AND b.token_contract_address = a.token_contract_address
                                    AND b.token_id = a.token_id
                                    AND b.sender = a.sender
                                    AND b.receiver = a.receiver
-           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillAvailableAdvancedOrders') }} c on c.call_tx_hash = a.tx_hash
+           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillAvailableAdvancedOrders') }} c ON c.call_tx_hash = a.tx_hash
      where 1=1
        AND NOT (a.item_type in ('2','3') AND b.tx_hash is NULL AND c.call_tx_hash is not null)
 )
@@ -183,9 +183,9 @@ with iv_availadv AS (
           ,coalesce(sum(case when item_type in ('2','3') then original_amount end),0) AS nft_item_count
       FROM (
             SELECT a.*
-                  ,count(case when item_type in ('2','3') then 1 end) over (partition by tx_hash) AS nft_transfer_count
+                  ,count(case when item_type in ('2','3') then 1 end) over (partition BY tx_hash) AS nft_transfer_count
                   ,case when main_type = 'advanced' then 'auction'
-                        when max(case when item_type in ('0','1') then item_type end) over (partition by tx_hash) = '0' then 'click buy now'
+                        when max(case when item_type in ('0','1') then item_type end) over (partition BY tx_hash) = '0' then 'click buy now'
                         else 'offer accepted'
                   end AS category
                   ,case when (item_type, sub_idx) in (('2',1), ('3',1)) then True
@@ -193,7 +193,7 @@ with iv_availadv AS (
                   end AS first_item
               FROM iv_transfer_level a
             ) a
-     group by 1,2,3,4,5,6,7
+     GROUP BY 1,2,3,4,5,6,7
 )
 ,iv_nft_trades AS (
     SELECT a.block_time
@@ -267,25 +267,25 @@ with iv_availadv AS (
            end AS order_type
 
       FROM iv_txn_level a
-          LEFT JOIN {{ source('ethereum','transactions') }} tx on tx.hash = a.tx_hash
+          LEFT JOIN {{ source('ethereum','transactions') }} tx ON tx.hash = a.tx_hash
                                               AND tx.block_number > 14801608
-          LEFT JOIN {{ ref('tokens_ethereum_nft') }} n on n.contract_address = a.nft_contract_address
-          LEFT JOIN {{ ref('tokens_ethereum_erc20') }} e1 on e1.contract_address = a.currency_contract
-          LEFT JOIN {{ ref('tokens_ethereum_erc20') }} e2 on e2.contract_address = a.currency_contract2
-          LEFT JOIN {{ source('prices', 'usd') }} p1 on p1.contract_address = a.currency_contract
+          LEFT JOIN {{ ref('tokens_ethereum_nft') }} n ON n.contract_address = a.nft_contract_address
+          LEFT JOIN {{ ref('tokens_ethereum_erc20') }} e1 ON e1.contract_address = a.currency_contract
+          LEFT JOIN {{ ref('tokens_ethereum_erc20') }} e2 ON e2.contract_address = a.currency_contract2
+          LEFT JOIN {{ source('prices', 'usd') }} p1 ON p1.contract_address = a.currency_contract
                                   AND p1.minute = date_trunc('minute', a.block_time)
                                   AND p1.minute >= '2022-05-15'
                                   AND p1.blockchain = 'ethereum'
-          LEFT JOIN {{ source('prices', 'usd') }} p2 on p2.contract_address = a.currency_contract2
+          LEFT JOIN {{ source('prices', 'usd') }} p2 ON p2.contract_address = a.currency_contract2
                                   AND p2.minute = date_trunc('minute', a.block_time)
                                   AND p2.minute >= '2022-05-15'
                                   AND p2.blockchain = 'ethereum'
-           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillOrder') }} spc1 on spc1.call_tx_hash = a.tx_hash
-           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillBasicOrder') }} spc2 on spc2.call_tx_hash = a.tx_hash
-           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillAdvancedOrder') }} spc3 on spc3.call_tx_hash = a.tx_hash
-           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillAvailableAdvancedOrders') }} spc4 on spc4.call_tx_hash = a.tx_hash
-           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillAvailableOrders') }} spc5 on spc5.call_tx_hash = a.tx_hash
-           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_matchOrders') }} spc6 on spc6.call_tx_hash = a.tx_hash
+           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillOrder') }} spc1 ON spc1.call_tx_hash = a.tx_hash
+           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillBasicOrder') }} spc2 ON spc2.call_tx_hash = a.tx_hash
+           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillAdvancedOrder') }} spc3 ON spc3.call_tx_hash = a.tx_hash
+           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillAvailableAdvancedOrders') }} spc4 ON spc4.call_tx_hash = a.tx_hash
+           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_fulfillAvailableOrders') }} spc5 ON spc5.call_tx_hash = a.tx_hash
+           LEFT JOIN {{ source('seaport_ethereum','Seaport_call_matchOrders') }} spc6 ON spc6.call_tx_hash = a.tx_hash
 )
 SELECT block_time
       ,nft_project_name

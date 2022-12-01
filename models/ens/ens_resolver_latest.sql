@@ -17,7 +17,7 @@ SELECT
 FROM(
      SELECT
      *
-    ,row_number() over (partition by node order by block_time desc, evt_index desc) AS ordering
+    ,row_number() over (partition BY node order BY block_time desc, evt_index desc) AS ordering
     FROM {{ ref('ens_resolver_records')}}
 ) f
 where ordering = 1

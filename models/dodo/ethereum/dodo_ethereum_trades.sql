@@ -13,7 +13,7 @@
 )
 }}
 
--- The first dodo contracted was deployed on '2020-08-10 13:19' FROM the query
+-- The first dodo contracted was deployed ON '2020-08-10 13:19' FROM the query
 --SELECT min(evt_block_time) FROM dodo_ethereum.DODO_evt_BuyBaseToken;
 {% set project_start_date = '2020-08-10' %}
 
@@ -58,7 +58,7 @@ WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_
         FROM
             {{ source('dodo_ethereum', 'DODO_evt_SellBaseToken')}} s
         LEFT JOIN dodo_view_markets m
-            on s.contract_address = m.market_contract_address
+            ON s.contract_address = m.market_contract_address
         WHERE s.seller <> '0xa356867fdcea8e71aeaf87805808803806231fdc'
         {% if is_incremental() %}
         AND s.evt_block_time >= date_trunc("day", now() - interval '1 week')
@@ -85,7 +85,7 @@ WITH dodo_view_markets (market_contract_address, base_token_symbol, quote_token_
         FROM
             {{ source('dodo_ethereum','DODO_evt_BuyBaseToken')}} b
         LEFT JOIN dodo_view_markets m
-            on b.contract_address = m.market_contract_address
+            ON b.contract_address = m.market_contract_address
         WHERE b.buyer <> '0xa356867fdcea8e71aeaf87805808803806231fdc'
         {% if is_incremental() %}
         AND b.evt_block_time >= date_trunc("day", now() - interval '1 week')
@@ -261,7 +261,7 @@ SELECT
     ) AS amount_usd
     ,dexs.token_bought_address
     ,dexs.token_sold_address
-    ,coalesce(dexs.taker, tx.FROM) AS taker -- subqueries rely on this COALESCE to avoid redundant joins with the transactions table
+    ,coalesce(dexs.taker, tx.FROM) AS taker -- subqueries rely ON this COALESCE to avoid redundant joins with the transactions table
     ,dexs.maker
     ,dexs.project_contract_address
     ,dexs.tx_hash

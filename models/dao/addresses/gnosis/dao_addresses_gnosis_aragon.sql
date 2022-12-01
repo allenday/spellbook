@@ -12,7 +12,7 @@
 
 WITH  -- dune query here - https: / /dune.com/queries/1435985
 
--- this code follows the same logic AS dao_addresses_ethereum_aragon, Refer to that for comments on code.
+-- this code follows the same logic AS dao_addresses_ethereum_aragon, Refer to that for comments ON code.
 
 aragon_daos AS (
         SELECT
@@ -27,7 +27,7 @@ aragon_daos AS (
         {% if is_incremental() %}
         WHERE block_time >= date_trunc("day", now() - interval '1 week')
         {% endif %}
-        AND topic1 = '0x3a7eb042a769adf51e9be78b68ed7af0ad7b379246536efc376ed2ca01238282' -- deploy dao event on aragon
+        AND topic1 = '0x3a7eb042a769adf51e9be78b68ed7af0ad7b379246536efc376ed2ca01238282' -- deploy dao event ON aragon
 ),
 
 app_ids (app_id) AS (

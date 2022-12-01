@@ -22,7 +22,7 @@ SELECT
     et.tx_hash,
     array_join(et.trace_address, ',') AS trace_address
 FROM {{ source('ethereum', 'traces') }} et
-join {{ ref('safe_ethereum_safes') }} s on et.FROM = s.address
+join {{ ref('safe_ethereum_safes') }} s ON et.FROM = s.address
     AND et.FROM != et.to -- exclude calls to self to guarantee unique key property
     AND et.success = true
     AND (lower(et.call_type) NOT in ('delegatecall', 'callcode', 'staticcall') or et.call_type is NULL)
@@ -45,7 +45,7 @@ SELECT
     et.tx_hash,
     array_join(et.trace_address, ',') AS trace_address
 FROM {{ source('ethereum', 'traces') }} et
-join {{ ref('safe_ethereum_safes') }} s on et.to = s.address
+join {{ ref('safe_ethereum_safes') }} s ON et.to = s.address
     AND et.FROM != et.to -- exclude calls to self to guarantee unique key property
     AND et.success = true
     AND (lower(et.call_type) NOT in ('delegatecall', 'callcode', 'staticcall') or et.call_type is NULL)

@@ -110,6 +110,6 @@ WHERE (
      AND block_slot > 114980355
      {% endif %}
      {% if is_incremental() %}
-     -- this filter will only be applied on an incremental run
+     -- this filter will only be applied ON an incremental run
      AND block_date >= date_trunc("day", now() - interval '1 week')
      {% endif %}

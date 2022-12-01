@@ -17,9 +17,9 @@ SELECT
     sum(tr.amount_raw) AS amount_raw,
     sum(tr.amount_raw / power(10, t.decimals)) AS amount
 FROM {{ ref('transfers_ethereum_erc20') }} tr
-LEFT JOIN {{ ref('tokens_ethereum_erc20') }} t on t.contract_address = tr.token_address
+LEFT JOIN {{ ref('tokens_ethereum_erc20') }} t ON t.contract_address = tr.token_address
 {% if is_incremental() %}
--- this filter will only be applied on an incremental run
+-- this filter will only be applied ON an incremental run
 where tr.evt_block_time >= date_trunc('day', now() - interval '1 week')
 {% endif %}
-group by 1, 2, 3, 4, 5, 6
+GROUP BY 1, 2, 3, 4, 5, 6

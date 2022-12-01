@@ -44,7 +44,7 @@ with base_level AS (
       ,coalesce(sd.contract_address is NOT NULL, false) AS is_self_destruct
     FROM {{ source('optimism', 'creation_traces') }} AS ct
     LEFT JOIN {{ ref('contracts_optimism_self_destruct_contracts') }} AS sd
-      on ct.address = sd.contract_address
+      ON ct.address = sd.contract_address
       AND ct.tx_hash = sd.creation_tx_hash
       AND ct.block_time = sd.created_time
       {% if is_incremental() %}
@@ -68,7 +68,7 @@ with base_level AS (
     FROM {{ this }}
     {% endif %}
   ) AS x
-  group by 1, 2, 3, 4, 5, 6
+  GROUP BY 1, 2, 3, 4, 5, 6
 )
 ,tokens AS (
   SELECT
@@ -76,8 +76,8 @@ with base_level AS (
     ,t.symbol
   FROM base_level AS bl
   join {{ ref('tokens_optimism_erc20') }} AS t
-    on bl.contract_address = t.contract_address
-  group by 1, 2
+    ON bl.contract_address = t.contract_address
+  GROUP BY 1, 2
 
   union all
 
@@ -86,8 +86,8 @@ with base_level AS (
     ,t.name AS symbol
   FROM base_level AS bl
   join {{ ref('tokens_optimism_nft') }} AS t
-    on bl.contract_address = t.contract_address
-  group by 1, 2
+    ON bl.contract_address = t.contract_address
+  GROUP BY 1, 2
 )
 -- starting FROM 0
 {% for i in range(max_levels) -%}
@@ -113,11 +113,11 @@ with base_level AS (
     {% if loop.first -%}
     FROM base_level AS b
     LEFT JOIN base_level AS u
-      on b.creator_address = u.contract_address
+      ON b.creator_address = u.contract_address
     {% else -%}
     FROM level{{i-1}} AS b
     LEFT JOIN base_level AS u
-      on b.creator_address = u.contract_address
+      ON b.creator_address = u.contract_address
     {% endif %}
 )
 {%- endfor %}
@@ -133,9 +133,9 @@ with base_level AS (
     ,f.creation_tx_hash
   FROM level{{max_levels - 1}} AS f
   LEFT JOIN {{ ref('contracts_optimism_contract_creator_address_list') }} AS cc
-    on f.creator_address = cc.creator_address
+    ON f.creator_address = cc.creator_address
   LEFT JOIN {{ ref('contracts_optimism_contract_creator_address_list') }} AS ccf
-    on f.contract_factory = ccf.creator_address
+    ON f.contract_factory = ccf.creator_address
   where f.contract_address is NOT NULL
  )
 ,combine AS (
@@ -151,7 +151,7 @@ with base_level AS (
     ,cc.creation_tx_hash
   FROM creator_contracts AS cc
   LEFT JOIN {{ source('optimism', 'contracts') }} AS oc
-    on cc.contract_address = oc.address
+    ON cc.contract_address = oc.address
 
   union all
   -- ovm 1.0 contracts
@@ -169,7 +169,7 @@ with base_level AS (
   FROM {{ source('ovm1_optimism', 'contracts') }} AS c
   where
     true
-    {% if is_incremental() %} -- this filter will only be applied on an incremental run
+    {% if is_incremental() %} -- this filter will only be applied ON an incremental run
     AND NOT exists (
       SELECT 1
       FROM {{ this }} AS gc
@@ -180,7 +180,7 @@ with base_level AS (
         )
     )
     {% endif %}
-    group by 1, 2, 3, 4, 5, 6, 7, 8, 9
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
 
   union all
   --synthetix genesis contracts
@@ -198,7 +198,7 @@ with base_level AS (
   FROM {{ source('ovm1_optimism', 'synthetix_genesis_contracts') }} AS snx
   where
     true
-    {% if is_incremental() %} -- this filter will only be applied on an incremental run
+    {% if is_incremental() %} -- this filter will only be applied ON an incremental run
     AND NOT exists (
       SELECT 1
       FROM {{ this }} AS gc
@@ -207,7 +207,7 @@ with base_level AS (
         AND gc.contract_project = 'Synthetix'
     )
     {% endif %}
-    group by 1, 2, 3, 4, 5, 6, 7, 8, 9
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
 )
 ,get_contracts AS (
   SELECT
@@ -222,8 +222,8 @@ with base_level AS (
     ,c.creation_tx_hash
   FROM combine AS c
   LEFT JOIN tokens AS t
-    on c.contract_address = t.contract_address
-  group by 1, 2, 3, 4, 5, 6, 7, 8, 9
+    ON c.contract_address = t.contract_address
+  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
 )
 ,cleanup AS (
 --grab the first non-NULL value for each, i.e. if we have the contract via both contract mapping AND optimism.contracts
@@ -234,7 +234,7 @@ with base_level AS (
     {% endfor %}
   FROM get_contracts
   where contract_address is NOT NULL
-  group by 1
+  GROUP BY 1
 )
 SELECT
   c.contract_address
@@ -260,8 +260,8 @@ SELECT
   ,c.creation_tx_hash
 FROM cleanup AS c
 LEFT JOIN {{ source('ovm1_optimism', 'contracts') }} AS ovm1c
-  on c.contract_address = ovm1c.contract_address --fill in any missing contract creators
+  ON c.contract_address = ovm1c.contract_address --fill in any missing contract creators
 LEFT JOIN {{ ref('contracts_optimism_project_name_mappings') }} AS dnm -- fix names for decoded contracts
-  on lower(c.contract_project) = lower(dnm.dune_name)
+  ON lower(c.contract_project) = lower(dnm.dune_name)
 LEFT JOIN {{ ref('contracts_optimism_contract_overrides') }} AS co --override contract maps
-  on lower(c.contract_address) = lower(co.contract_address)
+  ON lower(c.contract_address) = lower(co.contract_address)
