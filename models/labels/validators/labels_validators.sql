@@ -1,5 +1,5 @@
 {{config(alias='validators',
-        post_hook='{{ expose_spells(\'["ethereum","bnb","solana"]\',
+        post_hook='{{ expose_spells(\'["ethereum", "bnb", "solana"]\',
                                     "sector",
                                     "labels",
                                     \'["soispoke"]\') }}')}}

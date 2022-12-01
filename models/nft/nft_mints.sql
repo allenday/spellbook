@@ -1,9 +1,9 @@
 {{ config(
         alias ='mints',
-        post_hook='{{ expose_spells(\'["ethereum","solana"]\',
+        post_hook='{{ expose_spells(\'["ethereum", "solana"]\',
                     "sector",
                     "nft",
-                    \'["soispoke","umer_h_adil","hildobby"]\') }}')
+                    \'["soispoke", "umer_h_adil", "hildobby"]\') }}')
 }}
 
 WITH project_mints AS (

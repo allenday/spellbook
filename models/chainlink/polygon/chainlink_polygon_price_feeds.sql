@@ -8,7 +8,7 @@
     post_hook='{{ expose_spells(\'["polygon"]\',
                                 "project",
                                 "chainlink",
-                                \'["msilb7","0xroll"]\') }}'
+                                \'["msilb7", "0xroll"]\') }}'
     )
 }}
 

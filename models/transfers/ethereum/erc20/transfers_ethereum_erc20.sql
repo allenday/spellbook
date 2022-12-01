@@ -2,7 +2,7 @@
         post_hook='{{ expose_spells(\'["ethereum"]\',
                                     "sector",
                                     "transfers",
-                                    \'["soispoke","dot2dotseurat"]\') }}') }}
+                                    \'["soispoke", "dot2dotseurat"]\') }}') }}
 
 with
     sent_transfers AS (

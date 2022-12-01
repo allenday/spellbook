@@ -1,6 +1,6 @@
 {{ config(
         alias ='mints',
-        post_hook='{{ expose_spells(\'["ethereum","solana"]\',
+        post_hook='{{ expose_spells(\'["ethereum", "solana"]\',
                                             "project",
                                             "opensea",
                                             \'["soispoke"]\') }}'

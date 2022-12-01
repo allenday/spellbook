@@ -2,7 +2,7 @@
         post_hook='{{ expose_spells(\'["ethereum"]\',
                                     "sector",
                                     "labels",
-                                    \'["ilemi","soispoke"]\') }}')}}
+                                    \'["ilemi", "soispoke"]\') }}')}}
 
 SELECT blockchain, address, name, category, contributor, source, created_at, updated_at
 FROM (VALUES

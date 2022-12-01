@@ -3,7 +3,7 @@
         post_hook='{{ expose_spells(\'["arbitrum"]\',
                                 "project",
                                 "zigzag",
-                                \'["jeff-dude","mtitus6"]\') }}'
+                                \'["jeff-dude", "mtitus6"]\') }}'
         )
 }}
 

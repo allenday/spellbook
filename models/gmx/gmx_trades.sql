@@ -1,6 +1,6 @@
 {{ config(
         alias ='trades',
-        post_hook='{{ expose_spells(\'["avalanche_c","arbitrum"]\',
+        post_hook='{{ expose_spells(\'["avalanche_c", "arbitrum"]\',
                                 "project",
                                 "gmx",
                                 \'["Henrystats"]\') }}'

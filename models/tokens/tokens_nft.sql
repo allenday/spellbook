@@ -1,8 +1,8 @@
 {{ config( alias='nft',
-        post_hook='{{ expose_spells(\'["avalanche_c","bnb","ethereum","optimism", "gnosis"]\',
+        post_hook='{{ expose_spells(\'["avalanche_c", "bnb", "ethereum", "optimism", "gnosis"]\',
                                     "sector",
                                     "tokens",
-                                    \'["0xManny","hildobby","soispoke","dot2dotseurat"]\') }}')}}
+                                    \'["0xManny", "hildobby", "soispoke", "dot2dotseurat"]\') }}')}}
 
 SELECT
 'avalanche_c' AS blockchain,

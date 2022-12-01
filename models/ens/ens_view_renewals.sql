@@ -2,7 +2,7 @@
         post_hook='{{ expose_spells(\'["ethereum"]\',
                                     "project",
                                     "ens",
-                                    \'["antonio-mendes","mewwts"]\') }}')}}
+                                    \'["antonio-mendes", "mewwts"]\') }}')}}
 SELECT *
 FROM {{source('ethereumnameservice_ethereum', 'ETHRegistrarController_1_evt_NameRenewed')}}
 UNION

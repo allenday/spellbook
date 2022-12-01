@@ -1,9 +1,9 @@
 {{ config(
         alias ='burns',
-        post_hook='{{ expose_spells(\'["ethereum","bnb","avalanche_c"]\',
+        post_hook='{{ expose_spells(\'["ethereum", "bnb", "avalanche_c"]\',
                                             "project",
                                             "element",
-                                            \'["hildobby","soispoke"]\') }}'
+                                            \'["hildobby", "soispoke"]\') }}'
 )
 }}
 

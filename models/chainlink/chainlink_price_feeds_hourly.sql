@@ -1,9 +1,9 @@
 {{ config(
         alias ='price_feeds_hourly',
-        post_hook='{{ expose_spells(\'["optimism","polygon"]\',
+        post_hook='{{ expose_spells(\'["optimism", "polygon"]\',
                                 "project",
                                 "chainlink",
-                                \'["msilb7","0xroll"]\') }}'
+                                \'["msilb7", "0xroll"]\') }}'
         )
 }}
 

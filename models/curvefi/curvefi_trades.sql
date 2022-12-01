@@ -1,9 +1,9 @@
 {{ config(
         alias ='trades',
-        post_hook='{{ expose_spells(\'["ethereum","avalanche_c"]\',
+        post_hook='{{ expose_spells(\'["ethereum", "avalanche_c"]\',
                                 "project",
                                 "curvefi",
-                                \'["jeff-dude","yulesa","dsalv","Henrystats"]\') }}'
+                                \'["jeff-dude", "yulesa", "dsalv", "Henrystats"]\') }}'
         )
 }}
 

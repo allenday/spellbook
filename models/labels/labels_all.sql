@@ -5,7 +5,7 @@
     post_hook='{{ expose_spells(\'["ethereum", "solana", "arbitrum", "gnosis", "optimism", "bnb", "avalanche_c"]\',
                                 "sector",
                                 "labels",
-                                \'["soispoke","hildobby"]\') }}')
+                                \'["soispoke", "hildobby"]\') }}')
 }}
 
 -- Static Labels

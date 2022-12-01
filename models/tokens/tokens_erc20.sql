@@ -1,9 +1,9 @@
 {{ config( alias='erc20',
         tags=['static'],
-        post_hook='{{ expose_spells(\'["arbitrum","avalanche_c","bnb","ethereum","optimism", "gnosis"]\',
+        post_hook='{{ expose_spells(\'["arbitrum", "avalanche_c", "bnb", "ethereum", "optimism", "gnosis"]\',
                                     "sector",
                                     "tokens",
-                                    \'["0xManny","hildobby","soispoke","dot2dotseurat","mtitus6"]\') }}')}}
+                                    \'["0xManny", "hildobby", "soispoke", "dot2dotseurat", "mtitus6"]\') }}')}}
 
 SELECT 'arbitrum' AS blockchain, * FROM  {{ ref('tokens_arbitrum_erc20') }}
 UNION
