@@ -36,7 +36,7 @@ with base_level AS (
     , is_self_destruct
   FROM (
     SELECT
-      ct.`FROM` AS creator_address
+      ct.`from` AS creator_address
       , NULL::STRING AS contract_factory
       , ct.address AS contract_address
       , ct.block_time AS created_time

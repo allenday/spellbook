@@ -161,7 +161,7 @@ SELECT 'ethereum' AS blockchain
     END AS token_standard
 , trade_type
 , CAST(1 AS DECIMAL(38, 0)) AS number_of_items
-, CASE WHEN et.`FROM`=seller THEN 'Offer Accepted'
+, CASE WHEN et.`from`=seller THEN 'Offer Accepted'
     ELSE 'Buy'
     END AS trade_category
 , 'Trade' AS evt_type
@@ -185,7 +185,7 @@ SELECT 'ethereum' AS blockchain
 , aggregator_name
 , aggregator_address
 , txs.tx_hash
-, et.`FROM` AS tx_from
+, et.`from` AS tx_from
 , et.`to` AS tx_to
 , platform_fee_amount_raw
 , CASE WHEN currency_contract='0x0000000000000000000000000000000000000000' THEN platform_fee_amount_raw / POWER(10, 18)

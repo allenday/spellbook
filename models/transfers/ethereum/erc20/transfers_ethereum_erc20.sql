@@ -19,8 +19,8 @@ with
     ,
     received_transfers AS (
         SELECT
-        'receive' || '-' || evt_tx_hash || '-' || evt_index || '-' || `FROM` AS unique_transfer_id,
-        `FROM` AS wallet_address,
+        'receive' || '-' || evt_tx_hash || '-' || evt_index || '-' || `from` AS unique_transfer_id,
+        `from` AS wallet_address,
         contract_address AS token_address,
         evt_block_time,
         - value AS amount_raw

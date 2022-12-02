@@ -91,7 +91,7 @@ with
   )
 SELECT
   c.*,
-  t.`FROM` AS contract_creator
+  t.`from` AS contract_creator
 FROM
   contract_labels c
   INNER JOIN ethereum.traces t ON t.type = 'create'

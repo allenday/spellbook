@@ -73,7 +73,7 @@ with cryptopunks_bids_and_sales AS (
     FROM cryptopunks_bids_and_sales a
 
     JOIN {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_Transfer') }} b
-    ON a.from_address = b.`FROM` AND a.evt_block_number = b.evt_block_number AND a.evt_index = (b.evt_index+1)
+    ON a.from_address = b.`from` AND a.evt_block_number = b.evt_block_number AND a.evt_index = (b.evt_index+1)
 
     left outer JOIN cryptopunks_bids_and_sales c
     ON a.punk_id = c.punk_id AND c.event_type = "PunkBidEntered" AND c.punk_id_event_number < a.punk_id_event_number AND c.bid_from_address = b.`to`
@@ -96,8 +96,8 @@ with cryptopunks_bids_and_sales AS (
     FROM {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkBought') }} a
     left outer JOIN {{ source('cryptopunks_ethereum', 'CryptoPunksMarket_evt_PunkTransfer') }} b
     ON a.`punkIndex` = b.`punkIndex`
-        AND a.`toAddress` = b.`FROM`
-        AND b.`FROM` = '0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2'
+        AND a.`toAddress` = b.`from`
+        AND b.`from` = '0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2'
         AND a.evt_tx_hash = b.evt_tx_hash
 
     where a.`value` != 0 or a.`toAddress` != '0x0000000000000000000000000000000000000000' -- only include sales here
@@ -128,7 +128,7 @@ SELECT  "ethereum" AS blockchain
         , agg.contract_address AS aggregator_address
         , a.evt_block_number AS block_number
         , a.evt_tx_hash AS tx_hash
-        , tx.`FROM` AS tx_from
+        , tx.`from` AS tx_from
         , tx.`to` AS tx_to
         , cast(0 AS double) AS platform_fee_amount_raw
         , cast(0 AS double) AS platform_fee_amount

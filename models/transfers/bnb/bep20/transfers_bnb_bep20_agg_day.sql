@@ -28,7 +28,7 @@ with
     ,
     received_transfers AS (
         SELECT
-            `FROM` AS wallet_address,
+            `from` AS wallet_address,
             contract_address AS token_address,
             evt_block_time,
             - value AS amount_raw

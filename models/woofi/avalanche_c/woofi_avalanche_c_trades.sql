@@ -21,7 +21,7 @@ WITH dexs AS
             evt_block_time AS block_time
             ,'woofi' AS project
             ,'1' AS version
-            ,FROM AS taker
+            ,from AS taker
             ,to AS maker
             ,fromAmount AS token_bought_amount_raw
             ,toAmount AS token_sold_amount_raw
@@ -46,7 +46,7 @@ WITH dexs AS
             evt_block_time AS block_time
             ,'woofi' AS project
             ,'1' AS version
-            ,FROM AS taker
+            ,from AS taker
             ,to AS maker
             ,fromAmount AS token_bought_amount_raw
             ,toAmount AS token_sold_amount_raw

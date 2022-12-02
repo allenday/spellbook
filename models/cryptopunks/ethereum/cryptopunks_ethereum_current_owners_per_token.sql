@@ -10023,7 +10023,7 @@ FROM
             , ROW_NUMBER() OVER (PARTITION BY punk_id ORDER BY evt_block_number DESC, evt_index DESC) AS punk_id_tx_rank
     FROM
     (
-        SELECT  NULL AS `FROM`
+        SELECT  NULL AS `from`
                 , address AS `to`
                 , cast('2017-06-23 19:37:59' AS timestamp) AS evt_block_time
                 , cast(3919418 AS int) AS evt_block_number
@@ -10033,7 +10033,7 @@ FROM
 
         UNION ALL
 
-        SELECT  a.`FROM`
+        SELECT  a.`from`
                 , a.`to`
                 , a.evt_block_time
                 , a.evt_block_number

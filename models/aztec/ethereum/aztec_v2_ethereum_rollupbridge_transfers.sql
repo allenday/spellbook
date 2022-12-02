@@ -75,7 +75,7 @@ erc20_tfers AS (
         {% if is_incremental() %}
         WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
-        AND `FROM` IN (SELECT contract_address FROM all_bridges)
+        AND `from` IN (SELECT contract_address FROM all_bridges)
 
         UNION
 
@@ -103,7 +103,7 @@ eth_tfers AS (
         {% if is_incremental() %}
         WHERE block_time >= date_trunc("day", now() - INTERVAL '1 week')
         {% endif %}
-        AND `FROM` IN (SELECT contract_address FROM all_bridges)
+        AND `from` IN (SELECT contract_address FROM all_bridges)
         AND (LOWER(call_type) NOT IN ('delegatecall', 'callcode', 'staticcall') or call_type IS NULL)
         AND success = true
 
@@ -126,7 +126,7 @@ eth_tfers AS (
 
 tfers_raw AS (
         SELECT
-            er.`FROM` AS tx_from,
+            er.`from` AS tx_from,
             er.`to` AS tx_to,
             er.value,
             er.contract_address,
@@ -141,7 +141,7 @@ tfers_raw AS (
         UNION ALL
 
         SELECT
-            et.`FROM` AS tx_from,
+            et.`from` AS tx_from,
             et.`to` AS tx_to,
             et.value,
             '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' AS contract_address,

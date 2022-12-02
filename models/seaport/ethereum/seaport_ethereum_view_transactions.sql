@@ -234,7 +234,7 @@ with iv_availadv AS (
           , a.exchange_contract_address
           , a.tx_hash
           , a.block_number
-          , tx.`FROM` AS tx_from
+          , tx.`from` AS tx_from
           , tx.`to` AS tx_to
           , a.evt_index
           , 1 AS trade_id
