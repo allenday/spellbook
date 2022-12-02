@@ -1,8 +1,8 @@
-{{config(alias='flashbots_ethereum',
+{{ config(alias='flashbots_ethereum',
         post_hook='{{ expose_spells(\'["ethereum"]\',
                                     "sector",
                                     "labels",
-                                    \'["hildobby"]\') }}')}}
+                                    \'["hildobby"]\') }}') }}
 
 SELECT DISTINCT
     account_address AS address

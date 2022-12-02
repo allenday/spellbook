@@ -1,4 +1,4 @@
-{{config(alias='funds_ethereum')}}
+{{ config(alias='funds_ethereum') }}
 
 SELECT
     blockchain

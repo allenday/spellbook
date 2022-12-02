@@ -1,4 +1,4 @@
-{{ config( alias='native', tags=['static'])}}
+{{ config( alias='native', tags=['static']) }}
 
 SELECT
     chain

@@ -1,4 +1,4 @@
-{{ config( alias='stablecoins', tags=['static'])}}
+{{ config( alias='stablecoins', tags=['static']) }}
 
 SELECT
     symbol

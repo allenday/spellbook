@@ -1,8 +1,8 @@
-{{config(alias='validators_bnb',
+{{ config(alias='validators_bnb',
         post_hook='{{ expose_spells(\'["bnb"]\',
                                     "sector",
                                     "labels",
-                                    \'["soispoke"]\') }}')}}
+                                    \'["soispoke"]\') }}') }}
 
 SELECT
     blockchain

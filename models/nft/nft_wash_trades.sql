@@ -33,22 +33,23 @@ SELECT
     , filter_funding_buyer.first_funded_by AS buyer_first_funded_by
     , filter_funding_seller.first_funded_by AS seller_first_funded_by
     , date_trunc('day', nftt.block_time) AS block_date
-    , COALESCE(nftt.buyer = nftt.seller, FALSE) AS same_buyer_seller
-    , COALESCE(count(DISTINCT filter_baf.block_number) > 0
-    , FALSE) AS back_and_forth_trade
-    , COALESCE(count(DISTINCT filter_bought_3x.block_number) > 2
-    , FALSE) AS bought_it_three_times_within_a_week
-    , COALESCE(filter_funding_buyer.first_funded_by = filter_funding_seller.first_funded_by
-    OR filter_funding_buyer.first_funded_by = nftt.seller
-    OR filter_funding_seller.first_funded_by = nftt.buyer
-    , FALSE) AS funded_by_same_wallet
-    , COALESCE(nftt.buyer = nftt.seller
-    OR count(filter_baf.block_number) > 0
-    OR count(filter_bought_3x.block_number) > 2
-    OR filter_funding_buyer.first_funded_by = filter_funding_seller.first_funded_by
-    OR filter_funding_buyer.first_funded_by = nftt.seller
-    OR filter_funding_seller.first_funded_by = nftt.buyer
-    , FALSE) AS is_wash_trade
+    , coalesce(nftt.buyer = nftt.seller, FALSE) AS same_buyer_seller
+    , coalesce(count(DISTINCT filter_baf.block_number) > 0
+        , FALSE) AS back_and_forth_trade
+    , coalesce(count(DISTINCT filter_bought_3x.block_number) > 2
+        , FALSE) AS bought_it_three_times_within_a_week
+    , coalesce(
+        filter_funding_buyer.first_funded_by = filter_funding_seller.first_funded_by
+        OR filter_funding_buyer.first_funded_by = nftt.seller
+        OR filter_funding_seller.first_funded_by = nftt.buyer
+        , FALSE) AS funded_by_same_wallet
+    , coalesce(nftt.buyer = nftt.seller
+        OR count(filter_baf.block_number) > 0
+        OR count(filter_bought_3x.block_number) > 2
+        OR filter_funding_buyer.first_funded_by = filter_funding_seller.first_funded_by
+        OR filter_funding_buyer.first_funded_by = nftt.seller
+        OR filter_funding_seller.first_funded_by = nftt.buyer
+        , FALSE) AS is_wash_trade
 FROM {{ ref('nft_trades') }} AS nftt
 LEFT JOIN {{ ref('nft_trades') }} AS filter_baf
     ON filter_baf.seller = nftt.buyer

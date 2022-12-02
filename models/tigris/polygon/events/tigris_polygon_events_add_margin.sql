@@ -63,7 +63,7 @@ add_margin_v5 AS (
                 AND af.call_block_time >= date_trunc(
                     'day', now() - INTERVAL '1 week'
                 )
-                        {% endif %} 
+                            {% endif %} 
     {% if is_incremental() %}
         WHERE ap.evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
     {% endif %}

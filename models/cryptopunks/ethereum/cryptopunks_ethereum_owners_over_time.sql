@@ -345,7 +345,9 @@ WITH original_holders AS (
 
 , base_data AS (
     WITH all_days AS (
-        SELECT explode(sequence(to_date('2017-06-22'), to_date(now()), INTERVAL 1 DAY)) AS day
+        SELECT explode(
+                sequence(to_date('2017-06-22'), to_date(now()), INTERVAL 1 DAY)
+            ) AS day
     )
 
     , all_wallets AS (SELECT DISTINCT wallet FROM punk_transfer_summary

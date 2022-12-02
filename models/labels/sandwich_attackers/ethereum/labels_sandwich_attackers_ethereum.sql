@@ -1,4 +1,4 @@
-{{config(alias='sandwich_attackers_ethereum')}}
+{{ config(alias='sandwich_attackers_ethereum') }}
 
 WITH
 eth_sandwich_attackers AS (

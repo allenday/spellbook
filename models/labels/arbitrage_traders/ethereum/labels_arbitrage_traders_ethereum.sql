@@ -1,4 +1,4 @@
-{{config(alias='arbitrage_traders_ethereum')}}
+{{ config(alias='arbitrage_traders_ethereum') }}
 
 WITH
 eth_arb_traders AS (

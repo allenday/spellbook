@@ -1,4 +1,4 @@
-{{config(alias='contracts',
+{{ config(alias='contracts',
         post_hook='{{ expose_spells(\'["ethereum", "arbitrum", "gnosis", "optimism", "bnb", "avalanche_c"]\',
                                     "sector",
                                     "labels",
