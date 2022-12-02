@@ -211,7 +211,7 @@ with source_ethereum_transactions AS (
   SELECT a.*
           ,try_cast(date_trunc('day', a.block_time) AS date) AS block_date
           ,n.name AS nft_token_name
-          ,t.`FROM` AS tx_from
+          ,t.`from` AS tx_from
           ,t.`to` AS tx_to
           ,right(t.data,8) AS right_hash
           ,CASE WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_native_symbol}}'
@@ -221,12 +221,12 @@ with source_ethereum_transactions AS (
                 ELSE a.token_contract_address
            END AS token_alternative_symbol
           ,e.decimals AS price_token_decimals
-          ,a.price_amount_raw / power(10, e.decimals) AS price_amount
-          ,a.price_amount_raw / power(10, e.decimals) * p.price AS price_amount_usd
-          ,a.platform_fee_amount_raw / power(10, e.decimals) AS platform_fee_amount
-          ,a.platform_fee_amount_raw / power(10, e.decimals) * p.price AS platform_fee_amount_usd
-          ,a.creator_fee_amount_raw / power(10, e.decimals) AS creator_fee_amount
-          ,a.creator_fee_amount_raw / power(10, e.decimals) * p.price AS creator_fee_amount_usd
+          ,a.price_amount_raw / POWER(10, e.decimals) AS price_amount
+          ,a.price_amount_raw / POWER(10, e.decimals) * p.price AS price_amount_usd
+          ,a.platform_fee_amount_raw / POWER(10, e.decimals) AS platform_fee_amount
+          ,a.platform_fee_amount_raw / POWER(10, e.decimals) * p.price AS platform_fee_amount_usd
+          ,a.creator_fee_amount_raw / POWER(10, e.decimals) AS creator_fee_amount
+          ,a.creator_fee_amount_raw / POWER(10, e.decimals) * p.price AS creator_fee_amount_usd
           ,CASE WHEN right(t.data,8) = '72db8c0b' THEN 'Gem'
                 WHEN right(t.data,8) = '332d1229' THEN 'Blur'
                 ELSE agg.name

@@ -215,7 +215,7 @@ with source_polygon_transactions AS (
 ,iv_trades AS (
   SELECT a.*
           ,n.name AS nft_token_name
-          ,t.`FROM` AS tx_from
+          ,t.`from` AS tx_from
           ,t.`to` AS tx_to
           ,right(t.data,8) AS right_hash
           ,CASE WHEN a.token_contract_address = '{{c_native_token_address}}' THEN '{{c_native_symbol}}'

@@ -37,7 +37,8 @@ list of models using old generic test, due to multiple versions in one model:
 ,'mstable_ethereum_trades'
 ,'zigzag_trades'
 ,'gmx_trades'
-,'biswap_bnb_trades'
+,'biswap_bnb_trades' 
+,'babyswap_bnb_trades'
 ] %}
 
 
