@@ -12,15 +12,15 @@ WITH
 
 add_margin_v2 as (
     SELECT 
-        date_trunc('day', ap.evt_block_time) as day, 
-        ap.evt_tx_hash,
-        ap.evt_index,
-        ap.evt_block_time,
-        ap._id as position_id,
-        af._addMargin/1e18 as margin_change, 
-        ap._newMargin/1e18 as margin, 
-        ap._newPrice/1e18 as price, 
-        ap._trader as trader 
+        date_trunc('day', ap.evt_block_time) as day
+        , ap.evt_tx_hash
+        , ap.evt_index
+        , ap.evt_block_time
+        , ap._id as position_id
+        , af._addMargin/1e18 as margin_change
+        , ap._newMargin/1e18 as margin
+        , ap._newPrice/1e18 as price
+        , ap._trader as trader 
     FROM 
         {{ source('tigristrade_arbitrum', 'TradingV2_evt_AddToPosition') }} AS ap 
     INNER JOIN 
@@ -34,19 +34,19 @@ add_margin_v2 as (
             {% if is_incremental() %}
                 WHERE ap.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
-),
+)
 
-add_margin_v3 as (
+, add_margin_v3 as (
     SELECT 
-        date_trunc('day', ap.evt_block_time) as day, 
-        ap.evt_tx_hash,
-        ap.evt_index,
-        ap.evt_block_time,
-        ap._id as position_id,
-        af._addMargin/1e18 as margin_change, 
-        ap._newMargin/1e18 as margin, 
-        ap._newPrice/1e18 as price, 
-        ap._trader as trader 
+        date_trunc('day', ap.evt_block_time) as day
+        , ap.evt_tx_hash
+        , ap.evt_index
+        , ap.evt_block_time
+        , ap._id as position_id
+        , af._addMargin/1e18 as margin_change
+        , ap._newMargin/1e18 as margin
+        , ap._newPrice/1e18 as price
+        , ap._trader as trader 
     FROM 
         {{ source('tigristrade_arbitrum', 'TradingV3_evt_AddToPosition') }} AS ap 
     INNER JOIN 
@@ -60,19 +60,19 @@ add_margin_v3 as (
             {% if is_incremental() %}
                 WHERE ap.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
-),
+)
 
-add_margin_v4 as (
+, add_margin_v4 as (
     SELECT 
-        date_trunc('day', ap.evt_block_time) as day, 
-        ap.evt_tx_hash,
-        ap.evt_index,
-        ap.evt_block_time,
-        ap._id as position_id,
-        af._addMargin/1e18 as margin_change, 
-        ap._newMargin/1e18 as margin, 
-        ap._newPrice/1e18 as price, 
-        ap._trader as trader 
+        date_trunc('day', ap.evt_block_time) as day
+        , ap.evt_tx_hash
+        , ap.evt_index
+        , ap.evt_block_time
+        , ap._id as position_id
+        , af._addMargin/1e18 as margin_change
+        , ap._newMargin/1e18 as margin
+        , ap._newPrice/1e18 as price
+        , ap._trader as trader 
     FROM 
         {{ source('tigristrade_arbitrum', 'TradingV4_evt_AddToPosition') }} AS ap 
     INNER JOIN 
@@ -86,19 +86,19 @@ add_margin_v4 as (
             {% if is_incremental() %}
                 WHERE ap.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
-),
+)
 
-add_margin_v5 as (
+, add_margin_v5 as (
     SELECT 
-        date_trunc('day', ap.evt_block_time) as day, 
-        ap.evt_tx_hash,
-        ap.evt_index,
-        ap.evt_block_time,
-        ap._id as position_id,
-        af._addMargin/1e18 as margin_change, 
-        ap._newMargin/1e18 as margin, 
-        ap._newPrice/1e18 as price, 
-        ap._trader as trader 
+        date_trunc('day', ap.evt_block_time) as day
+        , ap.evt_tx_hash
+        , ap.evt_index
+        , ap.evt_block_time
+        , ap._id as position_id
+        , af._addMargin/1e18 as margin_change
+        , ap._newMargin/1e18 as margin
+        , ap._newPrice/1e18 as price
+        , ap._trader as trader 
     FROM 
         {{ source('tigristrade_arbitrum', 'TradingV5_evt_AddToPosition') }} AS ap 
     INNER JOIN 

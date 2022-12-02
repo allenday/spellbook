@@ -4,8 +4,8 @@
  }}
 
 SELECT 
-    evt_tx_hash, 
-    _asset as asset_id, 
-    _name as pair 
+    evt_tx_hash
+    , _asset as asset_id
+    , _name as pair 
 FROM 
     {{ source('tigristrade_polygon', 'PairsContract_evt_AssetAdded') }}

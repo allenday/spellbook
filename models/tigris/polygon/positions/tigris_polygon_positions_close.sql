@@ -7,22 +7,22 @@ WITH
 
 latest_leverage as (
     SELECT 
-        ab.*, 
-        l.leverage 
+        ab.*
+        , l.leverage 
     FROM 
         (
             SELECT 
-                MIN(l.evt_block_time) as latest_leverage_time, 
-                cp.evt_block_time, 
-                cp.evt_tx_hash,
-                cp.position_id,
-                cp.payout, 
-                cp.evt_index,
-                cp.version,
-                cp.price, 
-                cp.trader, 
-                (100/cp.perc_closed) * cp.payout as previous_margin, 
-                ((100/cp.perc_closed) * cp.payout) - cp.payout as new_margin
+                MIN(l.evt_block_time) as latest_leverage_time
+                , cp.evt_block_time
+                , cp.evt_tx_hash
+                , cp.position_id
+                , cp.payout
+                , cp.evt_index
+                , cp.version
+                , cp.price
+                , cp.trader
+                , (100/cp.perc_closed) * cp.payout as previous_margin
+                , ((100/cp.perc_closed) * cp.payout) - cp.payout as new_margin
             FROM 
                 {{ ref('tigris_polygon_events_close_position') }} AS cp 
             INNER JOIN 

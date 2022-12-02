@@ -8,14 +8,14 @@
 }}
 
 SELECT
-    'ethereum' AS blockchain,
-    date_trunc('hour', tr.evt_block_time) AS hour,
-    tr.wallet_address,
-    tr.token_address,
-    t.symbol,
-    tr.wallet_address || '-' || tr.token_address || '-' || date_trunc('hour', tr.evt_block_time) AS unique_transfer_id,
-    sum(tr.amount_raw) AS amount_raw,
-    sum(tr.amount_raw / power(10, t.decimals)) AS amount
+    'ethereum' AS blockchain
+    , date_trunc('hour', tr.evt_block_time) AS hour
+    , tr.wallet_address
+    , tr.token_address
+    , t.symbol
+    , tr.wallet_address || '-' || tr.token_address || '-' || date_trunc('hour', tr.evt_block_time) AS unique_transfer_id
+    , sum(tr.amount_raw) AS amount_raw
+    , sum(tr.amount_raw / power(10, t.decimals)) AS amount
 FROM {{ ref('transfers_ethereum_erc20') }} AS tr
 LEFT JOIN {{ ref('tokens_ethereum_erc20') }} AS t ON t.contract_address = tr.token_address
 {% if is_incremental() %}

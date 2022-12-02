@@ -21,8 +21,8 @@ finalized AS (
 )
 
 , unfinalized AS (
-    SELECT *,
-        lead(minute) OVER (PARTITION BY blockchain, contract_address, decimals, symbol ORDER BY minute ASC) AS next_update_minute
+    SELECT *
+        , lead(minute) OVER (PARTITION BY blockchain, contract_address, decimals, symbol ORDER BY minute ASC) AS next_update_minute
     FROM {{ source('prices', 'usd') }}
     where minute > now() - INTERVAL {{lookback_interval}}
 )

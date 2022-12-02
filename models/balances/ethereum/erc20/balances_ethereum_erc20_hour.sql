@@ -19,24 +19,24 @@ hours AS (
 
 , hourly_balances AS
 (SELECT
-    wallet_address,
-    token_address,
-    amount_raw,
-    amount,
-    hour,
-    symbol,
-    lead(hour, 1, now()) OVER (PARTITION BY token_address, wallet_address ORDER BY hour) AS next_hour
+    wallet_address
+    , token_address
+    , amount_raw
+    , amount
+    , hour
+    , symbol
+    , lead(hour, 1, now()) OVER (PARTITION BY token_address, wallet_address ORDER BY hour) AS next_hour
     FROM {{ ref('transfers_ethereum_erc20_rolling_hour') }})
 
 SELECT
-    'ethereum' AS blockchain,
-    h.hour,
-    b.wallet_address,
-    b.token_address,
-    b.amount_raw,
-    b.amount,
-    b.amount * p.price AS amount_usd,
-    b.symbol
+    'ethereum' AS blockchain
+    , h.hour
+    , b.wallet_address
+    , b.token_address
+    , b.amount_raw
+    , b.amount
+    , b.amount * p.price AS amount_usd
+    , b.symbol
 FROM hourly_balances AS b
 INNER JOIN hours AS h ON b.hour <= h.hour AND h.hour < b.next_hour
 LEFT JOIN {{ source('prices', 'usd') }} AS p

@@ -7,13 +7,13 @@
         )
 }}
 SELECT
-    rh.wallet_address,
-    rh.token_address,
-    rh.amount_raw,
-    rh.amount,
-    rh.amount*p.price AS amount_usd,
-    rh.symbol,
-    rh.last_updated
+    rh.wallet_address
+    , rh.token_address
+    , rh.amount_raw
+    , rh.amount
+    , rh.amount*p.price AS amount_usd
+    , rh.symbol
+    , rh.last_updated
 FROM {{ ref('transfers_ethereum_erc20_rolling_hour') }} AS rh
 LEFT JOIN {{ source('prices', 'usd') }} AS p
     ON p.contract_address = rh.token_address

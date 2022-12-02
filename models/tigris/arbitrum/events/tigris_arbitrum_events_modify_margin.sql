@@ -12,16 +12,16 @@ WITH
 
 modify_margin_v2 as (
     SELECT 
-        date_trunc('day', mm.evt_block_time) as day, 
-        mm.evt_tx_hash,
-        mm.evt_index,
-        mm.evt_block_time,
-        mm._id as position_id,
-        mm._isMarginAdded as modify_type, 
-        COALESCE(am._addMargin/1e18, rm._removeMargin/1e18) as margin_change, 
-        mm._newMargin/1e18 as margin, 
-        mm._newLeverage/1e18 as leverage, 
-        mm._trader as trader 
+        date_trunc('day', mm.evt_block_time) as day
+        , mm.evt_tx_hash
+        , mm.evt_index
+        , mm.evt_block_time
+        , mm._id as position_id
+        , mm._isMarginAdded as modify_type
+        , COALESCE(am._addMargin/1e18, rm._removeMargin/1e18) as margin_change
+        , mm._newMargin/1e18 as margin
+        , mm._newLeverage/1e18 as leverage
+        , mm._trader as trader 
     FROM 
         {{ source('tigristrade_arbitrum', 'TradingV2_evt_MarginModified') }} AS mm 
     LEFT JOIN 
@@ -43,20 +43,20 @@ modify_margin_v2 as (
             {% if is_incremental() %}
                 WHERE mm.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
-),
+)
 
-modify_margin_v3 as (
+, modify_margin_v3 as (
     SELECT 
-        date_trunc('day', mm.evt_block_time) as day, 
-        mm.evt_tx_hash,
-        mm.evt_index,
-        mm.evt_block_time,
-        mm._id as position_id,
-        mm._isMarginAdded as modify_type, 
-        COALESCE(am._addMargin/1e18, rm._removeMargin/1e18) as margin_change, 
-        mm._newMargin/1e18 as margin, 
-        mm._newLeverage/1e18 as leverage, 
-        mm._trader as trader 
+        date_trunc('day', mm.evt_block_time) as day
+        , mm.evt_tx_hash
+        , mm.evt_index
+        , mm.evt_block_time
+        , mm._id as position_id
+        , mm._isMarginAdded as modify_type
+        , COALESCE(am._addMargin/1e18, rm._removeMargin/1e18) as margin_change
+        , mm._newMargin/1e18 as margin
+        , mm._newLeverage/1e18 as leverage
+        , mm._trader as trader 
     FROM 
         {{ source('tigristrade_arbitrum', 'TradingV3_evt_MarginModified') }} AS mm 
     LEFT JOIN 
@@ -78,20 +78,20 @@ modify_margin_v3 as (
             {% if is_incremental() %}
                 WHERE mm.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
-),
+)
 
-modify_margin_v4 as (
+, modify_margin_v4 as (
     SELECT 
-        date_trunc('day', mm.evt_block_time) as day, 
-        mm.evt_tx_hash,
-        mm.evt_index,
-        mm.evt_block_time,
-        mm._id as position_id,
-        mm._isMarginAdded as modify_type, 
-        COALESCE(am._addMargin/1e18, rm._removeMargin/1e18) as margin_change, 
-        mm._newMargin/1e18 as margin, 
-        mm._newLeverage/1e18 as leverage, 
-        mm._trader as trader 
+        date_trunc('day', mm.evt_block_time) as day
+        , mm.evt_tx_hash
+        , mm.evt_index
+        , mm.evt_block_time
+        , mm._id as position_id
+        , mm._isMarginAdded as modify_type
+        , COALESCE(am._addMargin/1e18, rm._removeMargin/1e18) as margin_change
+        , mm._newMargin/1e18 as margin
+        , mm._newLeverage/1e18 as leverage
+        , mm._trader as trader 
     FROM 
         {{ source('tigristrade_arbitrum', 'TradingV4_evt_MarginModified') }} AS mm 
     LEFT JOIN 
@@ -113,20 +113,20 @@ modify_margin_v4 as (
             {% if is_incremental() %}
                 WHERE mm.evt_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
-),
+)
 
-modify_margin_v5 as (
+, modify_margin_v5 as (
     SELECT 
-        date_trunc('day', mm.evt_block_time) as day, 
-        mm.evt_tx_hash,
-        mm.evt_index,
-        mm.evt_block_time,
-        mm._id as position_id,
-        mm._isMarginAdded as modify_type, 
-        COALESCE(am._addMargin/1e18, rm._removeMargin/1e18) as margin_change, 
-        mm._newMargin/1e18 as margin, 
-        mm._newLeverage/1e18 as leverage, 
-        mm._trader as trader 
+        date_trunc('day', mm.evt_block_time) as day
+        , mm.evt_tx_hash
+        , mm.evt_index
+        , mm.evt_block_time
+        , mm._id as position_id
+        , mm._isMarginAdded as modify_type
+        , COALESCE(am._addMargin/1e18, rm._removeMargin/1e18) as margin_change
+        , mm._newMargin/1e18 as margin
+        , mm._newLeverage/1e18 as leverage
+        , mm._trader as trader 
     FROM 
         {{ source('tigristrade_arbitrum', 'TradingV5_evt_MarginModified') }} AS mm 
     LEFT JOIN 

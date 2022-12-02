@@ -1,8 +1,8 @@
 {{config(alias='aggregators', tags=['static'], materialized='table', file_format = 'delta')}}
 
 SELECT
-    contract_address,
-    name
+    contract_address
+    , name
 FROM
     (
         VALUES

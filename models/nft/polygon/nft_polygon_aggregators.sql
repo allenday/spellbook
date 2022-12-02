@@ -1,8 +1,8 @@
 {{ config( alias='aggregators') }}
 
 SELECT
-    contract_address,
-    name
+    contract_address
+    , name
 FROM
     (
         VALUES

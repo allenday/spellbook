@@ -4,16 +4,16 @@
 ) }}
 
 SELECT
-    evt_block_time AS `timestamp`,
-    evt_tx_hash AS tx_hash,
-    evt_index + s.step AS evt_index,
-    CASE
+    evt_block_time AS `timestamp`
+    , evt_tx_hash AS tx_hash
+    , evt_index + s.step AS evt_index
+    , CASE
     s.step
         WHEN (0) THEN 'JobMigrationOut'
         WHEN (1) THEN 'JobMigrationIn'
-    END AS event,
-    contract_address AS keep3r,
-    CASE
+    END AS event
+    , contract_address AS keep3r
+    , CASE
     s.step
         WHEN (0) THEN m._fromJob
         WHEN (1) THEN m._toJob
@@ -21,12 +21,12 @@ SELECT
 FROM
     (
         SELECT
-            evt_block_time,
-            evt_tx_hash,
-            evt_index,
-            contract_address,
-            _fromJob,
-            _toJob
+            evt_block_time
+            , evt_tx_hash
+            , evt_index
+            , contract_address
+            , _fromJob
+            , _toJob
         FROM
             {{ source(
                 'keep3r_network_ethereum',
@@ -34,12 +34,12 @@ FROM
             ) }}
         UNION
         SELECT
-            evt_block_time,
-            evt_tx_hash,
-            evt_index,
-            contract_address,
-            _fromJob,
-            _toJob
+            evt_block_time
+            , evt_tx_hash
+            , evt_index
+            , contract_address
+            , _fromJob
+            , _toJob
         FROM
             {{ source(
                 'keep3r_network_ethereum',

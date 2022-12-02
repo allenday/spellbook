@@ -13,13 +13,13 @@ stable_to_stable_trades AS (
         AND sell_token_address in (SELECT contract_address FROM {{ ref('tokens_ethereum_erc20_stablecoins') }})
 )
 SELECT
-    array("ethereum") AS blockchain,
-    tx_hash,
-    "Stable to stable" AS name,
-    "stable_to_stable" AS category,
-    "gentrexha" AS contributor,
-    "query" AS source,
-    timestamp('2022-11-16') AS created_at,
-    now() AS updated_at
+    array("ethereum") AS blockchain
+    , tx_hash
+    , "Stable to stable" AS name
+    , "stable_to_stable" AS category
+    , "gentrexha" AS contributor
+    , "query" AS source
+    , timestamp('2022-11-16') AS created_at
+    , now() AS updated_at
 FROM
     stable_to_stable_trades

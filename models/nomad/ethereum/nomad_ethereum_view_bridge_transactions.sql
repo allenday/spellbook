@@ -10,16 +10,16 @@
 
 with nomad_bridge_domains(domain_id, domain_name, domain_type) AS (
     values
-    (6648936, 'Ethereum', 'Outflow'),
-    (1650811245, 'Moonbeam', 'Outflow'),
-    (70901803, 'Moonbeam', 'Inflow'),
-    (1702260083, 'Evmos', 'Outflow'),
-    (73111513, 'Evmos', 'Inflow'),
-    (25393, 'Milkomeda C1', 'Outflow'),
-    (10906210, 'Milkomeda C1', 'Inflow'),
-    (1635148152, 'Avalanche', 'Outflow'),
-    (70229078, 'Avalanche', 'Inflow'),
-    (2019844457, 'Gnosis Chain (xdai)', 'Outflow')
+    (6648936, 'Ethereum', 'Outflow')
+    , (1650811245, 'Moonbeam', 'Outflow')
+    , (70901803, 'Moonbeam', 'Inflow')
+    , (1702260083, 'Evmos', 'Outflow')
+    , (73111513, 'Evmos', 'Inflow')
+    , (25393, 'Milkomeda C1', 'Outflow')
+    , (10906210, 'Milkomeda C1', 'Inflow')
+    , (1635148152, 'Avalanche', 'Outflow')
+    , (70229078, 'Avalanche', 'Inflow')
+    , (2019844457, 'Gnosis Chain (xdai)', 'Outflow')
 )
 
 , nomad_bridge_transactions AS (

@@ -12,69 +12,69 @@
 {% set weth_address = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' %}
 
 SELECT
-    version,
-    transaction_type,
-    erc20.symbol,
-    deposit.token AS token_address,
-    depositor,
-    withdrawn_to,
-    liquidator,
-    amount / CAST(CONCAT('1e', CAST(erc20.decimals AS VARCHAR(100))) AS DOUBLE) AS amount,
-    (amount / CAST(CONCAT('1e', CAST(p.decimals AS VARCHAR(100))) AS DOUBLE)) * price AS usd_amount,
-    evt_tx_hash,
-    evt_index,
-    evt_block_time,
-    evt_block_number
+    version
+    , transaction_type
+    , erc20.symbol
+    , deposit.token AS token_address
+    , depositor
+    , withdrawn_to
+    , liquidator
+    , amount / CAST(CONCAT('1e', CAST(erc20.decimals AS VARCHAR(100))) AS DOUBLE) AS amount
+    , (amount / CAST(CONCAT('1e', CAST(p.decimals AS VARCHAR(100))) AS DOUBLE)) * price AS usd_amount
+    , evt_tx_hash
+    , evt_index
+    , evt_block_time
+    , evt_block_number
 FROM (
         SELECT
-            '1' AS version,
-            'deposit' AS transaction_type,
-            CASE
+            '1' AS version
+            , 'deposit' AS transaction_type
+            , CASE
                 WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' --Using WETH instead of Aave "mock" address
                 ELSE _reserve
-            END AS token,
-            _user AS depositor,
-            CAST(NULL AS VARCHAR(5)) AS withdrawn_to,
-            CAST(NULL AS VARCHAR(5)) AS liquidator,
-            CAST(_amount AS DECIMAL(38, 0)) AS amount,
-            evt_tx_hash,
-            evt_index,
-            evt_block_time,
-            evt_block_number
+            END AS token
+            , _user AS depositor
+            , CAST(NULL AS VARCHAR(5)) AS withdrawn_to
+            , CAST(NULL AS VARCHAR(5)) AS liquidator
+            , CAST(_amount AS DECIMAL(38, 0)) AS amount
+            , evt_tx_hash
+            , evt_index
+            , evt_block_time
+            , evt_block_number
         FROM {{ source('aave_ethereum', 'LendingPool_evt_Deposit') }}
         UNION ALL
         SELECT
-            '1' AS version,
-            'withdraw' AS transaction_type,
-            CASE
+            '1' AS version
+            , 'withdraw' AS transaction_type
+            , CASE
                 WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' --Using WETH instead of Aave "mock" address
                 ELSE _reserve
-            END AS token,
-            _user AS depositor,
-            _user AS withdrawn_to,
-            CAST(NULL AS VARCHAR(5)) AS liquidator,
-            - CAST(_amount AS DECIMAL(38, 0)) AS amount,
-            evt_tx_hash,
-            evt_index,
-            evt_block_time,
-            evt_block_number
+            END AS token
+            , _user AS depositor
+            , _user AS withdrawn_to
+            , CAST(NULL AS VARCHAR(5)) AS liquidator
+            , - CAST(_amount AS DECIMAL(38, 0)) AS amount
+            , evt_tx_hash
+            , evt_index
+            , evt_block_time
+            , evt_block_number
         FROM {{ source('aave_ethereum', 'LendingPool_evt_RedeemUnderlying') }}
         UNION ALL
         SELECT
-            '1' AS version,
-            'deposit_liquidation' AS transaction_type,
-            CASE
+            '1' AS version
+            , 'deposit_liquidation' AS transaction_type
+            , CASE
                 WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' --Using WETH instead of Aave "mock" address
                 ELSE _collateral
-            END AS token,
-            _user AS depositor,
-            _liquidator AS withdrawn_to,
-            _liquidator AS liquidator,
-            - CAST(_liquidatedCollateralAmount AS DECIMAL(38, 0)) AS amount,
-            evt_tx_hash,
-            evt_index,
-            evt_block_time,
-            evt_block_number
+            END AS token
+            , _user AS depositor
+            , _liquidator AS withdrawn_to
+            , _liquidator AS liquidator
+            , - CAST(_liquidatedCollateralAmount AS DECIMAL(38, 0)) AS amount
+            , evt_tx_hash
+            , evt_index
+            , evt_block_time
+            , evt_block_number
         FROM {{ source('aave_ethereum', 'LendingPool_evt_LiquidationCall') }}
 ) AS deposit
 LEFT JOIN {{ ref('tokens_ethereum_erc20') }} AS erc20

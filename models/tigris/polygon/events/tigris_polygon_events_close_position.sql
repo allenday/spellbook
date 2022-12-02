@@ -12,15 +12,15 @@ WITH
 
 close_position_v1 as (
     SELECT 
-        date_trunc('day', tc.evt_block_time) as day, 
-        tc.evt_tx_hash,
-        tc.evt_index,
-        tc.evt_block_time,
-        tc._id as position_id,
-        tc._closePrice/1e18 as price, 
-        tc._payout/1e18 as payout, 
-        tc._percent/100 as perc_closed, 
-        op.trader
+        date_trunc('day', tc.evt_block_time) as day
+        , tc.evt_tx_hash
+        , tc.evt_index
+        , tc.evt_block_time
+        , tc._id as position_id
+        , tc._closePrice/1e18 as price
+        , tc._payout/1e18 as payout
+        , tc._percent/100 as perc_closed
+        , op.trader
     FROM 
         {{ source('tigristrade_polygon', 'Tradingv1_evt_PositionClosed') }} AS tc 
     INNER JOIN 
@@ -30,19 +30,19 @@ close_position_v1 as (
     {% if is_incremental() %}
         WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-),
+)
 
-close_position_v2 as (
+, close_position_v2 as (
     SELECT 
-        date_trunc('day', tc.evt_block_time) as day, 
-        tc.evt_tx_hash,
-        tc.evt_index,
-        tc.evt_block_time,
-        tc._id as position_id,
-        tc._closePrice/1e18 as price, 
-        tc._payout/1e18 as payout, 
-        tc._percent/100 as perc_closed, 
-        op.trader
+        date_trunc('day', tc.evt_block_time) as day
+        , tc.evt_tx_hash
+        , tc.evt_index
+        , tc.evt_block_time
+        , tc._id as position_id
+        , tc._closePrice/1e18 as price
+        , tc._payout/1e18 as payout
+        , tc._percent/100 as perc_closed
+        , op.trader
     FROM 
         {{ source('tigristrade_polygon', 'TradingV2_evt_PositionClosed') }} AS tc 
     INNER JOIN 
@@ -52,19 +52,19 @@ close_position_v2 as (
     {% if is_incremental() %}
         WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-),
+)
 
-close_position_v3 as (
+, close_position_v3 as (
     SELECT 
-        date_trunc('day', tc.evt_block_time) as day, 
-        tc.evt_tx_hash,
-        tc.evt_index,
-        tc.evt_block_time,
-        tc._id as position_id,
-        tc._closePrice/1e18 as price, 
-        tc._payout/1e18 as payout, 
-        tc._percent/100 as perc_closed, 
-        op.trader
+        date_trunc('day', tc.evt_block_time) as day
+        , tc.evt_tx_hash
+        , tc.evt_index
+        , tc.evt_block_time
+        , tc._id as position_id
+        , tc._closePrice/1e18 as price
+        , tc._payout/1e18 as payout
+        , tc._percent/100 as perc_closed
+        , op.trader
     FROM 
         {{ source('tigristrade_polygon', 'TradingV3_evt_PositionClosed') }} AS tc 
     INNER JOIN 
@@ -74,20 +74,20 @@ close_position_v3 as (
     {% if is_incremental() %}
         WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-),
+)
 
 
-close_position_v4 as (
+, close_position_v4 as (
     SELECT 
-        date_trunc('day', tc.evt_block_time) as day, 
-        tc.evt_tx_hash,
-        tc.evt_index,
-        tc.evt_block_time,
-        tc._id as position_id,
-        tc._closePrice/1e18 as price, 
-        tc._payout/1e18 as payout, 
-        tc._percent/100 as perc_closed, 
-        op.trader
+        date_trunc('day', tc.evt_block_time) as day
+        , tc.evt_tx_hash
+        , tc.evt_index
+        , tc.evt_block_time
+        , tc._id as position_id
+        , tc._closePrice/1e18 as price
+        , tc._payout/1e18 as payout
+        , tc._percent/100 as perc_closed
+        , op.trader
     FROM 
         {{ source('tigristrade_polygon', 'TradingV4_evt_PositionClosed') }} AS tc 
     INNER JOIN 
@@ -97,77 +97,77 @@ close_position_v4 as (
     {% if is_incremental() %}
         WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-),
+)
 
-close_position_v5 as (
+, close_position_v5 as (
     SELECT 
-        date_trunc('day', evt_block_time) as day, 
-        evt_tx_hash,
-        evt_index,
-        evt_block_time,
-        _id as position_id,
-        _closePrice/1e18 as price, 
-        _payout/1e18 as payout, 
-        _percent/1e8 as perc_closed, 
-        _trader as trader 
+        date_trunc('day', evt_block_time) as day
+        , evt_tx_hash
+        , evt_index
+        , evt_block_time
+        , _id as position_id
+        , _closePrice/1e18 as price
+        , _payout/1e18 as payout
+        , _percent/1e8 as perc_closed
+        , _trader as trader 
     FROM 
         {{ source('tigristrade_polygon', 'TradingV5_evt_PositionClosed') }}
     {% if is_incremental() %}
         WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-),
+)
 
-close_position_v6 as (
+, close_position_v6 as (
     SELECT 
-        date_trunc('day', evt_block_time) as day, 
-        evt_tx_hash,
-        evt_index,
-        evt_block_time,
-        _id as position_id,
-        _closePrice/1e18 as price, 
-        _payout/1e18 as payout, 
-        _percent/1e8 as perc_closed, 
-        _trader as trader 
+        date_trunc('day', evt_block_time) as day
+        , evt_tx_hash
+        , evt_index
+        , evt_block_time
+        , _id as position_id
+        , _closePrice/1e18 as price
+        , _payout/1e18 as payout
+        , _percent/1e8 as perc_closed
+        , _trader as trader 
     FROM 
         {{ source('tigristrade_polygon', 'TradingV6_evt_PositionClosed') }}
     {% if is_incremental() %}
         WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-),
+)
 
-close_position_v7 as (
+, close_position_v7 as (
     SELECT 
-        date_trunc('day', evt_block_time) as day, 
-        evt_tx_hash,
-        evt_index,
-        evt_block_time,
-        _id as position_id,
-        _closePrice/1e18 as price, 
-        _payout/1e18 as payout, 
-        _percent/1e8 as perc_closed, 
-        _trader as trader 
+        date_trunc('day', evt_block_time) as day
+        , evt_tx_hash
+        , evt_index
+        , evt_block_time
+        , _id as position_id
+        , _closePrice/1e18 as price
+        , _payout/1e18 as payout
+        , _percent/1e8 as perc_closed
+        , _trader as trader 
     FROM 
         {{ source('tigristrade_polygon', 'TradingV7_evt_PositionClosed') }}
     {% if is_incremental() %}
         WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}
-),
+)
 
-close_position_v8 as (
+, close_position_v8 as (
     SELECT 
         * 
     FROM 
         (
             SELECT 
-                date_trunc('day', evt_block_time) as day, 
-                evt_tx_hash,
-                evt_index,
-                evt_block_time,
-                _id as position_id,
-                _closePrice/1e18 as price, 
-                _payout/1e18 as payout, 
-                _percent/1e8 as perc_closed, 
-                _trader as trader 
+                date_trunc('day', evt_block_time) as day
+                , evt_tx_hash
+                , evt_index
+                , evt_block_time
+                , _id as position_id
+                , _closePrice/1e18 as price
+                , _payout/1e18 as payout
+                , _percent/1e8 as perc_closed
+                , _trader as trader 
             FROM 
                 {{ source('tigristrade_polygon', 'TradingV8_evt_PositionClosed') }}
             {% if is_incremental() %}

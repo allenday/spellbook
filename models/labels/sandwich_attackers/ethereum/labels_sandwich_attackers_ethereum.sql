@@ -27,13 +27,13 @@ eth_sandwich_attackers AS (
         AND buy.tx_to != '0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45' -- uniswap v3 router
 )
 SELECT
-    array("ethereum") AS blockchain,
-    address,
-    "Sandwich Attacker" AS name,
-    "sandwich_attackers" AS category,
-    "alexth" AS contributor,
-    "query" AS source,
-    timestamp('2022-10-14') AS created_at,
-    now() AS updated_at
+    array("ethereum") AS blockchain
+    , address
+    , "Sandwich Attacker" AS name
+    , "sandwich_attackers" AS category
+    , "alexth" AS contributor
+    , "query" AS source
+    , timestamp('2022-10-14') AS created_at
+    , now() AS updated_at
 FROM
     eth_sandwich_attackers

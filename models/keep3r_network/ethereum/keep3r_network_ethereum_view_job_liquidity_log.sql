@@ -6,24 +6,24 @@
 WITH job_liquidities AS (
 
     SELECT
-        ad.evt_block_time AS `timestamp`,
-        ad.evt_tx_hash AS tx_hash,
-        ad.evt_index,
-        'LiquidityAddition' AS event,
-        ad.contract_address AS keep3r,
-        ad._job AS job,
-        ad._liquidity AS token,
-        CAST(ad._amount AS DOUBLE) / 1e18 AS amount
+        ad.evt_block_time AS `timestamp`
+        , ad.evt_tx_hash AS tx_hash
+        , ad.evt_index
+        , 'LiquidityAddition' AS event
+        , ad.contract_address AS keep3r
+        , ad._job AS job
+        , ad._liquidity AS token
+        , CAST(ad._amount AS DOUBLE) / 1e18 AS amount
     FROM
         (
             SELECT
-                evt_block_time,
-                evt_tx_hash,
-                evt_index,
-                contract_address,
-                _job,
-                _liquidity,
-                _amount
+                evt_block_time
+                , evt_tx_hash
+                , evt_index
+                , contract_address
+                , _job
+                , _liquidity
+                , _amount
             FROM
                 {{ source(
                     'keep3r_network_ethereum',
@@ -31,13 +31,13 @@ WITH job_liquidities AS (
                 ) }}
             UNION
             SELECT
-                evt_block_time,
-                evt_tx_hash,
-                evt_index,
-                contract_address,
-                _job,
-                _liquidity,
-                _amount
+                evt_block_time
+                , evt_tx_hash
+                , evt_index
+                , contract_address
+                , _job
+                , _liquidity
+                , _amount
             FROM
                 {{ source(
                     'keep3r_network_ethereum',
@@ -46,23 +46,23 @@ WITH job_liquidities AS (
         ) AS ad
     UNION ALL
     SELECT
-        rm.evt_block_time AS `timestamp`,
-        rm.evt_tx_hash AS tx_hash,
-        rm.evt_index,
-        'LiquidityWithdrawal' AS event,
-        rm.contract_address keep3r,
-        rm._job job,
-        rm._liquidity AS token, - CAST(rm._amount AS DOUBLE) / 1e18 AS amount
+        rm.evt_block_time AS `timestamp`
+        , rm.evt_tx_hash AS tx_hash
+        , rm.evt_index
+        , 'LiquidityWithdrawal' AS event
+        , rm.contract_address keep3r
+        , rm._job job
+        , rm._liquidity AS token, - CAST(rm._amount AS DOUBLE) / 1e18 AS amount
     FROM
         (
             SELECT
-                evt_block_time,
-                evt_tx_hash,
-                evt_index,
-                contract_address,
-                _job,
-                _liquidity,
-                _amount
+                evt_block_time
+                , evt_tx_hash
+                , evt_index
+                , contract_address
+                , _job
+                , _liquidity
+                , _amount
             FROM
                 {{ source(
                     'keep3r_network_ethereum',
@@ -70,80 +70,80 @@ WITH job_liquidities AS (
                 ) }}
             UNION
             SELECT
-                evt_block_time,
-                evt_tx_hash,
-                evt_index,
-                contract_address,
-                _job,
-                _liquidity,
-                _amount
+                evt_block_time
+                , evt_tx_hash
+                , evt_index
+                , contract_address
+                , _job
+                , _liquidity
+                , _amount
             FROM
                 {{ source(
                     'keep3r_network_ethereum',
                     'Keep3r_v2_evt_LiquidityWithdrawal'
                 ) }}
         ) AS rm
-),
-df AS (
+)
+, df AS (
     SELECT
-        `timestamp`,
-        tx_hash,
-        evt_index,
-        event,
-        keep3r,
-        job,
-        token,
-        amount
+        `timestamp`
+        , tx_hash
+        , evt_index
+        , event
+        , keep3r
+        , job
+        , token
+        , amount
     FROM
         job_liquidities
     UNION
     SELECT
-        migs.event,
-        migs.evt_index,
-        migs.job,
-        migs.keep3r,
-        migs.`timestamp`,
-        migs.tx_hash,
-        liqs.token AS token,
-        NULL AS amount
+        migs.event
+        , migs.evt_index
+        , migs.job
+        , migs.keep3r
+        , migs.`timestamp`
+        , migs.tx_hash
+        , liqs.token AS token
+        , NULL AS amount
     FROM
         {{ ref('keep3r_network_ethereum_view_job_migrations') }} AS migs
     INNER JOIN (
             -- generates 1 extra line per token of keep3r
             SELECT
-            DISTINCT keep3r,
-                job,
-                token
+            DISTINCT keep3r
+                , job
+                , token
             FROM
                 job_liquidities
         ) AS liqs
         ON migs.keep3r = liqs.keep3r
-),
-migration_out AS (
+)
+, migration_out AS (
     SELECT
-        *,
-        CASE
+        *
+        , CASE
             WHEN event = 'JobMigrationOut' THEN SUM(
                 - amount
             ) OVER (
-                PARTITION BY keep3r,
-                    job,
-                    token rows unbounded preceding
+                PARTITION BY keep3r
+                    , job
+                    , token rows unbounded preceding
             )
         END AS migration_out
     FROM
         df
-),
-migration_in AS (
+)
+, migration_in AS (
     SELECT
-        *,
-        CASE
+        *
+        , CASE
             WHEN event = 'JobMigrationIn' THEN LAG(
                 - migration_out
             ) OVER (
-                PARTITION BY tx_hash,
-                    keep3r,
-                    token
+                PARTITION BY tx_hash
+                    , keep3r
+                    , token
                 ORDER BY
                     evt_index
             )
@@ -152,17 +152,17 @@ migration_in AS (
         migration_out
 )
 SELECT
-    `timestamp`,
-    tx_hash,
-    evt_index,
-    event,
-    keep3r,
-    job,
-    token,
-    COALESCE(
-        amount,
-        migration_out,
-        migration_in
+    `timestamp`
+    , tx_hash
+    , evt_index
+    , event
+    , keep3r
+    , job
+    , token
+    , COALESCE(
+        amount
+        , migration_out
+        , migration_in
     ) AS amount
 FROM
     migration_in

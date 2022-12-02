@@ -8,13 +8,13 @@
 }}
 
 SELECT
-    'ethereum' AS blockchain,
-    date_trunc('day', evt_block_time) AS day,
-    wallet_address,
-    token_address,
-    tokenId,
-    sum(amount) AS amount,
-    unique_tx_id || '-' || wallet_address || '-' || token_address || tokenId || '-' || sum(amount)::STRING AS unique_transfer_id
+    'ethereum' AS blockchain
+    , date_trunc('day', evt_block_time) AS day
+    , wallet_address
+    , token_address
+    , tokenId
+    , sum(amount) AS amount
+    , unique_tx_id || '-' || wallet_address || '-' || token_address || tokenId || '-' || sum(amount)::STRING AS unique_transfer_id
 FROM {{ ref('transfers_ethereum_erc1155') }}
 {% if is_incremental() %}
     -- this filter will only be applied ON an incremental run

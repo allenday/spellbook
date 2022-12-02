@@ -11,26 +11,26 @@ WITH
 
 assets_added AS (
     SELECT
-        0 AS asset_id,
-        '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' AS asset_address,
-        NULL AS asset_gas_limit,
-        NULL AS date_added
+        0 AS asset_id
+        , '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' AS asset_address
+        , NULL AS asset_gas_limit
+        , NULL AS date_added
 
     UNION
 
     SELECT
-        assetId AS asset_id,
-        assetAddress AS asset_address,
-        assetGasLimit AS asset_gas_limit,
-        evt_block_time AS date_added
+        assetId AS asset_id
+        , assetAddress AS asset_address
+        , assetGasLimit AS asset_gas_limit
+        , evt_block_time AS date_added
     FROM
         {{source('aztec_v2_ethereum', 'RollupProcessor_evt_AssetAdded')}}
 )
 
 SELECT
-    a.*,
-    t.symbol,
-    t.decimals
+    a.*
+    , t.symbol
+    , t.decimals
 FROM
     assets_added AS a
 LEFT JOIN

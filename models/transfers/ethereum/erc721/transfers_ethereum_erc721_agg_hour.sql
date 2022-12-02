@@ -8,12 +8,12 @@
 }}
 
 SELECT
-    'ethereum' AS blockchain,
-    date_trunc('hour', evt_block_time) AS hour,
-    wallet_address,
-    token_address,
-    tokenId,
-    wallet_address || '-' || date_trunc('hour', evt_block_time) || '-' || token_address || '-'  || tokenId AS unique_transfer_id
+    'ethereum' AS blockchain
+    , date_trunc('hour', evt_block_time) AS hour
+    , wallet_address
+    , token_address
+    , tokenId
+    , wallet_address || '-' || date_trunc('hour', evt_block_time) || '-' || token_address || '-'  || tokenId AS unique_transfer_id
 FROM {{ ref('transfers_ethereum_erc721') }}
 {% if is_incremental() %}
     -- this filter will only be applied ON an incremental run
