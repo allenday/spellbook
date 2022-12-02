@@ -5,55 +5,55 @@
                                     \'["0xManny", "hildobby", "soispoke", "dot2dotseurat"]\') }}')}}
 
 SELECT
-'avalanche_c' AS blockchain,
-contract_address,
-name,
-symbol,
-standard,
-category
+    'avalanche_c' AS blockchain,
+    contract_address,
+    name,
+    symbol,
+    standard,
+    category
 FROM  {{ ref('tokens_avalanche_c_nft') }}
-            UNION
+UNION
 SELECT
-'ethereum' AS blockchain,
-contract_address,
-name,
-symbol,
-standard,
-category
+    'ethereum' AS blockchain,
+    contract_address,
+    name,
+    symbol,
+    standard,
+    category
 FROM  {{ ref('tokens_ethereum_nft') }}
-            UNION
+UNION
 SELECT
-'gnosis' AS blockchain,
-contract_address,
-name,
-symbol,
-standard,
-CAST(NULL AS VARCHAR(5)) AS category
+    'gnosis' AS blockchain,
+    contract_address,
+    name,
+    symbol,
+    standard,
+    CAST(NULL AS VARCHAR(5)) AS category
 FROM  {{ ref('tokens_gnosis_nft') }}
-            UNION
+UNION
 SELECT
-'optimism' AS blockchain,
-contract_address,
-name,
-CAST(NULL AS VARCHAR(5)) AS symbol,
-CAST(NULL AS VARCHAR(5)) AS standard,
-CAST(NULL AS VARCHAR(5)) AS category
+    'optimism' AS blockchain,
+    contract_address,
+    name,
+    CAST(NULL AS VARCHAR(5)) AS symbol,
+    CAST(NULL AS VARCHAR(5)) AS standard,
+    CAST(NULL AS VARCHAR(5)) AS category
 FROM  {{ ref('tokens_optimism_nft') }}
-            UNION
+UNION
 SELECT
-'optimism' AS blockchain,
-contract_address,
-name,
-symbol,
-standard,
-category
+    'optimism' AS blockchain,
+    contract_address,
+    name,
+    symbol,
+    standard,
+    category
 FROM  {{ ref('tokens_optimism_nft_bridged_mapping') }}
-            UNION
+UNION
 SELECT
-'bnb' AS blockchain,
-contract_address,
-name,
-CAST(NULL AS VARCHAR(5)) AS symbol,
-standard,
-CAST(NULL AS VARCHAR(5)) AS category
+    'bnb' AS blockchain,
+    contract_address,
+    name,
+    CAST(NULL AS VARCHAR(5)) AS symbol,
+    standard,
+    CAST(NULL AS VARCHAR(5)) AS category
 FROM  {{ ref('tokens_bnb_nft') }}

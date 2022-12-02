@@ -9,8 +9,8 @@
 
 SELECT *
 FROM
-(
-      SELECT
+    (
+        SELECT
             version,
             transaction_type,
             symbol,
@@ -24,9 +24,9 @@ FROM
             evt_index,
             evt_block_time,
             evt_block_number
-      FROM {{ ref('aave_v1_ethereum_supply') }}
-      UNION
-      SELECT
+        FROM {{ ref('aave_v1_ethereum_supply') }}
+        UNION
+        SELECT
             version,
             transaction_type,
             symbol,
@@ -40,5 +40,5 @@ FROM
             evt_index,
             evt_block_time,
             evt_block_number
-      FROM {{ ref('aave_v2_ethereum_supply') }}
-)
+        FROM {{ ref('aave_v2_ethereum_supply') }}
+    )

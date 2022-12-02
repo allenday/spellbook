@@ -6,19 +6,19 @@
 )}}
 
 WITH tornado_addresses AS (
-SELECT
-    lower(blockchain) AS blockchain,
-    tx_hash,
-    depositor AS address,
-    'Depositor' AS name
-FROM {{ ref('tornado_cash_deposits') }}
-UNION
-SELECT
-    lower(blockchain) AS blockchain,
-    tx_hash,
-    recipient AS address,
-    'Recipient' AS name
-FROM {{ ref('tornado_cash_withdrawals') }}
+    SELECT
+        lower(blockchain) AS blockchain,
+        tx_hash,
+        depositor AS address,
+        'Depositor' AS name
+    FROM {{ ref('tornado_cash_deposits') }}
+    UNION
+    SELECT
+        lower(blockchain) AS blockchain,
+        tx_hash,
+        recipient AS address,
+        'Recipient' AS name
+    FROM {{ ref('tornado_cash_withdrawals') }}
 )
 
 SELECT

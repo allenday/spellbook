@@ -18,19 +18,19 @@ with nft_trade_address AS (
     where buyer is NOT NULL
         AND seller is NOT NULL
         AND blockchain is NOT NULL
-    {% if is_incremental() %}
-    AND block_time >= date_trunc("day", now() - INTERVAL '1 week')
-    {% endif %}
-    UNION ALL
+        {% if is_incremental() %}
+            AND block_time >= date_trunc("day", now() - INTERVAL '1 week')
+        {% endif %}
+        UNION ALL
 
-    SELECT distinct blockchain, seller AS address_a, buyer AS address_b
-    FROM {{ ref('nft_trades') }}
-    where buyer is NOT NULL
-        AND seller is NOT NULL
-        AND blockchain is NOT NULL
-    {% if is_incremental() %}
-    AND block_time >= date_trunc("day", now() - INTERVAL '1 week')
-    {% endif %}
+        SELECT distinct blockchain, seller AS address_a, buyer AS address_b
+        FROM {{ ref('nft_trades') }}
+        where buyer is NOT NULL
+            AND seller is NOT NULL
+            AND blockchain is NOT NULL
+            {% if is_incremental() %}
+                AND block_time >= date_trunc("day", now() - INTERVAL '1 week')
+            {% endif %}
 ),
 
 linked_address_nft_trade AS (

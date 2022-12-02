@@ -9,15 +9,15 @@
 }}
 
 SELECT pu.blockchain
-, pu.contract_address
-, pu.decimals
-, pu.minute
-, pu.price
-, pu.symbol
+    , pu.contract_address
+    , pu.decimals
+    , pu.minute
+    , pu.price
+    , pu.symbol
 FROM (
     SELECT blockchain
-    , contract_address
-    , MAX(minute) AS latest
+        , contract_address
+        , MAX(minute) AS latest
     FROM {{ source('prices', 'usd') }}
     GROUP BY blockchain, contract_address
     ) AS latest

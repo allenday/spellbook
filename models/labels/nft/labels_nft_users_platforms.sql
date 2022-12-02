@@ -1,17 +1,17 @@
 {{config(alias='nft_users_platforms')}}
 
 WITH nft_trades AS (
-SELECT
-    blockchain,
-    project,
-    buyer AS address
-FROM {{ ref('nft_trades') }}
-        UNION
-SELECT
-    blockchain,
-    project,
-    seller AS address
-FROM {{ ref('nft_trades') }}
+    SELECT
+        blockchain,
+        project,
+        buyer AS address
+    FROM {{ ref('nft_trades') }}
+    UNION
+    SELECT
+        blockchain,
+        project,
+        seller AS address
+    FROM {{ ref('nft_trades') }}
 )
 
 SELECT

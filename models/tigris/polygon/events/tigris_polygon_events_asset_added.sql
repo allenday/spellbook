@@ -8,4 +8,4 @@ SELECT
     _asset as asset_id, 
     _name as pair 
 FROM 
-{{ source('tigristrade_polygon', 'PairsContract_evt_AssetAdded') }}
+    {{ source('tigristrade_polygon', 'PairsContract_evt_AssetAdded') }}

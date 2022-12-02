@@ -298,20 +298,20 @@ with original_holders AS (
         , ('0xfcdca17445b446f2efd9a6234883e1756e937adb', 1)
         , ('0xff6492f6d2a2d1194061751c6b350e4fa5ff34f2', 1)
         , ('0xffdd93414a062d534d9262def0461939c471d52e', 1)
-     ) AS temp_table (address, original_count)
+          ) AS temp_table (address, original_count)
 )
 , transfers AS (
     SELECT  to_date('2017-06-22', 'yyyy-MM-dd') AS day
-            , address AS wallet
-            , sum(original_count) AS punk_balance
+        , address AS wallet
+        , sum(original_count) AS punk_balance
     FROM original_holders
     GROUP BY 1, 2
 
     UNION ALL
 
     SELECT  date_trunc('day', evt_block_time) AS day
-            , `from` AS wallet
-            , count(*)*-1.0 AS punk_balance
+        , `from` AS wallet
+        , count(*)*-1.0 AS punk_balance
     FROM {{ source('erc20_ethereum', 'evt_transfer') }}
     where contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks
     GROUP BY 1, 2
@@ -319,8 +319,8 @@ with original_holders AS (
     UNION ALL
 
     SELECT  date_trunc('day', evt_block_time) AS day
-            , `to` AS wallet
-            , count(*) AS punk_balance
+        , `to` AS wallet
+        , count(*) AS punk_balance
     FROM {{ source('erc20_ethereum', 'evt_transfer') }}
     where contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks
     GROUP BY 1, 2
@@ -342,13 +342,13 @@ with original_holders AS (
 )
 , combined_table AS (
     SELECT base_data.day
-            , base_data.wallet
-            , sum(coalesce(daily_transfer_sum, 0)) OVER (PARTITION BY base_data.wallet ORDER BY base_data.day) AS holding
+        , base_data.wallet
+        , sum(coalesce(daily_transfer_sum, 0)) OVER (PARTITION BY base_data.wallet ORDER BY base_data.day) AS holding
     FROM base_data
     LEFT JOIN punk_transfer_summary ON base_data.day = punk_transfer_summary.day AND base_data.wallet = punk_transfer_summary.wallet
 )
 
 SELECT day
-        , count(wallet) filter (where holding > 0) AS unique_wallets
+    , count(wallet) filter (where holding > 0) AS unique_wallets
 FROM combined_table
 GROUP BY 1

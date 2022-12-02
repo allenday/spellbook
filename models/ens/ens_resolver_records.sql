@@ -13,16 +13,16 @@
 
 with resolver_records AS (
     SELECT
-    a AS address
-    , node
-    , evt_block_time AS block_time
-    , evt_tx_hash AS tx_hash
-    , evt_index
+        a AS address
+        , node
+        , evt_block_time AS block_time
+        , evt_tx_hash AS tx_hash
+        , evt_index
     FROM {{ source('ethereumnameservice_ethereum', 'PublicResolver_evt_AddrChanged') }}
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
+        WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
-   )
+)
 
 SELECT
     n.name
@@ -33,4 +33,4 @@ SELECT
     , r.evt_index
 FROM resolver_records AS r
 INNER JOIN {{ ref('ens_node_names')}} AS n
-ON r.node = n.node
+    ON r.node = n.node

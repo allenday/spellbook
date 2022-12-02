@@ -12,27 +12,27 @@
 -- AS default label, take the ENS reverse record or the latest resolver record
 SELECT *
 FROM (
-       SELECT
-       array('ethereum') AS blockchain,
-       coalesce(rev.address, res.address) AS address,
-       coalesce(rev.name, res.name) AS name,
-       'ENS' AS category,
-       '0xRob' AS contributor,
-       'query' AS source,
-       date('2022-10-06') AS created_at,
-       now() AS modified_at
+    SELECT
+        array('ethereum') AS blockchain,
+        coalesce(rev.address, res.address) AS address,
+        coalesce(rev.name, res.name) AS name,
+        'ENS' AS category,
+        '0xRob' AS contributor,
+        'query' AS source,
+        date('2022-10-06') AS created_at,
+        now() AS modified_at
     FROM (
         SELECT *
         FROM (
             SELECT
                 address,
-                 name
-                 , ROW_NUMBER() OVER (PARTITION BY address ORDER BY block_time ASC) AS ordering
+                name
+                , ROW_NUMBER() OVER (PARTITION BY address ORDER BY block_time ASC) AS ordering
             FROM {{ ref('ens_resolver_latest') }}
         ) where ordering = 1
     ) AS res
     FULL OUTER JOIN {{ ref('ens_reverse_latest') }} AS rev
-    ON res.address = rev.address
+        ON res.address = rev.address
 ) AS ens
 
 -- For now, we want to limit the amount of ENS labels to 1

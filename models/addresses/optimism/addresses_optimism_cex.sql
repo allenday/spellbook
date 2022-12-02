@@ -6,7 +6,7 @@
 
 SELECT lower(address) AS address, cex_name, distinct_name
 FROM (VALUES
-     ("0x88880809d6345119ccabe8a9015e4b1309456990", "Juno", "Juno 1")
+      ("0x88880809d6345119ccabe8a9015e4b1309456990", "Juno", "Juno 1")
     , ("0x5122e9aa635c13afd2fc31de3953e0896bac7ab4", "Coinbase", "Coinbase 1")
     , ("0xf491d040110384dbcf7f241ffe2a546513fd873d", "Coinbase", "Coinbase 2")
     , ("0xd839c179a4606f46abd7a757f7bb77d7593ae249", "Coinbase", "Coinbase 3")

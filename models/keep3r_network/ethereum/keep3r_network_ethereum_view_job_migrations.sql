@@ -8,13 +8,13 @@ SELECT
     evt_tx_hash AS tx_hash,
     evt_index + s.step AS evt_index,
     CASE
-        s.step
+    s.step
         WHEN (0) THEN 'JobMigrationOut'
         WHEN (1) THEN 'JobMigrationIn'
     END AS event,
     contract_address AS keep3r,
     CASE
-        s.step
+    s.step
         WHEN (0) THEN m._fromJob
         WHEN (1) THEN m._toJob
     END AS job
@@ -46,7 +46,7 @@ FROM
                 'Keep3r_v2_evt_JobMigrationSuccessful'
             ) }}
     ) AS m
-    INNER JOIN (
+INNER JOIN (
         SELECT
             explode(SEQUENCE(0, 1)) AS step
     ) AS s

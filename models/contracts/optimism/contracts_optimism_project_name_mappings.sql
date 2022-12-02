@@ -10,8 +10,8 @@
 }}
 
 SELECT
-  dune_name
-  , mapped_name
+    dune_name
+    , mapped_name
 FROM (
     values
     ('lyra_v1', 'Lyra')

@@ -11,7 +11,7 @@ leverage as (
         position_id,
         leverage 
     FROM 
-    {{ ref('tigris_arbitrum_events_open_position') }}
+        {{ ref('tigris_arbitrum_events_open_position') }}
 
     UNION ALL
 
@@ -20,7 +20,7 @@ leverage as (
         position_id,
         leverage 
     FROM 
-    {{ ref('tigris_arbitrum_events_modify_margin') }}
+        {{ ref('tigris_arbitrum_events_modify_margin') }}
 )
 
 SELECT * FROM leverage 

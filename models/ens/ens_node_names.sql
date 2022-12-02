@@ -25,7 +25,7 @@ with registrations AS (
         , evt_index
     FROM {{ ref('ens_view_registrations') }}
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
+        WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 )
 
@@ -39,7 +39,7 @@ with registrations AS (
         , evt_index
     FROM {{ source('ethereumnameservice_ethereum', 'PublicResolver_evt_AddrChanged') }}
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
+        WHERE evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
 )
 
@@ -48,18 +48,18 @@ with registrations AS (
     SELECT *
     FROM (
         SELECT *
-        , ROW_NUMBER() OVER (PARTITION BY node ORDER BY block_time DESC, evt_index DESC) AS ordering2
+            , ROW_NUMBER() OVER (PARTITION BY node ORDER BY block_time DESC, evt_index DESC) AS ordering2
         FROM (
             SELECT
-            r.*
-            , n.address
-            , n.node
-            , ROW_NUMBER() OVER (PARTITION BY r.tx_hash ORDER BY (r.evt_index - n.evt_index) ASC) AS ordering
+                r.*
+                , n.address
+                , n.node
+                , ROW_NUMBER() OVER (PARTITION BY r.tx_hash ORDER BY (r.evt_index - n.evt_index) ASC) AS ordering
             FROM registrations AS r
             INNER JOIN node_info AS n
-            ON r.block_number = n.block_number
-            AND r.tx_hash = n.tx_hash
-            AND r.evt_index > n.evt_index --register event comes after node event
+                ON r.block_number = n.block_number
+                    AND r.tx_hash = n.tx_hash
+                    AND r.evt_index > n.evt_index --register event comes after node event
         )
         where ordering = 1
     )

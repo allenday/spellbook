@@ -14,7 +14,7 @@
 
 
 WITH
-  finalized AS (
+finalized AS (
     SELECT *
     FROM {{ source('prices', 'usd') }}
     where minute <= now() - INTERVAL {{lookback_interval}}
@@ -36,15 +36,15 @@ WITH
 
 , forward_fill AS (
     SELECT
-    t.minute
-    , blockchain
-    , contract_address
-    , decimals
-    , symbol
-    , price
+        t.minute
+        , blockchain
+        , contract_address
+        , decimals
+        , symbol
+        , price
     FROM timeseries AS t
     LEFT JOIN unfinalized AS p
-    ON t.minute >= p.minute AND (p.next_update_minute is NULL OR t.minute < p.next_update_minute) -- perform forward fill
+        ON t.minute >= p.minute AND (p.next_update_minute is NULL OR t.minute < p.next_update_minute) -- perform forward fill
 )
 
 SELECT

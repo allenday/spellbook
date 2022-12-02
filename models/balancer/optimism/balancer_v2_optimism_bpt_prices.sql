@@ -39,14 +39,14 @@ WITH bpt_trades AS (
             END AS token_amount_raw
         FROM {{ source('balancer_v2_optimism', 'Vault_evt_Swap') }} AS t
         WHERE t.tokenIn = SUBSTRING(t.poolId, 0, 42)
-        OR t.tokenOut = SUBSTRING(t.poolId, 0, 42)
+            OR t.tokenOut = SUBSTRING(t.poolId, 0, 42)
     ) AS dexs
     LEFT JOIN {{ ref('tokens_erc20') }} AS erc20a ON erc20a.contract_address = dexs.bpt_address
-    AND erc20a.blockchain = "optimism"
+        AND erc20a.blockchain = "optimism"
     JOIN {{ ref('tokens_erc20') }} AS erc20b ON erc20b.contract_address = dexs.token_address
-    AND erc20b.blockchain = "optimism"
+        AND erc20b.blockchain = "optimism"
     LEFT JOIN {{ source('prices', 'usd') }} AS p ON p.minute = date_trunc('minute', dexs.block_time)
-    AND p.contract_address = dexs.token_address AND p.blockchain = "optimism"
+        AND p.contract_address = dexs.token_address AND p.blockchain = "optimism"
 ),
 
 bpt_estimated_prices AS (

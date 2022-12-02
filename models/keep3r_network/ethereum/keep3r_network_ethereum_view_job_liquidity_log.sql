@@ -108,10 +108,10 @@ df AS (
         NULL AS amount
     FROM
         {{ ref('keep3r_network_ethereum_view_job_migrations') }} AS migs
-        INNER JOIN (
+    INNER JOIN (
             -- generates 1 extra line per token of keep3r
             SELECT
-                DISTINCT keep3r,
+            DISTINCT keep3r,
                 job,
                 token
             FROM
@@ -127,8 +127,8 @@ migration_out AS (
                 - amount
             ) OVER (
                 PARTITION BY keep3r,
-                job,
-                token rows unbounded preceding
+                    job,
+                    token rows unbounded preceding
             )
         END AS migration_out
     FROM
@@ -142,8 +142,8 @@ migration_in AS (
                 - migration_out
             ) OVER (
                 PARTITION BY tx_hash,
-                keep3r,
-                token
+                    keep3r,
+                    token
                 ORDER BY
                     evt_index
             )

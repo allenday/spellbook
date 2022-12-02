@@ -2,7 +2,7 @@
 
 SELECT blockchain, address, name, category, contributor, source, created_at, updated_at
 FROM (VALUES
-     (array('ethereum'), '0x2B1Ad6184a6B0fac06bD225ed37C2AbC04415fF4', 'a16z', 'funds', 'soispoke', 'static', timestamp('2022-09-03'), now())
+      (array('ethereum'), '0x2B1Ad6184a6B0fac06bD225ed37C2AbC04415fF4', 'a16z', 'funds', 'soispoke', 'static', timestamp('2022-09-03'), now())
     , (array('ethereum'), '0x05e793ce0c6027323ac150f6d45c2344d28b6019', 'a16z', 'funds', 'soispoke', 'static', timestamp('2022-09-03'), now())
     , (array('ethereum'), '0xa294cca691e4c83b1fc0c8d63d9a3eef0a196de1', 'Alameda', 'funds', 'soispoke', 'static', timestamp('2022-09-03'), now())
     , (array('ethereum'), '0xc5ed2333f8a2c351fca35e5ebadb2a82f5d254c3', 'Alameda Research', 'funds', 'soispoke', 'static', timestamp('2022-09-03'), now())

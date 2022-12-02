@@ -13,7 +13,7 @@ leverage as (
         version,
         evt_index
     FROM 
-    {{ ref('tigris_polygon_events_open_position') }}
+        {{ ref('tigris_polygon_events_open_position') }}
 
     UNION 
 
@@ -24,7 +24,7 @@ leverage as (
         version,
         evt_index
     FROM 
-    {{ ref('tigris_polygon_events_modify_margin') }}
+        {{ ref('tigris_polygon_events_modify_margin') }}
 )
 
 SELECT * FROM leverage

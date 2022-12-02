@@ -24,18 +24,18 @@ with cte_support AS (SELECT
         CASE WHEN support = 1 THEN sum(votes / 1e18) ELSE 0 END AS votes_for,
         CASE WHEN support = 2 THEN sum(votes / 1e18) ELSE 0 END AS votes_abstain,
         proposalId
-FROM {{ source('gitcoin_ethereum', 'GovernorAlpha_evt_VoteCast') }}
-GROUP BY support, proposalId, voter),
+    FROM {{ source('gitcoin_ethereum', 'GovernorAlpha_evt_VoteCast') }}
+    GROUP BY support, proposalId, voter),
 
 cte_sum_votes AS (
-SELECT COUNT(DISTINCT voter) AS number_of_voters,
-       SUM(votes_for) AS votes_for,
-       SUM(votes_against) AS votes_against,
-       SUM(votes_abstain) AS votes_abstain,
-       SUM(votes_for) + SUM(votes_against) + SUM(votes_abstain) AS votes_total,
-       proposalId
-FROM cte_support
-GROUP BY proposalId)
+    SELECT COUNT(DISTINCT voter) AS number_of_voters,
+        SUM(votes_for) AS votes_for,
+        SUM(votes_against) AS votes_against,
+        SUM(votes_abstain) AS votes_abstain,
+        SUM(votes_for) + SUM(votes_against) + SUM(votes_abstain) AS votes_total,
+        proposalId
+    FROM cte_support
+    GROUP BY proposalId)
 
 SELECT DISTINCT
     '{{ blockchain }}' AS blockchain,
@@ -57,11 +57,11 @@ SELECT DISTINCT
     pcr.startBlock AS start_block,
     pcr.endBlock AS end_block,
     CASE
-         WHEN pex.id is NOT NULL AND now() > pex.evt_block_time THEN 'Executed'
-         WHEN pca.id is NOT NULL AND now() > pca.evt_block_time THEN 'Canceled'
-         WHEN pcr.startBlock < pcr.evt_block_number < pcr.endBlock THEN 'Active'
-         WHEN now() > pqu.evt_block_time AND startBlock > pcr.evt_block_number THEN 'Queued'
-         ELSE 'Defeated' END AS status,
+        WHEN pex.id is NOT NULL AND now() > pex.evt_block_time THEN 'Executed'
+        WHEN pca.id is NOT NULL AND now() > pca.evt_block_time THEN 'Canceled'
+        WHEN pcr.startBlock < pcr.evt_block_number < pcr.endBlock THEN 'Active'
+        WHEN now() > pqu.evt_block_time AND startBlock > pcr.evt_block_number THEN 'Queued'
+        ELSE 'Defeated' END AS status,
     description AS description
 FROM  {{ source('gitcoin_ethereum', 'GovernorAlpha_evt_ProposalCreated') }} AS pcr
 LEFT JOIN cte_sum_votes AS csv ON csv.proposalId = pcr.id
@@ -69,5 +69,5 @@ LEFT JOIN {{ source('gitcoin_ethereum', 'GovernorAlpha_evt_ProposalCanceled') }}
 LEFT JOIN {{ source('gitcoin_ethereum', 'GovernorAlpha_evt_ProposalExecuted') }} AS pex ON pex.id = pcr.id
 LEFT JOIN {{ source('gitcoin_ethereum', 'GovernorAlpha_evt_ProposalQueued') }} AS pqu ON pex.id = pcr.id
 {% if is_incremental() %}
-WHERE pcr.evt_block_time > (SELECT max(created_at) FROM {{ this }})
+    WHERE pcr.evt_block_time > (SELECT max(created_at) FROM {{ this }})
 {% endif %}
