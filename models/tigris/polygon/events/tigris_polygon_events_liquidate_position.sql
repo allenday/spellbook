@@ -19,9 +19,9 @@ liquidate_position_v1 as (
             pl._id as position_id,
             op.trader as trader 
         FROM 
-        {{ source('tigristrade_polygon', 'Tradingv1_evt_PositionLiquidated') }} pl 
+        {{ source('tigristrade_polygon', 'Tradingv1_evt_PositionLiquidated') }} AS pl 
         INNER JOIN 
-        {{ ref('tigris_polygon_events_open_position') }} op 
+        {{ ref('tigris_polygon_events_open_position') }} AS op 
             ON pl._id = op.position_id
             AND op.version = 'v1'
         {% if is_incremental() %}
@@ -38,9 +38,9 @@ liquidate_position_v2 as (
             pl._id as position_id,
             op.trader as trader 
         FROM 
-        {{ source('tigristrade_polygon', 'TradingV2_evt_PositionLiquidated') }} pl 
+        {{ source('tigristrade_polygon', 'TradingV2_evt_PositionLiquidated') }} AS pl 
         INNER JOIN 
-        {{ ref('tigris_polygon_events_open_position') }} op 
+        {{ ref('tigris_polygon_events_open_position') }} AS op 
             ON pl._id = op.position_id
             AND op.version = 'v2'
         {% if is_incremental() %}
@@ -57,9 +57,9 @@ liquidate_position_v3 as (
             pl._id as position_id,
             op.trader as trader 
         FROM 
-        {{ source('tigristrade_polygon', 'TradingV3_evt_PositionLiquidated') }} pl 
+        {{ source('tigristrade_polygon', 'TradingV3_evt_PositionLiquidated') }} AS pl 
         INNER JOIN 
-        {{ ref('tigris_polygon_events_open_position') }} op 
+        {{ ref('tigris_polygon_events_open_position') }} AS op 
             ON pl._id = op.position_id
             AND op.version = 'v3'
         {% if is_incremental() %}
@@ -76,9 +76,9 @@ liquidate_position_v4 as (
             pl._id as position_id,
             op.trader as trader 
         FROM 
-        {{ source('tigristrade_polygon', 'TradingV4_evt_PositionLiquidated') }} pl 
+        {{ source('tigristrade_polygon', 'TradingV4_evt_PositionLiquidated') }} AS pl 
         INNER JOIN 
-        {{ ref('tigris_polygon_events_open_position') }} op 
+        {{ ref('tigris_polygon_events_open_position') }} AS op 
             ON pl._id = op.position_id
             AND op.version = 'v4'
         {% if is_incremental() %}

@@ -63,11 +63,11 @@ SELECT DISTINCT
          WHEN now() > pqu.evt_block_time AND startBlock > pcr.evt_block_number THEN 'Queued'
          ELSE 'Defeated' END AS status,
     description
-FROM  {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalCreated') }} pcr
-LEFT JOIN cte_sum_votes csv ON csv.proposalId = pcr.proposalId
-LEFT JOIN {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalCanceled') }} pca ON pca.proposalId = pcr.proposalId
-LEFT JOIN {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalExecuted') }} pex ON pex.proposalId = pcr.proposalId
-LEFT JOIN {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalQueued') }} pqu ON pex.proposalId = pcr.proposalId
+FROM  {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalCreated') }} AS pcr
+LEFT JOIN cte_sum_votes AS csv ON csv.proposalId = pcr.proposalId
+LEFT JOIN {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalCanceled') }} AS pca ON pca.proposalId = pcr.proposalId
+LEFT JOIN {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalExecuted') }} AS pex ON pex.proposalId = pcr.proposalId
+LEFT JOIN {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalQueued') }} AS pqu ON pex.proposalId = pcr.proposalId
 {% if is_incremental() %}
 WHERE pcr.evt_block_time > (SELECT max(created_at) FROM {{ this }})
 {% endif %}

@@ -34,14 +34,14 @@ last_margin as (
             FROM 
             {{ ref('tigris_polygon_positions_margin') }}
             GROUP BY 2, 3 
-            ) xx 
+            ) AS xx 
             INNER JOIN 
-            {{ ref('tigris_polygon_positions_margin') }} xy 
+            {{ ref('tigris_polygon_positions_margin') }} AS xy 
                 ON xx.evt_block_time = xy.evt_block_time
                 AND xx.position_id = xy.position_id
                 AND xx.version = xy.version
-        ) tmp 
-    ) tmp_2
+        ) AS tmp 
+    ) AS tmp_2
     WHERE rank_ = 1 
 ),
 
@@ -74,14 +74,14 @@ last_leverage as (
             FROM 
             {{ ref('tigris_polygon_positions_leverage') }}
             GROUP BY 2, 3 
-            ) xx 
+            ) AS xx 
             INNER JOIN 
-            {{ ref('tigris_polygon_positions_leverage') }} xy 
+            {{ ref('tigris_polygon_positions_leverage') }} AS xy 
                 ON xx.evt_block_time = xy.evt_block_time
                 AND xx.position_id = xy.position_id
                 AND xx.version = xy.version
-        ) tmp 
-    ) tmp_2
+        ) AS tmp 
+    ) AS tmp_2
     WHERE rank_ = 1 
 )
 
@@ -90,12 +90,12 @@ SELECT
     lm.margin, 
     ll.leverage 
 FROM 
-{{ ref('tigris_polygon_events_liquidate_position') }} lp 
+{{ ref('tigris_polygon_events_liquidate_position') }} AS lp 
 INNER JOIN 
-last_margin lm 
+last_margin AS lm 
     ON lp.position_id = lm.position_id
     AND lp.version = lm.version
 INNER JOIN 
-last_leverage ll 
+last_leverage AS ll 
     ON lp.position_id = ll.position_id
     AND lp.version = ll.version

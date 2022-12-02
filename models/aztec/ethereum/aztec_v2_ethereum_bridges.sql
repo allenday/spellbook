@@ -46,7 +46,8 @@ SELECT
     bc.contract_type,
     bc.bridgeAddress AS contract_address
 FROM
-bridges_creation bc
+bridges_creation AS bc
 LEFT JOIN
-bridges_label bl
+bridges_label AS bl
     ON bl.contract_address = bc.bridgeAddress
+;

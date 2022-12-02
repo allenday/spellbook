@@ -42,4 +42,4 @@ FROM (values
 	, ("FRAX / USD", "0xc7D132BeCAbE7Dcc4204841F33bae45841e41D9C", "0x2E3D870790dC77A83DD1d18184Acc7439A53f475", 0)
 	, ("FXS / USD", "0xB9B16330671067B1b062B9aC2eFd2dB75F03436E", "0x67ccea5bb16181e7b4109c9c2143c24a1c2205be", 0)
 	, ("INR / USD", "0x5535e67d8f99c8ebe961E1Fc1F6DDAE96FEC82C9", "0xa3A538EA5D5838dC32dde15946ccD74bDd5652fF", 0)
-) a (feed_name, proxy_address, underlying_token_address, extra_decimals)
+) AS a (feed_name, proxy_address, underlying_token_address, extra_decimals)

@@ -49,4 +49,4 @@ FROM (values
 ('jNGN', 18, '0x182c76e977161f703bb8f111047df6c43cfacc56', '0xfd9820cfe4c19e7025d58fa2fc837fb931cf7f7a', '0x8927dcca07a405464c9fb0d48490a75b6285d623', '0x0df812c4d675d155815b1216ce1da9e68f1b7050', 1),
 ('jNZD', 18, '0x6b526daf03b4c47af2bcc5860b12151823ff70e0', '0x6673ceaad879493ebd38b957840f94618bfa1837', '0x2624b6472cf43b26d284b9f51d4af4ccf763eb87', '0xa302a0b8a499fd0f00449df0a490dede21105955', 1),
 ('jPLN', 18, '0x08e6d1f0c4877ef2993ad733fc6f1d022d0e9dbf', '0x3c60da710d8c5f3dd96435301cfd0b2bd7a3e870', '0x1d84f60babef98f0ffe7fd298cddd2a2caf8e02d', '0xb34bce11040702f71c11529d00179b2959bce6c0', 1)
-) a (jfiat_symbol, decimals, jfiat_token_address, jfiat_liquidity_address, jfiat_collateral_pool_address, jfiat_chainlink_address, contract_version)
+) AS a (jfiat_symbol, decimals, jfiat_token_address, jfiat_liquidity_address, jfiat_collateral_pool_address, jfiat_chainlink_address, contract_version)

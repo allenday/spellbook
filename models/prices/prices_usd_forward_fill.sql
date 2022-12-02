@@ -42,8 +42,8 @@ WITH
     , decimals
     , symbol
     , price
-    FROM timeseries t
-    LEFT JOIN unfinalized p
+    FROM timeseries AS t
+    LEFT JOIN unfinalized AS p
     ON t.minute >= p.minute AND (p.next_update_minute is NULL OR t.minute < p.next_update_minute) -- perform forward fill
 )
 

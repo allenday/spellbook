@@ -14,5 +14,5 @@ SELECT
     FROM {{source('ethereumnameservice_ethereum', 'ENSRegistry_evt_NewOwner')}}
     UNION
     SELECT * FROM {{source('ethereumnameservice_ethereum', 'ENSRegistryWithFallback_evt_NewOwner')}}
-  ) r
+  ) AS r
 GROUP BY node, label ;

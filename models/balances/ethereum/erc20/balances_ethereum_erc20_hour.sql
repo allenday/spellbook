@@ -37,9 +37,9 @@ SELECT
     b.amount,
     b.amount * p.price AS amount_usd,
     b.symbol
-FROM hourly_balances b
-INNER JOIN hours h ON b.hour <= h.hour AND h.hour < b.next_hour
-LEFT JOIN {{ source('prices', 'usd') }} p
+FROM hourly_balances AS b
+INNER JOIN hours AS h ON b.hour <= h.hour AND h.hour < b.next_hour
+LEFT JOIN {{ source('prices', 'usd') }} AS p
     ON p.contract_address = b.token_address
     AND h.hour = p.minute
     AND p.blockchain = 'ethereum'

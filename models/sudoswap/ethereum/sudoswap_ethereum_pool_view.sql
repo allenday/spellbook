@@ -61,8 +61,8 @@ SELECT
   pool_factory,
   creation_block_time,
   creation_tx_hash
-FROM {{ ref('sudoswap_ethereum_pool_creations') }} p
-INNER JOIN {{ ref('sudoswap_ethereum_pool_settings_latest') }} s
+FROM {{ ref('sudoswap_ethereum_pool_creations') }} AS p
+INNER JOIN {{ ref('sudoswap_ethereum_pool_settings_latest') }} AS s
     ON p.pool_address = s.pool_address
-INNER JOIN pool_balance b ON p.pool_address = b.pool_address
-LEFT JOIN pool_trade_stats t ON p.pool_address = t.pool_address
+INNER JOIN pool_balance AS b ON p.pool_address = b.pool_address
+LEFT JOIN pool_trade_stats AS t ON p.pool_address = t.pool_address

@@ -18,9 +18,9 @@ last_margin as (
         FROM 
         {{ ref('tigris_arbitrum_positions_margin') }}
         GROUP BY 2 
-        ) xx 
+        ) AS xx 
         INNER JOIN 
-        {{ ref('tigris_arbitrum_positions_margin') }} xy 
+        {{ ref('tigris_arbitrum_positions_margin') }} AS xy 
             ON xx.evt_block_time = xy.evt_block_time
             AND xx.position_id = xy.position_id
 ),
@@ -38,9 +38,9 @@ last_leverage as (
         FROM 
         {{ ref('tigris_arbitrum_positions_leverage') }}
         GROUP BY 2 
-        ) xx 
+        ) AS xx 
         INNER JOIN 
-        {{ ref('tigris_arbitrum_positions_leverage') }} xy 
+        {{ ref('tigris_arbitrum_positions_leverage') }} AS xy 
             ON xx.evt_block_time = xy.evt_block_time
             AND xx.position_id = xy.position_id
 )
@@ -50,10 +50,10 @@ SELECT
     lm.margin, 
     ll.leverage 
 FROM 
-{{ ref('tigris_arbitrum_events_liquidate_position') }} lp 
+{{ ref('tigris_arbitrum_events_liquidate_position') }} AS lp 
 INNER JOIN 
-last_margin lm 
+last_margin AS lm 
     ON lp.position_id = lm.position_id
 INNER JOIN 
-last_leverage ll 
+last_leverage AS ll 
     ON lp.position_id = ll.position_id

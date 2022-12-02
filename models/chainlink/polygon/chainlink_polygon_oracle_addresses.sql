@@ -30,4 +30,4 @@ FROM (values
         ("NGN / USD", 8, "0x0df812c4d675d155815b1216ce1da9e68f1b7050", "0x0000000000000000000000000000000000000000"),
         ("NZD / USD", 8, "0xa302a0b8a499fd0f00449df0a490dede21105955", "0xe63032a70f6eb617970829fbfa365d7c44bdbbbf"),
         ("PLN / USD", 8, "0xb34bce11040702f71c11529d00179b2959bce6c0", "0x08f8d217e6f07ae423a2ad2ffb226ffcb577708d")
-) a (feed_name, decimals, proxy_address, aggregator_address)
+) AS a (feed_name, decimals, proxy_address, aggregator_address)

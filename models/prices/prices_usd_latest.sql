@@ -20,8 +20,8 @@ FROM (
     , MAX(minute) AS latest
     FROM {{ source('prices', 'usd') }}
     GROUP BY blockchain, contract_address
-    ) latest
-LEFT JOIN {{ source('prices', 'usd') }} pu ON pu.blockchain=latest.blockchain
+    ) AS latest
+LEFT JOIN {{ source('prices', 'usd') }} AS pu ON pu.blockchain=latest.blockchain
     AND pu.contract_address=latest.contract_address
     AND pu.minute=latest.latest
 

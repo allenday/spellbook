@@ -36,7 +36,7 @@ SELECT
     b.amount,
     nft_tokens.name AS collection,
     nft_tokens.category AS category
-FROM hourly_balances b
-INNER JOIN hours d ON b.hour <= d.hour AND d.hour < b.next_hour
-LEFT JOIN {{ ref('tokens_nft') }} nft_tokens ON nft_tokens.contract_address = b.token_address
+FROM hourly_balances AS b
+INNER JOIN hours AS d ON b.hour <= d.hour AND d.hour < b.next_hour
+LEFT JOIN {{ ref('tokens_nft') }} AS nft_tokens ON nft_tokens.contract_address = b.token_address
 AND nft_tokens.blockchain = 'ethereum'

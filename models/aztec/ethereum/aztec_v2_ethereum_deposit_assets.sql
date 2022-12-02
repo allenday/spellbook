@@ -32,8 +32,9 @@ SELECT
     t.symbol,
     t.decimals
 FROM
-assets_added a
+assets_added AS a
 LEFT JOIN
-{{ ref('tokens_erc20') }} t
+{{ ref('tokens_erc20') }} AS t
     ON a.asset_address = t.contract_address
     AND t.blockchain = 'ethereum'
+;

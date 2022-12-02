@@ -33,7 +33,7 @@ SELECT distinct
     b.token_address,
     b.tokenId,
     nft_tokens.name AS collection
-FROM daily_balances b
-INNER JOIN days d ON b.day <= d.day AND d.day < b.next_day
-LEFT JOIN {{ ref('tokens_nft') }} nft_tokens ON nft_tokens.contract_address = b.token_address
+FROM daily_balances AS b
+INNER JOIN days AS d ON b.day <= d.day AND d.day < b.next_day
+LEFT JOIN {{ ref('tokens_nft') }} AS nft_tokens ON nft_tokens.contract_address = b.token_address
 AND nft_tokens.blockchain = 'ethereum'

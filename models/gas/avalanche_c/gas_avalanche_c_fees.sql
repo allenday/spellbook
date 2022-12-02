@@ -48,8 +48,8 @@ SELECT
      txns.gas_used / txns.gas_limit * 100 AS gas_usage_percent,
      difficulty,
      type AS transaction_type
-FROM {{ source('avalanche_c', 'transactions') }} txns
-JOIN {{ source('avalanche_c', 'blocks') }} blocks ON blocks.number = txns.block_number
+FROM {{ source('avalanche_c', 'transactions') }} AS txns
+JOIN {{ source('avalanche_c', 'blocks') }} AS blocks ON blocks.number = txns.block_number
 {% if is_incremental() %}
 AND block_time >= date_trunc("day", now() - INTERVAL '2 days')
 AND blocks.time >= date_trunc("day", now() - INTERVAL '2 days')

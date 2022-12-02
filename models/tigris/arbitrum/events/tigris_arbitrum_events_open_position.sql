@@ -34,9 +34,9 @@ open_positions_v2 as (
             t._tradeInfo:referral as referral, 
             t._trader as trader 
         FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV2_evt_PositionOpened') }} t 
+        {{ source('tigristrade_arbitrum', 'TradingV2_evt_PositionOpened') }} AS t 
         INNER JOIN 
-        pairs ta 
+        pairs AS ta 
             ON t._tradeInfo:asset = ta.asset_id 
         {% if is_incremental() %}
         WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
@@ -60,9 +60,9 @@ open_positions_v3 as (
             t._tradeInfo:referral as referral, 
             t._trader as trader 
         FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV3_evt_PositionOpened') }} t 
+        {{ source('tigristrade_arbitrum', 'TradingV3_evt_PositionOpened') }} AS t 
         INNER JOIN 
-        pairs ta 
+        pairs AS ta 
             ON t._tradeInfo:asset = ta.asset_id 
         {% if is_incremental() %}
         WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
@@ -86,9 +86,9 @@ open_positions_v4 as (
             t._tradeInfo:referral as referral, 
             t._trader as trader 
         FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV4_evt_PositionOpened') }} t 
+        {{ source('tigristrade_arbitrum', 'TradingV4_evt_PositionOpened') }} AS t 
         INNER JOIN 
-        pairs ta 
+        pairs AS ta 
             ON t._tradeInfo:asset = ta.asset_id 
         {% if is_incremental() %}
         WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
@@ -112,9 +112,9 @@ open_positions_v5 as (
             t._tradeInfo:referral as referral, 
             t._trader as trader 
         FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV5_evt_PositionOpened') }} t 
+        {{ source('tigristrade_arbitrum', 'TradingV5_evt_PositionOpened') }} AS t 
         INNER JOIN 
-        pairs ta 
+        pairs AS ta 
             ON t._tradeInfo:asset = ta.asset_id 
         {% if is_incremental() %}
         WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')

@@ -18,6 +18,6 @@ i.underlying_symbol,
 i.underlying_token_address AS underlying_address,
 r.repayAmount / power(10, i.underlying_decimals) AS repay_amount,
 r.repayAmount / power(10, i.underlying_decimals)*p.price AS repay_usd
-FROM {{ source('ironbank_ethereum', 'CErc20Delegator_evt_RepayBorrow') }} r
-LEFT JOIN {{ ref('ironbank_ethereum_itokens') }} i ON i.contract_address = r.contract_address
-LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', r.evt_block_time) AND p.contract_address = i.underlying_token_address AND p.blockchain = 'ethereum'
+FROM {{ source('ironbank_ethereum', 'CErc20Delegator_evt_RepayBorrow') }} AS r
+LEFT JOIN {{ ref('ironbank_ethereum_itokens') }} AS i ON i.contract_address = r.contract_address
+LEFT JOIN {{ source('prices', 'usd') }} AS p ON p.minute = date_trunc('minute', r.evt_block_time) AND p.contract_address = i.underlying_token_address AND p.blockchain = 'ethereum'

@@ -83,3 +83,4 @@ LEFT JOIN {{ source('prices', 'usd') }} AS p
     ON p.minute = date_trunc('minute', deposit.evt_block_time)
     AND p.contract_address = deposit.token
     AND p.blockchain = 'ethereum'
+;

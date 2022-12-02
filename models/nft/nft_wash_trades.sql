@@ -59,8 +59,8 @@ SELECT nftt.blockchain
         THEN true
         ELSE false
         END AS is_wash_trade
-FROM {{ ref('nft_trades') }} nftt
-LEFT JOIN {{ ref('nft_trades') }} filter_baf
+FROM {{ ref('nft_trades') }} AS nftt
+LEFT JOIN {{ ref('nft_trades') }} AS filter_baf
     ON filter_baf.seller=nftt.buyer
     AND filter_baf.buyer=nftt.seller
     AND filter_baf.nft_contract_address=nftt.nft_contract_address
@@ -68,7 +68,7 @@ LEFT JOIN {{ ref('nft_trades') }} filter_baf
     {% if is_incremental() %}
     AND filter_baf.block_time >= date_trunc("day", NOW() - INTERVAL '1 week')
     {% endif %}
-LEFT JOIN {{ ref('nft_trades') }} filter_bought_3x
+LEFT JOIN {{ ref('nft_trades') }} AS filter_bought_3x
     ON filter_bought_3x.nft_contract_address=nftt.nft_contract_address
     AND filter_bought_3x.token_id=nftt.token_id
     AND filter_bought_3x.buyer=nftt.buyer
@@ -76,7 +76,7 @@ LEFT JOIN {{ ref('nft_trades') }} filter_bought_3x
     {% if is_incremental() %}
     AND filter_bought_3x.block_time >= date_trunc("day", NOW() - INTERVAL '1 week')
     {% endif %}
-LEFT JOIN {{ ref('addresses_events_ethereum_first_funded_by') }} filter_funding_buyer
+LEFT JOIN {{ ref('addresses_events_ethereum_first_funded_by') }} AS filter_funding_buyer
     ON filter_funding_buyer.address=nftt.buyer
     AND filter_funding_buyer.first_funded_by NOT IN (SELECT DISTINCT address FROM {{ ref('labels_bridges') }})
     AND filter_funding_buyer.first_funded_by NOT IN (SELECT DISTINCT address FROM {{ ref('labels_cex') }})
@@ -84,7 +84,7 @@ LEFT JOIN {{ ref('addresses_events_ethereum_first_funded_by') }} filter_funding_
     {% if is_incremental() %}
     AND filter_funding_buyer.block_time >= date_trunc("day", NOW() - INTERVAL '1 week')
     {% endif %}
-LEFT JOIN {{ ref('addresses_events_ethereum_first_funded_by') }} filter_funding_seller
+LEFT JOIN {{ ref('addresses_events_ethereum_first_funded_by') }} AS filter_funding_seller
     ON filter_funding_seller.address=nftt.seller
     AND filter_funding_seller.first_funded_by NOT IN (SELECT DISTINCT address FROM {{ ref('labels_bridges') }})
     AND filter_funding_seller.first_funded_by NOT IN (SELECT DISTINCT address FROM {{ ref('labels_cex') }})
@@ -93,7 +93,7 @@ LEFT JOIN {{ ref('addresses_events_ethereum_first_funded_by') }} filter_funding_
     AND filter_funding_seller.block_time >= date_trunc("day", NOW() - INTERVAL '1 week')
     {% endif %}
 {% if is_incremental() %}
-LEFT ANTI JOIN {{this}} nft_wtf ON nftt.unique_trade_id = nft_wtf.unique_trade_id
+LEFT ANTI JOIN {{this}} AS nft_wtf ON nftt.unique_trade_id = nft_wtf.unique_trade_id
 {% endif %}
 WHERE nftt.blockchain='ethereum'
 AND nftt.unique_trade_id IS NOT NULL

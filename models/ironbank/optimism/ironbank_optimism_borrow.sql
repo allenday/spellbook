@@ -18,6 +18,6 @@ i.underlying_symbol,
 i.underlying_token_address AS underlying_address,
 b.borrowAmount / power(10, i.underlying_decimals) AS borrow_amount,
 b.borrowAmount / power(10, i.underlying_decimals)*p.price AS borrow_usd
-FROM {{ source('ironbank_optimism', 'CErc20Delegator_evt_Borrow') }} b
-LEFT JOIN {{ ref('ironbank_optimism_itokens') }} i ON b.contract_address = i.contract_address
-LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', b.evt_block_time) AND p.contract_address = i.underlying_token_address AND p.blockchain = 'optimism'
+FROM {{ source('ironbank_optimism', 'CErc20Delegator_evt_Borrow') }} AS b
+LEFT JOIN {{ ref('ironbank_optimism_itokens') }} AS i ON b.contract_address = i.contract_address
+LEFT JOIN {{ source('prices', 'usd') }} AS p ON p.minute = date_trunc('minute', b.evt_block_time) AND p.contract_address = i.underlying_token_address AND p.blockchain = 'optimism'

@@ -22,9 +22,9 @@ add_margin_v2 as (
             ap._newPrice/1e18 as price, 
             ap._trader as trader 
         FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV2_evt_AddToPosition') }} ap 
+        {{ source('tigristrade_arbitrum', 'TradingV2_evt_AddToPosition') }} AS ap 
         INNER JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV2_call_addToPosition') }} af 
+        {{ source('tigristrade_arbitrum', 'TradingV2_call_addToPosition') }} AS af 
             ON ap._id = af._id 
             AND ap.evt_tx_hash = af.call_tx_hash 
             AND af.call_success = true 
@@ -48,9 +48,9 @@ add_margin_v3 as (
             ap._newPrice/1e18 as price, 
             ap._trader as trader 
         FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV3_evt_AddToPosition') }} ap 
+        {{ source('tigristrade_arbitrum', 'TradingV3_evt_AddToPosition') }} AS ap 
         INNER JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV3_call_addToPosition') }} af 
+        {{ source('tigristrade_arbitrum', 'TradingV3_call_addToPosition') }} AS af 
             ON ap._id = af._id 
             AND ap.evt_tx_hash = af.call_tx_hash 
             AND af.call_success = true 
@@ -74,9 +74,9 @@ add_margin_v4 as (
             ap._newPrice/1e18 as price, 
             ap._trader as trader 
         FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV4_evt_AddToPosition') }} ap 
+        {{ source('tigristrade_arbitrum', 'TradingV4_evt_AddToPosition') }} AS ap 
         INNER JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV4_call_addToPosition') }} af 
+        {{ source('tigristrade_arbitrum', 'TradingV4_call_addToPosition') }} AS af 
             ON ap._id = af._id 
             AND ap.evt_tx_hash = af.call_tx_hash 
             AND af.call_success = true 
@@ -100,9 +100,9 @@ add_margin_v5 as (
             ap._newPrice/1e18 as price, 
             ap._trader as trader 
         FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV5_evt_AddToPosition') }} ap 
+        {{ source('tigristrade_arbitrum', 'TradingV5_evt_AddToPosition') }} AS ap 
         INNER JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV5_call_addToPosition') }} af 
+        {{ source('tigristrade_arbitrum', 'TradingV5_call_addToPosition') }} AS af 
             ON ap._id = af._id 
             AND ap.evt_tx_hash = af.call_tx_hash 
             AND af.call_success = true 

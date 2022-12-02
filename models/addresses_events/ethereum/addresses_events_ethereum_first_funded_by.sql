@@ -16,14 +16,14 @@ SELECT b.to AS address
     , MIN(a.block_time) AS block_time
     , MIN(a.block_number) AS block_number
     , MIN(a.tx_hash) AS tx_hash
-FROM {{ source('ethereum', 'traces') }} a
+FROM {{ source('ethereum', 'traces') }} AS a
 JOIN
 (
     SELECT et.to
         , MIN(et.block_number) AS first_block
-    FROM {{ source('ethereum', 'traces') }} et
+    FROM {{ source('ethereum', 'traces') }} AS et
     {% if is_incremental() %}
-    LEFT ANTI JOIN {{this}} ffb
+    LEFT ANTI JOIN {{this}} AS ffb
         ON et.to = ffb.address
     {% endif %}
     WHERE et.success

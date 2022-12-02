@@ -31,6 +31,6 @@ SELECT
     , r.block_time
     , r.tx_hash
     , r.evt_index
-FROM resolver_records r
-INNER JOIN {{ ref('ens_node_names')}} n
+FROM resolver_records AS r
+INNER JOIN {{ ref('ens_node_names')}} AS n
 ON r.node = n.node

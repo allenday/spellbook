@@ -64,10 +64,10 @@ SELECT
     evt_block_time,
     evt_block_number
 FROM {{ source('aave_v3_optimism', 'Pool_evt_LiquidationCall') }}
-) deposit
-LEFT JOIN {{ ref('tokens_optimism_erc20') }} erc20
+) AS deposit
+LEFT JOIN {{ ref('tokens_optimism_erc20') }} AS erc20
     ON deposit.token = erc20.contract_address
-LEFT JOIN {{ source('prices', 'usd') }} p
+LEFT JOIN {{ source('prices', 'usd') }} AS p
     ON p.minute = date_trunc('minute', deposit.evt_block_time)
     AND p.symbol = erc20.symbol
     AND p.blockchain = 'ethereum' -- Using ETH tokens FOR USD prices AS price data is NOT available FOR OP tokens

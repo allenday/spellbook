@@ -43,7 +43,7 @@ WITH job_liquidities AS (
                     'keep3r_network_ethereum',
                     'Keep3r_v2_evt_LiquidityAddition'
                 ) }}
-        ) ad
+        ) AS ad
     UNION ALL
     SELECT
         rm.evt_block_time AS `timestamp`,
@@ -82,7 +82,7 @@ WITH job_liquidities AS (
                     'keep3r_network_ethereum',
                     'Keep3r_v2_evt_LiquidityWithdrawal'
                 ) }}
-        ) rm
+        ) AS rm
 ),
 df AS (
     SELECT
@@ -116,7 +116,7 @@ df AS (
                 token
             FROM
                 job_liquidities
-        ) liqs
+        ) AS liqs
         ON migs.keep3r = liqs.keep3r
 ),
 migration_out AS (

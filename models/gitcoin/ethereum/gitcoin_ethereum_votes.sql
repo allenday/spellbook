@@ -45,9 +45,9 @@ SELECT
          WHEN vc.support = 2 THEN 'abstain'
          END AS support,
     cast(NULL AS STRING) AS reason
-FROM {{ source('gitcoin_ethereum', 'GovernorAlpha_evt_VoteCast') }} vc
-LEFT JOIN cte_sum_votes csv ON vc.proposalId = csv.proposalId
-LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', evt_block_time)
+FROM {{ source('gitcoin_ethereum', 'GovernorAlpha_evt_VoteCast') }} AS vc
+LEFT JOIN cte_sum_votes AS csv ON vc.proposalId = csv.proposalId
+LEFT JOIN {{ source('prices', 'usd') }} AS p ON p.minute = date_trunc('minute', evt_block_time)
     AND p.symbol = 'GTC'
     AND p.blockchain ='ethereum'
     {% if is_incremental() %}

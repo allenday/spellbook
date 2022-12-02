@@ -47,4 +47,4 @@ FROM (values
 ('0x2624b6472cf43b26d284b9f51d4af4ccf763eb87', 'USDC', 6, '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'),
 ('0x1d84f60babef98f0ffe7fd298cddd2a2caf8e02d', 'USDC', 6, '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'),
 ('0xbc988a0146178825c26c255989cfd5083bae672c', 'MIMATIC', 18, '0xa3fa99a148fa48d14ed51d610c367c61876997f1')
-) a (jfiat_collateral_pool_address, jfiat_collateral_symbol, decimals, jfiat_collateral_token_address)
+) AS a (jfiat_collateral_pool_address, jfiat_collateral_symbol, decimals, jfiat_collateral_token_address)

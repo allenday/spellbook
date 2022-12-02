@@ -30,10 +30,10 @@ FROM (
                  , ROW_NUMBER() OVER (PARTITION BY address ORDER BY block_time ASC) AS ordering
             FROM {{ ref('ens_resolver_latest') }}
         ) where ordering = 1
-    ) res
-    FULL OUTER JOIN {{ ref('ens_reverse_latest') }} rev
+    ) AS res
+    FULL OUTER JOIN {{ ref('ens_reverse_latest') }} AS rev
     ON res.address = rev.address
-) ens
+) AS ens
 
 -- For now, we want to limit the amount of ENS labels to 1
 --UNION

@@ -19,10 +19,10 @@ i_asset.underlying_token_address AS underlying_address,
 i_collateral.underlying_token_address AS collateral_address,
 l.repayAmount / power(10, i.underlying_decimals) AS repay_amount,
 l.repayAmount / power(10, i.underlying_decimals)*p.price AS repay_usd
-FROM {{ source('ironbank_ethereum', 'CErc20Delegator_evt_LiquidateBorrow') }} l
+FROM {{ source('ironbank_ethereum', 'CErc20Delegator_evt_LiquidateBorrow') }} AS l
 LEFT JOIN (SELECT contract_address, underlying_token_address
-            FROM {{ ref('ironbank_ethereum_itokens') }} ) i_collateral ON l.cTokenCollateral = i_collateral.contract_address
+            FROM {{ ref('ironbank_ethereum_itokens') }} ) AS i_collateral ON l.cTokenCollateral = i_collateral.contract_address
 LEFT JOIN (SELECT contract_address, underlying_token_address
-            FROM {{ ref('ironbank_ethereum_itokens') }} ) i_asset ON l.contract_address = i_asset.contract_address
-LEFT JOIN {{ ref('ironbank_ethereum_itokens') }} i ON l.contract_address = i.contract_address
-LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', l.evt_block_time) AND p.contract_address = i.underlying_token_address AND p.blockchain = 'ethereum'
+            FROM {{ ref('ironbank_ethereum_itokens') }} ) AS i_asset ON l.contract_address = i_asset.contract_address
+LEFT JOIN {{ ref('ironbank_ethereum_itokens') }} AS i ON l.contract_address = i.contract_address
+LEFT JOIN {{ source('prices', 'usd') }} AS p ON p.minute = date_trunc('minute', l.evt_block_time) AND p.contract_address = i.underlying_token_address AND p.blockchain = 'ethereum'

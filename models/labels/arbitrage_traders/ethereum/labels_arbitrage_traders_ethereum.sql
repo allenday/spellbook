@@ -49,8 +49,8 @@ with
     SELECT
       distinct t1.taker AS address
     FROM
-      {{ref('dex_trades')}} t1
-      INNER JOIN {{ref('dex_trades')}} t2 ON t1.tx_hash = t2.tx_hash
+      {{ref('dex_trades')}} AS t1
+      INNER JOIN {{ref('dex_trades')}} AS t2 ON t1.tx_hash = t2.tx_hash
     WHERE
       t1.blockchain = 'ethereum'
       AND t2.blockchain = 'ethereum'

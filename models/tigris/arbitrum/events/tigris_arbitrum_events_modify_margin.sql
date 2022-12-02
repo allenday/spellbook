@@ -23,9 +23,9 @@ modify_margin_v2 as (
             mm._newLeverage/1e18 as leverage, 
             mm._trader as trader 
         FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV2_evt_MarginModified') }} mm 
+        {{ source('tigristrade_arbitrum', 'TradingV2_evt_MarginModified') }} AS mm 
         LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV2_call_addMargin') }} am 
+        {{ source('tigristrade_arbitrum', 'TradingV2_call_addMargin') }} AS am 
             ON mm._id = am._id 
             AND mm.evt_tx_hash = am.call_tx_hash
             AND am.call_success = true 
@@ -33,7 +33,7 @@ modify_margin_v2 as (
             AND am.call_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV2_call_removeMargin') }} rm 
+        {{ source('tigristrade_arbitrum', 'TradingV2_call_removeMargin') }} AS rm 
             ON mm._id = rm._id 
             AND mm.evt_tx_hash = rm.call_tx_hash
             AND rm.call_success = true 
@@ -58,9 +58,9 @@ modify_margin_v3 as (
             mm._newLeverage/1e18 as leverage, 
             mm._trader as trader 
         FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV3_evt_MarginModified') }} mm 
+        {{ source('tigristrade_arbitrum', 'TradingV3_evt_MarginModified') }} AS mm 
         LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV3_call_addMargin') }} am 
+        {{ source('tigristrade_arbitrum', 'TradingV3_call_addMargin') }} AS am 
             ON mm._id = am._id 
             AND mm.evt_tx_hash = am.call_tx_hash
             AND am.call_success = true 
@@ -68,7 +68,7 @@ modify_margin_v3 as (
             AND am.call_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV3_call_removeMargin') }} rm 
+        {{ source('tigristrade_arbitrum', 'TradingV3_call_removeMargin') }} AS rm 
             ON mm._id = rm._id 
             AND mm.evt_tx_hash = rm.call_tx_hash
             AND rm.call_success = true 
@@ -93,9 +93,9 @@ modify_margin_v4 as (
             mm._newLeverage/1e18 as leverage, 
             mm._trader as trader 
         FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV4_evt_MarginModified') }} mm 
+        {{ source('tigristrade_arbitrum', 'TradingV4_evt_MarginModified') }} AS mm 
         LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV4_call_addMargin') }} am 
+        {{ source('tigristrade_arbitrum', 'TradingV4_call_addMargin') }} AS am 
             ON mm._id = am._id 
             AND mm.evt_tx_hash = am.call_tx_hash
             AND am.call_success = true 
@@ -103,7 +103,7 @@ modify_margin_v4 as (
             AND am.call_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV4_call_removeMargin') }} rm 
+        {{ source('tigristrade_arbitrum', 'TradingV4_call_removeMargin') }} AS rm 
             ON mm._id = rm._id 
             AND mm.evt_tx_hash = rm.call_tx_hash
             AND rm.call_success = true 
@@ -128,9 +128,9 @@ modify_margin_v5 as (
             mm._newLeverage/1e18 as leverage, 
             mm._trader as trader 
         FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV5_evt_MarginModified') }} mm 
+        {{ source('tigristrade_arbitrum', 'TradingV5_evt_MarginModified') }} AS mm 
         LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV5_call_addMargin') }} am 
+        {{ source('tigristrade_arbitrum', 'TradingV5_call_addMargin') }} AS am 
             ON mm._id = am._id 
             AND mm.evt_tx_hash = am.call_tx_hash
             AND am.call_success = true 
@@ -138,7 +138,7 @@ modify_margin_v5 as (
             AND am.call_block_time >= date_trunc("day", now() - interval '1 week')
             {% endif %}
         LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV5_call_removeMargin') }} rm 
+        {{ source('tigristrade_arbitrum', 'TradingV5_call_removeMargin') }} AS rm 
             ON mm._id = rm._id 
             AND mm.evt_tx_hash = rm.call_tx_hash
             AND rm.call_success = true 

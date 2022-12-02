@@ -37,9 +37,9 @@ SELECT
     b.amount,
     b.amount * p.price AS amount_usd,
     b.symbol
-FROM daily_balances b
-INNER JOIN days d ON b.day <= d.day AND d.day < b.next_day
-LEFT JOIN {{ source('prices', 'usd') }} p
+FROM daily_balances AS b
+INNER JOIN days AS d ON b.day <= d.day AND d.day < b.next_day
+LEFT JOIN {{ source('prices', 'usd') }} AS p
     ON p.contract_address = b.token_address
     AND d.day = p.minute
     AND p.blockchain = 'ethereum'
