@@ -9,8 +9,8 @@
 
 {% set element_models = [
 'element_ethereum_fees'
-,'element_avalanche_c_fees'
-,'element_bnb_fees'
+, 'element_avalanche_c_fees'
+, 'element_bnb_fees'
 ] %}
 
 

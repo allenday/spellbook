@@ -38,34 +38,34 @@ WITH event_data AS (
 
 SELECT
     'ethereum' AS blockchain
-    ,'clipper' AS project
-    ,'1' AS version
-    ,TRY_CAST(date_trunc('DAY', e.block_time) AS date) AS block_date
-    ,e.block_time
-    ,t_bought.symbol AS token_bought_symbol
-    ,t_sold.symbol AS token_sold_symbol
-    ,CASE
+    , 'clipper' AS project
+    , '1' AS version
+    , TRY_CAST(date_trunc('DAY', e.block_time) AS date) AS block_date
+    , e.block_time
+    , t_bought.symbol AS token_bought_symbol
+    , t_sold.symbol AS token_sold_symbol
+    , CASE
         WHEN lower(t_bought.symbol) > lower(t_sold.symbol) THEN concat(t_sold.symbol, '-', t_bought.symbol)
         ELSE concat(t_bought.symbol, '-', t_sold.symbol)
     END AS token_pair
-    ,e.token_bought_amount_raw / power(10, t_bought.decimals) AS token_bought_amount
-    ,e.token_sold_amount_raw / power(10, t_sold.decimals) AS token_sold_amount
+    , e.token_bought_amount_raw / power(10, t_bought.decimals) AS token_bought_amount
+    , e.token_sold_amount_raw / power(10, t_sold.decimals) AS token_sold_amount
     , CAST(e.token_bought_amount_raw AS DECIMAL(38, 0)) AS token_bought_amount_raw
     , CAST(e.token_sold_amount_raw AS DECIMAL(38, 0)) AS token_sold_amount_raw
-    ,coalesce(
+    , coalesce(
         (e.token_bought_amount_raw / power(10, p_bought.decimals)) * p_bought.price
         , (e.token_sold_amount_raw / power(10, p_sold.decimals)) * p_sold.price
     ) AS amount_usd
-    ,e.token_bought_address
-    ,e.token_sold_address
-    ,e.taker
-    ,e.maker
-    ,e.project_contract_address
-    ,e.tx_hash
-    ,tx.from AS tx_from
-    ,tx.to AS tx_to
-    ,e.trace_address
-    ,e.evt_index
+    , e.token_bought_address
+    , e.token_sold_address
+    , e.taker
+    , e.maker
+    , e.project_contract_address
+    , e.tx_hash
+    , tx.from AS tx_from
+    , tx.to AS tx_to
+    , e.trace_address
+    , e.evt_index
 FROM event_data e
 INNER JOIN {{ source('ethereum', 'transactions') }} tx
     ON tx.block_number = e.block_number

@@ -9,8 +9,8 @@
 
 {% set sushi_models = [
 'sushiswap_ethereum_trades'
-,'sushiswap_avalanche_c_trades'
-,'sushiswap_gnosis_trades'
+, 'sushiswap_avalanche_c_trades'
+, 'sushiswap_gnosis_trades'
 ] %}
 
 

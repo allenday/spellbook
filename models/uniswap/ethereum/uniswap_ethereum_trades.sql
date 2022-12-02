@@ -5,8 +5,8 @@
 
 {% set uniswap_models = [
 'uniswap_v1_ethereum_trades'
-,'uniswap_v2_ethereum_trades'
-,'uniswap_v3_ethereum_trades'
+, 'uniswap_v2_ethereum_trades'
+, 'uniswap_v3_ethereum_trades'
 ] %}
 
 

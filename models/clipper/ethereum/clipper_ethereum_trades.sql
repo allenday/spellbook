@@ -9,8 +9,8 @@
 
 {% set clipper_models = [
 'clipper_v1_ethereum_trades'
-,'clipper_v2_ethereum_trades'
-,'clipper_v3_ethereum_trades'
+, 'clipper_v2_ethereum_trades'
+, 'clipper_v3_ethereum_trades'
 ] %}
 
 

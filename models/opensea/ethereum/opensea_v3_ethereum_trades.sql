@@ -1,5 +1,5 @@
 {{ config(schema='opensea_v3_ethereum'
-         ,alias='trades')
+         , alias='trades')
 }}
 
 -- opensea.trades has the same columns AS seaport.trades

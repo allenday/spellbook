@@ -10,8 +10,8 @@
 
 SELECT
   lower(contract_address) AS contract_address
-  ,project_name
-  ,project_type
+  , project_name
+  , project_type
 FROM
 (
   values

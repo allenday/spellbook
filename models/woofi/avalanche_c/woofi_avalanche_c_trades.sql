@@ -19,19 +19,19 @@
 WITH dexs AS
  (SELECT
             evt_block_time AS block_time
-            ,'woofi' AS project
-            ,'1' AS version
-            ,from AS taker
-            ,to AS maker
-            ,fromAmount AS token_bought_amount_raw
-            ,toAmount AS token_sold_amount_raw
-            ,cast(NULL AS double) AS amount_usd
-            ,fromToken AS token_bought_address
-            ,toToken AS token_sold_address
-            ,contract_address AS project_contract_address
-            ,evt_tx_hash AS tx_hash
-            ,'' AS trace_address
-            ,evt_index
+            , 'woofi' AS project
+            , '1' AS version
+            , from AS taker
+            , to AS maker
+            , fromAmount AS token_bought_amount_raw
+            , toAmount AS token_sold_amount_raw
+            , cast(NULL AS double) AS amount_usd
+            , fromToken AS token_bought_address
+            , toToken AS token_sold_address
+            , contract_address AS project_contract_address
+            , evt_tx_hash AS tx_hash
+            , '' AS trace_address
+            , evt_index
         FROM
             {{ source('woofi_avalanche_c', 'WooPP_evt_WooSwap')}}
         WHERE FROM <> '0x5aa6a4e96a9129562e2fc06660d07feddaaf7854' -- woorouter
@@ -44,19 +44,19 @@ WITH dexs AS
 
         SELECT
             evt_block_time AS block_time
-            ,'woofi' AS project
-            ,'1' AS version
-            ,from AS taker
-            ,to AS maker
-            ,fromAmount AS token_bought_amount_raw
-            ,toAmount AS token_sold_amount_raw
-            ,cast(NULL AS double) AS amount_usd
-            ,fromToken AS token_bought_address
-            ,toToken AS token_sold_address
-            ,contract_address AS project_contract_address
-            ,evt_tx_hash AS tx_hash
-            ,'' AS trace_address
-            ,evt_index
+            , 'woofi' AS project
+            , '1' AS version
+            , from AS taker
+            , to AS maker
+            , fromAmount AS token_bought_amount_raw
+            , toAmount AS token_sold_amount_raw
+            , cast(NULL AS double) AS amount_usd
+            , fromToken AS token_bought_address
+            , toToken AS token_sold_address
+            , contract_address AS project_contract_address
+            , evt_tx_hash AS tx_hash
+            , '' AS trace_address
+            , evt_index
         FROM
             {{ source('woofi_avalanche_c', 'WooRouterV2_evt_WooRouterSwap')}}
 
@@ -70,21 +70,21 @@ WITH dexs AS
 
 SELECT
     'avalanche_c' AS blockchain
-    ,project
-    ,version
-    ,TRY_CAST(date_trunc('DAY', dexs.block_time) AS date) AS block_date
-    ,dexs.block_time
-    ,erc20a.symbol AS token_bought_symbol
-    ,erc20b.symbol AS token_sold_symbol
-    ,CASE
+    , project
+    , version
+    , TRY_CAST(date_trunc('DAY', dexs.block_time) AS date) AS block_date
+    , dexs.block_time
+    , erc20a.symbol AS token_bought_symbol
+    , erc20b.symbol AS token_sold_symbol
+    , CASE
         WHEN lower(erc20a.symbol) > lower(erc20b.symbol) THEN concat(erc20b.symbol, '-', erc20a.symbol)
         ELSE concat(erc20a.symbol, '-', erc20b.symbol)
     END AS token_pair
-    ,dexs.token_bought_amount_raw / power(10, erc20a.decimals) AS token_bought_amount
-    ,dexs.token_sold_amount_raw / power(10, erc20b.decimals) AS token_sold_amount
+    , dexs.token_bought_amount_raw / power(10, erc20a.decimals) AS token_bought_amount
+    , dexs.token_sold_amount_raw / power(10, erc20b.decimals) AS token_sold_amount
     , CAST(dexs.token_bought_amount_raw AS DECIMAL(38, 0)) AS token_bought_amount_raw
     , CAST(dexs.token_sold_amount_raw AS DECIMAL(38, 0)) AS token_sold_amount_raw
-    ,coalesce(
+    , coalesce(
         dexs.amount_usd
         , (dexs.token_bought_amount_raw
  / power(10, (CASE dexs.token_bought_address
@@ -107,16 +107,16 @@ SELECT
                    ELSE p_sold.price
                 END)
     ) AS amount_usd
-    ,dexs.token_bought_address
-    ,dexs.token_sold_address
-    ,coalesce(dexs.taker, tx.from) AS taker -- subqueries rely ON this COALESCE to avoid redundant joins with the transactions table
-    ,dexs.maker
-    ,dexs.project_contract_address
-    ,dexs.tx_hash
-    ,tx.from AS tx_from
-    ,tx.to AS tx_to
-    ,dexs.trace_address
-    ,dexs.evt_index
+    , dexs.token_bought_address
+    , dexs.token_sold_address
+    , coalesce(dexs.taker, tx.from) AS taker -- subqueries rely ON this COALESCE to avoid redundant joins with the transactions table
+    , dexs.maker
+    , dexs.project_contract_address
+    , dexs.tx_hash
+    , tx.from AS tx_from
+    , tx.to AS tx_to
+    , dexs.trace_address
+    , dexs.evt_index
 FROM dexs
 INNER JOIN {{ source('avalanche_c', 'transactions')}} tx
     ON dexs.tx_hash = tx.hash

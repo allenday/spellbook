@@ -13,13 +13,13 @@
 with uniswap_v3_poolcreated AS (
   SELECT
     pool
-    ,token0
-    ,token1
-    ,fee
+    , token0
+    , token1
+    , fee
   FROM {{ source('uniswap_v3_optimism', 'factory_evt_poolcreated') }}
   GROUP BY 1, 2, 3, 4
 )
-,ovm1_legacy_pools_raw AS (
+, ovm1_legacy_pools_raw AS (
   SELECT
     explode(
       from_json(
@@ -758,9 +758,9 @@ with uniswap_v3_poolcreated AS (
 )
 SELECT
   col.newAddress AS pool
-  ,col.token0
-  ,col.token1
-  ,col.fee
+  , col.token0
+  , col.token1
+  , col.fee
 FROM ovm1_legacy_pools_raw
 
 UNION

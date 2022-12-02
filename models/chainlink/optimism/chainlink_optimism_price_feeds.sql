@@ -35,7 +35,7 @@ FROM
 	    , AVG(
             conv( --handle FOR multiple updates in the same block
             SUBSTRING(l.topic2,3,64)
-            ,16,10)
+            , 16,10)
  / POWER(10, cfa.decimals)
             ) AS oracle_price
 	    , cfa.proxy_address

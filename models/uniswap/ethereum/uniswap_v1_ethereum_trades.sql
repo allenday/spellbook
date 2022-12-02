@@ -21,17 +21,17 @@ WITH dexs AS
     -- Uniswap v1 TokenPurchase
     SELECT
         t.evt_block_time AS block_time
-        ,t.buyer AS taker
-        ,'' AS maker
-        ,t.tokens_bought AS token_bought_amount_raw
-        ,t.eth_sold AS token_sold_amount_raw
-        ,NULL AS amount_usd
-        ,f.token AS token_bought_address
-        ,'{{ weth_address }}' AS token_sold_address --Using WETH FOR easier joining with USD price table
-        ,t.contract_address AS project_contract_address
-        ,t.evt_tx_hash AS tx_hash
-        ,'' AS trace_address
-        ,t.evt_index
+        , t.buyer AS taker
+        , '' AS maker
+        , t.tokens_bought AS token_bought_amount_raw
+        , t.eth_sold AS token_sold_amount_raw
+        , NULL AS amount_usd
+        , f.token AS token_bought_address
+        , '{{ weth_address }}' AS token_sold_address --Using WETH FOR easier joining with USD price table
+        , t.contract_address AS project_contract_address
+        , t.evt_tx_hash AS tx_hash
+        , '' AS trace_address
+        , t.evt_index
     FROM
         {{ source('uniswap_ethereum', 'Exchange_evt_TokenPurchase') }} t
     INNER JOIN {{ source('uniswap_ethereum', 'Factory_evt_NewExchange') }} f
@@ -45,17 +45,17 @@ WITH dexs AS
     -- Uniswap v1 EthPurchase
     SELECT
         t.evt_block_time AS block_time
-        ,t.buyer AS taker
-        ,'' AS maker
-        ,t.eth_bought AS token_bought_amount_raw
-        ,t.tokens_sold AS token_sold_amount_raw
-        ,NULL AS amount_usd
-        ,'{{ weth_address }}' AS token_bought_address --Using WETH FOR easier joining with USD price table
-        ,f.token AS token_sold_address
-        ,t.contract_address AS project_contract_address
-        ,t.evt_tx_hash AS tx_hash
-        ,'' AS trace_address
-        ,t.evt_index
+        , t.buyer AS taker
+        , '' AS maker
+        , t.eth_bought AS token_bought_amount_raw
+        , t.tokens_sold AS token_sold_amount_raw
+        , NULL AS amount_usd
+        , '{{ weth_address }}' AS token_bought_address --Using WETH FOR easier joining with USD price table
+        , f.token AS token_sold_address
+        , t.contract_address AS project_contract_address
+        , t.evt_tx_hash AS tx_hash
+        , '' AS trace_address
+        , t.evt_index
     FROM
         {{ source('uniswap_ethereum', 'Exchange_evt_EthPurchase') }} t
     INNER JOIN {{ source('uniswap_ethereum', 'Factory_evt_NewExchange') }} f
@@ -66,35 +66,35 @@ WITH dexs AS
 )
 SELECT
     'ethereum' AS blockchain
-    ,'uniswap' AS project
-    ,'1' AS version
-    ,TRY_CAST(date_trunc('DAY', dexs.block_time) AS date) AS block_date
-    ,dexs.block_time
-    ,erc20a.symbol AS token_bought_symbol
-    ,erc20b.symbol AS token_sold_symbol
-    ,CASE
+    , 'uniswap' AS project
+    , '1' AS version
+    , TRY_CAST(date_trunc('DAY', dexs.block_time) AS date) AS block_date
+    , dexs.block_time
+    , erc20a.symbol AS token_bought_symbol
+    , erc20b.symbol AS token_sold_symbol
+    , CASE
         WHEN lower(erc20a.symbol) > lower(erc20b.symbol) THEN concat(erc20b.symbol, '-', erc20a.symbol)
         ELSE concat(erc20a.symbol, '-', erc20b.symbol)
     END AS token_pair
-    ,dexs.token_bought_amount_raw / power(10, erc20a.decimals) AS token_bought_amount
-    ,dexs.token_sold_amount_raw / power(10, erc20b.decimals) AS token_sold_amount
+    , dexs.token_bought_amount_raw / power(10, erc20a.decimals) AS token_bought_amount
+    , dexs.token_sold_amount_raw / power(10, erc20b.decimals) AS token_sold_amount
     , CAST(dexs.token_bought_amount_raw AS DECIMAL(38, 0)) AS token_bought_amount_raw
     , CAST(dexs.token_sold_amount_raw AS DECIMAL(38, 0)) AS token_sold_amount_raw
-    ,coalesce(
+    , coalesce(
         dexs.amount_usd
         , (dexs.token_bought_amount_raw / power(10, p_bought.decimals)) * p_bought.price
         , (dexs.token_sold_amount_raw / power(10, p_sold.decimals)) * p_sold.price
     ) AS amount_usd
-    ,dexs.token_bought_address
-    ,dexs.token_sold_address
-    ,coalesce(dexs.taker, tx.from) AS taker -- subqueries rely ON this COALESCE to avoid redundant joins with the transactions table
-    ,dexs.maker
-    ,dexs.project_contract_address
-    ,dexs.tx_hash
-    ,tx.from AS tx_from
-    ,tx.to AS tx_to
-    ,dexs.trace_address
-    ,dexs.evt_index
+    , dexs.token_bought_address
+    , dexs.token_sold_address
+    , coalesce(dexs.taker, tx.from) AS taker -- subqueries rely ON this COALESCE to avoid redundant joins with the transactions table
+    , dexs.maker
+    , dexs.project_contract_address
+    , dexs.tx_hash
+    , tx.from AS tx_from
+    , tx.to AS tx_to
+    , dexs.trace_address
+    , dexs.evt_index
 FROM dexs
 INNER JOIN {{ source('ethereum', 'transactions') }} tx
     ON tx.hash = dexs.tx_hash

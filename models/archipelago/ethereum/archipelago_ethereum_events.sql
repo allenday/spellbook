@@ -116,9 +116,9 @@ WITH
     platform_fees AS (
         SELECT
             block_number
-            ,sum(fee_amount_raw) AS platform_fee_amount_raw
-            ,sum(fee_percentage) AS platform_fee_percentage
-            ,unique_trade_id
+            , sum(fee_amount_raw) AS platform_fee_amount_raw
+            , sum(fee_percentage) AS platform_fee_percentage
+            , unique_trade_id
         FROM fee_events
             where is_protocol_fee
         GROUP BY block_number,unique_trade_id
@@ -127,10 +127,10 @@ WITH
     royalty_fees AS (
         SELECT
             block_number
-            ,sum(fee_amount_raw) AS royalty_fee_amount_raw
-            ,sum(fee_percentage) AS royalty_fee_percentage
+            , sum(fee_amount_raw) AS royalty_fee_amount_raw
+            , sum(fee_percentage) AS royalty_fee_percentage
             , CAST(NULL AS VARCHAR(5)) AS royalty_fee_receive_address -- we have multiple address so have to null this field
-            ,unique_trade_id
+            , unique_trade_id
         FROM fee_events
             where NOT is_protocol_fee
         GROUP BY block_number,unique_trade_id

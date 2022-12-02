@@ -17,7 +17,7 @@ WITH
   pools AS (
     SELECT
          pool_address
-        ,nft_contract_address
+        , nft_contract_address
     FROM {{ ref('sudoswap_ethereum_pool_creations') }}
   ),
 

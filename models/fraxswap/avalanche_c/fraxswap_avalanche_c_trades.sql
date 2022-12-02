@@ -19,17 +19,17 @@ WITH
 fraxswap_dex AS (
     SELECT
         t.evt_block_time                                                    AS block_time
-        ,t.`to`                                                             AS taker
-        ,''                                                                 AS maker
-        ,CASE WHEN t.amount0Out = 0 THEN t.amount1Out ELSE t.amount0Out END AS token_bought_amount_raw
-        ,CASE WHEN t.amount0In = 0 THEN t.amount1In ELSE t.amount0In END    AS token_sold_amount_raw
-        ,cast(NULL AS double)                                               AS amount_usd
-        ,CASE WHEN t.amount0Out = 0 THEN p.token1 ELSE p.token0 END         AS token_bought_address
-        ,CASE WHEN t.amount0In = 0 THEN p.token1 ELSE p.token0 END          AS token_sold_address
-        ,t.contract_address                                                 AS project_contract_address
-        ,t.evt_tx_hash                                                      AS tx_hash
-        ,''                                                                 AS trace_address
-        ,t.evt_index
+        , t.`to`                                                             AS taker
+        , ''                                                                 AS maker
+        , CASE WHEN t.amount0Out = 0 THEN t.amount1Out ELSE t.amount0Out END AS token_bought_amount_raw
+        , CASE WHEN t.amount0In = 0 THEN t.amount1In ELSE t.amount0In END    AS token_sold_amount_raw
+        , cast(NULL AS double)                                               AS amount_usd
+        , CASE WHEN t.amount0Out = 0 THEN p.token1 ELSE p.token0 END         AS token_bought_address
+        , CASE WHEN t.amount0In = 0 THEN p.token1 ELSE p.token0 END          AS token_sold_address
+        , t.contract_address                                                 AS project_contract_address
+        , t.evt_tx_hash                                                      AS tx_hash
+        , ''                                                                 AS trace_address
+        , t.evt_index
     FROM {{ source('fraxswap_avalanche_c', 'FraxswapPair_evt_Swap') }} t
     INNER JOIN {{ source('fraxswap_avalanche_c', 'FraxswapFactory_evt_PairCreated') }} p
         ON t.contract_address = p.pair
@@ -42,34 +42,34 @@ fraxswap_dex AS (
 
 SELECT
     'avalanche_c'                                                       AS blockchain
-    ,'fraxswap'                                                         AS project
-    ,'1'                                                                AS version
-    ,try_cast(date_trunc('DAY', fraxswap_dex.block_time) AS date)       AS block_date
-    ,fraxswap_dex.block_time
-    ,erc20a.symbol                                                      AS token_bought_symbol
-    ,erc20b.symbol                                                      AS token_sold_symbol
-    ,CASE
+    , 'fraxswap'                                                         AS project
+    , '1'                                                                AS version
+    , try_cast(date_trunc('DAY', fraxswap_dex.block_time) AS date)       AS block_date
+    , fraxswap_dex.block_time
+    , erc20a.symbol                                                      AS token_bought_symbol
+    , erc20b.symbol                                                      AS token_sold_symbol
+    , CASE
          WHEN lower(erc20a.symbol) > lower(erc20b.symbol) THEN concat(erc20b.symbol, '-', erc20a.symbol)
          ELSE concat(erc20a.symbol, '-', erc20b.symbol)
      END                                                                AS token_pair
-    ,fraxswap_dex.token_bought_amount_raw / power(10, erc20a.decimals)  AS token_bought_amount
-    ,fraxswap_dex.token_sold_amount_raw / power(10, erc20b.decimals)    AS token_sold_amount
+    , fraxswap_dex.token_bought_amount_raw / power(10, erc20a.decimals)  AS token_bought_amount
+    , fraxswap_dex.token_sold_amount_raw / power(10, erc20b.decimals)    AS token_sold_amount
     , CAST(fraxswap_dex.token_bought_amount_raw AS DECIMAL(38, 0)) AS token_bought_amount_raw
     , CAST(fraxswap_dex.token_sold_amount_raw AS DECIMAL(38, 0)) AS token_sold_amount_raw
-    ,coalesce(fraxswap_dex.amount_usd
+    , coalesce(fraxswap_dex.amount_usd
             , (fraxswap_dex.token_bought_amount_raw / power(10, p_bought.decimals)) * p_bought.price
             , (fraxswap_dex.token_sold_amount_raw / power(10, p_sold.decimals)) * p_sold.price
      )                                                                  AS amount_usd
-    ,fraxswap_dex.token_bought_address
-    ,fraxswap_dex.token_sold_address
-    ,coalesce(fraxswap_dex.taker, tx.from)                              AS taker
-    ,fraxswap_dex.maker
-    ,fraxswap_dex.project_contract_address
-    ,fraxswap_dex.tx_hash
-    ,tx.from                                                            AS tx_from
-    ,tx.to                                                              AS tx_to
-    ,fraxswap_dex.trace_address
-    ,fraxswap_dex.evt_index
+    , fraxswap_dex.token_bought_address
+    , fraxswap_dex.token_sold_address
+    , coalesce(fraxswap_dex.taker, tx.from)                              AS taker
+    , fraxswap_dex.maker
+    , fraxswap_dex.project_contract_address
+    , fraxswap_dex.tx_hash
+    , tx.from                                                            AS tx_from
+    , tx.to                                                              AS tx_to
+    , fraxswap_dex.trace_address
+    , fraxswap_dex.evt_index
 FROM fraxswap_dex
 INNER JOIN {{ source('avalanche_c', 'transactions') }} tx
     ON fraxswap_dex.tx_hash = tx.hash

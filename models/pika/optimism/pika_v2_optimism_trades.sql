@@ -18,20 +18,20 @@
 WITH positions AS (
 	SELECT
 		positionId
-		,user AS user
-		,productId
+		, user AS user
+		, productId
 		, CAST(isLong AS VARCHAR(5)) AS isLong
-		,price
-		,oraclePrice
-		,margin
-		,leverage
-		,fee
-		,contract_address
-		,evt_tx_hash
-		,evt_index
-		,evt_block_time
-		,evt_block_number
-		,'2' AS version
+		, price
+		, oraclePrice
+		, margin
+		, leverage
+		, fee
+		, contract_address
+		, evt_tx_hash
+		, evt_index
+		, evt_block_time
+		, evt_block_number
+		, '2' AS version
 	FROM {{ source('pika_perp_v2_optimism', 'PikaPerpV2_evt_NewPosition') }}
 	{% if is_incremental() %}
 	WHERE evt_block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
@@ -41,20 +41,20 @@ WITH positions AS (
 	--closing positions
 	SELECT
 		positionId
-		,user
-		,productId
-		,'close' AS action
-		,price
-		,entryPrice
-		,margin
-		,leverage
-		,fee
-		,contract_address
-		,evt_tx_hash
-		,evt_index
-		,evt_block_time
-		,evt_block_number
-		,'2' AS version
+		, user
+		, productId
+		, 'close' AS action
+		, price
+		, entryPrice
+		, margin
+		, leverage
+		, fee
+		, contract_address
+		, evt_tx_hash
+		, evt_index
+		, evt_block_time
+		, evt_block_number
+		, '2' AS version
 	FROM {{ source('pika_perp_v2_optimism', 'PikaPerpV2_evt_ClosePosition') }}
 	{% if is_incremental() %}
 	WHERE evt_block_time >= DATE_TRUNC("DAY", NOW() - INTERVAL '1 WEEK')
@@ -65,7 +65,7 @@ perps AS (
 	SELECT
 		evt_block_time AS block_time
 
-		,CASE
+		, CASE
 		WHEN productId = 1 OR productId = 16 THEN 'ETH'
 		WHEN productId = 2 OR productId = 17 THEN 'BTC'
 		WHEN productId = 3 OR productId = 18 THEN 'LINK'
@@ -81,7 +81,7 @@ perps AS (
 		ELSE CONCAT ('product_id_', productId)
 		END AS virtual_asset
 
-		,CASE
+		, CASE
 		WHEN productId = 1 OR productId = 16 THEN 'ETH'
 		WHEN productId = 2 OR productId = 17 THEN 'BTC'
 		WHEN productId = 3 OR productId = 18 THEN 'LINK'
@@ -97,7 +97,7 @@ perps AS (
 		ELSE CONCAT ('product_id_', productId)
 		END AS underlying_asset
 
-		,CASE
+		, CASE
 		WHEN productId = 1 OR productId = 16 THEN 'ETH-USD'
 		WHEN productId = 2 OR productId = 17 THEN 'BTC-USD'
 		WHEN productId = 3 OR productId = 18 THEN 'LINK-USD'
@@ -113,47 +113,47 @@ perps AS (
 		ELSE CONCAT ('product_id_', productId)
 		END AS market
 
-		,contract_address AS market_address
+		, contract_address AS market_address
 		, (margin / 1e8) * (leverage/1e8) AS volume_usd
-		,fee / 1e8 AS fee_usd
-		,margin / 1e8 AS margin_usd
+		, fee / 1e8 AS fee_usd
+		, margin / 1e8 AS margin_usd
 
-		,CASE
+		, CASE
 		WHEN isLong = 'true' THEN 'long'
 		WHEN isLong = 'false' THEN 'short'
 		ELSE isLong
 		END AS trade
 
-		,'Pika' AS project
-		,version
-		,user AS trader
-		,margin * leverage AS volume_raw
-		,evt_tx_hash AS tx_hash
-		,evt_index
+		, 'Pika' AS project
+		, version
+		, user AS trader
+		, margin * leverage AS volume_raw
+		, evt_tx_hash AS tx_hash
+		, evt_index
 	FROM positions
 
 )
 
 SELECT
 	'optimism' AS blockchain
-	,TRY_CAST(date_trunc('DAY', perps.block_time) AS date) AS block_date
-	,perps.block_time
-	,perps.virtual_asset
-	,perps.underlying_asset
-	,perps.market
-	,perps.market_address
-	,perps.volume_usd
-	,perps.fee_usd
-	,perps.margin_usd
-	,perps.trade
-	,perps.project
-	,perps.version
-	,perps.trader
-	,perps.volume_raw
-	,perps.tx_hash
-	,tx.from AS tx_from
-	,tx.to AS tx_to
-	,perps.evt_index
+	, TRY_CAST(date_trunc('DAY', perps.block_time) AS date) AS block_date
+	, perps.block_time
+	, perps.virtual_asset
+	, perps.underlying_asset
+	, perps.market
+	, perps.market_address
+	, perps.volume_usd
+	, perps.fee_usd
+	, perps.margin_usd
+	, perps.trade
+	, perps.project
+	, perps.version
+	, perps.trader
+	, perps.volume_raw
+	, perps.tx_hash
+	, tx.from AS tx_from
+	, tx.to AS tx_to
+	, perps.evt_index
 FROM perps
 INNER JOIN {{ source('optimism', 'transactions') }} AS tx
 	ON perps.tx_hash = tx.hash

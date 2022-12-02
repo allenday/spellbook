@@ -9,7 +9,7 @@
 
 {% set hashflow_models = [
 'hashflow_avalanche_c_trades'
-,'hashflow_ethereum_trades'
+, 'hashflow_ethereum_trades'
 ] %}
 
 SELECT *

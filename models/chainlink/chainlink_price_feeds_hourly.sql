@@ -9,7 +9,7 @@
 
 {% set chainlink_models = [
 'chainlink_optimism_price_feeds_hourly'
-,'chainlink_polygon_price_feeds_hourly'
+, 'chainlink_polygon_price_feeds_hourly'
 ] %}
 
 SELECT *

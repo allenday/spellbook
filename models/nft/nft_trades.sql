@@ -8,17 +8,17 @@
 
 {% set nft_models = [
 'opensea_trades'
-,'magiceden_trades'
-,'looksrare_ethereum_trades'
-,'x2y2_ethereum_trades'
-,'sudoswap_ethereum_trades'
-,'foundation_ethereum_trades'
-,'archipelago_ethereum_trades'
-,'cryptopunks_ethereum_trades'
-,'element_trades'
-,'superrare_ethereum_trades'
-,'zora_ethereum_trades'
-,'blur_ethereum_trades'
+, 'magiceden_trades'
+, 'looksrare_ethereum_trades'
+, 'x2y2_ethereum_trades'
+, 'sudoswap_ethereum_trades'
+, 'foundation_ethereum_trades'
+, 'archipelago_ethereum_trades'
+, 'cryptopunks_ethereum_trades'
+, 'element_trades'
+, 'superrare_ethereum_trades'
+, 'zora_ethereum_trades'
+, 'blur_ethereum_trades'
 ] %}
 
 

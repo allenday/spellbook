@@ -17,13 +17,13 @@
 -- set column names to loop through
 {% set cols = [
     "contract_project"
-    ,"token_symbol"
-    ,"contract_name"
-    ,"creator_address"
-    ,"created_time"
-    ,"contract_factory"
-    ,"is_self_destruct"
-    ,"creation_tx_hash"
+    , "token_symbol"
+    , "contract_name"
+    , "creator_address"
+    , "created_time"
+    , "contract_factory"
+    , "is_self_destruct"
+    , "creation_tx_hash"
 ] %}
 
 with base_level AS (

@@ -1,5 +1,5 @@
 {{ config(schema='opensea_v3_ethereum'
-         ,alias='events')
+         , alias='events')
 }}
 
 -- opensea.events is compose of mint, burn, AND trades.

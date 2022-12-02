@@ -14,17 +14,17 @@
 with eth_transfers AS (
     SELECT
         r.from
-        ,r.to
+        , r.to
         --Using the ETH deposit placeholder address to match with prices tables
-        ,lower('0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000') AS contract_address
-        ,r.value
-        ,r.value / 1e18 AS value_decimal
-        ,r.tx_hash
-        ,r.trace_address
-        ,r.block_time AS tx_block_time
-        ,r.block_number AS tx_block_number
-        ,SUBSTRING(t.data, 1, 10) AS tx_method_id
-        ,r.tx_hash || '-' || r.trace_address::STRING AS unique_transfer_id
+        , lower('0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000') AS contract_address
+        , r.value
+        , r.value / 1e18 AS value_decimal
+        , r.tx_hash
+        , r.trace_address
+        , r.block_time AS tx_block_time
+        , r.block_number AS tx_block_number
+        , SUBSTRING(t.data, 1, 10) AS tx_method_id
+        , r.tx_hash || '-' || r.trace_address::STRING AS unique_transfer_id
     FROM {{ source('optimism', 'traces') }} AS r
     JOIN {{ source('optimism', 'transactions') }} AS t
         ON r.tx_hash = t.hash
@@ -43,17 +43,17 @@ with eth_transfers AS (
 
     SELECT
         r.from
-        ,r.to
+        , r.to
         --Using the ETH deposit placeholder address to match with prices tables
-        ,lower('0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000') AS contract_address
-        ,r.value
-        ,r.value / 1e18 AS value_decimal
-        ,r.evt_tx_hash AS tx_hash
-        ,array(r.evt_index) AS trace_address
-        ,r.evt_block_time AS tx_block_time
-        ,r.evt_block_number AS tx_block_number
-        ,SUBSTRING(t.data, 1, 10) AS tx_method_id
-        ,r.evt_tx_hash || '-' || array(r.evt_index)::STRING AS unique_transfer_id
+        , lower('0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000') AS contract_address
+        , r.value
+        , r.value / 1e18 AS value_decimal
+        , r.evt_tx_hash AS tx_hash
+        , array(r.evt_index) AS trace_address
+        , r.evt_block_time AS tx_block_time
+        , r.evt_block_number AS tx_block_number
+        , SUBSTRING(t.data, 1, 10) AS tx_method_id
+        , r.evt_tx_hash || '-' || array(r.evt_index)::STRING AS unique_transfer_id
     FROM {{ source('erc20_optimism', 'evt_transfer') }} AS r
     JOIN {{ source('optimism', 'transactions') }} AS t
         ON r.evt_tx_hash = t.hash

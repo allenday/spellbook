@@ -9,8 +9,8 @@
 
 {% set element_models = [
 'element_ethereum_events'
-,'element_bnb_events'
-,'element_avalanche_c_events'
+, 'element_bnb_events'
+, 'element_avalanche_c_events'
 ] %}
 
 

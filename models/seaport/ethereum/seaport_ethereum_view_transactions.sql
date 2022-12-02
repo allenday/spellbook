@@ -108,7 +108,7 @@ with iv_availadv AS (
                           AND a.each_consideration:identifier = e.each_offer:identifier
 
 )
-,iv_transfer_level AS (
+, iv_transfer_level AS (
     SELECT a.*
       FROM iv_transfer_level_pre a
            LEFT JOIN iv_availadv b ON b.tx_hash = a.tx_hash
@@ -121,7 +121,7 @@ with iv_availadv AS (
      where 1=1
        AND NOT (a.item_type in ('2', '3') AND b.tx_hash is NULL AND c.call_tx_hash is not null)
 )
-,iv_txn_level AS (
+, iv_txn_level AS (
     SELECT tx_hash
           , block_time
           , block_number
@@ -195,7 +195,7 @@ with iv_availadv AS (
             ) a
      GROUP BY 1, 2, 3, 4, 5, 6, 7
 )
-,iv_nft_trades AS (
+, iv_nft_trades AS (
     SELECT a.block_time
           , n.name AS nft_project_name
           , nft_token_id
@@ -204,14 +204,14 @@ with iv_availadv AS (
                 WHEN erc721_transfer_count > 0 AND erc1155_transfer_count > 0 THEN 'mixed'
            END AS erc_standard
           , CASE WHEN a.zone in ('0xf397619df7bfd4d1657ea9bdd9df7ff888731a11'
-                               ,'0x9b814233894cd227f561b78cc65891aa55c62ad2'
-                               ,'0x004c00500000ad104d7dbd00e3ae0a5c00560c00'
+                               , '0x9b814233894cd227f561b78cc65891aa55c62ad2'
+                               , '0x004c00500000ad104d7dbd00e3ae0a5c00560c00'
                                )
                 THEN 'OpenSea'
            END AS platform
           , CASE WHEN a.zone in ('0xf397619df7bfd4d1657ea9bdd9df7ff888731a11'
-                               ,'0x9b814233894cd227f561b78cc65891aa55c62ad2'
-                               ,'0x004c00500000ad104d7dbd00e3ae0a5c00560c00'
+                               , '0x9b814233894cd227f561b78cc65891aa55c62ad2'
+                               , '0x004c00500000ad104d7dbd00e3ae0a5c00560c00'
                                )
                 THEN 3
            END AS platform_version

@@ -107,32 +107,32 @@ WITH
     )
 
 
-    ,pool_fee_update AS (
+    , pool_fee_update AS (
         SELECT
             *
         FROM {{ source('sudo_amm_ethereum', 'LSSVMPair_general_evt_FeeUpdate') }}
     )
 
-    ,protocol_fee_update AS (
+    , protocol_fee_update AS (
         SELECT
             *
         FROM {{ source('sudo_amm_ethereum', 'LSSVMPairFactory_evt_ProtocolFeeMultiplierUpdate') }}
     )
 
-    ,asset_recipient_update AS (
+    , asset_recipient_update AS (
         SELECT
             *
         FROM {{ source('sudo_amm_ethereum', 'LSSVMPair_general_evt_AssetRecipientChange') }}
     )
 
-    ,tokens_ethereum_nft AS (
+    , tokens_ethereum_nft AS (
         SELECT
             *
         FROM {{ ref('tokens_nft') }}
         WHERE blockchain = 'ethereum'
     )
 
-    ,nft_ethereum_aggregators AS (
+    , nft_ethereum_aggregators AS (
         SELECT
             *
         FROM {{ ref('nft_aggregators') }}
@@ -140,7 +140,7 @@ WITH
     )
 
 --logic CTEs
-    ,swaps_w_fees AS (
+    , swaps_w_fees AS (
         SELECT
             *
         FROM (
@@ -184,7 +184,7 @@ WITH
         WHERE ordering = 1 --we want to keep the most recent pool_fee AND protocol fee FOR each individual call (trade)
     )
 
-    ,swaps_w_traces AS (
+    , swaps_w_traces AS (
         -- we traces to get NFT AND ETH transfer data because sudoswap doesn't emit any data in events FOR swaps, so we have to piece it together manually based ON trace_address.
         SELECT
             sb.call_block_time
@@ -236,7 +236,7 @@ WITH
         GROUP BY 1,2,3,7,8,9,10,11,12,13,14,15
     )
 
-    ,swaps_cleaned AS (
+    , swaps_cleaned AS (
         --formatting swaps FOR sudoswap_ethereum_events defined schema
         SELECT
             'ethereum' AS blockchain
@@ -287,7 +287,7 @@ WITH
         FROM swaps_w_traces
     )
 
-    ,swaps_cleaned_w_metadata AS (
+    , swaps_cleaned_w_metadata AS (
         SELECT
             sc.*
             , tokens.name AS collection
@@ -323,7 +323,7 @@ WITH
         LEFT JOIN tokens_ethereum_nft tokens ON nft_contract_address = tokens.contract_address
     )
 
-    ,swaps_exploded AS (
+    , swaps_exploded AS (
         SELECT
             blockchain
             , project

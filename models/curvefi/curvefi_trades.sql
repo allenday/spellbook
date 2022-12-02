@@ -9,7 +9,7 @@
 
 {% set curvefi_trade_models = [
 'curvefi_ethereum_trades'
-,'curvefi_avalanche_c_trades'
+, 'curvefi_avalanche_c_trades'
 ] %}
 
 
