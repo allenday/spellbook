@@ -9337,4 +9337,3 @@ FROM
   , ('0xfb6bd0c00bd348125a1f6edc36e4b7ff5dbddfba', 'Krystal', 'Others')
   , ('0x681255e12fcd81c3e5c0c324353025b7c98521c4', 'Krystal', 'Others')
 ) AS temp_table (contract_address,project_name,project_type)
-;

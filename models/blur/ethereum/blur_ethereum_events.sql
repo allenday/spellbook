@@ -129,4 +129,3 @@ LEFT JOIN {{ ref('nft_ethereum_transfers') }} seller_fix ON seller_fix.block_tim
 {% if is_incremental() %}
 WHERE bm.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
 {% endif %}
-;

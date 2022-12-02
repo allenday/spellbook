@@ -76,11 +76,10 @@ SELECT
     evt_block_time,
     evt_block_number
 FROM {{ source('aave_ethereum', 'LendingPool_evt_LiquidationCall') }}
-) deposit
-LEFT JOIN {{ ref('tokens_ethereum_erc20') }} erc20
+) AS deposit
+LEFT JOIN {{ ref('tokens_ethereum_erc20') }} AS erc20
     ON deposit.token = erc20.contract_address
-LEFT JOIN {{ source('prices', 'usd') }} p
+LEFT JOIN {{ source('prices', 'usd') }} AS p
     ON p.minute = date_trunc('minute', deposit.evt_block_time)
     AND p.contract_address = deposit.token
     AND p.blockchain = 'ethereum'
-;

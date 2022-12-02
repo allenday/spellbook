@@ -143,4 +143,3 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold
     AND p_sold.minute >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
     AND p_sold.blockchain = 'ethereum'
-;

@@ -111,4 +111,3 @@ SELECT
 FROM transfers_bnb_bep20 tr
 LEFT JOIN {{ ref('tokens_bnb_bep20') }} t ON t.contract_address = tr.token_address
 GROUP BY 1, 2, 3, 4, 5
-;

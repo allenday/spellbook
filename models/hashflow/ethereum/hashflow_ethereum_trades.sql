@@ -71,4 +71,4 @@ LEFT JOIN erc20_tokens erc20a
     ON erc20a.contract_address = hashflow_trades.maker_token
 LEFT JOIN erc20_tokens erc20b
     ON erc20b.contract_address = hashflow_trades.taker_token
-;
+

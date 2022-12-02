@@ -102,4 +102,3 @@ where 1 = 1
     {% if is_incremental() %}
     AND s.evt_block_time >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
-;

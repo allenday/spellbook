@@ -31,4 +31,3 @@ FROM (
     {% endif %}
     {% endfor %}
 )
-;

@@ -324,4 +324,4 @@ with source_avalanche_c_transactions AS (
 )
 SELECT *
 FROM iv_columns
-;
+

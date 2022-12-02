@@ -416,4 +416,3 @@ SELECT
     amount_usd
 FROM all_trades
 where fill_status is true
-;

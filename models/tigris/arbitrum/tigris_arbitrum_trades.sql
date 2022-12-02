@@ -219,4 +219,3 @@ SELECT
     'arbitrum' as blockchain,
     *
 FROM modify_margin
-;

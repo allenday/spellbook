@@ -187,4 +187,4 @@ with iv_offer_consideration AS (
 )
 SELECT *
 FROM iv_base_pairs
-;
+

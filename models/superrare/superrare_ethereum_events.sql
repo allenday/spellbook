@@ -347,4 +347,4 @@ left outer JOIN {{ source('erc20_ethereum', 'evt_transfer') }} erc20 ON erc20.co
 left outer JOIN transfers_for_tokens_sold_from_auction po -- if sold FROM auction house previous owner
     ON a.evt_tx_hash = po.evt_tx_hash
 where (a.amount / 1e18) > 0
-;
+

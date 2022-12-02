@@ -169,4 +169,3 @@ FROM
       AND pu.minute >= date_trunc("day", now() - INTERVAL '1 week')
       {% endif %}
 ) p
-;

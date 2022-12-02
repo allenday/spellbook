@@ -63,11 +63,11 @@ SELECT DISTINCT
          WHEN now() > pqu.evt_block_time AND startBlock > pcr.evt_block_number THEN 'Queued'
          ELSE 'Defeated' END AS status,
     cast(NULL AS STRING) AS description
-FROM  {{ source('aave_ethereum', 'AaveGovernanceV2_evt_ProposalCreated') }} pcr
-LEFT JOIN cte_sum_votes csv ON csv.id = pcr.id
-LEFT JOIN {{ source('aave_ethereum', 'AaveGovernanceV2_evt_ProposalCanceled') }} pca ON pca.id = pcr.id
-LEFT JOIN {{ source('aave_ethereum', 'AaveGovernanceV2_evt_ProposalExecuted') }} pex ON pex.id = pcr.id
-LEFT JOIN {{ source('aave_ethereum', 'AaveGovernanceV2_evt_ProposalQueued') }} pqu ON pex.id = pcr.id
+FROM  {{ source('aave_ethereum', 'AaveGovernanceV2_evt_ProposalCreated') }} AS pcr
+LEFT JOIN cte_sum_votes AS csv ON csv.id = pcr.id
+LEFT JOIN {{ source('aave_ethereum', 'AaveGovernanceV2_evt_ProposalCanceled') }} AS pca ON pca.id = pcr.id
+LEFT JOIN {{ source('aave_ethereum', 'AaveGovernanceV2_evt_ProposalExecuted') }} AS pex ON pex.id = pcr.id
+LEFT JOIN {{ source('aave_ethereum', 'AaveGovernanceV2_evt_ProposalQueued') }} AS pqu ON pex.id = pcr.id
 {% if is_incremental() %}
 WHERE pcr.evt_block_time > (SELECT max(created_at) FROM {{ this }})
 {% endif %}

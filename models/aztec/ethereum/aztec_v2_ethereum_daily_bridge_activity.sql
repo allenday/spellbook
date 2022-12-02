@@ -109,4 +109,3 @@ token_prices AS (
     FROM daily_transfers dt
     INNER JOIN token_prices p ON dt.date = p.day AND dt.token_address = p.token_address
     LEFT JOIN token_prices b ON dt.date = b.day AND dt.token_address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' -- using this to get price FOR missing ETH token
-;

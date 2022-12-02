@@ -225,4 +225,3 @@ SELECT
     'polygon' as blockchain,
     *
 FROM modify_margin
-;

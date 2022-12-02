@@ -162,4 +162,4 @@ LEFT JOIN {{ source('prices', 'usd') }} p_avx
     {% if is_incremental() %}
     AND p_avx.minute >= date_trunc("day", now() - INTERVAL '1 week')
     {% endif %}
-;
+

@@ -381,4 +381,3 @@ WHERE f.creator_address NOT IN (
   , LOWER('0x4200000000000000000000000000000000000012') -- L2StandardTokenFactory
   , LOWER('0xeedA95f4513f950957Ae84E4da221ee260Fa2f40') -- Deterministic Factory
 )
-;

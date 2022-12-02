@@ -160,4 +160,4 @@ with
 
 
 SELECT * FROM full_settings_backfilled
-;
+

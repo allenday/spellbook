@@ -43,4 +43,3 @@ WHERE a.success
     AND a.block_time >= date_trunc('day', now() - INTERVAL '1 week')
     {% endif %}
 GROUP BY b.to
-;

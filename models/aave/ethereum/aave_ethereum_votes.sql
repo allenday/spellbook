@@ -45,9 +45,9 @@ SELECT
          WHEN vc.support = 2 THEN 'abstain'
          END AS support,
     cast(NULL AS STRING) AS reason
-FROM {{ source('aave_ethereum', 'AaveGovernanceV2_evt_VoteEmitted') }} vc
-LEFT JOIN cte_sum_votes csv ON vc.id = csv.id
-LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', evt_block_time)
+FROM {{ source('aave_ethereum', 'AaveGovernanceV2_evt_VoteEmitted') }} AS vc
+LEFT JOIN cte_sum_votes AS csv ON vc.id = csv.id
+LEFT JOIN {{ source('prices', 'usd') }} AS p ON p.minute = date_trunc('minute', evt_block_time)
     AND p.symbol = 'AAVE'
     AND p.blockchain ='ethereum'
     {% if is_incremental() %}

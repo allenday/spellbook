@@ -235,4 +235,3 @@ LEFT JOIN {{ ref('tokens_erc20') }} AS t1
 LEFT JOIN transfers AS tr
     ON tr.tx_hash = er.tx_hash
     AND tr.block_number = er.block_number
-;

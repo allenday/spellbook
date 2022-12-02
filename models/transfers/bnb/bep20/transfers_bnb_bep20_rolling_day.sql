@@ -18,4 +18,3 @@ SELECT
         PARTITION BY token_address, wallet_address ORDER BY day
     ) AS amount
 FROM {{ ref('transfers_bnb_bep20_agg_day') }}
-;

@@ -59,4 +59,3 @@ FROM
 ) c
 LEFT JOIN {{ ref('chainlink_optimism_oracle_token_mapping') }} o
 	ON c.proxy_address = o.proxy_address
-;

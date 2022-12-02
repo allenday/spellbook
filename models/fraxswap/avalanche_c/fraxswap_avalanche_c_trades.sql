@@ -102,4 +102,3 @@ LEFT JOIN {{ source('prices', 'usd') }} p_sold
     {% ELSE %}
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
-;

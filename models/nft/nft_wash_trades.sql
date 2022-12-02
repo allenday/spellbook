@@ -122,4 +122,3 @@ GROUP BY nftt.blockchain
     , nftt.unique_trade_id
     , filter_funding_buyer.first_funded_by
     , filter_funding_seller.first_funded_by
-;

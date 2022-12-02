@@ -40,5 +40,5 @@ WHERE logs.topic1 = '{{ event_signature }}'
     {% if is_incremental() %}
     AND logs.block_time >= DATE_TRUNC('day', NOW() - INTERVAL '1 week')
     {% endif %}
-;
+
 
