@@ -1,4 +1,4 @@
-{{config(alias='addresses_ethereum')}}
+{{ config(alias='addresses_ethereum') }}
 
 WITH
 

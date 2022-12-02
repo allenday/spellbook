@@ -27,7 +27,9 @@ FROM (
             SELECT
                 address
                 , name
-                , ROW_NUMBER() OVER (PARTITION BY address ORDER BY block_time ASC) AS ordering
+                , row_number() OVER (
+                    PARTITION BY address ORDER BY block_time ASC
+                ) AS ordering
             FROM {{ ref('ens_resolver_latest') }}
         ) WHERE ordering = 1
     ) AS res

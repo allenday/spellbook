@@ -14,11 +14,17 @@ SELECT
     , tokenId
     , date_trunc('day', evt_block_time) AS day
     , sum(amount) AS amount
-    , unique_tx_id || '-' || wallet_address || '-' || token_address || tokenId || '-' || sum(amount)::STRING AS unique_transfer_id
+    , unique_tx_id || '-' || wallet_address || '-' || token_address || tokenId || '-' || sum(
+        amount
+    )::STRING AS unique_transfer_id
 FROM {{ ref('test_view') }}
 {% if is_incremental() %}
     -- this filter will only be applied ON an incremental run
     WHERE date_trunc('day', evt_block_time) > now() - INTERVAL 2 DAYS
 {% endif %}
 GROUP BY
-    date_trunc('day', evt_block_time), wallet_address, token_address, tokenId, unique_tx_id
+    date_trunc('day', evt_block_time)
+    , wallet_address
+    , token_address
+    , tokenId
+    , unique_tx_id

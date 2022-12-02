@@ -82,7 +82,7 @@ open_position AS (
         , lp.margin AS margin_change
         , lp.version
         , 'liquidate_position' AS trade_type
-        , CAST(NULL AS double) AS price
+        , cast(NULL AS double) AS price
         , lp.margin * lp.leverage AS volume_usd
     FROM
         {{ ref('tigris_polygon_positions_liquidation') }} AS lp
@@ -122,7 +122,7 @@ open_position AS (
             FROM
                 (
                     SELECT
-                        MIN(l.evt_block_time) AS latest_leverage_time
+                        min(l.evt_block_time) AS latest_leverage_time
                         , am.day
                         , am.evt_block_time
                         , am.evt_tx_hash
@@ -141,10 +141,15 @@ open_position AS (
                             AND am.version = l.version
                             AND am.evt_block_time > l.evt_block_time
                             {% if is_incremental() %}
-                                AND l.evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+                                AND l.evt_block_time >= date_trunc(
+                                    'day', now() - INTERVAL '1 week'
+                                )
                             {% endif %}
                             {% if is_incremental() %}
-                                WHERE am.evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+                                WHERE
+                                    am.evt_block_time >= date_trunc(
+                                        'day', now() - INTERVAL '1 week'
+                                    )
                             {% endif %}
                             GROUP BY 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
                 ) AS tmp
@@ -154,7 +159,9 @@ open_position AS (
                     AND tmp.version = l.version
                     AND tmp.latest_leverage_time = l.evt_block_time
                     {% if is_incremental() %}
-                        AND l.evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+                        AND l.evt_block_time >= date_trunc(
+                            'day', now() - INTERVAL '1 week'
+                        )
                     {% endif %}
         ) AS am
     INNER JOIN
@@ -179,9 +186,11 @@ open_position AS (
         , mm.trader
         , mm.margin_change
         , mm.version
-        , CAST(NULL AS double) AS price
+        , cast(NULL AS double) AS price
         , mm.margin_change * mm.leverage AS volume_usd
-        , CASE WHEN mm.modify_type = TRUE THEN 'add_margin' ELSE 'remove_margin' END AS trade_type
+        , CASE
+            WHEN mm.modify_type = TRUE THEN 'add_margin' ELSE 'remove_margin'
+        END AS trade_type
     FROM
         {{ ref('tigris_polygon_events_modify_margin') }} AS mm
     INNER JOIN

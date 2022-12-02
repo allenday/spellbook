@@ -1,4 +1,4 @@
-{{config(alias='addresses_polygon')}}
+{{ config(alias='addresses_polygon') }}
 
 WITH
 

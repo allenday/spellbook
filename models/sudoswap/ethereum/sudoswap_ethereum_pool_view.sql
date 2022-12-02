@@ -52,15 +52,15 @@ SELECT
     , pool_factory
     , creation_block_time
     , creation_tx_hash
-    , coalesce(eth_volume, 0) AS eth_volume
-    , coalesce(usd_volume, 0) AS usd_volume
-    , coalesce(nfts_traded, 0) AS nfts_traded
-    , coalesce(pool_fee_volume_eth, 0) AS pool_fee_volume_eth
-    , coalesce(pool_fee_bid_volume_eth, 0) AS pool_fee_bid_volume_eth
-    , coalesce(pool_fee_ask_volume_eth, 0) AS pool_fee_ask_volume_eth
-    , coalesce(platform_fee_volume_eth, 0) AS platform_fee_volume_eth
-    , coalesce(eth_change_trading, 0) AS eth_change_trading
-    , coalesce(nft_change_trading, 0) AS nft_change_trading
+    , COALESCE(eth_volume, 0) AS eth_volume
+    , COALESCE(usd_volume, 0) AS usd_volume
+    , COALESCE(nfts_traded, 0) AS nfts_traded
+    , COALESCE(pool_fee_volume_eth, 0) AS pool_fee_volume_eth
+    , COALESCE(pool_fee_bid_volume_eth, 0) AS pool_fee_bid_volume_eth
+    , COALESCE(pool_fee_ask_volume_eth, 0) AS pool_fee_ask_volume_eth
+    , COALESCE(platform_fee_volume_eth, 0) AS platform_fee_volume_eth
+    , COALESCE(eth_change_trading, 0) AS eth_change_trading
+    , COALESCE(nft_change_trading, 0) AS nft_change_trading
 FROM {{ ref('sudoswap_ethereum_pool_creations') }} AS p
 INNER JOIN {{ ref('sudoswap_ethereum_pool_settings_latest') }} AS s
     ON p.pool_address = s.pool_address

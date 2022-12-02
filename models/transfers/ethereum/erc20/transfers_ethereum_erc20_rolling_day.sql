@@ -9,7 +9,9 @@
             , token_address
             , symbol
             , current_timestamp() AS last_updated
-            , ROW_NUMBER() OVER (PARTITION BY token_address, wallet_address ORDER BY day DESC) AS recency_index
+            , row_number() OVER (
+                PARTITION BY token_address, wallet_address ORDER BY day DESC
+            ) AS recency_index
             , sum(amount_raw) OVER (
                 PARTITION BY token_address, wallet_address ORDER BY day
             ) AS amount_raw

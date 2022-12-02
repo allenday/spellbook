@@ -7,7 +7,8 @@ SELECT
         WHEN dao_creator_tool = 'aragon' THEN 'DAO: Aragon'
         WHEN dao_creator_tool = 'colony' THEN 'DAO: Colony'
         WHEN dao_creator_tool = 'dao-haus' THEN 'DAO: DAO Haus'
-        WHEN dao_creator_tool = 'syndicate' THEN 'DAO: Syndicate Investment Club'
+        WHEN
+            dao_creator_tool = 'syndicate' THEN 'DAO: Syndicate Investment Club'
     END AS name
     , 'daos' AS category
     , 'henrystats' AS contributor
@@ -16,7 +17,8 @@ SELECT
     , now() AS updated_at
 FROM
     {{ ref('dao_addresses') }}
-WHERE dao_creator_tool != 'zodiac' -- excluding zodiac since they're gnosis safes
+-- excluding zodiac since they're gnosis safes
+WHERE dao_creator_tool != 'zodiac'
 
 UNION  -- using a UNION because there are daos whose contract address also receives AND send funds
 
@@ -35,5 +37,6 @@ SELECT
     , now() AS updated_at
 FROM
     {{ ref('dao_addresses') }}
-WHERE dao_creator_tool NOT IN ('zodiac', 'syndicate') -- excluding syndicate since their wallet addresses are controlled BY EOAs
+-- excluding syndicate since their wallet addresses are controlled BY EOAs
+WHERE dao_creator_tool NOT IN ('zodiac', 'syndicate')
                                                      -- excluding zodiac since they're gnosis safes

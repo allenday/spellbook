@@ -20,9 +20,12 @@ eth_arb_traders AS (
             (
                 VALUES
                 --
-                ('0x7a250d5630b4cf539739df2c5dacb4c659f2488d') -- uniswap router02
-                , ('0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45') -- uniswap swaprouter02
-                , ('0xe592427a0aece92de3edee1f18e0157c05861564') -- uniswap v3 router
+                -- uniswap router02
+                ('0x7a250d5630b4cf539739df2c5dacb4c659f2488d')
+                -- uniswap swaprouter02
+                , ('0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45')
+                -- uniswap v3 router
+                , ('0xe592427a0aece92de3edee1f18e0157c05861564')
                 , ('0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5') -- 1inch
                 , ('0xe66b31678d6c16e9ebf358268a790b763c133750') -- 0x
                 , ('0x1111111254fb6c44bac0bed2854e76f90643097d') -- 1inch
@@ -40,11 +43,13 @@ eth_arb_traders AS (
                 , ('0xfade503916c1d1253646c36c9961aa47bf14bd2d') -- 1inch
                 , ('0x9021c84f3900b610ab8625d26d739e3b7bff86ab') -- 1inch
                 , ('0x11111254369792b2ca5d084ab5eea397ca8fa48b') -- 1inch
-                , ('0xf7ca8f55c54cbb6d0965bc6d65c43adc500bc591') -- unknown protocol
+                -- unknown protocol
+                , ('0xf7ca8f55c54cbb6d0965bc6d65c43adc500bc591')
                 , ('0xdef171fe48cf0115b1d80b88dc8eab59176fee57') -- paraswap
                 , ('0x54a4a1167b004b004520c605e3f01906f683413d') -- kyber
                 , ('0x288931fa76d7b0482f0fd0bca9a50bf0d22b9fef') -- 1inch
-                , ('0x8df6084e3b84a65ab9dd2325b5422e5debd8944a') -- coinbase wallet swap proxy
+                -- coinbase wallet swap proxy
+                , ('0x8df6084e3b84a65ab9dd2325b5422e5debd8944a')
             )
     )
 

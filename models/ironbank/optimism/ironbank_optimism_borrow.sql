@@ -19,5 +19,11 @@ SELECT
     , b.borrowAmount / power(10, i.underlying_decimals) AS borrow_amount
     , b.borrowAmount / power(10, i.underlying_decimals) * p.price AS borrow_usd
 FROM {{ source('ironbank_optimism', 'CErc20Delegator_evt_Borrow') }} AS b
-LEFT JOIN {{ ref('ironbank_optimism_itokens') }} AS i ON b.contract_address = i.contract_address
-LEFT JOIN {{ source('prices', 'usd') }} AS p ON p.minute = date_trunc('minute', b.evt_block_time) AND p.contract_address = i.underlying_token_address AND p.blockchain = 'optimism'
+LEFT JOIN
+    {{ ref('ironbank_optimism_itokens') }} AS i ON
+        b.contract_address = i.contract_address
+LEFT JOIN
+    {{ source('prices', 'usd') }} AS p ON
+        p.minute = date_trunc(
+            'minute', b.evt_block_time
+        ) AND p.contract_address = i.underlying_token_address AND p.blockchain = 'optimism'

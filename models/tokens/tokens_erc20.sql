@@ -3,7 +3,7 @@
         post_hook='{{ expose_spells(\'["arbitrum", "avalanche_c", "bnb", "ethereum", "optimism", "gnosis"]\',
                                     "sector",
                                     "tokens",
-                                    \'["0xManny", "hildobby", "soispoke", "dot2dotseurat", "mtitus6"]\') }}')}}
+                                    \'["0xManny", "hildobby", "soispoke", "dot2dotseurat", "mtitus6"]\') }}') }}
 
 SELECT
     'arbitrum' AS blockchain

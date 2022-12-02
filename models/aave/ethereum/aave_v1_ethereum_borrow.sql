@@ -24,8 +24,12 @@ SELECT
     , evt_index
     , evt_block_time
     , evt_block_number
-    , amount / CAST(CONCAT('1e', CAST(erc20.decimals AS VARCHAR(100))) AS DOUBLE) AS amount
-    , (amount / CAST(CONCAT('1e', CAST(p.decimals AS VARCHAR(1000))) AS DOUBLE)) * price AS usd_amount
+    , amount / CAST(
+        CONCAT('1e', CAST(erc20.decimals AS VARCHAR(100))) AS DOUBLE
+    ) AS amount
+    , (
+        amount / CAST(CONCAT('1e', CAST(p.decimals AS VARCHAR(1000))) AS DOUBLE)
+    ) * price AS usd_amount
 FROM (
     SELECT
         '1' AS version
@@ -35,7 +39,8 @@ FROM (
             WHEN _borrowRateMode = '2' THEN 'variable'
         END AS loan_type
         , CASE
-            WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' --Using WETH instead of Aave "mock" address
+            --Using WETH instead of Aave "mock" address
+            WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}'
             ELSE _reserve
         END AS token
         , _user AS borrower
@@ -53,7 +58,8 @@ FROM (
         , 'repay' AS transaction_type
         , NULL AS loan_type
         , CASE
-            WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' --Using WETH instead of Aave "mock" address
+            --Using WETH instead of Aave "mock" address
+            WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}'
             ELSE _reserve
         END AS token
         , _user AS borrower
@@ -71,7 +77,8 @@ FROM (
         , 'borrow_liquidation' AS transaction_type
         , NULL AS loan_type
         , CASE
-            WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' --Using WETH instead of Aave "mock" address
+            --Using WETH instead of Aave "mock" address
+            WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}'
             ELSE _reserve
         END AS token
         , _user AS borrower
@@ -87,6 +94,6 @@ FROM (
 LEFT JOIN {{ ref('tokens_ethereum_erc20') }} AS erc20
     ON borrow.token = erc20.contract_address
 LEFT JOIN {{ source('prices', 'usd') }} AS p
-    ON p.minute = date_trunc('minute', borrow.evt_block_time)
+    ON p.minute = DATE_TRUNC('minute', borrow.evt_block_time)
         AND p.contract_address = borrow.token
         AND p.blockchain = 'ethereum';

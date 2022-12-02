@@ -1,4 +1,4 @@
-{{ config( alias='erc20', tags=['static'])}}
+{{ config( alias='erc20', tags=['static']) }}
 
 SELECT
     symbol

@@ -318,7 +318,8 @@ WITH original_holders AS (
         , `from` AS wallet
         , count(*) * -1.0 AS punk_balance
     FROM {{ source('erc20_ethereum', 'evt_transfer') }}
-    WHERE contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks
+    -- cryptopunks
+    WHERE contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB')
     GROUP BY 1, 2
 
     UNION ALL
@@ -328,7 +329,8 @@ WITH original_holders AS (
         , `to` AS wallet
         , count(*) AS punk_balance
     FROM {{ source('erc20_ethereum', 'evt_transfer') }}
-    WHERE contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB') -- cryptopunks
+    -- cryptopunks
+    WHERE contract_address = lower('0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB')
     GROUP BY 1, 2
 )
 
@@ -342,7 +344,9 @@ WITH original_holders AS (
 )
 
 , base_data AS (
-    WITH all_days AS (SELECT explode(sequence(to_date('2017-06-22'), to_date(now()), INTERVAL 1 DAY)) AS day)
+    WITH all_days AS (
+        SELECT explode(sequence(to_date('2017-06-22'), to_date(now()), INTERVAL 1 DAY)) AS day
+    )
 
     , all_wallets AS (SELECT DISTINCT wallet FROM punk_transfer_summary
     )
@@ -357,9 +361,13 @@ WITH original_holders AS (
     SELECT
         base_data.day
         , base_data.wallet
-        , sum(coalesce(daily_transfer_sum, 0)) OVER (PARTITION BY base_data.wallet ORDER BY base_data.day) AS holding
+        , sum(
+            coalesce(daily_transfer_sum, 0)
+        ) OVER (PARTITION BY base_data.wallet ORDER BY base_data.day) AS holding
     FROM base_data
-    LEFT JOIN punk_transfer_summary ON base_data.day = punk_transfer_summary.day AND base_data.wallet = punk_transfer_summary.wallet
+    LEFT JOIN
+        punk_transfer_summary ON
+            base_data.day = punk_transfer_summary.day AND base_data.wallet = punk_transfer_summary.wallet
 )
 
 SELECT

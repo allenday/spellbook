@@ -8,8 +8,15 @@ WITH
 stable_to_stable_trades AS (
     SELECT DISTINCT tx_hash
     FROM {{ ref('cow_protocol_ethereum_trades') }}
-    WHERE buy_token_address IN (SELECT contract_address FROM {{ ref('tokens_ethereum_erc20_stablecoins') }})
-        AND sell_token_address IN (SELECT contract_address FROM {{ ref('tokens_ethereum_erc20_stablecoins') }})
+    WHERE
+        buy_token_address IN (
+            SELECT contract_address
+            FROM {{ ref('tokens_ethereum_erc20_stablecoins') }}
+        )
+        AND sell_token_address IN (
+            SELECT contract_address
+            FROM {{ ref('tokens_ethereum_erc20_stablecoins') }}
+        )
 )
 
 SELECT

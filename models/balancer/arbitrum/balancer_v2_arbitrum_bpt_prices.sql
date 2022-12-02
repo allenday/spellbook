@@ -15,7 +15,9 @@ WITH bpt_trades AS (
         , bpt_address
         , bpt_amount_raw
         , token_amount_raw
-        , bpt_amount_raw / POWER(10, COALESCE(erc20a.decimals, 18)) AS bpt_amount
+        , bpt_amount_raw / POWER(
+            10, COALESCE(erc20a.decimals, 18)
+        ) AS bpt_amount
         , token_amount_raw / POWER(10, erc20b.decimals) AS token_amount
         , p.price * token_amount_raw / POWER(10, erc20b.decimals) AS usd_amount
     FROM (
@@ -41,12 +43,18 @@ WITH bpt_trades AS (
         WHERE t.tokenIn = SUBSTRING(t.poolId, 0, 42)
             OR t.tokenOut = SUBSTRING(t.poolId, 0, 42)
     ) AS dexs
-    LEFT JOIN {{ ref('tokens_erc20') }} AS erc20a ON erc20a.contract_address = dexs.bpt_address
-        AND erc20a.blockchain = "arbitrum"
-    INNER JOIN {{ ref('tokens_erc20') }} AS erc20b ON erc20b.contract_address = dexs.token_address
-        AND erc20b.blockchain = "arbitrum"
-    LEFT JOIN {{ source('prices', 'usd') }} AS p ON p.minute = date_trunc("minute", dexs.block_time)
-        AND p.contract_address = dexs.token_address AND p.blockchain = "arbitrum"
+    LEFT JOIN
+        {{ ref('tokens_erc20') }} AS erc20a ON
+            erc20a.contract_address = dexs.bpt_address
+            AND erc20a.blockchain = "arbitrum"
+    INNER JOIN
+        {{ ref('tokens_erc20') }} AS erc20b ON
+            erc20b.contract_address = dexs.token_address
+            AND erc20b.blockchain = "arbitrum"
+    LEFT JOIN
+        {{ source('prices', 'usd') }} AS p ON
+            p.minute = DATE_TRUNC("minute", dexs.block_time)
+            AND p.contract_address = dexs.token_address AND p.blockchain = "arbitrum"
 )
 
 , bpt_estimated_prices AS (
@@ -59,7 +67,7 @@ WITH bpt_trades AS (
 )
 
 SELECT
-    date_trunc("hour", block_time) AS hour
+    DATE_TRUNC("hour", block_time) AS hour
     , bpt_address AS contract_address
     , PERCENTILE(price, 0.5) AS median_price
 FROM bpt_estimated_prices

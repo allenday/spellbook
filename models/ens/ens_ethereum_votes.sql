@@ -21,7 +21,8 @@
 WITH cte_sum_votes AS (SELECT
     proposalId
     , sum(weight / 1e18) AS sum_votes
-    FROM {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_VoteCast') }}
+    FROM
+        {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_VoteCast') }}
     GROUP BY proposalId
 )
 
@@ -46,14 +47,17 @@ SELECT
                 WHEN vc.support = 2 THEN 'abstain'
     END AS support
     , reason
-FROM {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_VoteCast') }} AS vc
+FROM
+    {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_VoteCast') }} AS vc
 LEFT JOIN cte_sum_votes ON vc.proposalId = cte_sum_votes.proposalId
-LEFT JOIN {{ source('prices', 'usd') }} AS p ON p.minute = date_trunc('minute', evt_block_time)
-    AND p.symbol = 'ENS'
-    AND p.blockchain = 'ethereum'
-    {% if is_incremental() %}
-        AND p.minute >= date_trunc('day', now() - INTERVAL '1 week')
-    {% endif %}
-    {% if is_incremental() %}
-        WHERE evt_block_time > (SELECT max(block_time) FROM {{ this }})
-    {% endif %}
+LEFT JOIN
+    {{ source('prices', 'usd') }} AS p ON
+        p.minute = date_trunc('minute', evt_block_time)
+        AND p.symbol = 'ENS'
+        AND p.blockchain = 'ethereum'
+        {% if is_incremental() %}
+            AND p.minute >= date_trunc('day', now() - INTERVAL '1 week')
+        {% endif %}
+        {% if is_incremental() %}
+            WHERE evt_block_time > (SELECT max(block_time) FROM {{ this }})
+        {% endif %}

@@ -1,4 +1,4 @@
-{{config(alias='validators_solana')}}
+{{ config(alias='validators_solana') }}
 
 SELECT DISTINCT
     recipient AS address

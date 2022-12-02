@@ -1,4 +1,4 @@
-{{config(alias='safe_ethereum')}}
+{{ config(alias='safe_ethereum') }}
 
 SELECT
     address

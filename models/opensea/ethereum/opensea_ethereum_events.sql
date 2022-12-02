@@ -55,8 +55,13 @@ FROM
             , collection
             , amount_usd
             , token_standard
-            , CASE WHEN trade_type != 'Bundle Trade' AND count(*) OVER (PARTITION BY tx_hash) > 1 THEN 'Bulk Purchase'
-                                                                                     ELSE trade_type
+            , CASE
+                WHEN
+                    trade_type != 'Bundle Trade' AND COUNT(
+                        *
+                    ) OVER (PARTITION BY tx_hash) > 1 THEN 'Bulk Purchase'
+                ELSE
+                    trade_type
             END AS trade_type
             , CAST(number_of_items AS DECIMAL(38, 0)) AS number_of_items
             , CASE WHEN is_private THEN 'Private Sale' ELSE trade_category END AS trade_category -- Private sale can be purchasd BY Buy / Offer accepted, but we surpress when it is Private sale here
@@ -78,11 +83,21 @@ FROM
             , platform_fee_amount_raw
             , platform_fee_amount
             , platform_fee_amount_usd
-            , CASE WHEN amount_raw > 0 THEN CAST((platform_fee_amount_raw / amount_raw * 100) AS DOUBLE) END AS platform_fee_percentage
+            , CASE
+                WHEN
+                    amount_raw > 0 THEN CAST(
+                        (platform_fee_amount_raw / amount_raw * 100) AS DOUBLE
+                    )
+            END AS platform_fee_percentage
             , royalty_fee_amount_raw
             , royalty_fee_amount
             , royalty_fee_amount_usd
-            , CASE WHEN amount_raw > 0 THEN CAST((royalty_fee_amount_raw / amount_raw * 100) AS DOUBLE) END AS royalty_fee_percentage
+            , CASE
+                WHEN
+                    amount_raw > 0 THEN CAST(
+                        (royalty_fee_amount_raw / amount_raw * 100) AS DOUBLE
+                    )
+            END AS royalty_fee_percentage
             , royalty_fee_receive_address
             , currency_symbol AS royalty_fee_currency_symbol
             , unique_trade_id

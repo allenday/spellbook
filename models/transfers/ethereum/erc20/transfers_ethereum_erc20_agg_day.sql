@@ -13,11 +13,15 @@ SELECT
     , tr.wallet_address
     , tr.token_address
     , t.symbol
-    , tr.wallet_address || '-' || tr.token_address || '-' || date_trunc('day', tr.evt_block_time) AS unique_transfer_id
+    , tr.wallet_address || '-' || tr.token_address || '-' || date_trunc(
+        'day', tr.evt_block_time
+    ) AS unique_transfer_id
     , sum(tr.amount_raw) AS amount_raw
     , sum(tr.amount_raw / power(10, t.decimals)) AS amount
 FROM {{ ref('transfers_ethereum_erc20') }} AS tr
-LEFT JOIN {{ ref('tokens_ethereum_erc20') }} AS t ON t.contract_address = tr.token_address
+LEFT JOIN
+    {{ ref('tokens_ethereum_erc20') }} AS t ON
+        t.contract_address = tr.token_address
 {% if is_incremental() %}
     -- this filter will only be applied ON an incremental run
     WHERE tr.evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')

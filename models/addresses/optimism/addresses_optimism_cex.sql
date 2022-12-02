@@ -1,8 +1,8 @@
-{{config(alias='cex',
+{{ config(alias='cex',
         post_hook='{{ expose_spells(\'["optimism"]\',
                                     "sector",
                                     "addresses",
-                                    \'["msilb7"]\') }}')}}
+                                    \'["msilb7"]\') }}') }}
 
 SELECT
     cex_name

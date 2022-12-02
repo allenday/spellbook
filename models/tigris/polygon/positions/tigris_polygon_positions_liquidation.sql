@@ -15,7 +15,9 @@ last_margin AS (
     FROM
         (
             SELECT
-                ROW_NUMBER() OVER (PARTITION BY position_id, version ORDER BY evt_index DESC) AS rank_
+                ROW_NUMBER() OVER (
+                    PARTITION BY position_id, version ORDER BY evt_index DESC
+                ) AS rank_
                 , *
             FROM
                 (
@@ -55,7 +57,9 @@ last_margin AS (
     FROM
         (
             SELECT
-                ROW_NUMBER() OVER (PARTITION BY position_id, version ORDER BY evt_index DESC) AS rank_
+                ROW_NUMBER() OVER (
+                    PARTITION BY position_id, version ORDER BY evt_index DESC
+                ) AS rank_
                 , *
             FROM
                 (

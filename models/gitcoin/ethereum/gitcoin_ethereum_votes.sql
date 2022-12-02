@@ -48,12 +48,14 @@ SELECT
     , cast(NULL AS STRING) AS reason
 FROM {{ source('gitcoin_ethereum', 'GovernorAlpha_evt_VoteCast') }} AS vc
 LEFT JOIN cte_sum_votes ON vc.proposalId = cte_sum_votes.proposalId
-LEFT JOIN {{ source('prices', 'usd') }} AS p ON p.minute = date_trunc('minute', evt_block_time)
-    AND p.symbol = 'GTC'
-    AND p.blockchain = 'ethereum'
-    {% if is_incremental() %}
-        AND p.minute >= date_trunc('day', now() - INTERVAL '1 week')
-    {% endif %}
-    {% if is_incremental() %}
-        WHERE evt_block_time > (SELECT max(block_time) FROM {{ this }})
-    {% endif %}
+LEFT JOIN
+    {{ source('prices', 'usd') }} AS p ON
+        p.minute = date_trunc('minute', evt_block_time)
+        AND p.symbol = 'GTC'
+        AND p.blockchain = 'ethereum'
+        {% if is_incremental() %}
+            AND p.minute >= date_trunc('day', now() - INTERVAL '1 week')
+        {% endif %}
+        {% if is_incremental() %}
+            WHERE evt_block_time > (SELECT max(block_time) FROM {{ this }})
+        {% endif %}

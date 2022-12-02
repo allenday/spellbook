@@ -33,29 +33,57 @@ FROM
         , ('0x6cD2852371Fb10bB606c1c65930926c47a62f8CD', 'rf-bb-WONDER', 18)
         , ('0x01EAFb9d744a652e71f554cd8946bFbCd38f5b96', 'rfsAMM-USDC-USD+', 18)
         , ('0xc99c96e761afEb6454f3Bf3163668d599110305a', 'rf-rETH-ETH', 18)
-        , ('0x2B33fAc8C11619eB15bBE193Ec2675E505e2829e', 'rf-sAMM-USD+-LUSD', 18)
+        , (
+            '0x2B33fAc8C11619eB15bBE193Ec2675E505e2829e'
+            , 'rf-sAMM-USD+-LUSD'
+            , 18
+        )
         , ('0x111A9B77f95B1E024DF162b42DeC0A2B1C51A00E', 'rfvAMM-VELO-USDC', 18)
         , ('0x6Cb0cF0518bc8f87B751F178EF264B248d1A2128', 'rfsAMM-USDC-MAI', 18)
         , ('0x1B4Fd39128B9caDfdfe62fb8C519061D5227D4b9', 'rf-vAMM-OP-L2DAO', 18)
         , ('0x02E3eFeD80972ea6B4c53c742e10488D1efC0Fe2', 'rfsAMM-USDC-DAI', 18)
-        , ('0x0766AED42E9B48aa8F3E6bCAE925c6CF82B517eF', 'rf-sAMM-USDC-SUSD', 18)
+        , (
+            '0x0766AED42E9B48aa8F3E6bCAE925c6CF82B517eF'
+            , 'rf-sAMM-USDC-SUSD'
+            , 18
+        )
         , ('0x2B2CE9Ea2a8428CE4c4Dcd0c19a931968D2F1e7b', 'rf-vAMM-OP-USDC', 18)
         , ('0xFE24e5c6bd0721b5b69e10Da687796Ba63F3BF81', 'rfvAMM-ETH-USDC', 18)
         , ('0x50d1666f8048F88bAE6B23CC0d09fCC259065441', 'rfsAMM-FRAX-USDC', 18)
         , ('0xc72C4437824866eF48A0e8455831c21022a12592', 'rfsAMM-USDC-LUSD', 18)
         , ('0xD4f64A36d0E9f00E499c35A5f8b90183D8ab3305', 'rfsAMM-WETH-sETH', 18)
-        , ('0x7d3063f7693D8de76E4Ed0B615Eb3A36cA1a6C25', 'rfsAMM-USDC-alUSD', 18)
+        , (
+            '0x7d3063f7693D8de76E4Ed0B615Eb3A36cA1a6C25'
+            , 'rfsAMM-USDC-alUSD'
+            , 18
+        )
         , ('0x75f29A89107ff590f3b65759e8e6F9943149c27a', 'rfsAMM-USDC-DOLA', 18)
-        , ('0x132F3f42A55F037680f557a1441C4e8e42A41a41', 'rfvAMM-WETH-AELIN', 18)
-        , ('0xD268887B2171c4b7595DeeBD0CB589c560682629', 'rfsAMM-WETH-alETH', 18)
+        , (
+            '0x132F3f42A55F037680f557a1441C4e8e42A41a41'
+            , 'rfvAMM-WETH-AELIN'
+            , 18
+        )
+        , (
+            '0xD268887B2171c4b7595DeeBD0CB589c560682629'
+            , 'rfsAMM-WETH-alETH'
+            , 18
+        )
         , ('0x83Cf5e8B98Ff3bbF2237fe7411e6B03C57c7a0EC', 'rfvAMM-FRAX-USDC', 18)
-        , ('0x9B27db3cc52dA7F6Ca16740a977a349AA09547EF', 'rfvAMM-USDC-agEUR', 18)
+        , (
+            '0x9B27db3cc52dA7F6Ca16740a977a349AA09547EF'
+            , 'rfvAMM-USDC-agEUR'
+            , 18
+        )
         , ('0x1047Afc683Abc40314B29DFD686BB178ebEB4F44', 'rfvAMM-WETH-OP', 18)
         , ('0xC7C84d12E350cC9cd81EaB405aAE2d600308C711', 'rfvAMM-LYRA-USDC', 18)
         , ('0xbf12FD5e22fcDB0fFB5c62005fEC4f9B90339580', 'rfvAMM-VELO-OP', 18)
         , ('0xc5666f7c50dBb9BFafDE29d5ED190A31FFCa8370', 'rfvAMM-WETH-DOLA', 18)
         , ('0x53B788691D66ee50c8F36d153921b37f85432FAc', 'rfvAMM-PERP-USDC', 18)
-        , ('0x15fbF2F74FaA5400c1CCb9cFB0aC8294Be3A0272', 'rfvAMM-TAROT-USDC', 18)
+        , (
+            '0x15fbF2F74FaA5400c1CCb9cFB0aC8294Be3A0272'
+            , 'rfvAMM-TAROT-USDC'
+            , 18
+        )
         , ('0x1e19F9B2F87Ff30FFB061d07c77a57d59d267F97', 'rfvAMM-OP-DAI', 18)
         , ('0x557b10781DFAe44Ad008EA1c7A281C230F4E4C1d', 'rfsAMM-sUSD-DAI', 18)
         , ('0x01e4D996240F677a057b19DB300060BD20a8F7a9', 'rfsAMM-USDC-USX', 18)
@@ -63,7 +91,15 @@ FROM
         , ('0xFA43948C857a201386a99CBc07A099C56fe04580', 'rfvAMM-HND-USDC', 18)
         , ('0xDc015935dd936450b9d116C3Fa66CA3Ad3afc109', 'rfsAMM-sUSD-LUSD', 18)
         , ('0xA4226E6833e5C6F83628c25922a383495c3d2259', 'rfsAMM-USDC-TUSD', 18)
-        , ('0xC7670686529791d9C62eAa4D3B4745BB84a3a1CE', 'rfsAMM-jEUR-agEUR', 18)
-        , ('0x56756c847B027a27703aaD58c732C041f4e5f033', 'rfvAMM-SONNE-USDC', 18)
+        , (
+            '0xC7670686529791d9C62eAa4D3B4745BB84a3a1CE'
+            , 'rfsAMM-jEUR-agEUR'
+            , 18
+        )
+        , (
+            '0x56756c847B027a27703aaD58c732C041f4e5f033'
+            , 'rfvAMM-SONNE-USDC'
+            , 18
+        )
         , ('0x6045E787688C7550bCc3dec551c54c57f13E6204', 'rfvAMM-BOND-WETH', 18)
     )

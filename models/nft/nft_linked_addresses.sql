@@ -54,13 +54,17 @@ WITH nft_trade_address AS (
     -- Normalize linked addresses to master address
     SELECT
         blockchain
-        , (CASE WHEN address_a > address_b THEN address_b ELSE address_a END) AS master_address
+        , (
+            CASE WHEN address_a > address_b THEN address_b ELSE address_a END
+        ) AS master_address
         , address_a AS alternative_address
     FROM linked_address_nft_trade
     UNION
     SELECT
         blockchain
-        , (CASE WHEN address_a > address_b THEN address_b ELSE address_a END) AS master_address
+        , (
+            CASE WHEN address_a > address_b THEN address_b ELSE address_a END
+        ) AS master_address
         , address_b AS alternative_address
     FROM linked_address_nft_trade
 )
@@ -71,7 +75,9 @@ WITH nft_trade_address AS (
         , master_address
         , alternative_address
         , master_address || "-" || alternative_address AS linked_address_id
-        , ROW_NUMBER() OVER (PARTITION BY blockchain, alternative_address ORDER BY master_address) AS row_num
+        , row_number() OVER (
+            PARTITION BY blockchain, alternative_address ORDER BY master_address
+        ) AS row_num
     FROM linked_address_sorted
 )
 

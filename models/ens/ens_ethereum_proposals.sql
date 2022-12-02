@@ -21,21 +21,28 @@
 WITH cte_support AS (SELECT
         voter AS voter
         , proposalId
-        , CASE WHEN support = 0 THEN sum(weight / 1e18) ELSE 0 END AS votes_against
+        , CASE
+            WHEN support = 0 THEN sum(weight / 1e18) ELSE 0
+        END AS votes_against
         , CASE WHEN support = 1 THEN sum(weight / 1e18) ELSE 0 END AS votes_for
-        , CASE WHEN support = 2 THEN sum(weight / 1e18) ELSE 0 END AS votes_abstain
-    FROM {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_VoteCast') }}
+        , CASE
+            WHEN support = 2 THEN sum(weight / 1e18) ELSE 0
+        END AS votes_abstain
+    FROM
+        {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_VoteCast') }}
     GROUP BY support, proposalId, voter
 )
 
 , cte_sum_votes AS (
     SELECT
         proposalId
-        , COUNT(DISTINCT voter) AS number_of_voters
-        , SUM(votes_for) AS votes_for
-        , SUM(votes_against) AS votes_against
-        , SUM(votes_abstain) AS votes_abstain
-        , SUM(votes_for) + SUM(votes_against) + SUM(votes_abstain) AS votes_total
+        , count(DISTINCT voter) AS number_of_voters
+        , sum(votes_for) AS votes_for
+        , sum(votes_against) AS votes_against
+        , sum(votes_abstain) AS votes_abstain
+        , sum(
+            votes_for
+        ) + sum(votes_against) + sum(votes_abstain) AS votes_total
     FROM cte_support
     GROUP BY proposalId
 )
@@ -56,21 +63,32 @@ SELECT DISTINCT
     , cte_sum_votes.votes_abstain
     , cte_sum_votes.votes_total
     , cte_sum_votes.number_of_voters
-    , cte_sum_votes.votes_total / 1e9 * 100 AS participation -- Total votes / Total supply (1B FOR Uniswap)
+    -- Total votes / Total supply (1B FOR Uniswap)
+    , cte_sum_votes.votes_total / 1e9 * 100 AS participation
     , pcr.startBlock AS start_block
     , pcr.endBlock AS end_block
     , CASE
-        WHEN pex.proposalId IS NOT NULL AND now() > pex.evt_block_time THEN 'Executed'
-        WHEN pca.proposalId IS NOT NULL AND now() > pca.evt_block_time THEN 'Canceled'
+        WHEN
+            pex.proposalId IS NOT NULL AND now() > pex.evt_block_time THEN 'Executed'
+        WHEN
+            pca.proposalId IS NOT NULL AND now() > pca.evt_block_time THEN 'Canceled'
         WHEN pcr.startBlock < pcr.evt_block_number < pcr.endBlock THEN 'Active'
-        WHEN now() > pqu.evt_block_time AND startBlock > pcr.evt_block_number THEN 'Queued'
+        WHEN
+            now() > pqu.evt_block_time AND startBlock > pcr.evt_block_number THEN 'Queued'
         ELSE 'Defeated' END AS status
     , description
-FROM {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalCreated') }} AS pcr
+FROM
+    {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalCreated') }} AS pcr
 LEFT JOIN cte_sum_votes ON cte_sum_votes.proposalId = pcr.proposalId
-LEFT JOIN {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalCanceled') }} AS pca ON pca.proposalId = pcr.proposalId
-LEFT JOIN {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalExecuted') }} AS pex ON pex.proposalId = pcr.proposalId
-LEFT JOIN {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalQueued') }} AS pqu ON pex.proposalId = pcr.proposalId
+LEFT JOIN
+    {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalCanceled') }} AS pca ON
+        pca.proposalId = pcr.proposalId
+LEFT JOIN
+    {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalExecuted') }} AS pex ON
+        pex.proposalId = pcr.proposalId
+LEFT JOIN
+    {{ source('ethereumnameservice_ethereum', 'ENSGovernor_evt_ProposalQueued') }} AS pqu ON
+        pex.proposalId = pcr.proposalId
 {% if is_incremental() %}
     WHERE pcr.evt_block_time > (SELECT max(created_at) FROM {{ this }})
 {% endif %}

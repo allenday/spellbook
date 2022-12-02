@@ -110,5 +110,7 @@ SELECT
     , sum(transfers_bnb_bep20.amount_raw) AS amount_raw
     , sum(transfers_bnb_bep20.amount_raw / power(10, t.decimals)) AS amount
 FROM transfers_bnb_bep20
-LEFT JOIN {{ ref('tokens_bnb_bep20') }} AS t ON t.contract_address = transfers_bnb_bep20.token_address
+LEFT JOIN
+    {{ ref('tokens_bnb_bep20') }} AS t ON
+        t.contract_address = transfers_bnb_bep20.token_address
 GROUP BY 1, 2, 3, 4, 5

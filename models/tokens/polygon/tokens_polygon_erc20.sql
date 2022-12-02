@@ -1,4 +1,4 @@
-{{ config( alias='erc20')}}
+{{ config( alias='erc20') }}
 
 SELECT
     symbol

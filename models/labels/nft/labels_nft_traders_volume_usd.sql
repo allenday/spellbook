@@ -27,17 +27,43 @@ SELECT
     , 'nft' AS category
     , 'soispoke' AS contributor
     , 'query' AS source
-    , collect_set(nft_trades.blockchain) AS blockchain
-    , CASE WHEN ((ROW_NUMBER() OVER(ORDER BY SUM(amount_usd) DESC)) / total_count * 100) <= 10
-                                                 AND ((ROW_NUMBER() OVER(ORDER BY SUM(amount_usd) DESC)) / total_count * 100) > 5
+    , COLLECT_SET(nft_trades.blockchain) AS blockchain
+    , CASE
+        WHEN
+            (
+                (
+                    ROW_NUMBER() OVER(ORDER BY SUM(amount_usd) DESC)
+                ) / total_count * 100
+            ) <= 10
+            AND (
+                (
+                    ROW_NUMBER() OVER(
+                        ORDER BY SUM(amount_usd) DESC
+                    )
+                ) / total_count * 100
+            ) > 5
             THEN 'Top 10% NFT Trader (Volume in $USD)'
-                                                 WHEN ((ROW_NUMBER() OVER(ORDER BY SUM(amount_usd) DESC)) / total_count * 100) <= 5
-            AND ((ROW_NUMBER() OVER(ORDER BY SUM(amount_usd) DESC)) / total_count * 100) > 1
+        WHEN
+            (
+                (
+                    ROW_NUMBER() OVER(ORDER BY SUM(amount_usd) DESC)
+                ) / total_count * 100
+            ) <= 5
+            AND (
+                (
+                    ROW_NUMBER() OVER(ORDER BY SUM(amount_usd) DESC)
+                ) / total_count * 100
+            ) > 1
             THEN 'Top 5% NFT Trader (Volume in $USD)'
-                                                 WHEN ((ROW_NUMBER() OVER(ORDER BY SUM(amount_usd) DESC)) / total_count * 100) <= 1
+        WHEN
+            (
+                (
+                    ROW_NUMBER() OVER(ORDER BY SUM(amount_usd) DESC)
+                ) / total_count * 100
+            ) <= 1
             THEN 'Top 1% NFT Trader (Volume in $USD)' END AS name
-    , timestamp('2022-08-24') AS created_at
-    , now() AS updated_at
+    , TIMESTAMP('2022-08-24') AS created_at
+    , NOW() AS updated_at
 FROM nft_trades
 INNER JOIN total ON total.address = nft_trades.address
 WHERE nft_trades.address IS NOT NULL AND amount_usd IS NOT NULL

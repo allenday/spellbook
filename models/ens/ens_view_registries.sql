@@ -11,8 +11,11 @@ SELECT
     , count(*) AS count_ens_registries
 FROM (
     SELECT *
-    FROM {{ source('ethereumnameservice_ethereum', 'ENSRegistry_evt_NewOwner') }}
+    FROM
+        {{ source('ethereumnameservice_ethereum', 'ENSRegistry_evt_NewOwner') }}
     UNION
-    SELECT * FROM {{ source('ethereumnameservice_ethereum', 'ENSRegistryWithFallback_evt_NewOwner') }}
+    SELECT *
+    FROM
+        {{ source('ethereumnameservice_ethereum', 'ENSRegistryWithFallback_evt_NewOwner') }}
     ) AS r
 GROUP BY node, label;

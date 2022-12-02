@@ -23,14 +23,20 @@ SELECT
     , evt_index
     , evt_block_time
     , evt_block_number
-    , amount / CAST(CONCAT('1e', CAST(erc20.decimals AS VARCHAR(100))) AS DOUBLE) AS amount
-    , (amount / CAST(CONCAT('1e', CAST(p.decimals AS VARCHAR(100))) AS DOUBLE)) * price AS usd_amount
+    , amount / CAST(
+        CONCAT('1e', CAST(erc20.decimals AS VARCHAR(100))) AS DOUBLE
+    ) AS amount
+    , (
+        amount / CAST(CONCAT('1e', CAST(p.decimals AS VARCHAR(100))) AS DOUBLE)
+    ) * price AS usd_amount
 FROM (
         SELECT
             '1' AS version
             , 'deposit' AS transaction_type
             , CASE
-                WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' --Using WETH instead of Aave "mock" address
+                --Using WETH instead of Aave "mock" address
+                WHEN
+                    _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}'
                 ELSE _reserve
             END AS token
             , _user AS depositor
@@ -47,7 +53,9 @@ FROM (
             '1' AS version
             , 'withdraw' AS transaction_type
             , CASE
-                WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' --Using WETH instead of Aave "mock" address
+                --Using WETH instead of Aave "mock" address
+                WHEN
+                    _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}'
                 ELSE _reserve
             END AS token
             , _user AS depositor
@@ -64,7 +72,9 @@ FROM (
             '1' AS version
             , 'deposit_liquidation' AS transaction_type
             , CASE
-                WHEN _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' --Using WETH instead of Aave "mock" address
+                --Using WETH instead of Aave "mock" address
+                WHEN
+                    _reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}'
                 ELSE _collateral
             END AS token
             , _user AS depositor
@@ -80,6 +90,6 @@ FROM (
 LEFT JOIN {{ ref('tokens_ethereum_erc20') }} AS erc20
     ON deposit.token = erc20.contract_address
 LEFT JOIN {{ source('prices', 'usd') }} AS p
-    ON p.minute = date_trunc('minute', deposit.evt_block_time)
+    ON p.minute = DATE_TRUNC('minute', deposit.evt_block_time)
         AND p.contract_address = deposit.token
         AND p.blockchain = 'ethereum';

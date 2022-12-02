@@ -47,6 +47,6 @@ FROM
             ) }}
     ) AS m
 INNER JOIN (
-        SELECT explode(SEQUENCE(0, 1)) AS step
+        SELECT explode(sequence(0, 1)) AS step
     ) AS s
     ON TRUE

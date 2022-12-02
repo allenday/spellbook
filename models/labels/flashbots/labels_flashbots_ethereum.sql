@@ -12,5 +12,5 @@ SELECT DISTINCT
     , 'query' AS source
     , array('ethereum') AS blockchain
     , date('2022-10-08') AS created_at
-    , NOW() AS modified_at
+    , now() AS modified_at
 FROM {{ source('flashbots', 'arbitrages') }}

@@ -19,7 +19,9 @@ modify_margin_v2 AS (
         , mm._isMarginAdded AS modify_type
         , mm._trader AS trader
         , date_trunc('day', mm.evt_block_time) AS day
-        , COALESCE(am._addMargin / 1e18, rm._removeMargin / 1e18) AS margin_change
+        , coalesce(
+            am._addMargin / 1e18, rm._removeMargin / 1e18
+        ) AS margin_change
         , mm._newMargin / 1e18 AS margin
         , mm._newLeverage / 1e18 AS leverage
     FROM
@@ -30,7 +32,9 @@ modify_margin_v2 AS (
             AND mm.evt_tx_hash = am.call_tx_hash
             AND am.call_success = true
             {% if is_incremental() %}
-                AND am.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+                AND am.call_block_time >= date_trunc(
+                    'day', now() - INTERVAL '1 week'
+                )
             {% endif %}
     LEFT JOIN
         {{ source('tigristrade_arbitrum', 'TradingV2_call_removeMargin') }} AS rm
@@ -38,10 +42,15 @@ modify_margin_v2 AS (
             AND mm.evt_tx_hash = rm.call_tx_hash
             AND rm.call_success = true
             {% if is_incremental() %}
-                AND rm.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+                AND rm.call_block_time >= date_trunc(
+                    'day', now() - INTERVAL '1 week'
+                )
             {% endif %}
             {% if is_incremental() %}
-                WHERE mm.evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+                WHERE
+                    mm.evt_block_time >= date_trunc(
+                        'day', now() - INTERVAL '1 week'
+                    )
             {% endif %}
 )
 
@@ -54,7 +63,9 @@ modify_margin_v2 AS (
         , mm._isMarginAdded AS modify_type
         , mm._trader AS trader
         , date_trunc('day', mm.evt_block_time) AS day
-        , COALESCE(am._addMargin / 1e18, rm._removeMargin / 1e18) AS margin_change
+        , coalesce(
+            am._addMargin / 1e18, rm._removeMargin / 1e18
+        ) AS margin_change
         , mm._newMargin / 1e18 AS margin
         , mm._newLeverage / 1e18 AS leverage
     FROM
@@ -65,7 +76,9 @@ modify_margin_v2 AS (
             AND mm.evt_tx_hash = am.call_tx_hash
             AND am.call_success = true
             {% if is_incremental() %}
-                AND am.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+                AND am.call_block_time >= date_trunc(
+                    'day', now() - INTERVAL '1 week'
+                )
             {% endif %}
     LEFT JOIN
         {{ source('tigristrade_arbitrum', 'TradingV3_call_removeMargin') }} AS rm
@@ -73,10 +86,15 @@ modify_margin_v2 AS (
             AND mm.evt_tx_hash = rm.call_tx_hash
             AND rm.call_success = true
             {% if is_incremental() %}
-                AND rm.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+                AND rm.call_block_time >= date_trunc(
+                    'day', now() - INTERVAL '1 week'
+                )
             {% endif %}
             {% if is_incremental() %}
-                WHERE mm.evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+                WHERE
+                    mm.evt_block_time >= date_trunc(
+                        'day', now() - INTERVAL '1 week'
+                    )
             {% endif %}
 )
 
@@ -89,7 +107,9 @@ modify_margin_v2 AS (
         , mm._isMarginAdded AS modify_type
         , mm._trader AS trader
         , date_trunc('day', mm.evt_block_time) AS day
-        , COALESCE(am._addMargin / 1e18, rm._removeMargin / 1e18) AS margin_change
+        , coalesce(
+            am._addMargin / 1e18, rm._removeMargin / 1e18
+        ) AS margin_change
         , mm._newMargin / 1e18 AS margin
         , mm._newLeverage / 1e18 AS leverage
     FROM
@@ -100,7 +120,9 @@ modify_margin_v2 AS (
             AND mm.evt_tx_hash = am.call_tx_hash
             AND am.call_success = true
             {% if is_incremental() %}
-                AND am.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+                AND am.call_block_time >= date_trunc(
+                    'day', now() - INTERVAL '1 week'
+                )
             {% endif %}
     LEFT JOIN
         {{ source('tigristrade_arbitrum', 'TradingV4_call_removeMargin') }} AS rm
@@ -108,10 +130,15 @@ modify_margin_v2 AS (
             AND mm.evt_tx_hash = rm.call_tx_hash
             AND rm.call_success = true
             {% if is_incremental() %}
-                AND rm.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+                AND rm.call_block_time >= date_trunc(
+                    'day', now() - INTERVAL '1 week'
+                )
             {% endif %}
             {% if is_incremental() %}
-                WHERE mm.evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+                WHERE
+                    mm.evt_block_time >= date_trunc(
+                        'day', now() - INTERVAL '1 week'
+                    )
             {% endif %}
 )
 
@@ -124,7 +151,9 @@ modify_margin_v2 AS (
         , mm._isMarginAdded AS modify_type
         , mm._trader AS trader
         , date_trunc('day', mm.evt_block_time) AS day
-        , COALESCE(am._addMargin / 1e18, rm._removeMargin / 1e18) AS margin_change
+        , coalesce(
+            am._addMargin / 1e18, rm._removeMargin / 1e18
+        ) AS margin_change
         , mm._newMargin / 1e18 AS margin
         , mm._newLeverage / 1e18 AS leverage
     FROM
@@ -135,7 +164,9 @@ modify_margin_v2 AS (
             AND mm.evt_tx_hash = am.call_tx_hash
             AND am.call_success = true
             {% if is_incremental() %}
-                AND am.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+                AND am.call_block_time >= date_trunc(
+                    'day', now() - INTERVAL '1 week'
+                )
             {% endif %}
     LEFT JOIN
         {{ source('tigristrade_arbitrum', 'TradingV5_call_removeMargin') }} AS rm
@@ -143,10 +174,15 @@ modify_margin_v2 AS (
             AND mm.evt_tx_hash = rm.call_tx_hash
             AND rm.call_success = true
             {% if is_incremental() %}
-                AND rm.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+                AND rm.call_block_time >= date_trunc(
+                    'day', now() - INTERVAL '1 week'
+                )
             {% endif %}
             {% if is_incremental() %}
-                WHERE mm.evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+                WHERE
+                    mm.evt_block_time >= date_trunc(
+                        'day', now() - INTERVAL '1 week'
+                    )
             {% endif %}
 )
 

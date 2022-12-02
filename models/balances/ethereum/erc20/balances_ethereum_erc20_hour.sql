@@ -23,7 +23,11 @@ hours AS (
     , amount
     , hour
     , symbol
-    , lead(hour, 1, now()) OVER (PARTITION BY token_address, wallet_address ORDER BY hour) AS next_hour
+    , lead(
+        hour, 1, now()
+    ) OVER (
+        PARTITION BY token_address, wallet_address ORDER BY hour
+    ) AS next_hour
     FROM {{ ref('transfers_ethereum_erc20_rolling_hour') }}
 )
 
@@ -37,7 +41,9 @@ SELECT
     , hourly_balances.symbol
     , hourly_balances.amount * p.price AS amount_usd
 FROM hourly_balances
-INNER JOIN hours ON hourly_balances.hour <= hours.hour AND hours.hour < hourly_balances.next_hour
+INNER JOIN
+    hours ON
+        hourly_balances.hour <= hours.hour AND hours.hour < hourly_balances.next_hour
 LEFT JOIN {{ source('prices', 'usd') }} AS p
     ON p.contract_address = hourly_balances.token_address
         AND hours.hour = p.minute

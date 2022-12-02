@@ -19,5 +19,11 @@ SELECT
     , m.mintAmount / power(10, i.underlying_decimals) AS mint_amount
     , m.mintAmount / power(10, i.underlying_decimals) * p.price AS mint_usd
 FROM {{ source('ironbank_optimism', 'CErc20Delegator_evt_Mint') }} AS m
-LEFT JOIN {{ ref('ironbank_optimism_itokens') }} AS i ON m.contract_address = i.contract_address
-LEFT JOIN {{ source('prices', 'usd') }} AS p ON p.minute = date_trunc('minute', m.evt_block_time) AND p.contract_address = i.underlying_token_address AND p.blockchain = 'optimism'
+LEFT JOIN
+    {{ ref('ironbank_optimism_itokens') }} AS i ON
+        m.contract_address = i.contract_address
+LEFT JOIN
+    {{ source('prices', 'usd') }} AS p ON
+        p.minute = date_trunc(
+            'minute', m.evt_block_time
+        ) AND p.contract_address = i.underlying_token_address AND p.blockchain = 'optimism'

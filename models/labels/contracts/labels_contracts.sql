@@ -8,7 +8,9 @@
 SELECT
     array('ethereum') AS blockchain
     , address
-    , concat(upper(SUBSTRING(namespace, 1, 1)), SUBSTRING(namespace, 2)) || ': ' || name AS name
+    , concat(
+        upper(substring(namespace, 1, 1)), substring(namespace, 2)
+    ) || ': ' || name AS name
     , 'contracts' AS category
     , 'soispoke' AS contributor
     , 'query' AS source
@@ -19,7 +21,9 @@ UNION
 SELECT
     array('gnosis') AS blockchain
     , address
-    , concat(upper(SUBSTRING(namespace, 1, 1)), SUBSTRING(namespace, 2)) || ': ' || name AS name
+    , concat(
+        upper(substring(namespace, 1, 1)), substring(namespace, 2)
+    ) || ': ' || name AS name
     , 'contracts' AS category
     , 'soispoke' AS contributor
     , 'query' AS source
@@ -30,7 +34,9 @@ UNION
 SELECT
     array('avalanche_c') AS blockchain
     , address
-    , concat(upper(SUBSTRING(namespace, 1, 1)), SUBSTRING(namespace, 2)) || ': ' || name AS name
+    , concat(
+        upper(substring(namespace, 1, 1)), substring(namespace, 2)
+    ) || ': ' || name AS name
     , 'contracts' AS category
     , 'soispoke' AS contributor
     , 'query' AS source
@@ -41,7 +47,9 @@ UNION
 SELECT
     array('arbitrum') AS blockchain
     , address
-    , concat(upper(SUBSTRING(namespace, 1, 1)), SUBSTRING(namespace, 2)) || ': ' || name AS name
+    , concat(
+        upper(substring(namespace, 1, 1)), substring(namespace, 2)
+    ) || ': ' || name AS name
     , 'contracts' AS category
     , 'soispoke' AS contributor
     , 'query' AS source
@@ -52,7 +60,9 @@ UNION
 SELECT
     array('bnb') AS blockchain
     , address
-    , concat(upper(SUBSTRING(namespace, 1, 1)), SUBSTRING(namespace, 2)) || ': ' || name AS name
+    , concat(
+        upper(substring(namespace, 1, 1)), substring(namespace, 2)
+    ) || ': ' || name AS name
     , 'contracts' AS category
     , 'soispoke' AS contributor
     , 'query' AS source
@@ -63,7 +73,9 @@ UNION
 SELECT
     array('optimism') AS blockchain
     , address
-    , concat(upper(SUBSTRING(namespace, 1, 1)), SUBSTRING(namespace, 2)) || ': ' || name AS name
+    , concat(
+        upper(substring(namespace, 1, 1)), substring(namespace, 2)
+    ) || ': ' || name AS name
     , 'contracts' AS category
     , 'soispoke' AS contributor
     , 'query' AS source

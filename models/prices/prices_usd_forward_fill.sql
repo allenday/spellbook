@@ -23,7 +23,13 @@ finalized AS (
 , unfinalized AS (
     SELECT
         *
-        , lead(minute) OVER (PARTITION BY blockchain, contract_address, decimals, symbol ORDER BY minute ASC) AS next_update_minute
+        , lead(
+            minute
+        ) OVER (
+            PARTITION BY
+                blockchain, contract_address, decimals, symbol
+            ORDER BY minute ASC
+        ) AS next_update_minute
     FROM {{ source('prices', 'usd') }}
     WHERE minute > now() - INTERVAL {{ lookback_interval }}
 )
@@ -45,7 +51,11 @@ finalized AS (
         , price
     FROM timeseries
     LEFT JOIN unfinalized
-        ON timeseries.minute >= unfinalized.minute AND (unfinalized.next_update_minute IS NULL OR timeseries.minute < unfinalized.next_update_minute) -- perform forward fill
+        -- perform forward fill
+        ON
+            timeseries.minute >= unfinalized.minute AND (
+                unfinalized.next_update_minute IS NULL OR timeseries.minute < unfinalized.next_update_minute
+            )
 )
 
 SELECT
