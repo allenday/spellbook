@@ -8,12 +8,13 @@
   )
 }}
 
-SELECT "polygon"                    AS blockchain
-       , feed_name
-       , CAST(decimals AS numeric)    AS decimals
-       , LOWER(proxy_address)         AS proxy_address
-       , LOWER(aggregator_address)    AS aggregator_address
-FROM (values
+SELECT
+    "polygon" AS blockchain
+    , feed_name
+    , CAST(decimals AS numeric) AS decimals
+    , LOWER(proxy_address) AS proxy_address
+    , LOWER(aggregator_address) AS aggregator_address
+FROM (VALUES
         ("EUR / USD", 8, "0x73366fe0aa0ded304479862808e02506fe556a98", "0x310990e8091b5cf083fa55f500f140cfbb959016")
         , ("GBP / USD", 8, "0x099a2540848573e94fb1ca0fa420b00acbbc845a", "0x3f7f90e0f782e325401f6323ba93e717f519f382")
         , ("CHF / USD", 8, "0xc76f762cedf0f78a439727861628e0fdfe1e70c2", "0x8123beacb5bca3afa0c9ff71b28549d58cec8176")
@@ -30,4 +31,4 @@ FROM (values
         , ("NGN / USD", 8, "0x0df812c4d675d155815b1216ce1da9e68f1b7050", "0x0000000000000000000000000000000000000000")
         , ("NZD / USD", 8, "0xa302a0b8a499fd0f00449df0a490dede21105955", "0xe63032a70f6eb617970829fbfa365d7c44bdbbbf")
         , ("PLN / USD", 8, "0xb34bce11040702f71c11529d00179b2959bce6c0", "0x08f8d217e6f07ae423a2ad2ffb226ffcb577708d")
-) AS a (feed_name, decimals, proxy_address, aggregator_address)
+)

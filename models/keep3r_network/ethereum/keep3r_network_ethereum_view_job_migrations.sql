@@ -4,15 +4,15 @@
 ) }}
 
 SELECT
-    evt_block_time AS `timestamp`
+    evt_block_time AS timestamp
     , evt_tx_hash AS tx_hash
+    , contract_address AS keep3r
     , evt_index + s.step AS evt_index
     , CASE
     s.step
         WHEN (0) THEN 'JobMigrationOut'
         WHEN (1) THEN 'JobMigrationIn'
     END AS event
-    , contract_address AS keep3r
     , CASE
     s.step
         WHEN (0) THEN m._fromJob
@@ -47,7 +47,6 @@ FROM
             ) }}
     ) AS m
 INNER JOIN (
-        SELECT
-            explode(SEQUENCE(0, 1)) AS step
+        SELECT explode(SEQUENCE(0, 1)) AS step
     ) AS s
     ON TRUE

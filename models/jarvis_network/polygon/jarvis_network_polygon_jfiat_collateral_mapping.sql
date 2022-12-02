@@ -8,12 +8,13 @@
   )
 }}
 
-SELECT 'polygon'                             AS blockchain
-       , LOWER(jfiat_collateral_pool_address)  AS jfiat_collateral_pool_address
-       , jfiat_collateral_symbol
-       , CAST(decimals AS numeric)             AS decimals
-       , LOWER(jfiat_collateral_token_address) AS jfiat_collateral_token_address
-FROM (values
+SELECT
+    'polygon' AS blockchain
+    , jfiat_collateral_symbol
+    , LOWER(jfiat_collateral_pool_address) AS jfiat_collateral_pool_address
+    , CAST(decimals AS numeric) AS decimals
+    , LOWER(jfiat_collateral_token_address) AS jfiat_collateral_token_address
+FROM (VALUES
     ('0x65a7b4ff684c2d08c115d55a4b089bf4e92f5003', 'USDC', 6, '0x2791bca1f2de4661ed88a30c99a7a9449aa84174')
     , ('0x36d6d1d6249fbc6ebd0fc28fd46c846fb69b9074', 'USDC', 6, '0x2791bca1f2de4661ed88a30c99a7a9449aa84174')
     , ('0x8734cf40a402d4191bd4d7a64beef12e4c452def', 'USDC', 6, '0x2791bca1f2de4661ed88a30c99a7a9449aa84174')
@@ -47,4 +48,4 @@ FROM (values
     , ('0x2624b6472cf43b26d284b9f51d4af4ccf763eb87', 'USDC', 6, '0x2791bca1f2de4661ed88a30c99a7a9449aa84174')
     , ('0x1d84f60babef98f0ffe7fd298cddd2a2caf8e02d', 'USDC', 6, '0x2791bca1f2de4661ed88a30c99a7a9449aa84174')
     , ('0xbc988a0146178825c26c255989cfd5083bae672c', 'MIMATIC', 18, '0xa3fa99a148fa48d14ed51d610c367c61876997f1')
-) AS a (jfiat_collateral_pool_address, jfiat_collateral_symbol, decimals, jfiat_collateral_token_address)
+)

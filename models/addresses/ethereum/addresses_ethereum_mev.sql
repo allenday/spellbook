@@ -267,4 +267,4 @@ FROM (VALUES
     , ('0xff2fbc735d33ae830f056107f1b551783ec4ed5b')
     , ('0xff62dfadca3b5643d0b283571fe154d886580c0c')
     , ('0x93f9a668dccc090f63b0ec27d809527dc2f0ebba')
-    ) AS x (address)
+    )

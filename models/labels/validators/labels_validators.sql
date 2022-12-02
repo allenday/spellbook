@@ -4,8 +4,8 @@
                                     "labels",
                                     \'["soispoke"]\') }}')}}
 
-SELECT * FROM  {{ ref('labels_validators_ethereum') }}
+SELECT * FROM {{ ref('labels_validators_ethereum') }}
 UNION
-SELECT * FROM  {{ ref('labels_validators_bnb') }}
+SELECT * FROM {{ ref('labels_validators_bnb') }}
 UNION
-SELECT * FROM  {{ ref('labels_validators_solana') }}
+SELECT * FROM {{ ref('labels_validators_solana') }}

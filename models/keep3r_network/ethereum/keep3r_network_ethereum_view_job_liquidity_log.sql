@@ -6,7 +6,7 @@
 WITH job_liquidities AS (
 
     SELECT
-        ad.evt_block_time AS `timestamp`
+        ad.evt_block_time AS timestamp
         , ad.evt_tx_hash AS tx_hash
         , ad.evt_index
         , 'LiquidityAddition' AS event
@@ -46,13 +46,14 @@ WITH job_liquidities AS (
         ) AS ad
     UNION ALL
     SELECT
-        rm.evt_block_time AS `timestamp`
+        rm.evt_block_time AS timestamp
         , rm.evt_tx_hash AS tx_hash
         , rm.evt_index
         , 'LiquidityWithdrawal' AS event
-        , rm.contract_address keep3r
-        , rm._job job
-        , rm._liquidity AS token, - CAST(rm._amount AS DOUBLE) / 1e18 AS amount
+        , rm.contract_address AS keep3r
+        , rm._job AS job
+        , rm._liquidity AS token
+        , - CAST(rm._amount AS DOUBLE) / 1e18 AS amount
     FROM
         (
             SELECT
@@ -84,9 +85,10 @@ WITH job_liquidities AS (
                 ) }}
         ) AS rm
 )
+
 , df AS (
     SELECT
-        `timestamp`
+        timestamp
         , tx_hash
         , evt_index
         , event
@@ -102,7 +104,7 @@ WITH job_liquidities AS (
         , migs.evt_index
         , migs.job
         , migs.keep3r
-        , migs.`timestamp`
+        , migs.timestamp
         , migs.tx_hash
         , liqs.token AS token
         , NULL AS amount
@@ -110,8 +112,8 @@ WITH job_liquidities AS (
         {{ ref('keep3r_network_ethereum_view_job_migrations') }} AS migs
     INNER JOIN (
             -- generates 1 extra line per token of keep3r
-            SELECT
-            DISTINCT keep3r
+            SELECT DISTINCT
+                keep3r
                 , job
                 , token
             FROM
@@ -119,6 +121,7 @@ WITH job_liquidities AS (
         ) AS liqs
         ON migs.keep3r = liqs.keep3r
 )
+
 , migration_out AS (
     SELECT
         *
@@ -128,12 +131,13 @@ WITH job_liquidities AS (
             ) OVER (
                 PARTITION BY keep3r
                     , job
-                    , token rows unbounded preceding
+                    , token ROWS UNBOUNDED PRECEDING
             )
         END AS migration_out
     FROM
         df
 )
+
 , migration_in AS (
     SELECT
         *
@@ -151,8 +155,9 @@ WITH job_liquidities AS (
     FROM
         migration_out
 )
+
 SELECT
-    `timestamp`
+    timestamp
     , tx_hash
     , evt_index
     , event
@@ -167,4 +172,4 @@ SELECT
 FROM
     migration_in
 ORDER BY
-    `timestamp`
+    timestamp

@@ -7,7 +7,8 @@
                                     \'["hildobby"]\') }}')
 }}
 
-SELECT blockchain
+SELECT
+    blockchain
     , project
     , version
     , block_time
@@ -16,13 +17,11 @@ SELECT blockchain
     , amount_usd
     , token_standard
     , trade_type
-    , CAST(number_of_items AS DECIMAL(38, 0)) AS number_of_items
     , trade_category
     , evt_type
     , seller
     , buyer
     , amount_original
-    , CAST(amount_raw AS DECIMAL(38, 0)) AS amount_raw
     , currency_symbol
     , currency_contract
     , nft_contract_address
@@ -34,5 +33,7 @@ SELECT blockchain
     , tx_from
     , tx_to
     , unique_trade_id
+    , CAST(number_of_items AS DECIMAL(38, 0)) AS number_of_items
+    , CAST(amount_raw AS DECIMAL(38, 0)) AS amount_raw
 FROM {{ ref('blur_ethereum_events') }}
 WHERE evt_type = 'Trade'

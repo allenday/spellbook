@@ -1,18 +1,18 @@
 {{config(alias='aztec_v2_contracts_ethereum')}}
 
-with
+WITH
 contract_labels AS (
     SELECT
-        array('ethereum') AS blockchain
-        , contract_address AS address
+        contract_address AS address
         , description AS name
         , contract_type AS category
         , 'jackiep00' AS contributor
         , 'wizard' AS source
-        , date('2022-09-19') AS created_at
-        , now() AS updated_at
         , version
         , protocol
+        , array('ethereum') AS blockchain
+        , date('2022-09-19') AS created_at
+        , now() AS updated_at
     FROM
         (
             SELECT
@@ -80,20 +80,14 @@ contract_labels AS (
                         , 'ERC4626 Tokenized Vault'
                         , '0x3578D6D5e1B4F07A48bb1c958CBfEc135bef7d98'
                     )
-                ) AS x (
-                    protocol
-                    , contract_type
-                    , version
-                    , description
-                    , contract_address
                 )
         )
 )
+
 SELECT
-    c.*
-    , t.`from` AS contract_creator
+    contract_labels.*
+    , ethereum.traces.`from` AS contract_creator
 FROM
-    contract_labels AS c
-INNER JOIN ethereum.traces AS t ON t.type = 'create'
-        AND c.address = t.address
-;
+    contract_labels
+INNER JOIN ethereum.traces ON ethereum.traces.type = 'create'
+        AND contract_labels.address = ethereum.traces.address;

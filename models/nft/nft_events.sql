@@ -487,6 +487,7 @@ WITH project_events AS (
         , unique_trade_id
     FROM {{ ref('blur_ethereum_events') }}
 )
+
 , native_mints AS (
     SELECT
         blockchain
@@ -527,8 +528,9 @@ WITH project_events AS (
         , NULL AS royalty_fee_percentage
         , unique_trade_id
     FROM {{ ref('nft_ethereum_native_mints') }}
-	WHERE tx_hash NOT IN (SELECT tx_hash FROM project_events)
+    WHERE tx_hash NOT IN (SELECT tx_hash FROM project_events)
 )
+
 SELECT * FROM project_events
 UNION ALL
 SELECT * FROM native_mints

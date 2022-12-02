@@ -15,7 +15,7 @@
 -- we do a little sketchy event matching to get the node <> name relationships
 -- basically this takes the last AddrChanged event in the same tx preceding a NameRegistred event to link the node AND the name
 -- ONLY works FOR base ENS names (.eth , no subdomains)
-with registrations AS (
+WITH registrations AS (
     SELECT
         label AS label_hash
         , name AS label_name
@@ -47,28 +47,28 @@ with registrations AS (
 , matching AS (
     SELECT *
     FROM (
-        SELECT *
+        SELECT
+            *
             , ROW_NUMBER() OVER (PARTITION BY node ORDER BY block_time DESC, evt_index DESC) AS ordering2
         FROM (
             SELECT
-                r.*
-                , n.address
-                , n.node
-                , ROW_NUMBER() OVER (PARTITION BY r.tx_hash ORDER BY (r.evt_index - n.evt_index) ASC) AS ordering
-            FROM registrations AS r
-            INNER JOIN node_info AS n
-                ON r.block_number = n.block_number
-                    AND r.tx_hash = n.tx_hash
-                    AND r.evt_index > n.evt_index --register event comes after node event
+                registrations.*
+                , node_info.address
+                , node_info.node
+                , ROW_NUMBER() OVER (PARTITION BY registrations.tx_hash ORDER BY (registrations.evt_index - node_info.evt_index) ASC) AS ordering
+            FROM registrations
+            INNER JOIN node_info
+                ON registrations.block_number = node_info.block_number
+                    AND registrations.tx_hash = node_info.tx_hash
+                    AND registrations.evt_index > node_info.evt_index --register event comes after node event
         )
-        where ordering = 1
+        WHERE ordering = 1
     )
-    where ordering2 = 1
+    WHERE ordering2 = 1
 )
 
 SELECT
     node
-    , concat(label_name, '.eth') AS name
     , label_name
     , label_hash
     , address AS initial_address
@@ -76,6 +76,5 @@ SELECT
     , block_number
     , block_time
     , evt_index
+    , concat(label_name, ".eth") AS name
 FROM matching
-
-

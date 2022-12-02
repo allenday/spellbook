@@ -4,12 +4,13 @@
                                     "labels",
                                     \'["hildobby"]\') }}')}}
 
-SELECT DISTINCT array('ethereum') AS blockchain
-    , account_address AS address
+SELECT DISTINCT
+    account_address AS address
     , 'Flashbots User' AS name
     , 'flashbots' AS category
     , 'hildobby' AS contributor
     , 'query' AS source
+    , array('ethereum') AS blockchain
     , date('2022-10-08') AS created_at
     , NOW() AS modified_at
 FROM {{ source('flashbots', 'arbitrages') }}

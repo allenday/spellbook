@@ -4,7 +4,15 @@
                                     "labels",
                                     \'["hildobby"]\') }}')}}
 
-SELECT blockchain, address, name, category, contributor, source, created_at, updated_at
+SELECT
+    blockchain
+    , address
+    , name
+    , category
+    , contributor
+    , source
+    , created_at
+    , updated_at
 FROM (VALUES
     -- Source: https: / /home.treasury.gov/policy-issues/financial-sanctions/recent-actions/20220808
     (array('ethereum'), '0x8589427373d6d84e98730d7795d8f6f8731fda16', 'Tornado Cash: Donate', 'ofac_sanction', 'hildobby', 'static', TIMESTAMP('2022-09-20'), NOW())
@@ -45,4 +53,4 @@ FROM (VALUES
     , (array('ethereum'), '0x03893a7c7463ae47d46bc7f091665f1893656003', 'Tornado Cash: 50000 cDAI Pool', 'ofac_sanction', 'hildobby', 'static', TIMESTAMP('2022-09-20'), NOW())
     , (array('ethereum'), '0xca0840578f57fe71599d29375e16783424023357', 'Tornado Cash: L1 Helper', 'ofac_sanction', 'hildobby', 'static', TIMESTAMP('2022-09-20'), NOW())
     , (array('ethereum'), '0x58e8dcc13be9780fc42e8723d8ead4cf46943df2', 'Tornado Cash: Relayer Registry', 'ofac_sanction', 'hildobby', 'static', TIMESTAMP('2022-09-20'), NOW())
-    ) AS x (blockchain, address, name, category, contributor, source, created_at, updated_at)
+    )

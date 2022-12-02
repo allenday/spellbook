@@ -8,158 +8,170 @@
     )
 }}
 
-WITH 
+WITH
 
-modify_margin_v2 as (
-    SELECT 
-        date_trunc('day', mm.evt_block_time) as day
-        , mm.evt_tx_hash
+modify_margin_v2 AS (
+    SELECT
+        mm.evt_tx_hash
         , mm.evt_index
         , mm.evt_block_time
-        , mm._id as position_id
-        , mm._isMarginAdded as modify_type
-        , COALESCE(am._addMargin/1e18, rm._removeMargin/1e18) as margin_change
-        , mm._newMargin/1e18 as margin
-        , mm._newLeverage/1e18 as leverage
-        , mm._trader as trader 
-    FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV2_evt_MarginModified') }} AS mm 
-    LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV2_call_addMargin') }} AS am 
-        ON mm._id = am._id 
+        , mm._id AS position_id
+        , mm._isMarginAdded AS modify_type
+        , mm._trader AS trader
+        , date_trunc('day', mm.evt_block_time) AS day
+        , COALESCE(am._addMargin / 1e18, rm._removeMargin / 1e18) AS margin_change
+        , mm._newMargin / 1e18 AS margin
+        , mm._newLeverage / 1e18 AS leverage
+    FROM
+        {{ source('tigristrade_arbitrum', 'TradingV2_evt_MarginModified') }} AS mm
+    LEFT JOIN
+        {{ source('tigristrade_arbitrum', 'TradingV2_call_addMargin') }} AS am
+        ON mm._id = am._id
             AND mm.evt_tx_hash = am.call_tx_hash
-            AND am.call_success = true 
+            AND am.call_success = true
             {% if is_incremental() %}
-                AND am.call_block_time >= date_trunc("day", now() - interval '1 week')
+                AND am.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
             {% endif %}
-    LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV2_call_removeMargin') }} AS rm 
-        ON mm._id = rm._id 
+    LEFT JOIN
+        {{ source('tigristrade_arbitrum', 'TradingV2_call_removeMargin') }} AS rm
+        ON mm._id = rm._id
             AND mm.evt_tx_hash = rm.call_tx_hash
-            AND rm.call_success = true 
+            AND rm.call_success = true
             {% if is_incremental() %}
-                AND rm.call_block_time >= date_trunc("day", now() - interval '1 week')
+                AND rm.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
             {% endif %}
             {% if is_incremental() %}
-                WHERE mm.evt_block_time >= date_trunc("day", now() - interval '1 week')
+                WHERE mm.evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
             {% endif %}
 )
 
-, modify_margin_v3 as (
-    SELECT 
-        date_trunc('day', mm.evt_block_time) as day
-        , mm.evt_tx_hash
+, modify_margin_v3 AS (
+    SELECT
+        mm.evt_tx_hash
         , mm.evt_index
         , mm.evt_block_time
-        , mm._id as position_id
-        , mm._isMarginAdded as modify_type
-        , COALESCE(am._addMargin/1e18, rm._removeMargin/1e18) as margin_change
-        , mm._newMargin/1e18 as margin
-        , mm._newLeverage/1e18 as leverage
-        , mm._trader as trader 
-    FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV3_evt_MarginModified') }} AS mm 
-    LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV3_call_addMargin') }} AS am 
-        ON mm._id = am._id 
+        , mm._id AS position_id
+        , mm._isMarginAdded AS modify_type
+        , mm._trader AS trader
+        , date_trunc('day', mm.evt_block_time) AS day
+        , COALESCE(am._addMargin / 1e18, rm._removeMargin / 1e18) AS margin_change
+        , mm._newMargin / 1e18 AS margin
+        , mm._newLeverage / 1e18 AS leverage
+    FROM
+        {{ source('tigristrade_arbitrum', 'TradingV3_evt_MarginModified') }} AS mm
+    LEFT JOIN
+        {{ source('tigristrade_arbitrum', 'TradingV3_call_addMargin') }} AS am
+        ON mm._id = am._id
             AND mm.evt_tx_hash = am.call_tx_hash
-            AND am.call_success = true 
+            AND am.call_success = true
             {% if is_incremental() %}
-                AND am.call_block_time >= date_trunc("day", now() - interval '1 week')
+                AND am.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
             {% endif %}
-    LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV3_call_removeMargin') }} AS rm 
-        ON mm._id = rm._id 
+    LEFT JOIN
+        {{ source('tigristrade_arbitrum', 'TradingV3_call_removeMargin') }} AS rm
+        ON mm._id = rm._id
             AND mm.evt_tx_hash = rm.call_tx_hash
-            AND rm.call_success = true 
+            AND rm.call_success = true
             {% if is_incremental() %}
-                AND rm.call_block_time >= date_trunc("day", now() - interval '1 week')
+                AND rm.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
             {% endif %}
             {% if is_incremental() %}
-                WHERE mm.evt_block_time >= date_trunc("day", now() - interval '1 week')
+                WHERE mm.evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
             {% endif %}
 )
 
-, modify_margin_v4 as (
-    SELECT 
-        date_trunc('day', mm.evt_block_time) as day
-        , mm.evt_tx_hash
+, modify_margin_v4 AS (
+    SELECT
+        mm.evt_tx_hash
         , mm.evt_index
         , mm.evt_block_time
-        , mm._id as position_id
-        , mm._isMarginAdded as modify_type
-        , COALESCE(am._addMargin/1e18, rm._removeMargin/1e18) as margin_change
-        , mm._newMargin/1e18 as margin
-        , mm._newLeverage/1e18 as leverage
-        , mm._trader as trader 
-    FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV4_evt_MarginModified') }} AS mm 
-    LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV4_call_addMargin') }} AS am 
-        ON mm._id = am._id 
+        , mm._id AS position_id
+        , mm._isMarginAdded AS modify_type
+        , mm._trader AS trader
+        , date_trunc('day', mm.evt_block_time) AS day
+        , COALESCE(am._addMargin / 1e18, rm._removeMargin / 1e18) AS margin_change
+        , mm._newMargin / 1e18 AS margin
+        , mm._newLeverage / 1e18 AS leverage
+    FROM
+        {{ source('tigristrade_arbitrum', 'TradingV4_evt_MarginModified') }} AS mm
+    LEFT JOIN
+        {{ source('tigristrade_arbitrum', 'TradingV4_call_addMargin') }} AS am
+        ON mm._id = am._id
             AND mm.evt_tx_hash = am.call_tx_hash
-            AND am.call_success = true 
+            AND am.call_success = true
             {% if is_incremental() %}
-                AND am.call_block_time >= date_trunc("day", now() - interval '1 week')
+                AND am.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
             {% endif %}
-    LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV4_call_removeMargin') }} AS rm 
-        ON mm._id = rm._id 
+    LEFT JOIN
+        {{ source('tigristrade_arbitrum', 'TradingV4_call_removeMargin') }} AS rm
+        ON mm._id = rm._id
             AND mm.evt_tx_hash = rm.call_tx_hash
-            AND rm.call_success = true 
+            AND rm.call_success = true
             {% if is_incremental() %}
-                AND rm.call_block_time >= date_trunc("day", now() - interval '1 week')
+                AND rm.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
             {% endif %}
             {% if is_incremental() %}
-                WHERE mm.evt_block_time >= date_trunc("day", now() - interval '1 week')
+                WHERE mm.evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
             {% endif %}
 )
 
-, modify_margin_v5 as (
-    SELECT 
-        date_trunc('day', mm.evt_block_time) as day
-        , mm.evt_tx_hash
+, modify_margin_v5 AS (
+    SELECT
+        mm.evt_tx_hash
         , mm.evt_index
         , mm.evt_block_time
-        , mm._id as position_id
-        , mm._isMarginAdded as modify_type
-        , COALESCE(am._addMargin/1e18, rm._removeMargin/1e18) as margin_change
-        , mm._newMargin/1e18 as margin
-        , mm._newLeverage/1e18 as leverage
-        , mm._trader as trader 
-    FROM 
-        {{ source('tigristrade_arbitrum', 'TradingV5_evt_MarginModified') }} AS mm 
-    LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV5_call_addMargin') }} AS am 
-        ON mm._id = am._id 
+        , mm._id AS position_id
+        , mm._isMarginAdded AS modify_type
+        , mm._trader AS trader
+        , date_trunc('day', mm.evt_block_time) AS day
+        , COALESCE(am._addMargin / 1e18, rm._removeMargin / 1e18) AS margin_change
+        , mm._newMargin / 1e18 AS margin
+        , mm._newLeverage / 1e18 AS leverage
+    FROM
+        {{ source('tigristrade_arbitrum', 'TradingV5_evt_MarginModified') }} AS mm
+    LEFT JOIN
+        {{ source('tigristrade_arbitrum', 'TradingV5_call_addMargin') }} AS am
+        ON mm._id = am._id
             AND mm.evt_tx_hash = am.call_tx_hash
-            AND am.call_success = true 
+            AND am.call_success = true
             {% if is_incremental() %}
-                AND am.call_block_time >= date_trunc("day", now() - interval '1 week')
+                AND am.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
             {% endif %}
-    LEFT JOIN 
-        {{ source('tigristrade_arbitrum', 'TradingV5_call_removeMargin') }} AS rm 
-        ON mm._id = rm._id 
+    LEFT JOIN
+        {{ source('tigristrade_arbitrum', 'TradingV5_call_removeMargin') }} AS rm
+        ON mm._id = rm._id
             AND mm.evt_tx_hash = rm.call_tx_hash
-            AND rm.call_success = true 
+            AND rm.call_success = true
             {% if is_incremental() %}
-                AND rm.call_block_time >= date_trunc("day", now() - interval '1 week')
+                AND rm.call_block_time >= date_trunc('day', now() - INTERVAL '1 week')
             {% endif %}
             {% if is_incremental() %}
-                WHERE mm.evt_block_time >= date_trunc("day", now() - interval '1 week')
+                WHERE mm.evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
             {% endif %}
 )
 
-SELECT *, 'v2' as version FROM modify_margin_v2
+SELECT
+    *
+    , 'v2' AS version
+FROM modify_margin_v2
 
 UNION ALL
 
-SELECT *, 'v3' as version FROM modify_margin_v3
+SELECT
+    *
+    , 'v3' AS version
+FROM modify_margin_v3
 
 UNION ALL
 
-SELECT *, 'v4' as version FROM modify_margin_v4
+SELECT
+    *
+    , 'v4' AS version
+FROM modify_margin_v4
 
 UNION ALL
 
-SELECT *, 'v5' as version FROM modify_margin_v5
+SELECT
+    *
+    , 'v5' AS version
+FROM modify_margin_v5

@@ -247,6 +247,7 @@ WITH project_mints AS (
         , unique_trade_id
     FROM {{ ref('blur_ethereum_mints') }}
 )
+
 , native_mints AS (
     SELECT
         blockchain
@@ -277,8 +278,9 @@ WITH project_mints AS (
         , tx_to
         , unique_trade_id
     FROM {{ ref('nft_ethereum_native_mints') }}
-	WHERE tx_hash NOT IN (SELECT tx_hash FROM project_mints)
+    WHERE tx_hash NOT IN (SELECT tx_hash FROM project_mints)
 )
+
 SELECT * FROM project_mints
 UNION ALL
 SELECT * FROM native_mints

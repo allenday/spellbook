@@ -28,26 +28,25 @@ bridges_label (protocol, version, description, contract_address) AS (
         , 'Bridge' AS contract_type
         , AVG(bridgeGasLimit) AS blank -- to get unique bridges
     FROM
-        {{source('aztec_v2_ethereum', 'RollupProcessor_evt_BridgeAdded')}}
+        {{ source('aztec_v2_ethereum', 'RollupProcessor_evt_BridgeAdded') }}
     GROUP BY 1, 2
 
     UNION
 
     SELECT
-        LOWER('0xFF1F2B4ADb9dF6FC8eAFecDcbF96A2B351680455') AS bridgeAddress
+        LOWER('0xFF1F2B4ADb9dF6FC8eAFecDcbF96A2B351680455') AS bridgeaddress
         , 'Rollup' AS contract_type
         , 100 AS blank
 )
 
 SELECT
-    bl.protocol
-    , bl.version
-    , bl.description
-    , bc.contract_type
-    , bc.bridgeAddress AS contract_address
+    bridges_label.protocol
+    , bridges_label.version
+    , bridges_label.description
+    , bridges_creation.contract_type
+    , bridges_creation.bridgeAddress AS contract_address
 FROM
-    bridges_creation AS bc
+    bridges_creation
 LEFT JOIN
-    bridges_label AS bl
-    ON bl.contract_address = bc.bridgeAddress
-;
+    bridges_label
+    ON bridges_label.contract_address = bridges_creation.bridgeAddress;

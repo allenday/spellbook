@@ -24,17 +24,16 @@ assets_added AS (
         , assetGasLimit AS asset_gas_limit
         , evt_block_time AS date_added
     FROM
-        {{source('aztec_v2_ethereum', 'RollupProcessor_evt_AssetAdded')}}
+        {{ source('aztec_v2_ethereum', 'RollupProcessor_evt_AssetAdded') }}
 )
 
 SELECT
-    a.*
+    assets_added.*
     , t.symbol
     , t.decimals
 FROM
-    assets_added AS a
+    assets_added
 LEFT JOIN
     {{ ref('tokens_erc20') }} AS t
-    ON a.asset_address = t.contract_address
-        AND t.blockchain = 'ethereum'
-;
+    ON assets_added.asset_address = t.contract_address
+        AND t.blockchain = 'ethereum';

@@ -8,9 +8,14 @@
   )
 }}
 
-SELECT "optimism" AS blockchain, feed_name, CAST(decimals AS numeric) AS decimals, LOWER(proxy_address) AS proxy_address, LOWER(aggregator_address) AS aggregator_address
+SELECT
+    "optimism" AS blockchain
+    , feed_name
+    , CAST(decimals AS numeric) AS decimals
+    , LOWER(proxy_address) AS proxy_address
+    , LOWER(aggregator_address) AS aggregator_address
 
-FROM (values
+FROM (VALUES
         ("AAVE / USD", 8, "0x338ed6787f463394d24813b297401b9f05a8c9d1", "0x81cc0c227bf9bfb8088b14755dfca65f7892203b")
         , ("BTC / USD", 8, "0xd702dd976fb76fffc2d3963d037dfdae5b04e593", "0x0c1272d2ac652d10d03bb4deb0d31f15ea3eab2b")
         , ("CRV / USD", 8, "0xbD92C6c284271c227a1e0bF1786F468b539f51D9", "0x7c56d3650f9acd992b3aa635c04a311c54ad264c")
@@ -60,5 +65,4 @@ FROM (values
         , ("BAL / USD", 8, "0x30D9d31C1ac29Bc2c2c312c1bCa9F8b3D60e2376", "0x44f690526b76d91072fb0427b0a24b882e612455")
         , ("BOND / USD", 8, "0x8fCfb87fc17CfD5775d234AcFd1753764899Bf20", "0x3b06b9b3ead7ec34ae67e2d7f73b128da09c583a")
         , ("DOGE / USD", 8, "0xC6066533917f034Cf610c08e1fe5e9c7eADe0f54", "0x8afc1cc622be1cd1644579c9c7ec3fbba6bd02d2")
-) AS a (feed_name, decimals, proxy_address, aggregator_address)
-
+)

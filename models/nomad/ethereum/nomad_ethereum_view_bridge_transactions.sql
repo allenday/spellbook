@@ -8,8 +8,8 @@
                                     \'["springzh"]\') }}')
 }}
 
-with nomad_bridge_domains(domain_id, domain_name, domain_type) AS (
-    values
+WITH nomad_bridge_domains(domain_id, domain_name, domain_type) AS (
+    VALUES
     (6648936, 'Ethereum', 'Outflow')
     , (1650811245, 'Moonbeam', 'Outflow')
     , (70901803, 'Moonbeam', 'Inflow')
@@ -23,7 +23,8 @@ with nomad_bridge_domains(domain_id, domain_name, domain_type) AS (
 )
 
 , nomad_bridge_transactions AS (
-    SELECT evt_block_time AS block_time
+    SELECT
+        evt_block_time AS block_time
         , evt_block_number AS block_number
         , evt_tx_hash AS tx_hash
         , evt_index
@@ -37,11 +38,11 @@ with nomad_bridge_domains(domain_id, domain_name, domain_type) AS (
         , `from` AS sender
         , concat('0x', right(toId, 40)) AS recipient
         , toDomain AS domain_id
-        , d.domain_name AS domain_name
+        , nomad_bridge_domains.domain_name AS domain_name
         , fastLiquidityEnabled AS fast_liquidity_enabled
         , '0x0000000000000000000000000000000000000000' AS liquidity_provider
     FROM {{ source('nomad_ethereum', 'BridgeRouter_evt_Send') }} AS s
-    INNER JOIN nomad_bridge_domains AS d ON d.domain_id = s.toDomain
+    INNER JOIN nomad_bridge_domains ON nomad_bridge_domains.domain_id = s.toDomain
     LEFT JOIN {{ ref('tokens_erc20') }} AS e1 ON e1.contract_address = s.token AND e1.blockchain = 'ethereum'
     LEFT JOIN {{ source('prices', 'usd') }} AS p1 ON p1.contract_address = s.token
             AND p1.minute = date_trunc('minute', s.evt_block_time)
@@ -50,7 +51,8 @@ with nomad_bridge_domains(domain_id, domain_name, domain_type) AS (
 
     UNION ALL
 
-    SELECT evt_block_time AS block_time
+    SELECT
+        evt_block_time AS block_time
         , evt_block_number AS block_number
         , evt_tx_hash AS tx_hash
         , evt_index
@@ -64,14 +66,14 @@ with nomad_bridge_domains(domain_id, domain_name, domain_type) AS (
         , t.`from` AS sender
         , r.recipient
         , left(originAndNonce, 8) AS domain_id
-        , d.domain_name AS domain_name
+        , nomad_bridge_domains.domain_name AS domain_name
         , false AS fast_liquidity_enabled
         , liquidityProvider AS liquidity_provider
     FROM {{ source('nomad_ethereum', 'BridgeRouter_evt_Receive') }} AS r
     INNER JOIN {{ source('ethereum', 'transactions') }} AS t ON r.evt_block_number = t.block_number
             AND r.evt_tx_hash = t.hash
             AND t.block_time >= '2022-01-01'
-    INNER JOIN nomad_bridge_domains AS d ON d.domain_id = left(originAndNonce, 8)
+    INNER JOIN nomad_bridge_domains ON nomad_bridge_domains.domain_id = left(originAndNonce, 8)
     LEFT JOIN {{ ref('tokens_erc20') }} AS e1 ON e1.contract_address = r.token AND e1.blockchain = 'ethereum'
     LEFT JOIN {{ source('prices', 'usd') }} AS p1 ON p1.contract_address = r.token
             AND p1.minute = date_trunc('minute', r.evt_block_time)
@@ -79,21 +81,22 @@ with nomad_bridge_domains(domain_id, domain_name, domain_type) AS (
             AND p1.blockchain = 'ethereum'
 )
 
-SELECT block_time
-       , block_number
-       , tx_hash
-       , evt_index
-       , transaction_type
-       , contract_address
-       , token_address
-       , original_amount_raw
-       , original_amount
-       , original_currency
-       , usd_amount
-       , sender
-       , recipient
-       , domain_id
-       , domain_name
-       , fast_liquidity_enabled
-       , liquidity_provider
+SELECT
+    block_time
+    , block_number
+    , tx_hash
+    , evt_index
+    , transaction_type
+    , contract_address
+    , token_address
+    , original_amount_raw
+    , original_amount
+    , original_currency
+    , usd_amount
+    , sender
+    , recipient
+    , domain_id
+    , domain_name
+    , fast_liquidity_enabled
+    , liquidity_provider
 FROM nomad_bridge_transactions

@@ -15,12 +15,12 @@ FROM (
         conv((id), 10, 16) AS label
         , expires
         , evt_block_time
-    FROM {{source('ethereumnameservice_ethereum', 'BaseRegistrarImplementation_evt_NameRegistered')}}
+    FROM {{ source('ethereumnameservice_ethereum', 'BaseRegistrarImplementation_evt_NameRegistered') }}
     UNION
     SELECT
         conv((id), 10, 16) AS label
         , expires
         , evt_block_time
-    FROM {{source('ethereumnameservice_ethereum', 'BaseRegistrarImplementation_evt_NameRenewed')}}
+    FROM {{ source('ethereumnameservice_ethereum', 'BaseRegistrarImplementation_evt_NameRenewed') }}
 ) AS r
-GROUP BY label ;
+GROUP BY label;

@@ -1,6 +1,9 @@
 {{ config( alias='erc20', tags=['static'])}}
 
-SELECT LOWER(contract_address) AS contract_address, symbol, decimals
+SELECT
+    symbol
+    , decimals
+    , LOWER(contract_address) AS contract_address
 FROM (VALUES
         ('0xc7198437980c041c805a1edcba50c1ce5db95118', 'USDT.e', 6)
         , ('0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7', 'USDt', 6)
@@ -190,4 +193,4 @@ FROM (VALUES
         , ('0x7b2b702706d9b361dfe3f00bd138c0cfda7fb2cf', 'PLN', 18)
         , ('0x70928e5b188def72817b7775f0bf6325968e563b', 'LUNA', 6)
         , ('0x9e15f045e44ea5a80e7fbc193a35287712cc5569', '3ULL', 18)
-    ) AS temp_table (contract_address, symbol, decimals)
+    )

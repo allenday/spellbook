@@ -7,7 +7,8 @@
                                     \'["soispoke", "hildobby"]\') }}')
 }}
 
-SELECT blockchain
+SELECT
+    blockchain
     , project
     , version
     , block_time

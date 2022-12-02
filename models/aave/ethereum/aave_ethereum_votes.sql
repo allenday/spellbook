@@ -18,11 +18,12 @@
 {% set dao_name = 'DAO: AAVE' %}
 {% set dao_address = '0xec568fffba86c094cf06b22134b23074dfe2252c' %}
 
-WITH cte_sum_votes AS
-(SELECT sum(votingPower / 1e18) AS sum_votes
-        , id
+WITH cte_sum_votes AS (SELECT
+    id
+    , sum(votingPower / 1e18) AS sum_votes
     FROM {{ source('aave_ethereum', 'AaveGovernanceV2_evt_VoteEmitted') }}
-    GROUP BY id)
+    GROUP BY id
+)
 
 SELECT
     '{{ blockchain }}' AS blockchain
@@ -35,23 +36,23 @@ SELECT
     , '{{ dao_address }}' AS dao_address
     , vc.id AS proposal_id
     , vc.votingPower / 1e18 AS votes
-    , (votingPower / 1e18) * (100) / (csv.sum_votes) AS votes_share
+    , (votingPower / 1e18) * (100) / (cte_sum_votes.sum_votes) AS votes_share
     , p.symbol AS token_symbol
     , p.contract_address AS token_address
     , vc.votingPower / 1e18 * p.price AS votes_value_usd
     , vc.voter AS voter_address
     , CASE WHEN vc.support = 0 THEN 'against'
-              WHEN vc.support = 1 THEN 'FOR'
-              WHEN vc.support = 2 THEN 'abstain'
+                WHEN vc.support = 1 THEN 'FOR'
+                WHEN vc.support = 2 THEN 'abstain'
     END AS support
     , cast(NULL AS STRING) AS reason
 FROM {{ source('aave_ethereum', 'AaveGovernanceV2_evt_VoteEmitted') }} AS vc
-LEFT JOIN cte_sum_votes AS csv ON vc.id = csv.id
+LEFT JOIN cte_sum_votes ON vc.id = cte_sum_votes.id
 LEFT JOIN {{ source('prices', 'usd') }} AS p ON p.minute = date_trunc('minute', evt_block_time)
     AND p.symbol = 'AAVE'
-    AND p.blockchain ='ethereum'
+    AND p.blockchain = 'ethereum'
     {% if is_incremental() %}
-        AND p.minute >= date_trunc("day", now() - INTERVAL '1 week')
+        AND p.minute >= date_trunc('day', now() - INTERVAL '1 week')
     {% endif %}
     {% if is_incremental() %}
         WHERE evt_block_time > (SELECT max(block_time) FROM {{ this }})

@@ -4,7 +4,15 @@
                                     "labels",
                                     \'["ilemi", "soispoke"]\') }}')}}
 
-SELECT blockchain, address, name, category, contributor, source, created_at, updated_at
+SELECT
+    blockchain
+    , address
+    , name
+    , category
+    , contributor
+    , source
+    , created_at
+    , updated_at
 FROM (VALUES
     (array('ethereum'), '0xb3764761e297d6f121e79c32a65829cd1ddb4d32', 'Multisig Exploit Hacker', 'hackers', 'ilemi', 'static', timestamp('2022-08-28'), now())
     , (array('ethereum'), '0x1342a001544b8b7ae4a5d374e33114c66d78bd5f', 'Gatecoin Hacker 2', 'hackers', 'ilemi', 'static', timestamp('2022-08-28'), now())
@@ -106,4 +114,4 @@ FROM (VALUES
     , (array('ethereum'), '0x844f03375f7da2292da550aebfd52dff2cc6ad75', 'RUNE Token Exploiter', 'hackers', 'ilemi', 'static', timestamp('2022-08-28'), now())
     , (array('ethereum'), '0x09923e35f19687a524bbca7d42b92b6748534f25', 'Nexus Mutual Hacker 1', 'hackers', 'ilemi', 'static', timestamp('2022-08-28'), now())
     , (array('ethereum'), '0x59ABf3837Fa962d6853b4Cc0a19513AA031fd32b', 'FTX Funds Drainer', 'hackers', 'augustog', 'static', timestamp('2022-11-15'), now())
-    ) AS x (blockchain, address, name, category, contributor, source, created_at, updated_at)
+    )

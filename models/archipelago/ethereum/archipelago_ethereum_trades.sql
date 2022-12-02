@@ -23,7 +23,6 @@ SELECT
     , seller
     , buyer
     , amount_original
-    , CAST(amount_raw AS DECIMAL(38, 0)) AS amount_raw
     , currency_symbol
     , currency_contract
     , nft_contract_address
@@ -35,4 +34,5 @@ SELECT
     , tx_from
     , tx_to
     , unique_trade_id
+    , CAST(amount_raw AS DECIMAL(38, 0)) AS amount_raw
 FROM {{ ref('archipelago_ethereum_events') }}

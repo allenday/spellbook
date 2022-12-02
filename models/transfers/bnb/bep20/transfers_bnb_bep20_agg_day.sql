@@ -12,7 +12,7 @@
         )
 }}
 
-with
+WITH
 sent_transfers AS (
     SELECT
         `to` AS wallet_address
@@ -22,7 +22,7 @@ sent_transfers AS (
     FROM
         {{ source('erc20_bnb', 'evt_Transfer') }}
     {% if is_incremental() %}
-        where evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+        WHERE evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
     {% endif %}
 )
 ,
@@ -35,7 +35,7 @@ received_transfers AS (
     FROM
         {{ source('erc20_bnb', 'evt_Transfer') }}
     {% if is_incremental() %}
-        where evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+        WHERE evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
     {% endif %}
 )
 ,
@@ -48,7 +48,7 @@ deposited_wbnb AS (
     FROM
         {{ source('bnb_bnb', 'WBNB_evt_Deposit') }}
     {% if is_incremental() %}
-        where evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+        WHERE evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
     {% endif %}
 )
 ,
@@ -61,7 +61,7 @@ withdrawn_wbnb AS (
     FROM
         {{ source('bnb_bnb', 'WBNB_evt_Withdrawal') }}
     {% if is_incremental() %}
-        where evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
+        WHERE evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
     {% endif %}
 )
 ,
@@ -100,14 +100,15 @@ transfers_bnb_bep20 AS (
         , amount_raw
     FROM withdrawn_wbnb
 )
+
 SELECT
     'bnb' AS blockchain
-    , date_trunc('day', tr.evt_block_time) AS day
-    , tr.wallet_address
-    , tr.token_address
+    , date_trunc('day', transfers_bnb_bep20.evt_block_time) AS day
+    , transfers_bnb_bep20.wallet_address
+    , transfers_bnb_bep20.token_address
     , t.symbol
-    , sum(tr.amount_raw) AS amount_raw
-    , sum(tr.amount_raw / power(10, t.decimals)) AS amount
-FROM transfers_bnb_bep20 AS tr
-LEFT JOIN {{ ref('tokens_bnb_bep20') }} AS t ON t.contract_address = tr.token_address
+    , sum(transfers_bnb_bep20.amount_raw) AS amount_raw
+    , sum(transfers_bnb_bep20.amount_raw / power(10, t.decimals)) AS amount
+FROM transfers_bnb_bep20
+LEFT JOIN {{ ref('tokens_bnb_bep20') }} AS t ON t.contract_address = transfers_bnb_bep20.token_address
 GROUP BY 1, 2, 3, 4, 5

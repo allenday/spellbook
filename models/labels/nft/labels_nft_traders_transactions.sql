@@ -24,22 +24,22 @@ WITH nft_trades AS (
 )
 
 SELECT
-    collect_set(nft_trades.blockchain) AS blockchain
-    , nft_trades.address
-    , CASE WHEN ((ROW_NUMBER() OVER(ORDER BY COUNT(tx_hash) DESC)) / total_count * 100) <= 10
-                                                 AND ((ROW_NUMBER() OVER(ORDER BY COUNT(tx_hash) DESC)) / total_count * 100) > 5
-            THEN 'Top 10% NFT Trader (Transaction)'
-                                                 WHEN ((ROW_NUMBER() OVER(ORDER BY COUNT(tx_hash) DESC)) / total_count * 100) <= 5
-            AND ((ROW_NUMBER() OVER(ORDER BY COUNT(tx_hash) DESC)) / total_count * 100) > 1
-            THEN 'Top 5% NFT Trader (Transactions)'
-                                                 WHEN ((ROW_NUMBER() OVER(ORDER BY COUNT(tx_hash) DESC)) / total_count * 100) <= 1
-            THEN 'Top 1% NFT Trader (Transactions)' END AS name
+    nft_trades.address
     , 'nft' AS category
     , 'soispoke' AS contributor
     , 'query' AS source
+    , collect_set(nft_trades.blockchain) AS blockchain
+    , CASE WHEN ((ROW_NUMBER() OVER(ORDER BY COUNT(tx_hash) DESC)) / total_count * 100) <= 10
+                                                   AND ((ROW_NUMBER() OVER(ORDER BY COUNT(tx_hash) DESC)) / total_count * 100) > 5
+            THEN 'Top 10% NFT Trader (Transaction)'
+                                                   WHEN ((ROW_NUMBER() OVER(ORDER BY COUNT(tx_hash) DESC)) / total_count * 100) <= 5
+            AND ((ROW_NUMBER() OVER(ORDER BY COUNT(tx_hash) DESC)) / total_count * 100) > 1
+            THEN 'Top 5% NFT Trader (Transactions)'
+                                                   WHEN ((ROW_NUMBER() OVER(ORDER BY COUNT(tx_hash) DESC)) / total_count * 100) <= 1
+            THEN 'Top 1% NFT Trader (Transactions)' END AS name
     , timestamp('2022-08-24') AS created_at
     , now() AS updated_at
 FROM nft_trades
-JOIN total ON total.address = nft_trades.address
-WHERE nft_trades.address is NOT NULL
+INNER JOIN total ON total.address = nft_trades.address
+WHERE nft_trades.address IS NOT NULL
 GROUP BY nft_trades.address, total_count

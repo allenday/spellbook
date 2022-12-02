@@ -9,16 +9,16 @@
 
 SELECT
     'ethereum' AS blockchain
-    , date_trunc('hour', evt_block_time) AS hour
     , wallet_address
     , token_address
     , tokenId
+    , date_trunc('hour', evt_block_time) AS hour
     , sum(amount) AS amount
     , unique_tx_id || '-' || wallet_address || '-' || token_address || tokenId || '-' || sum(amount)::STRING AS unique_transfer_id
 FROM {{ ref('transfers_ethereum_erc1155') }}
 {% if is_incremental() %}
     -- this filter will only be applied ON an incremental run
-    where date_trunc('hour', evt_block_time) > now() - INTERVAL 2 days
+    WHERE date_trunc('hour', evt_block_time) > now() - INTERVAL 2 DAYS
 {% endif %}
 GROUP BY
     date_trunc('hour', evt_block_time), wallet_address, token_address, tokenId, unique_tx_id

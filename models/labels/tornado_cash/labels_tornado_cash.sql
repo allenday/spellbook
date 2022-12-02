@@ -22,12 +22,12 @@ WITH tornado_addresses AS (
 )
 
 SELECT
-    collect_set(blockchain) AS blockchain
-    , address
-    , 'Tornado Cash ' || array_join(collect_set(name), ' AND ') AS name
+    address
     , 'tornado_cash' AS category
     , 'soispoke' AS contributor
     , 'query' AS source
+    , collect_set(blockchain) AS blockchain
+    , 'Tornado Cash ' || array_join(collect_set(name), ' AND ') AS name
     , timestamp('2022-10-01') AS created_at
     , now() AS updated_at
 FROM tornado_addresses

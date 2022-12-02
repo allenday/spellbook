@@ -37,9 +37,3 @@ FROM
     {{ ref('dao_addresses') }}
 WHERE dao_creator_tool NOT IN ('zodiac', 'syndicate') -- excluding syndicate since their wallet addresses are controlled BY EOAs
                                                      -- excluding zodiac since they're gnosis safes
-
-
-
-
-
-

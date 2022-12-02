@@ -3,7 +3,8 @@
         alias='fees')
 }}
 
-SELECT blockchain
+SELECT
+    blockchain
     , project
     , version
     , block_time
@@ -12,11 +13,9 @@ SELECT blockchain
     , platform_fee_amount_raw
     , platform_fee_amount
     , platform_fee_amount_usd
-    , CAST(platform_fee_percentage AS DOUBLE) AS platform_fee_percentage
     , royalty_fee_amount_raw
     , royalty_fee_amount
     , royalty_fee_amount_usd
-    , CAST(royalty_fee_percentage AS DOUBLE) AS royalty_fee_percentage
     , royalty_fee_receive_address
     , royalty_fee_currency_symbol
     , token_standard
@@ -35,4 +34,6 @@ SELECT blockchain
     , tx_from
     , tx_to
     , unique_trade_id
+    , CAST(platform_fee_percentage AS DOUBLE) AS platform_fee_percentage
+    , CAST(royalty_fee_percentage AS DOUBLE) AS royalty_fee_percentage
 FROM {{ ref('opensea_ethereum_events') }}

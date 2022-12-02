@@ -4,10 +4,18 @@
                                     "labels",
                                     \'["hildobby"]\') }}')}}
 
-SELECT blockchain, address, name, category, contributor, source, created_at, updated_at
+SELECT
+    blockchain
+    , address
+    , name
+    , category
+    , contributor
+    , source
+    , created_at
+    , updated_at
 FROM (VALUES
-    	-- Binance, Source: https: / /etherscan.io/accounts/label/binance
-    	(array('ethereum'), '0x8ed95d1746bf1e4dab58d8ed4724f1ef95b20db0', '0x: Erc20 Bridge Proxy', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())
+        -- Binance, Source: https: / /etherscan.io/accounts/label/binance
+        (array('ethereum'), '0x8ed95d1746bf1e4dab58d8ed4724f1ef95b20db0', '0x: Erc20 Bridge Proxy', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())
         , (array('ethereum'), '0x0ac2d6f5f5afc669d3ca38f830dad2b4f238ad3f', '0x: Eth2Dai Bridge', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())
         , (array('ethereum'), '0xa6baaed2053058a3c8f11e0c7a9716304454b09e', '0x: Uniswap Bridge', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())
         , (array('ethereum'), '0x96e471b5945373de238963b4e032d3574be4d195', '0xHabitat: Rollup Bridge', 'bridge', 'hildobby', 'static', timestamp('2022-09-22'), now())
@@ -121,4 +129,4 @@ FROM (VALUES
         , (array('ethereum'), '0x76943c0d61395d8f2edf9060e1533529cae05de6', 'Optimism: Lido Bridge', 'bridge', 'msilb7', 'static', timestamp('2022-10-12'), now())
         , (array('ethereum'), '0x324c7ec7fb2bc61646ac2f22f6d06ab29b6c87a3', 'Optimism: Teleportr v1', 'bridge', 'msilb7', 'static', timestamp('2022-10-12'), now())
         , (array('ethereum'), '0x52ec2f3d7c5977a8e558c8d9c6000b615098e8fc', 'Optimism: Teleportr v2', 'bridge', 'msilb7', 'static', timestamp('2022-10-12'), now())
-    ) AS x (blockchain, address, name, category, contributor, source, created_at, updated_at);
+    );

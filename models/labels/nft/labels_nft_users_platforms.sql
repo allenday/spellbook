@@ -15,14 +15,14 @@ WITH nft_trades AS (
 )
 
 SELECT
-    collect_set(blockchain) AS blockchain
-    , address
-    , array_join(collect_set(concat(upper(SUBSTRING(project, 1, 1)), SUBSTRING(project, 2))), ', ') ||' User' AS name
+    address
     , 'nft' AS category
     , 'soispoke' AS contributor
     , 'query' AS source
+    , collect_set(blockchain) AS blockchain
+    , array_join(collect_set(concat(upper(SUBSTRING(project, 1, 1)), SUBSTRING(project, 2))), ', ') || ' User' AS name
     , timestamp('2022-09-03') AS created_at
     , now() AS updated_at
 FROM nft_trades
-WHERE address is NOT NULL
+WHERE address IS NOT NULL
 GROUP BY address

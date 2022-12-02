@@ -4,7 +4,10 @@
           "addresses",
           \'["hildobby", "msilb7"]\') }}') }}
 
-SELECT lower(address) AS address, bridge_name, description
+SELECT
+    bridge_name
+    , description
+    , lower(address) AS address
 FROM (VALUES ("0x8ed95d1746bf1e4dab58d8ed4724f1ef95b20db0", "0x", "Erc20 Bridge Proxy")
               , ("0x0ac2d6f5f5afc669d3ca38f830dad2b4f238ad3f", "0x", "Eth2Dai Bridge")
               , ("0xa6baaed2053058a3c8f11e0c7a9716304454b09e", "0x", "Uniswap Bridge")
@@ -127,4 +130,4 @@ FROM (VALUES ("0x8ed95d1746bf1e4dab58d8ed4724f1ef95b20db0", "0x", "Erc20 Bridge 
               , ("0x76943c0d61395d8f2edf9060e1533529cae05de6", "Optimism", "Optimism: Lido Bridge")
               , ("0x324c7ec7fb2bc61646ac2f22f6d06ab29b6c87a3", "Optimism", "Optimism: Teleportr v1")
               , ("0x52ec2f3d7c5977a8e558c8d9c6000b615098e8fc", "Optimism", "Optimism: Teleportr v2")
-              ) AS x (address, bridge_name, description)
+              )

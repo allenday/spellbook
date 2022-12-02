@@ -3,24 +3,24 @@
     )
  }}
 
-WITH 
+WITH
 
-leverage as (
-    SELECT 
+leverage AS (
+    SELECT
         evt_block_time
         , position_id
-        , leverage 
-    FROM 
+        , leverage
+    FROM
         {{ ref('tigris_arbitrum_events_open_position') }}
 
     UNION ALL
 
-    SELECT 
+    SELECT
         evt_block_time
         , position_id
-        , leverage 
-    FROM 
+        , leverage
+    FROM
         {{ ref('tigris_arbitrum_events_modify_margin') }}
 )
 
-SELECT * FROM leverage 
+SELECT * FROM leverage

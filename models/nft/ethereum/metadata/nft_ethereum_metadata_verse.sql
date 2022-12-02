@@ -4,11 +4,17 @@
 }}
 
 
-SELECT contract_address, project_id, project_id_base_value, collection_name, artist_name, art_collection_unique_id
+SELECT
+    contract_address
+    , project_id
+    , project_id_base_value
+    , collection_name
+    , artist_name
+    , art_collection_unique_id
 FROM (VALUES
         ('0xbb5471c292065d3b01b2e81e299267221ae9a250', 0, 1000000, 'Hypertype', 'Mark Webster', '0xbb5471c292065d3b01b2e81e299267221ae9a250-0')
         -- double check base value once we have 2nd collection minted
 
-) AS temp_table (contract_address, project_id, project_id_base_value, collection_name, artist_name, art_collection_unique_id)
+)
 
 ORDER BY project_id ASC

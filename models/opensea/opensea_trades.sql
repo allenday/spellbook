@@ -7,7 +7,8 @@
         )
 }}
 
-SELECT blockchain
+SELECT
+    blockchain
     , project
     , version
     , block_time
@@ -38,7 +39,8 @@ FROM {{ ref('opensea_ethereum_trades') }}
 
 UNION ALL
 
-SELECT blockchain
+SELECT
+    blockchain
     , project
     , version
     , block_time

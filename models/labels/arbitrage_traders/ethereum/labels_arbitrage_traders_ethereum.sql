@@ -1,8 +1,8 @@
 {{config(alias='arbitrage_traders_ethereum')}}
 
-with
+WITH
 eth_arb_traders AS (
-    with
+    WITH
     pools AS (
         -- uni v2 pools
         SELECT pair
@@ -13,6 +13,7 @@ eth_arb_traders AS (
         SELECT pool AS pair
         FROM uniswap_v3_ethereum.Factory_evt_PoolCreated
     )
+
     , err_contracts AS (
         SELECT address
         FROM
@@ -44,33 +45,34 @@ eth_arb_traders AS (
                 , ('0x54a4a1167b004b004520c605e3f01906f683413d') -- kyber
                 , ('0x288931fa76d7b0482f0fd0bca9a50bf0d22b9fef') -- 1inch
                 , ('0x8df6084e3b84a65ab9dd2325b5422e5debd8944a') -- coinbase wallet swap proxy
-            ) AS x (address)
+            )
     )
-    SELECT
-    distinct t1.taker AS address
+
+    SELECT DISTINCT t1.taker AS address
     FROM
-        {{ref('dex_trades')}} AS t1
-    INNER JOIN {{ref('dex_trades')}} AS t2 ON t1.tx_hash = t2.tx_hash
+        {{ ref('dex_trades') }} AS t1
+    INNER JOIN {{ ref('dex_trades') }} AS t2 ON t1.tx_hash = t2.tx_hash
     WHERE
         t1.blockchain = 'ethereum'
         AND t2.blockchain = 'ethereum'
         AND t1.token_sold_address = t2.token_bought_address
         AND t1.token_bought_address = t2.token_sold_address
         AND t1.evt_index != t2.evt_index
-        AND t1.taker NOT in (
+        AND t1.taker NOT IN (
             SELECT pair FROM pools
         )
-        AND t1.taker NOT in (
+        AND t1.taker NOT IN (
             SELECT address FROM err_contracts
         )
 )
+
 SELECT
-    array("ethereum") AS blockchain
-    , address
-    , "Arbitrage Trader" AS name
-    , "arbitrage_traders" AS category
-    , "alexth" AS contributor
-    , "query" AS source
+    address
+    , 'Arbitrage Trader' AS name
+    , 'arbitrage_traders' AS category
+    , 'alexth' AS contributor
+    , 'query' AS source
+    , array('ethereum') AS blockchain
     , timestamp('2022-10-05') AS created_at
     , now() AS updated_at
 FROM

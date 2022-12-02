@@ -3,7 +3,12 @@
         )
 }}
 
-SELECT contract_address, collection_name, artist_name, platform, website
+SELECT
+    contract_address
+    , collection_name
+    , artist_name
+    , platform
+    , website
 FROM (VALUES
         ('0x398034c799fad7fdc4695c8eb8bec713ebed9da4', 'Alessandra Sanguinetti', 'Alessandra Sanguinetti', 'Foundation', 'https: / /foundation.app/collection/alessandra-sanguinetti')
         , ('0xf25d28271e2b98a1771dfa45c6a3ad65958d4f81', 'La Calle', 'Alex Webb', 'Foundation', 'https: / /foundation.app/collection/awlc')
@@ -64,6 +69,6 @@ FROM (VALUES
         , ('0xb8c55c77b3617ef22a4f552f9a47503e021c6623', 'Roaming', 'Todd Hido', 'Foundation', 'https: / /foundation.app/collection/thr-00f3')
         , ('0x49e6b0cfb1880fd7afb69c062613238049a4b56b', 'By Accident - The Negatives', 'Marcel De Baer', 'Foundation', 'https: / /foundation.app/collection/ngtvs')
 
-) AS temp_table (contract_address, collection_name, artist_name, platform, website)
+)
 
 ORDER BY artist_name ASC, collection_name ASC

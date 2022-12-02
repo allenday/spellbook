@@ -17,5 +17,5 @@ SELECT
     , avg(CAST(a.variableBorrowRate AS DOUBLE)) / 1e27 AS variable_borrow_apy
 FROM {{ source('aave_v2_ethereum', 'LendingPool_evt_ReserveDataUpdated') }} AS a
 LEFT JOIN {{ ref('tokens_ethereum_erc20') }} AS t
-    ON a.reserve=t.contract_address
+    ON a.reserve = t.contract_address
 GROUP BY 1, 2, 3

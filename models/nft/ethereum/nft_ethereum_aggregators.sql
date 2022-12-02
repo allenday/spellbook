@@ -40,4 +40,4 @@ FROM
         , ('0x141efc30c4093bc0f8204accb8afa6643fddecf2', 'Alpha Sharks') -- Alpha Sharks
         , ('0x552b16d19dbad7af2786fe5a40d96d2a5c09428c', 'Alpha Sharks') -- Alpha Sharks 2.0
         , ('0xef1c6e67703c7bd7107eed8303fbe6ec2554bf6b', 'Uniswap') -- Uniswap's Universal Router
-    ) AS temp_table (contract_address, name)
+    )

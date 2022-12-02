@@ -7,18 +7,16 @@
         )
 }}
 
-with
+WITH
 days AS (
-    SELECT
-        explode(
-            sequence(
-                to_date('2015-01-01'), date_trunc('day', now()), INTERVAL 1 day
-            )
-        ) AS day
+    SELECT explode(
+        sequence(
+            to_date('2015-01-01'), date_trunc('day', now()), INTERVAL 1 DAY
+        )
+    ) AS day
 )
 
-, daily_balances AS
-(SELECT
+, daily_balances AS (SELECT
     wallet_address
     , token_address
     , amount_raw
@@ -26,28 +24,29 @@ days AS (
     , day
     , symbol
     , lead(day, 1, now()) OVER (PARTITION BY token_address, wallet_address ORDER BY day) AS next_day
-    FROM {{ ref('transfers_ethereum_erc20_rolling_day') }})
+    FROM {{ ref('transfers_ethereum_erc20_rolling_day') }}
+)
 
 SELECT
     'ethereum' AS blockchain
-    , d.day
-    , b.wallet_address
-    , b.token_address
-    , b.amount_raw
-    , b.amount
-    , b.amount * p.price AS amount_usd
-    , b.symbol
-FROM daily_balances AS b
-INNER JOIN days AS d ON b.day <= d.day AND d.day < b.next_day
+    , days.day
+    , daily_balances.wallet_address
+    , daily_balances.token_address
+    , daily_balances.amount_raw
+    , daily_balances.amount
+    , daily_balances.symbol
+    , daily_balances.amount * p.price AS amount_usd
+FROM daily_balances
+INNER JOIN days ON daily_balances.day <= days.day AND days.day < daily_balances.next_day
 LEFT JOIN {{ source('prices', 'usd') }} AS p
-    ON p.contract_address = b.token_address
-        AND d.day = p.minute
+    ON p.contract_address = daily_balances.token_address
+        AND days.day = p.minute
         AND p.blockchain = 'ethereum'
 -- Removes rebase tokens FROM balances
-LEFT JOIN {{ ref('tokens_ethereum_rebase') }}  AS r
-    ON b.token_address = r.contract_address
+LEFT JOIN {{ ref('tokens_ethereum_rebase') }} AS r
+    ON daily_balances.token_address = r.contract_address
 -- Removes likely non-compliant tokens due to negative balances
-LEFT JOIN {{ ref('balances_ethereum_erc20_noncompliant') }}  AS nc
-    ON b.token_address = nc.token_address
-WHERE r.contract_address is NULL
-    AND nc.token_address is NULL
+LEFT JOIN {{ ref('balances_ethereum_erc20_noncompliant') }} AS nc
+    ON daily_balances.token_address = nc.token_address
+WHERE r.contract_address IS NULL
+    AND nc.token_address IS NULL

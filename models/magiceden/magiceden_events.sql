@@ -14,12 +14,10 @@ SELECT
     , block_date
     , block_time
     , token_id
-    , CAST(NULL AS VARCHAR(5)) AS collection
     , amount_usd
     , token_standard
     , trade_type
     , number_of_items
-    , CAST(NULL AS VARCHAR(5)) AS trade_category
     , evt_type
     , seller
     , buyer
@@ -27,14 +25,9 @@ SELECT
     , amount_raw
     , currency_symbol
     , currency_contract
-    , CAST(NULL AS VARCHAR(5)) AS nft_contract_address
     , project_contract_address
-    , CAST(NULL AS VARCHAR(5)) AS aggregator_name
-    , CAST(NULL AS VARCHAR(5)) AS aggregator_address
     , tx_hash
     , block_number
-    , CAST(NULL AS VARCHAR(5)) AS tx_from
-    , CAST(NULL AS VARCHAR(5)) AS tx_to
     , platform_fee_amount_raw
     , platform_fee_amount
     , platform_fee_amount_usd
@@ -43,7 +36,14 @@ SELECT
     , royalty_fee_amount
     , royalty_fee_amount_usd
     , royalty_fee_percentage
-    , CAST(NULL AS VARCHAR(5)) AS royalty_fee_receive_address
     , royalty_fee_currency_symbol
     , unique_trade_id
+    , CAST(NULL AS VARCHAR(5)) AS collection
+    , CAST(NULL AS VARCHAR(5)) AS trade_category
+    , CAST(NULL AS VARCHAR(5)) AS nft_contract_address
+    , CAST(NULL AS VARCHAR(5)) AS aggregator_name
+    , CAST(NULL AS VARCHAR(5)) AS aggregator_address
+    , CAST(NULL AS VARCHAR(5)) AS tx_from
+    , CAST(NULL AS VARCHAR(5)) AS tx_to
+    , CAST(NULL AS VARCHAR(5)) AS royalty_fee_receive_address
 FROM {{ ref('magiceden_solana_events') }}

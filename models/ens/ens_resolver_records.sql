@@ -11,7 +11,7 @@
     )
 }}
 
-with resolver_records AS (
+WITH resolver_records AS (
     SELECT
         a AS address
         , node
@@ -26,11 +26,11 @@ with resolver_records AS (
 
 SELECT
     n.name
-    , r.address
-    , r.node
-    , r.block_time
-    , r.tx_hash
-    , r.evt_index
-FROM resolver_records AS r
-INNER JOIN {{ ref('ens_node_names')}} AS n
-    ON r.node = n.node
+    , resolver_records.address
+    , resolver_records.node
+    , resolver_records.block_time
+    , resolver_records.tx_hash
+    , resolver_records.evt_index
+FROM resolver_records
+INNER JOIN {{ ref('ens_node_names') }} AS n
+    ON resolver_records.node = n.node

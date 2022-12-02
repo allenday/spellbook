@@ -1,6 +1,14 @@
 {{config(alias='funds_ethereum')}}
 
-SELECT blockchain, address, name, category, contributor, source, created_at, updated_at
+SELECT
+    blockchain
+    , address
+    , name
+    , category
+    , contributor
+    , source
+    , created_at
+    , updated_at
 FROM (VALUES
       (array('ethereum'), '0x2B1Ad6184a6B0fac06bD225ed37C2AbC04415fF4', 'a16z', 'funds', 'soispoke', 'static', timestamp('2022-09-03'), now())
     , (array('ethereum'), '0x05e793ce0c6027323ac150f6d45c2344d28b6019', 'a16z', 'funds', 'soispoke', 'static', timestamp('2022-09-03'), now())
@@ -49,4 +57,4 @@ FROM (VALUES
     , (array('ethereum'), '0x085af684acdb1220d111fee971b733c5e5ae6ccd', 'Three Arrows Capital', 'funds', 'soispoke', 'static', timestamp('2022-09-03'), now())
     , (array('ethereum'), '0x8e04af7f7c76daa9ab429b1340e0327b5b835748', 'Three Arrows Capital', 'funds', 'soispoke', 'static', timestamp('2022-09-03'), now())
     , (array('ethereum'), '0x0000006daea1723962647b7e189d311d757fb793', 'Wintermute Trading', 'funds', 'soispoke', 'static', timestamp('2022-09-03'), now())
-    ) AS x (blockchain, address, name, category, contributor, source, created_at, updated_at)
+    )

@@ -7,7 +7,8 @@
                                     \'["cat"]\') }}')
 }}
 
-SELECT blockchain
+SELECT
+    blockchain
     , project
     , version
     , block_time
@@ -22,7 +23,6 @@ SELECT blockchain
     , seller
     , buyer
     , amount_original
-    , CAST(amount_raw AS DECIMAL(38, 0)) AS amount_raw
     , currency_symbol
     , currency_contract
     , nft_contract_address
@@ -34,5 +34,6 @@ SELECT blockchain
     , tx_from
     , tx_to
     , unique_trade_id
+    , CAST(amount_raw AS DECIMAL(38, 0)) AS amount_raw
 FROM {{ ref('superrare_ethereum_events') }}
 WHERE evt_type = 'Trade'

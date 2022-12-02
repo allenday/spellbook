@@ -3,99 +3,99 @@
     )
  }}
 
-WITH 
+WITH
 
-last_margin as (
-    SELECT 
+last_margin AS (
+    SELECT
         evt_block_time
         , position_id
         , version
         , margin
         , evt_index
-    FROM 
+    FROM
         (
-            SELECT 
-                ROW_NUMBER() OVER (PARTITION BY position_id, version ORDER BY evt_index DESC) as rank_
-                , * 
-            FROM 
+            SELECT
+                ROW_NUMBER() OVER (PARTITION BY position_id, version ORDER BY evt_index DESC) AS rank_
+                , *
+            FROM
                 (
-                    SELECT 
+                    SELECT
                         xx.evt_block_time
                         , xx.position_id
                         , xx.version
                         , xy.margin
                         , xy.evt_index
-                    FROM 
+                    FROM
                         (
-                            SELECT 
-                                MAX(evt_block_time) as evt_block_time
+                            SELECT
+                                MAX(evt_block_time) AS evt_block_time
                                 , position_id
-                                , version 
-                            FROM 
+                                , version
+                            FROM
                                 {{ ref('tigris_polygon_positions_margin') }}
-                            GROUP BY 2, 3 
-                        ) AS xx 
-                    INNER JOIN 
-                        {{ ref('tigris_polygon_positions_margin') }} AS xy 
+                            GROUP BY 2, 3
+                        ) AS xx
+                    INNER JOIN
+                        {{ ref('tigris_polygon_positions_margin') }} AS xy
                         ON xx.evt_block_time = xy.evt_block_time
                             AND xx.position_id = xy.position_id
                             AND xx.version = xy.version
-                ) AS tmp 
+                ) AS tmp
         ) AS tmp_2
-    WHERE rank_ = 1 
+    WHERE rank_ = 1
 )
 
-, last_leverage as (
-    SELECT 
+, last_leverage AS (
+    SELECT
         evt_block_time
         , position_id
         , version
         , leverage
-        , evt_index 
-    FROM 
+        , evt_index
+    FROM
         (
-            SELECT 
-                ROW_NUMBER() OVER (PARTITION BY position_id, version ORDER BY evt_index DESC) as rank_
-                , * 
-            FROM 
+            SELECT
+                ROW_NUMBER() OVER (PARTITION BY position_id, version ORDER BY evt_index DESC) AS rank_
+                , *
+            FROM
                 (
-                    SELECT 
+                    SELECT
                         xx.evt_block_time
                         , xx.position_id
                         , xx.version
                         , xy.leverage
                         , xy.evt_index
-                    FROM 
+                    FROM
                         (
-                            SELECT 
-                                MAX(evt_block_time) as evt_block_time
+                            SELECT
+                                MAX(evt_block_time) AS evt_block_time
                                 , position_id
-                                , version 
-                            FROM 
+                                , version
+                            FROM
                                 {{ ref('tigris_polygon_positions_leverage') }}
-                            GROUP BY 2, 3 
-                        ) AS xx 
-                    INNER JOIN 
-                        {{ ref('tigris_polygon_positions_leverage') }} AS xy 
+                            GROUP BY 2, 3
+                        ) AS xx
+                    INNER JOIN
+                        {{ ref('tigris_polygon_positions_leverage') }} AS xy
                         ON xx.evt_block_time = xy.evt_block_time
                             AND xx.position_id = xy.position_id
                             AND xx.version = xy.version
-                ) AS tmp 
+                ) AS tmp
         ) AS tmp_2
-    WHERE rank_ = 1 
+    WHERE rank_ = 1
 )
 
-SELECT 
+SELECT
     lp.*
-    , lm.margin
-    , ll.leverage 
-FROM 
-    {{ ref('tigris_polygon_events_liquidate_position') }} AS lp 
-INNER JOIN 
-    last_margin AS lm 
-    ON lp.position_id = lm.position_id
-        AND lp.version = lm.version
-INNER JOIN 
-    last_leverage AS ll 
-    ON lp.position_id = ll.position_id
-        AND lp.version = ll.version
+    , last_margin.margin
+    , last_leverage.leverage
+FROM
+    {{ ref('tigris_polygon_events_liquidate_position') }} AS lp
+INNER JOIN
+    last_margin
+    ON lp.position_id = last_margin.position_id
+        AND lp.version = last_margin.version
+INNER JOIN
+    last_leverage
+    ON lp.position_id = last_leverage.position_id
+        AND lp.version = last_leverage.version

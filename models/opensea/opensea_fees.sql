@@ -7,7 +7,8 @@
         )
 }}
 
-SELECT blockchain
+SELECT
+    blockchain
     , project
     , version
     , block_time
@@ -16,7 +17,6 @@ SELECT blockchain
     , platform_fee_amount_raw
     , platform_fee_amount
     , platform_fee_amount_usd
-    , CAST(platform_fee_percentage AS DOUBLE) AS platform_fee_percentage
     , royalty_fee_amount_raw
     , royalty_fee_amount
     , royalty_fee_amount_usd
@@ -39,4 +39,5 @@ SELECT blockchain
     , tx_from
     , tx_to
     , unique_trade_id
+    , CAST(platform_fee_percentage AS DOUBLE) AS platform_fee_percentage
 FROM {{ ref('opensea_ethereum_fees') }}

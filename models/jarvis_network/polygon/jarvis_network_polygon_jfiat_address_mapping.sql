@@ -8,15 +8,16 @@
   )
 }}
 
-SELECT 'polygon'                             AS blockchain
+SELECT
+    'polygon' AS blockchain
     , jfiat_symbol
-    , CAST(decimals AS numeric)            AS decimals
-    , LOWER(jfiat_token_address)           AS jfiat_token_address
-    , LOWER(jfiat_liquidity_address)       AS jfiat_liquidity_address
+    , CAST(decimals AS numeric) AS decimals
+    , LOWER(jfiat_token_address) AS jfiat_token_address
+    , LOWER(jfiat_liquidity_address) AS jfiat_liquidity_address
     , LOWER(jfiat_collateral_pool_address) AS jfiat_collateral_pool_address
-    , LOWER(jfiat_chainlink_address)       AS jfiat_chainlink_address
-    , CAST(contract_version AS numeric)    AS contract_version
-FROM (values
+    , LOWER(jfiat_chainlink_address) AS jfiat_chainlink_address
+    , CAST(contract_version AS numeric) AS contract_version
+FROM (VALUES
     ('jEUR', 18, '0x4e3decbb3645551b8a19f0ea1678079fcb33fb4c', '0x65a7b4ff684c2d08c115d55a4b089bf4e92f5003', '0x65a7b4ff684c2d08c115d55a4b089bf4e92f5003', '0x73366fe0aa0ded304479862808e02506fe556a98', 2)
     , ('jGBP', 18, '0x767058f11800fba6a682e73a6e79ec5eb74fac8c', '0x36d6d1d6249fbc6ebd0fc28fd46c846fb69b9074', '0x36d6d1d6249fbc6ebd0fc28fd46c846fb69b9074', '0x099a2540848573e94fb1ca0fa420b00acbbc845a', 2)
     , ('jCHF', 18, '0xbd1463f02f61676d53fd183c2b19282bff93d099', '0x8734cf40a402d4191bd4d7a64beef12e4c452def', '0x8734cf40a402d4191bd4d7a64beef12e4c452def', '0xc76f762cedf0f78a439727861628e0fdfe1e70c2', 2)
@@ -49,4 +50,4 @@ FROM (values
     , ('jNGN', 18, '0x182c76e977161f703bb8f111047df6c43cfacc56', '0xfd9820cfe4c19e7025d58fa2fc837fb931cf7f7a', '0x8927dcca07a405464c9fb0d48490a75b6285d623', '0x0df812c4d675d155815b1216ce1da9e68f1b7050', 1)
     , ('jNZD', 18, '0x6b526daf03b4c47af2bcc5860b12151823ff70e0', '0x6673ceaad879493ebd38b957840f94618bfa1837', '0x2624b6472cf43b26d284b9f51d4af4ccf763eb87', '0xa302a0b8a499fd0f00449df0a490dede21105955', 1)
     , ('jPLN', 18, '0x08e6d1f0c4877ef2993ad733fc6f1d022d0e9dbf', '0x3c60da710d8c5f3dd96435301cfd0b2bd7a3e870', '0x1d84f60babef98f0ffe7fd298cddd2a2caf8e02d', '0xb34bce11040702f71c11529d00179b2959bce6c0', 1)
-) AS a (jfiat_symbol, decimals, jfiat_token_address, jfiat_liquidity_address, jfiat_collateral_pool_address, jfiat_chainlink_address, contract_version)
+)

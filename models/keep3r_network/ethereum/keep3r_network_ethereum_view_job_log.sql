@@ -4,7 +4,7 @@
 ) }}
 
 SELECT
-    `timestamp`
+    timestamp
     , tx_hash
     , evt_index
     , event
@@ -18,7 +18,7 @@ FROM
     {{ ref('keep3r_network_ethereum_view_job_liquidity_log') }}
 UNION ALL
 SELECT
-    `timestamp`
+    timestamp
     , tx_hash
     , evt_index
     , event
@@ -31,5 +31,5 @@ SELECT
 FROM
     {{ ref('keep3r_network_ethereum_view_job_credits_log') }}
 ORDER BY
-    `timestamp`
+    timestamp
     , evt_index

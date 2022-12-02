@@ -3,51 +3,51 @@
     )
  }}
 
-WITH 
+WITH
 
-margin as (
-    SELECT 
+margin AS (
+    SELECT
         evt_block_time
         , position_id
         , margin
         , version
         , evt_index
-    FROM 
+    FROM
         {{ ref('tigris_polygon_events_add_margin') }}
 
     UNION ALL
 
-    SELECT 
+    SELECT
         evt_block_time
         , position_id
         , margin
         , version
         , evt_index
-    FROM 
+    FROM
         {{ ref('tigris_polygon_events_modify_margin') }}
 
     UNION ALL
 
-    SELECT 
+    SELECT
         evt_block_time
         , position_id
         , margin
         , version
         , evt_index
-    FROM 
+    FROM
         {{ ref('tigris_polygon_events_open_position') }}
 
     UNION ALL
 
-    SELECT 
+    SELECT
         evt_block_time
         , position_id
-        , new_margin as margin
+        , new_margin AS margin
         , version
         , evt_index
-    FROM 
+    FROM
         {{ ref('tigris_polygon_positions_close') }}
 
 )
 
-SELECT * FROM margin  
+SELECT * FROM margin

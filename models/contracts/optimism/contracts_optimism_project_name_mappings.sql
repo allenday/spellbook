@@ -13,7 +13,7 @@ SELECT
     dune_name
     , mapped_name
 FROM (
-    values
+    VALUES
     ('lyra_v1', 'Lyra')
     , ('Lyra V1', 'Lyra')
     , ('aave_v3', 'Aave')
@@ -63,4 +63,4 @@ FROM (
     , ('opx_finance', 'OPX Finance')
     , ('pooltogether_v3', 'PoolTogether')
     , ('beethovenx', 'Beethoven X')
-    ) AS temp_table (dune_name, mapped_name)
+    )

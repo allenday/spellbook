@@ -7,7 +7,8 @@
                                     \'["cat"]\') }}')
 }}
 
-SELECT blockchain
+SELECT
+    blockchain
     , project
     , version
     , block_time
@@ -16,16 +17,13 @@ SELECT blockchain
     , platform_fee_amount_raw
     , platform_fee_amount
     , platform_fee_amount_usd
-    , CAST(platform_fee_percentage AS DOUBLE) AS platform_fee_percentage
     , royalty_fee_amount_raw
     , royalty_fee_amount
     , royalty_fee_amount_usd
-    , CAST(royalty_fee_percentage AS DOUBLE) AS royalty_fee_percentage
     , royalty_fee_receive_address
     , royalty_fee_currency_symbol
     , token_standard
     , trade_type
-    , CAST(number_of_items AS DECIMAL(38, 0)) AS number_of_items
     , trade_category
     , evt_type
     , seller
@@ -39,4 +37,7 @@ SELECT blockchain
     , tx_from
     , tx_to
     , unique_trade_id
+    , CAST(platform_fee_percentage AS DOUBLE) AS platform_fee_percentage
+    , CAST(royalty_fee_percentage AS DOUBLE) AS royalty_fee_percentage
+    , CAST(number_of_items AS DECIMAL(38, 0)) AS number_of_items
 FROM {{ ref('superrare_ethereum_events') }}

@@ -1,6 +1,10 @@
 {{ config( alias='stablecoins', tags=['static'])}}
 
-SELECT LOWER(contract_address) AS contract_address, symbol, decimals, name
+SELECT
+    symbol
+    , decimals
+    , name
+    , LOWER(contract_address) AS contract_address
 FROM (VALUES
       ('0xbc6da0fe9ad5f3b0d58160288917aa56653660e9', 'alUSD', 18, 'Alchemix USD')
       , ('0xd46ba6d942050d489dbd938a2c909a5d5039a161', 'AMPL', 9, 'Ampleforth')
@@ -25,4 +29,4 @@ FROM (VALUES
       , ('0xdac17f958d2ee523a2206206994597c13d831ec7', 'USDT', 6, 'Tether')
       , ('0xa47c8bf37f92abed4a126bda807a7b7498661acd', 'UST', 18, 'Wrapped UST Token')
       , ('0xa693b19d2931d498c5b318df961919bb4aee87a5', 'UST', 6, 'UST (Wormhole)')
-      ) AS temp_table (contract_address, symbol, decimals, name)
+      )

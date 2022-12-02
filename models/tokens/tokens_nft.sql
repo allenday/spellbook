@@ -11,7 +11,7 @@ SELECT
     , symbol
     , standard
     , category
-FROM  {{ ref('tokens_avalanche_c_nft') }}
+FROM {{ ref('tokens_avalanche_c_nft') }}
 UNION
 SELECT
     'ethereum' AS blockchain
@@ -20,7 +20,7 @@ SELECT
     , symbol
     , standard
     , category
-FROM  {{ ref('tokens_ethereum_nft') }}
+FROM {{ ref('tokens_ethereum_nft') }}
 UNION
 SELECT
     'gnosis' AS blockchain
@@ -29,7 +29,7 @@ SELECT
     , symbol
     , standard
     , CAST(NULL AS VARCHAR(5)) AS category
-FROM  {{ ref('tokens_gnosis_nft') }}
+FROM {{ ref('tokens_gnosis_nft') }}
 UNION
 SELECT
     'optimism' AS blockchain
@@ -38,7 +38,7 @@ SELECT
     , CAST(NULL AS VARCHAR(5)) AS symbol
     , CAST(NULL AS VARCHAR(5)) AS standard
     , CAST(NULL AS VARCHAR(5)) AS category
-FROM  {{ ref('tokens_optimism_nft') }}
+FROM {{ ref('tokens_optimism_nft') }}
 UNION
 SELECT
     'optimism' AS blockchain
@@ -47,7 +47,7 @@ SELECT
     , symbol
     , standard
     , category
-FROM  {{ ref('tokens_optimism_nft_bridged_mapping') }}
+FROM {{ ref('tokens_optimism_nft_bridged_mapping') }}
 UNION
 SELECT
     'bnb' AS blockchain
@@ -56,4 +56,4 @@ SELECT
     , CAST(NULL AS VARCHAR(5)) AS symbol
     , standard
     , CAST(NULL AS VARCHAR(5)) AS category
-FROM  {{ ref('tokens_bnb_nft') }}
+FROM {{ ref('tokens_bnb_nft') }}

@@ -8,91 +8,103 @@
     )
 }}
 
-WITH 
+WITH
 
-close_position_v2 as (
-    SELECT 
-        date_trunc('day', evt_block_time) as day
-        , evt_tx_hash
+close_position_v2 AS (
+    SELECT
+        evt_tx_hash
         , evt_index
         , evt_block_time
-        , _id as position_id
-        , _closePrice/1e18 as price
-        , _payout/1e18 as payout
-        , _percent/1e8 as perc_closed
-        , _trader as trader 
-    FROM 
+        , _id AS position_id
+        , _trader AS trader
+        , date_trunc('day', evt_block_time) AS day
+        , _closePrice / 1e18 AS price
+        , _payout / 1e18 AS payout
+        , _percent / 1e8 AS perc_closed
+    FROM
         {{ source('tigristrade_arbitrum', 'TradingV2_evt_PositionClosed') }}
     {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
     {% endif %}
 )
 
-, close_position_v3 as (
-    SELECT 
-        date_trunc('day', evt_block_time) as day
-        , evt_tx_hash
+, close_position_v3 AS (
+    SELECT
+        evt_tx_hash
         , evt_index
         , evt_block_time
-        , _id as position_id
-        , _closePrice/1e18 as price
-        , _payout/1e18 as payout
-        , _percent/1e8 as perc_closed
-        , _trader as trader 
-    FROM 
+        , _id AS position_id
+        , _trader AS trader
+        , date_trunc('day', evt_block_time) AS day
+        , _closePrice / 1e18 AS price
+        , _payout / 1e18 AS payout
+        , _percent / 1e8 AS perc_closed
+    FROM
         {{ source('tigristrade_arbitrum', 'TradingV3_evt_PositionClosed') }}
     {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
     {% endif %}
 )
 
-, close_position_v4 as (
-    SELECT 
-        date_trunc('day', evt_block_time) as day
-        , evt_tx_hash
+, close_position_v4 AS (
+    SELECT
+        evt_tx_hash
         , evt_index
         , evt_block_time
-        , _id as position_id
-        , _closePrice/1e18 as price
-        , _payout/1e18 as payout
-        , _percent/1e8 as perc_closed
-        , _trader as trader 
-    FROM 
+        , _id AS position_id
+        , _trader AS trader
+        , date_trunc('day', evt_block_time) AS day
+        , _closePrice / 1e18 AS price
+        , _payout / 1e18 AS payout
+        , _percent / 1e8 AS perc_closed
+    FROM
         {{ source('tigristrade_arbitrum', 'TradingV4_evt_PositionClosed') }}
     {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
     {% endif %}
 )
 
-, close_position_v5 as (
-    SELECT 
-        date_trunc('day', evt_block_time) as day
-        , evt_tx_hash
+, close_position_v5 AS (
+    SELECT
+        evt_tx_hash
         , evt_index
         , evt_block_time
-        , _id as position_id
-        , _closePrice/1e18 as price
-        , _payout/1e18 as payout
-        , _percent/1e8 as perc_closed
-        , _trader as trader 
-    FROM 
+        , _id AS position_id
+        , _trader AS trader
+        , date_trunc('day', evt_block_time) AS day
+        , _closePrice / 1e18 AS price
+        , _payout / 1e18 AS payout
+        , _percent / 1e8 AS perc_closed
+    FROM
         {{ source('tigristrade_arbitrum', 'TradingV5_evt_PositionClosed') }}
     {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc('day', now() - INTERVAL '1 week')
     {% endif %}
 )
 
 
-SELECT *, 'v2' as version FROM close_position_v2
+SELECT
+    *
+    , 'v2' AS version
+FROM close_position_v2
 
 UNION ALL
 
-SELECT *, 'v3' as version FROM close_position_v3
+SELECT
+    *
+    , 'v3' AS version
+FROM close_position_v3
 
 UNION ALL
 
-SELECT *, 'v4' as version FROM close_position_v4
+SELECT
+    *
+    , 'v4' AS version
+FROM close_position_v4
 
 UNION ALL
 
-SELECT *, 'v5' as version FROM close_position_v5
+SELECT
+    *
+    , 'v5' AS version
+FROM close_position_v5

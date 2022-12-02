@@ -6,7 +6,7 @@
                                             \'["hildobby", "soispoke", "dot2dotseurat"]\') }}'
         )
 }}
-SELECT distinct
+SELECT DISTINCT
     wallet_address
     , token_address
     , tokenId

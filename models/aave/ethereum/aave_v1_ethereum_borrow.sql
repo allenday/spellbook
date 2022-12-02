@@ -20,12 +20,12 @@ SELECT
     , borrower
     , repayer
     , liquidator
-    , amount / CAST(CONCAT('1e', CAST(erc20.decimals AS VARCHAR(100))) AS DOUBLE) AS amount
-    , (amount / CAST(CONCAT('1e', CAST(p.decimals AS VARCHAR(1000))) AS DOUBLE)) * price AS usd_amount
     , evt_tx_hash
     , evt_index
     , evt_block_time
     , evt_block_number
+    , amount / CAST(CONCAT('1e', CAST(erc20.decimals AS VARCHAR(100))) AS DOUBLE) AS amount
+    , (amount / CAST(CONCAT('1e', CAST(p.decimals AS VARCHAR(1000))) AS DOUBLE)) * price AS usd_amount
 FROM (
     SELECT
         '1' AS version
@@ -89,5 +89,4 @@ LEFT JOIN {{ ref('tokens_ethereum_erc20') }} AS erc20
 LEFT JOIN {{ source('prices', 'usd') }} AS p
     ON p.minute = date_trunc('minute', borrow.evt_block_time)
         AND p.contract_address = borrow.token
-        AND p.blockchain = 'ethereum'
-;
+        AND p.blockchain = 'ethereum';
