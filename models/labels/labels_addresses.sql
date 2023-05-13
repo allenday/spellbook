@@ -42,39 +42,38 @@
 SELECT *
 FROM (
     {% for single_category_labels_model in single_category_labels_models %}
-    SELECT
-        blockchain
-        , address
-        , name
-        , category
-        , contributor
-        , source
-        , created_at
-        , updated_at
-        , model_name
-        , label_type
-    FROM {{ single_category_labels_model }}
+        SELECT
+            blockchain,
+            address,
+            name,
+            category,
+            contributor,
+            source,
+            created_at,
+            updated_at,
+            model_name,
+            label_type
+        FROM {{ single_category_labels_model }}
 
-    UNION ALL
+        UNION ALL
 
     {% endfor %}
 
     {% for standardized_labels_model in standardized_labels_models %}
-    SELECT
-        blockchain
-        , address
-        , name
-        , category
-        , contributor
-        , source
-        , created_at
-        , updated_at
-        , model_name
-        , label_type
-    FROM {{ standardized_labels_model }}
-    {% if not loop.last %}
-    UNION ALL
-    {% endif %}
+        SELECT
+            blockchain,
+            address,
+            name,
+            category,
+            contributor,
+            source,
+            created_at,
+            updated_at,
+            model_name,
+            label_type
+        FROM {{ standardized_labels_model }}
+        {% if not loop.last %}
+            UNION ALL
+        {% endif %}
     {% endfor %}
-)
-;
+);

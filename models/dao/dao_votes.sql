@@ -20,26 +20,26 @@ ref('uniswap_v3_ethereum_votes')
 SELECT *
 FROM (
     {% for dao_model in dao_votes_models %}
-    SELECT
-        blockchain,
-        project,
-        version,
-        block_time,
-        tx_hash,
-        dao_name,
-        dao_address,
-        proposal_id,
-        votes,
-        votes_share,
-        token_symbol,
-        token_address,
-        votes_value_usd,
-        voter_address,
-        support,
-        reason
-    FROM {{ dao_model }}
-    {% if not loop.last %}
-    UNION ALL
-    {% endif %}
+        SELECT
+            blockchain,
+            project,
+            version,
+            block_time,
+            tx_hash,
+            dao_name,
+            dao_address,
+            proposal_id,
+            votes,
+            votes_share,
+            token_symbol,
+            token_address,
+            votes_value_usd,
+            voter_address,
+            support,
+            reason
+        FROM {{ dao_model }}
+        {% if not loop.last %}
+            UNION ALL
+        {% endif %}
     {% endfor %}
 )

@@ -8,44 +8,48 @@
     )
 }}
 
-with 
- questers as (
-    select quester_address, 'optimism' AS blockchain, COUNT(*) AS num_quests_completed
-    from {{ref('optimism_quests_optimism_quest_completions')}}
-    GROUP BY 1,2
-  )
+with
+questers as (
+    select
+        quester_address,
+        'optimism' as blockchain,
+        COUNT(*) as num_quests_completed
+    from {{ ref('optimism_quests_optimism_quest_completions') }}
+    group by 1, 2
+)
 
 select
-  blockchain,
-  quester_address AS address,
-  'Optimism Quests Participant' AS name,
-  'quests' AS category,
-  'msilb7' AS contributor,
-  'query' AS source,
-  timestamp('2023-03-11') as created_at,
-  now() as updated_at,
-  'optimism_quest_participants' as model_name,
-  'persona' as label_type
+    blockchain,
+    quester_address as address,
+    'Optimism Quests Participant' as name,
+    'quests' as category,
+    'msilb7' as contributor,
+    'query' as source,
+    timestamp('2023-03-11') as created_at,
+    now() as updated_at,
+    'optimism_quest_participants' as model_name,
+    'persona' as label_type
 from
-  questers
+    questers
 
-UNION ALL
+union all
 
 select
-  blockchain,
-  quester_address AS address,
-  'Optimism Quests - ' || 
-  CASE WHEN num_quests_completed >= 10 THEN 'Tier 3'
-       WHEN num_quests_completed >= 7 THEN 'Tier 2'
-       ELSE 'Tier 1'
-  END AS name,
-  'quests' AS category,
-  'msilb7' AS contributor,
-  'query' AS source,
-  timestamp('2023-03-11') as created_at,
-  now() as updated_at,
-  'optimism_quest_participants' as model_name,
-  'persona' as label_type
+    blockchain,
+    quester_address as address,
+    'Optimism Quests - '
+    || case
+        when num_quests_completed >= 10 then 'Tier 3'
+        when num_quests_completed >= 7 then 'Tier 2'
+        else 'Tier 1'
+    end as name,
+    'quests' as category,
+    'msilb7' as contributor,
+    'query' as source,
+    timestamp('2023-03-11') as created_at,
+    now() as updated_at,
+    'optimism_quest_participants' as model_name,
+    'persona' as label_type
 from
-  questers
-WHERE num_quests_completed >= 4
+    questers
+where num_quests_completed >= 4

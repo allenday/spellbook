@@ -17,49 +17,51 @@
 -- ONLY works for base ENS names (.eth , no subdomains)
 with registrations as (
     select
-        label as label_hash
-        ,name as label_name
-        ,evt_block_number as block_number
-        ,evt_block_time as block_time
-        ,evt_tx_hash as tx_hash
-        ,evt_index
+        label as label_hash,
+        name as label_name,
+        evt_block_number as block_number,
+        evt_block_time as block_time,
+        evt_tx_hash as tx_hash,
+        evt_index
     from {{ ref('ens_view_registrations') }}
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        where evt_block_time >= date_trunc("day", now() - interval "1 week")
     {% endif %}
-)
+),
 
-,node_info as (
+node_info as (
     select
-        a as address
-        ,node
-        ,evt_block_number as block_number
-        ,evt_block_time as block_time
-        ,evt_tx_hash as tx_hash
-        ,evt_index
+        a as address,
+        node,
+        evt_block_number as block_number,
+        evt_block_time as block_time,
+        evt_tx_hash as tx_hash,
+        evt_index
     from {{ source('ethereumnameservice_ethereum','PublicResolver_evt_AddrChanged') }}
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        where evt_block_time >= date_trunc("day", now() - interval "1 week")
     {% endif %}
-)
+),
 
 -- here's the sketchy matching
-, matching as (
+matching as (
     select *
     from (
-        select *
-        ,row_number() over (partition by node order by block_time desc, evt_index desc) as ordering2
+        select
+            *,
+            row_number() over (partition by node order by block_time desc, evt_index desc) as ordering2
         from (
             select
-            r.*
-            ,n.address
-            ,n.node
-            ,row_number() over (partition by r.tx_hash order by (r.evt_index - n.evt_index) asc) as ordering
-            from registrations r
-            inner join node_info n
-            ON r.block_number = n.block_number
-            AND r.tx_hash = n.tx_hash
-            AND r.evt_index > n.evt_index --register event comes after node event
+                r.*,
+                n.address,
+                n.node,
+                row_number() over (partition by r.tx_hash order by (r.evt_index - n.evt_index) asc) as ordering
+            from registrations as r
+            inner join node_info as n
+                on
+                    r.block_number = n.block_number
+                    and r.tx_hash = n.tx_hash
+                    and r.evt_index > n.evt_index --register event comes after node event
         )
         where ordering = 1
     )
@@ -67,15 +69,13 @@ with registrations as (
 )
 
 select
-    node
-    ,concat(label_name,'.eth') as name
-    ,label_name
-    ,label_hash
-    ,address as initial_address
-    ,tx_hash
-    ,block_number
-    ,block_time
-    ,evt_index
+    node,
+    concat(label_name, ".eth") as name,
+    label_name,
+    label_hash,
+    address as initial_address,
+    tx_hash,
+    block_number,
+    block_time,
+    evt_index
 from matching
-
-

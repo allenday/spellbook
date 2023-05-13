@@ -8,9 +8,9 @@
 }}
 
 SELECT *
-FROM 
-(
-      SELECT
+FROM
+    (
+        SELECT
             version,
             transaction_type,
             loan_type,
@@ -24,10 +24,10 @@ FROM
             evt_tx_hash,
             evt_index,
             evt_block_time,
-            evt_block_number  
-      FROM {{ ref('aave_v3_optimism_borrow') }}
-      /*
+            evt_block_number
+        FROM {{ ref('aave_v3_optimism_borrow') }}
+    /*
       UNION ALL
       < add new version as needed
       */
-)
+    )

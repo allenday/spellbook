@@ -15,7 +15,7 @@
 {% set project_start_date = '2022-09-13' %}
 
 SELECT
-    DATE_TRUNC('day',call_block_time) AS block_date,
+    DATE_TRUNC('day', call_block_time) AS block_date,
     account AS quester_address,
     call_tx_hash AS tx_hash,
     call_block_number AS block_number,
@@ -25,12 +25,13 @@ SELECT
     quest_project
 
 FROM
-    {{source('optimism_quest_optimism','StarNFTV4_call_mint')}} m
-INNER JOIN {{ref('optimism_quests_optimism_nft_id_mapping')}} nft 
-    ON cast(m.cid as varchar(4)) = nft.nft_id
+    {{ source('optimism_quest_optimism','StarNFTV4_call_mint') }} AS m
+INNER JOIN {{ ref('optimism_quests_optimism_nft_id_mapping') }} AS nft
+    ON cast(m.cid AS varchar(4)) = nft.nft_id
 
-WHERE call_success = true
-AND call_block_time >= cast( '{{project_start_date}}' as timestamp)
-{% if is_incremental() %}
-AND call_block_time >= date_trunc('day', now() - interval '1 week')
-{% endif %}
+WHERE
+    call_success = true
+    AND call_block_time >= cast('{{ project_start_date }}' AS timestamp)
+    {% if is_incremental() %}
+        AND call_block_time >= date_trunc('day', now() - interval '1 week')
+    {% endif %}

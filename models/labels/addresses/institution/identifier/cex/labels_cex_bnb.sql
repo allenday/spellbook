@@ -1,11 +1,22 @@
-{{config(alias='cex_bnb',
+{{ config(alias='cex_bnb',
         post_hook='{{ expose_spells(\'["bnb"]\',
                                     "sector",
                                     "labels",
-                                    \'["soispoke"]\') }}')}}
+                                    \'["soispoke"]\') }}') }}
 
-SELECT blockchain, lower(address) as address, name, category, contributor, source, created_at, updated_at, model_name, label_type
-FROM (VALUES
+SELECT
+    blockchain,
+    lower(address) AS address,
+    name,
+    category,
+    contributor,
+    source,
+    created_at,
+    updated_at,
+    model_name,
+    label_type
+FROM (
+    VALUES
     -- Binance
     ('bnb', '0x631Fc1EA2270e98fbD9D92658eCe0F5a269Aa161', 'Binance 1', 'institution', 'soispoke', 'static', timestamp('2022-08-28'), now(), 'cex_bnb', 'identifier'),
     ('bnb', '0xB1256D6b31E4Ae87DA1D56E5890C66be7f1C038e', 'Binance 2', 'institution', 'soispoke', 'static', timestamp('2022-08-28'), now(), 'cex_bnb', 'identifier'),
@@ -36,4 +47,4 @@ FROM (VALUES
     ('bnb', '0x72A53cDBBcc1b9efa39c834A540550e23463AAcB', 'Crypto.com 3', 'institution', 'soispoke', 'static', timestamp('2022-11-14'), now(), 'cex_bnb', 'identifier'),
     ('bnb', '0x7758e507850da48cd47df1fb5f875c23e3340c50', 'Crypto.com 4', 'institution', 'soispoke', 'static', timestamp('2022-11-14'), now(), 'cex_bnb', 'identifier'),
     ('bnb', '0xcffad3200574698b78f32232aa9d63eabd290703', 'Crypto.com 5', 'institution', 'soispoke', 'static', timestamp('2022-11-14'), now(), 'cex_bnb', 'identifier')
-    ) AS x (blockchain, address, name, category, contributor, source, created_at, updated_at, model_name, label_type)
+)

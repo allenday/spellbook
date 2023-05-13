@@ -17,5 +17,4 @@ select
     sum(amount) over (
         partition by token_address, wallet_address order by day
     ) as amount
-from {{ ref('transfers_bnb_bep20_agg_day') }}
-;
+from {{ ref('transfers_bnb_bep20_agg_day') }};

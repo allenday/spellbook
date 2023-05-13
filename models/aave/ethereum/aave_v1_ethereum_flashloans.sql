@@ -13,37 +13,40 @@
 
 
 WITH flashloans AS (
-    SELECT flash.evt_block_time AS block_time
-    , flash.evt_block_number AS block_number
-    , CAST(flash._amount AS double) AS amount_raw
-    , flash.evt_tx_hash AS tx_hash
-    , flash.evt_index
-    , CAST(flash._totalFee AS double) AS fee
-    , CASE WHEN flash._reserve='{{aave_mock_address}}' THEN '{{weth_address}}' ELSE flash._reserve END AS currency_contract
-    , CASE WHEN flash._reserve='{{aave_mock_address}}' THEN 'ETH' ELSE erc20.symbol END AS currency_symbol
-    , CASE WHEN flash._reserve='{{aave_mock_address}}' THEN 18 ELSE erc20.decimals END AS currency_decimals
-    , flash._target AS recipient
-    , flash.contract_address AS contract_address
-    FROM {{ source('aave_ethereum','LendingPool_evt_FlashLoan') }} flash
-    LEFT JOIN {{ ref('tokens_ethereum_erc20') }} erc20 ON flash._reserve = erc20.contract_address
+    SELECT
+        flash.evt_block_time AS block_time,
+        flash.evt_block_number AS block_number,
+        CAST(flash._amount AS double) AS amount_raw,
+        flash.evt_tx_hash AS tx_hash,
+        flash.evt_index,
+        CAST(flash._totalfee AS double) AS fee,
+        CASE WHEN flash._reserve = '{{ aave_mock_address }}' THEN '{{ weth_address }}' ELSE flash._reserve END AS currency_contract,
+        CASE WHEN flash._reserve = '{{ aave_mock_address }}' THEN 'ETH' ELSE erc20.symbol END AS currency_symbol,
+        CASE WHEN flash._reserve = '{{ aave_mock_address }}' THEN 18 ELSE erc20.decimals END AS currency_decimals,
+        flash._target AS recipient,
+        flash.contract_address AS contract_address
+    FROM {{ source('aave_ethereum','LendingPool_evt_FlashLoan') }} AS flash
+    LEFT JOIN {{ ref('tokens_ethereum_erc20') }} AS erc20 ON flash._reserve = erc20.contract_address
     WHERE CAST(flash._amount AS double) > 0
-    )
-    
-SELECT 'ethereum' AS blockchain
-, 'Aave' AS project
-, 'v1' AS version
-, flash.block_time
-, flash.block_number
-, flash.amount_raw/POWER(10, flash.currency_decimals) AS amount
-, pu.price*flash.amount_raw/POWER(10, flash.currency_decimals) AS amount_usd
-, flash.tx_hash
-, flash.evt_index
-, flash.fee/POWER(10, flash.currency_decimals) AS fee
-, flash.currency_contract
-, flash.currency_symbol
-, flash.recipient
-, flash.contract_address
-FROM flashloans flash
-LEFT JOIN {{ source('prices','usd') }} pu ON pu.blockchain = 'ethereum'  
-    AND pu.contract_address = flash.currency_contract
-    AND pu.minute = date_trunc('minute', flash.block_time)
+)
+
+SELECT
+    'ethereum' AS blockchain,
+    'Aave' AS project,
+    'v1' AS version,
+    flash.block_time,
+    flash.block_number,
+    flash.amount_raw / POWER(10, flash.currency_decimals) AS amount,
+    pu.price * flash.amount_raw / POWER(10, flash.currency_decimals) AS amount_usd,
+    flash.tx_hash,
+    flash.evt_index,
+    flash.fee / POWER(10, flash.currency_decimals) AS fee,
+    flash.currency_contract,
+    flash.currency_symbol,
+    flash.recipient,
+    flash.contract_address
+FROM flashloans AS flash
+LEFT JOIN {{ source('prices','usd') }}
+    AS pu ON pu.blockchain = 'ethereum'
+AND pu.contract_address = flash.currency_contract
+AND pu.minute = date_trunc('minute', flash.block_time)

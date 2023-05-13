@@ -3,7 +3,7 @@
                                     "project",
                                     "safe",
                                     \'["gentrexha"]\') }}'
-)}}
+) }}
 
 -- PoC Query here - https://dune.com/queries/2116702
 with safes as (
@@ -12,15 +12,15 @@ with safes as (
         et.`from` as address,
         cardinality(_owners) as num_owners,
         _threshold as threshold
-    from {{ source('gnosis_safe_ethereum', 'Safev0_1_0_call_setup') }} s
-    join {{ source('ethereum', 'traces') }} et
+    from {{ source('gnosis_safe_ethereum', 'Safev0_1_0_call_setup') }} as s
+    inner join {{ source('ethereum', 'traces') }} as et
         on s.call_tx_hash = et.tx_hash and s.call_trace_address = et.trace_address
     where
         s.call_success = true
         and et.success = true
-        AND substring(cast(et.input as varchar(8)), 0, 4) in ('0x0ec78d9e') -- setup methods of v0_1_0
-        AND et.call_type = 'delegatecall' -- the delegate call to the master copy is the Safe address
-        AND cast(et.to as varchar(42)) in ('0x8942595A2dC5181Df0465AF0D7be08c8f23C93af') -- mastercopy address v0_1_0
+        and substring(cast(et.input as varchar(8)), 0, 4) in ('0x0ec78d9e') -- setup methods of v0_1_0
+        and et.call_type = 'delegatecall' -- the delegate call to the master copy is the Safe address
+        and cast(et.to as varchar(42)) in ('0x8942595A2dC5181Df0465AF0D7be08c8f23C93af') -- mastercopy address v0_1_0
     union all
     select
         call_block_time as block_time,
@@ -115,17 +115,17 @@ data as (
 ),
 
 current_thresholds as (
-    SELECT
+    select
         a.address,
         a.threshold
-    FROM (
-        SELECT
+    from (
+        select
             address,
             threshold,
-            ROW_NUMBER() OVER (PARTITION BY address ORDER BY block_time DESC) ranked_order
-            FROM data
-        ) a
-     WHERE a.ranked_order = 1
+            ROW_NUMBER() over (partition by address order by block_time desc) as ranked_order
+        from data
+    ) as a
+    where a.ranked_order = 1
 )
 
 select

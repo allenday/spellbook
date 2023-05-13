@@ -23,35 +23,35 @@
 
 SELECT *
 FROM
-(
-  {% for perpetual_model in perpetual_trade_models %}
-  SELECT
-    blockchain
-    ,block_date
-    ,block_time
-    ,virtual_asset
-    ,underlying_asset
-    ,market
-    ,market_address
-    ,volume_usd
-    ,fee_usd
-    ,margin_usd
-    ,trade
-    ,project
-    ,version
-    ,frontend
-    ,trader
-    ,volume_raw
-    ,tx_hash
-    ,tx_from
-    ,tx_to
-    ,evt_index
-  FROM {{ perpetual_model }}
-  {% if is_incremental() %}
-  WHERE block_time >= date_trunc("day", now() - interval '1 week')
-  {% endif %}
-  {% if not loop.last %}
-  UNION ALL
-  {% endif %}
-  {% endfor %}
-)
+    (
+        {% for perpetual_model in perpetual_trade_models %}
+            SELECT
+                blockchain,
+                block_date,
+                block_time,
+                virtual_asset,
+                underlying_asset,
+                market,
+                market_address,
+                volume_usd,
+                fee_usd,
+                margin_usd,
+                trade,
+                project,
+                version,
+                frontend,
+                trader,
+                volume_raw,
+                tx_hash,
+                tx_from,
+                tx_to,
+                evt_index
+            FROM {{ perpetual_model }}
+            {% if is_incremental() %}
+                WHERE block_time >= date_trunc("day", now() - interval "1 week")
+            {% endif %}
+            {% if not loop.last %}
+                UNION ALL
+            {% endif %}
+        {% endfor %}
+    )

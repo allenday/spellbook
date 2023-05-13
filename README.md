@@ -3,6 +3,20 @@
 
 Welcome to your [Spellbook](https://youtu.be/o7p0BNt7NHs). Cast a magical incantation to tame the blockchain.
 
+The goal of this spellbook fork is to allow it to run in google big query.
+To run this locally:
+2. Update your keyfile for BQ outside the git folder
+3. Change the dbt_project.yml file to get your profile
+4. Change the profiles.yml file to your desires
+5. Add the raw tables needed within Big Query (see decoded-projects-github)
+
+Things done here include:
+1. Added dbt-bigquery and SQLfluff to the pipfile.lock
+2. Created intial_fixes.py script which:
+  a. fixes an error with tests in the yml file
+  b. Uses a multithreading script to run "sqlfluff fix {file_path} --force" on the sql models
+3. 
+
 📖 Documentation of models can be found [here](https://spellbook-docs.dune.com/#!/overview), with a full example contribution walkthrough [here](https://dune.com/docs/spellbook/getting-started/)
 
 ### Heads up

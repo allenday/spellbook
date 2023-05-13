@@ -9,50 +9,54 @@
 }}
 
 select
-     poolAddress as pool_address
-    ,collection as nft_contract_address
-    ,token_address
-    ,evt_tx_hash as create_tx_hash
-    ,evt_block_time as create_block_time
-from {{ source('collectionswap_ethereum','CollectionPoolFactory_evt_NewPool') }} e
+    POOLADDRESS as POOL_ADDRESS,
+    COLLECTION as NFT_CONTRACT_ADDRESS,
+    TOKEN_ADDRESS,
+    EVT_TX_HASH as CREATE_TX_HASH,
+    EVT_BLOCK_TIME as CREATE_BLOCK_TIME
+from {{ source('collectionswap_ethereum','CollectionPoolFactory_evt_NewPool') }} as E
 inner join (
     select
-    output_pool
-    ,get_json_object(params, '$.token') AS token_address
+        OUTPUT_POOL,
+        get_json_object(PARAMS, '$.token') as TOKEN_ADDRESS
     from {{ source('collectionswap_ethereum','CollectionPoolFactory_call_createPoolERC20') }}
-    where call_success
-    {% if is_incremental() %}
-    and call_block_time >= date_trunc("day", now() - interval '1 week')
-    {% endif %}
+    where
+        CALL_SUCCESS
+        {% if is_incremental() %}
+            and CALL_BLOCK_TIME >= date_trunc('day', now() - interval '1 week')
+        {% endif %}
     union all
     select
-    output_pool
-    ,'0x0000000000000000000000000000000000000000' AS token_address
+        OUTPUT_POOL,
+        '0x0000000000000000000000000000000000000000' as TOKEN_ADDRESS
     from {{ source('collectionswap_ethereum','CollectionPoolFactory_call_createPoolETH') }}
-    where call_success
-    {% if is_incremental() %}
-    and call_block_time >= date_trunc("day", now() - interval '1 week')
-    {% endif %}
+    where
+        CALL_SUCCESS
+        {% if is_incremental() %}
+            and CALL_BLOCK_TIME >= date_trunc('day', now() - interval '1 week')
+        {% endif %}
     union all
     select
-    output_pool
-    ,get_json_object(params, '$.token') AS token_address
+        OUTPUT_POOL,
+        get_json_object(PARAMS, '$.token') as TOKEN_ADDRESS
     from {{ source('collectionswap_ethereum','CollectionPoolFactory_call_createPoolERC20Filtered') }}
-    where call_success
-    {% if is_incremental() %}
-    and call_block_time >= date_trunc("day", now() - interval '1 week')
-    {% endif %}
+    where
+        CALL_SUCCESS
+        {% if is_incremental() %}
+            and CALL_BLOCK_TIME >= date_trunc('day', now() - interval '1 week')
+        {% endif %}
     union all
     select
-    output_pool
-    ,'0x0000000000000000000000000000000000000000' AS token_address
+        OUTPUT_POOL,
+        '0x0000000000000000000000000000000000000000' as TOKEN_ADDRESS
     from {{ source('collectionswap_ethereum','CollectionPoolFactory_call_createPoolETHFiltered') }}
-    where call_success
-    {% if is_incremental() %}
-    and call_block_time >= date_trunc("day", now() - interval '1 week')
-    {% endif %}
-) c
-on e.poolAddress = c.output_pool
+    where
+        CALL_SUCCESS
+        {% if is_incremental() %}
+            and CALL_BLOCK_TIME >= date_trunc('day', now() - interval '1 week')
+        {% endif %}
+) as C
+    on E.POOLADDRESS = C.OUTPUT_POOL
 {% if is_incremental() %}
-WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+    where EVT_BLOCK_TIME >= date_trunc('day', now() - interval '1 week')
 {% endif %}

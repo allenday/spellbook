@@ -13,15 +13,15 @@
 
 WITH global_values AS (
 
-  SELECT
-    'optimism' AS native_blockchain,
-    contract_address,
-    symbol,
-    decimals,
-    cast(POWER(2,32) as double) AS total_initial_supply,
-    cast('2022-05-31' AS date) AS token_launch_date
+    SELECT
+        'optimism' AS native_blockchain,
+        contract_address,
+        symbol,
+        decimals,
+        cast(POWER(2, 32) AS double) AS total_initial_supply,
+        cast('2022-05-31' AS date) AS token_launch_date
 
-    FROM {{ref('tokens_optimism_erc20')}} t
+    FROM {{ ref('tokens_optimism_erc20') }} AS t
     WHERE t.contract_address = '0x4200000000000000000000000000000000000042'
 
 )

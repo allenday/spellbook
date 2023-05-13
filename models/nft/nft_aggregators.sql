@@ -6,12 +6,27 @@
                                     \'["soispoke","hildobby", "chuxin"]\') }}')
 }}
 
-SELECT 'avalanche_c' as blockchain, * FROM  {{ ref('nft_avalanche_c_aggregators') }}
+SELECT
+    'avalanche_c' AS blockchain,
+    *
+FROM {{ ref('nft_avalanche_c_aggregators') }}
 UNION ALL
-SELECT 'bnb' as blockchain, * FROM  {{ ref('nft_bnb_aggregators') }}
+SELECT
+    'bnb' AS blockchain,
+    *
+FROM {{ ref('nft_bnb_aggregators') }}
 UNION ALL
-SELECT 'ethereum' as blockchain, * FROM  {{ ref('nft_ethereum_aggregators') }}
+SELECT
+    'ethereum' AS blockchain,
+    *
+FROM {{ ref('nft_ethereum_aggregators') }}
 UNION ALL
-SELECT 'polygon' as blockchain, * FROM  {{ ref('nft_polygon_aggregators') }}
+SELECT
+    'polygon' AS blockchain,
+    *
+FROM {{ ref('nft_polygon_aggregators') }}
 UNION ALL
-SELECT 'optimism' as blockchain, * FROM  {{ ref('nft_optimism_aggregators') }}
+SELECT
+    'optimism' AS blockchain,
+    *
+FROM {{ ref('nft_optimism_aggregators') }}

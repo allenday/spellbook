@@ -9,47 +9,53 @@
     )
 }}
 
-WITH 
+WITH
 
-add_margin_v1 as (
-        SELECT 
-            date_trunc('day', evt_block_time) as day, 
-            evt_tx_hash,
-            evt_index,
-            evt_block_time,
-            id as position_id,
-            addMargin/1e18 as margin_change, 
-            newMargin/1e18 as margin, 
-            newPrice/1e18 as price, 
-            trader
-        FROM 
+add_margin_v1 AS (
+    SELECT
+        date_trunc('day', evt_block_time) AS day,
+        evt_tx_hash,
+        evt_index,
+        evt_block_time,
+        id AS position_id,
+        addmargin / 1e18 AS margin_change,
+        newmargin / 1e18 AS margin,
+        newprice / 1e18 AS price,
+        trader
+    FROM
         {{ source('tigristrade_v2_polygon', 'Trading_evt_AddToPosition') }}
-        {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
-        {% endif %}
+    {% if is_incremental() %}
+        WHERE evt_block_time >= date_trunc('day', now() - interval '1 week')
+    {% endif %}
 ),
 
-add_margin_v2 as (
-        SELECT 
-            date_trunc('day', evt_block_time) as day, 
-            evt_tx_hash,
-            evt_index,
-            evt_block_time,
-            id as position_id,
-            addMargin/1e18 as margin_change, 
-            newMargin/1e18 as margin, 
-            newPrice/1e18 as price, 
-            trader
-        FROM 
+add_margin_v2 AS (
+    SELECT
+        date_trunc('day', evt_block_time) AS day,
+        evt_tx_hash,
+        evt_index,
+        evt_block_time,
+        id AS position_id,
+        addmargin / 1e18 AS margin_change,
+        newmargin / 1e18 AS margin,
+        newprice / 1e18 AS price,
+        trader
+    FROM
         {{ source('tigristrade_v2_polygon', 'TradingV2_evt_AddToPosition') }}
-        {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
-        {% endif %}
+    {% if is_incremental() %}
+        WHERE evt_block_time >= date_trunc('day', now() - interval '1 week')
+    {% endif %}
 )
 
 
-SELECT *, 'v2.1' as version FROM add_margin_v1
+SELECT
+    *,
+    'v2.1' AS version
+FROM add_margin_v1
 
-UNION ALL 
+UNION ALL
 
-SELECT *, 'v2.2' as version FROM add_margin_v2
+SELECT
+    *,
+    'v2.2' AS version
+FROM add_margin_v2

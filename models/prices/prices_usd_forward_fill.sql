@@ -14,54 +14,55 @@
 
 
 WITH
-  finalized as (
-    select *
+finalized AS (
+    SELECT *
     FROM {{ source('prices', 'usd') }}
-    where minute <= now() - interval {{lookback_interval}}
-)
+    WHERE minute <= now() - INTERVAL {{ lookback_interval }}
+),
 
-, unfinalized as (
-    select *,
-        lead(minute) over (partition by blockchain,contract_address,decimals,symbol order by minute asc) as next_update_minute
+unfinalized AS (
+    SELECT
+        *,
+        lead(minute) OVER (PARTITION BY blockchain, contract_address, decimals, symbol ORDER BY minute ASC) AS next_update_minute
     FROM {{ source('prices', 'usd') }}
-    where minute > now() - interval {{lookback_interval}}
-)
+    WHERE minute > now() - INTERVAL {{ lookback_interval }}
+),
 
-, timeseries as (
-    select explode(sequence(
-        date_trunc('minute', now() - interval {{lookback_interval}})
-        ,date_trunc('minute', now())
-        ,interval 1 minute)) as minute
-)
+timeseries AS (
+    SELECT explode(sequence(
+        date_trunc('minute', now() - INTERVAL {{ lookback_interval }}),
+        date_trunc('minute', now()),
+        INTERVAL 1 MINUTE
+    )) AS minute
+),
 
-, forward_fill as (
-    select
-    t.minute
-    ,blockchain
-    ,contract_address
-    ,decimals
-    ,symbol
-    ,price
-    from timeseries t
-    left join unfinalized p
-    ON t.minute >= p.minute and (p.next_update_minute is null OR t.minute < p.next_update_minute) -- perform forward fill
+forward_fill AS (
+    SELECT
+        t.minute,
+        blockchain,
+        contract_address,
+        decimals,
+        symbol,
+        price
+    FROM timeseries AS t
+    LEFT JOIN unfinalized AS p
+        ON t.minute >= p.minute AND (p.next_update_minute IS NULL OR t.minute < p.next_update_minute) -- perform forward fill
 )
 
 SELECT
-    minute
-    ,blockchain
-    ,contract_address
-    ,decimals
-    ,symbol
-    ,price
+    minute,
+    blockchain,
+    contract_address,
+    decimals,
+    symbol,
+    price
 FROM finalized
 UNION ALL
 SELECT
-    minute
-    ,blockchain
-    ,contract_address
-    ,decimals
-    ,symbol
-    ,price
-FROM forward_fill
-;
+    minute,
+    blockchain,
+    contract_address,
+    decimals,
+    symbol,
+    price
+FROM forward_fill;

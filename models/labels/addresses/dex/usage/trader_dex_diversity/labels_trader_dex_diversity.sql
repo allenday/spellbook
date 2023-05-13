@@ -10,27 +10,36 @@
 }}
 
 with
- trader_dex_diversity as (
-    select blockchain,
-           count(distinct project) as dex_diversity,
-           taker                   as address
-    from (select blockchain, taker, project
-          from {{ ref('dex_aggregator_trades') }}
-          union all
-          select blockchain, taker, project
-          from {{ ref('dex_trades') }})
-    group by taker, blockchain 
- )
+trader_dex_diversity as (
+    select
+        blockchain,
+        count(distinct project) as dex_diversity,
+        taker as address
+    from (
+        select
+            blockchain,
+            taker,
+            project
+        from {{ ref('dex_aggregator_trades') }}
+        union all
+        select
+            blockchain,
+            taker,
+            project
+        from {{ ref('dex_trades') }}
+    )
+    group by taker, blockchain
+)
 
-select                                                      
+select
     blockchain,
     address,
     concat('Number of DEXs traded on: ', dex_diversity) as name,
-    "dex" AS category,
-    "gentrexha" AS contributor,
-    "query" AS source,
+    'dex' as category,
+    'gentrexha' as contributor,
+    'query' as source,
     timestamp('2022-12-15') as created_at,
     now() as updated_at,
-    "trader_dex_diversity" as model_name,
-    "usage" as label_type
+    'trader_dex_diversity' as model_name,
+    'usage' as label_type
 from trader_dex_diversity

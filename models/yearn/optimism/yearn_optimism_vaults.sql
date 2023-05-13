@@ -13,17 +13,18 @@
 }}
 
 SELECT
-  'optimism' as blockchain
-, call_block_time AS block_time_created
-, call_block_number AS block_number_created
-, _token AS underlying_token
-, _symbol AS vault_symbol
-, _name AS vault_name
-, output_0 AS vault_token
+    'optimism' AS blockchain,
+    call_block_time AS block_time_created,
+    call_block_number AS block_number_created,
+    _token AS underlying_token,
+    _symbol AS vault_symbol,
+    _name AS vault_name,
+    output_0 AS vault_token
 
 FROM {{ source('yearn_optimism', 'ReleaseRegistry_call_newVault') }}
 
-WHERE call_success = true
-{% if is_incremental() %}
-AND call_block_time >= date_trunc("day", now() - interval '1 week')
-{% endif %}
+WHERE
+    call_success = true
+    {% if is_incremental() %}
+        AND call_block_time >= date_trunc('day', now() - interval '1 week')
+    {% endif %}

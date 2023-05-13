@@ -5,7 +5,7 @@
                                     "project",
                                     "liquidifty",
                                     \'["bizzyvinci"]\') }}'
-)}}
+) }}
 
 select * from {{ ref('liquidifty_bnb_trades') }}
 union all

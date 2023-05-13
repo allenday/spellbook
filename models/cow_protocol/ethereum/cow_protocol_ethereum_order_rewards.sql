@@ -3,11 +3,11 @@
                                     "project",
                                     "cow_protocol",
                                     \'["bh2smith"]\') }}'
-)}}
+) }}
 
 -- PoC Query here - https://dune.com/queries/1752782
-select
-    distinct order_uid,
+select distinct
+    order_uid,
     block_number,
     tx_hash,
     solver,

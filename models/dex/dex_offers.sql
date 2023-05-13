@@ -17,8 +17,8 @@
 ] %}
 
 SELECT *
-    FROM (
-        {% for dex_offer_model in dex_offer_models %}
+FROM (
+    {% for dex_offer_model in dex_offer_models %}
         SELECT
             blockchain,
             project,
@@ -55,5 +55,5 @@ SELECT *
         {% if not loop.last %}
         UNION ALL
         {% endif %}
-        {% endfor %}
+    {% endfor %}
 )

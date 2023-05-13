@@ -1,4 +1,4 @@
-{{  config(
+{{ config(
         alias='eth_flow_orders',
         materialized='incremental',
         partition_by = ['block_date'],
@@ -42,15 +42,17 @@ eth_flow_orders as (
         get_json_object(event.order, '$.appData') as app_hash,
         -- OrderHash returned by createOrder with excluded fix values (owner = contract_address, validTo = max u32)
         -- https://github.com/cowprotocol/ethflowcontract/blob/9c74c8ba36ff9ff3e255172b02454f831c066865/src/CoWSwapEthFlow.sol#L81-L84
-        concat(output_orderHash, substring(event.contract_address, 3, 40), 'ffffffff') as order_uid
-    from {{ source('cow_protocol_ethereum', 'CoWSwapEthFlow_evt_OrderPlacement') }} event
-    inner join {{ source('cow_protocol_ethereum', 'CoWSwapEthFlow_call_createOrder') }} call
-        on call_block_number = evt_block_number
-        and call_tx_hash = evt_tx_hash
-        and call_success = true
+        concat(output_orderhash, substring(event.contract_address, 3, 40), 'ffffffff') as order_uid
+    from {{ source('cow_protocol_ethereum', 'CoWSwapEthFlow_evt_OrderPlacement') }} as event
+    inner join {{ source('cow_protocol_ethereum', 'CoWSwapEthFlow_call_createOrder') }}
+        on
+            call_block_number = evt_block_number
+            and call_tx_hash = evt_tx_hash
+            and call_success = true
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
-    AND call_block_time >= date_trunc("day", now() - interval '1 week')
+        where
+            evt_block_time >= date_trunc('day', now() - interval '1 week')
+            and call_block_time >= date_trunc('day', now() - interval '1 week')
     {% endif %}
 )
 

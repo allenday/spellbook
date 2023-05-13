@@ -18,37 +18,36 @@ ref('zeroex_api_fills_deduped')
 SELECT *
 FROM (
     {% for model in zeroex_models %}
-    SELECT
-      blockchain  as blockchain,
-      '0x API'  as project,
-      '1' as version,
-      block_date  as block_date,
-      block_time  as block_time,
-      maker_symbol as  token_bought_symbol, 
-      taker_symbol  as  token_sold_symbol,
-      token_pair  as token_pair,
-      maker_token_amount  as token_bought_amount, 
-      taker_token_amount  as token_sold_amount,
-      maker_token_amount_raw  as token_bought_amount_raw,
-      taker_token_amount_raw  as token_sold_amount_raw,
-      volume_usd  as amount_usd,
-      maker_token  as token_bought_address,
-      taker_token as token_sold_address,
-      taker  as taker, 
-      maker  as maker, 
-      contract_address  as project_contract_address,
-      tx_hash  as tx_hash,
-      tx_from  as tx_from,
-      tx_to  as tx_to,
-      trace_address,
-      evt_index  as evt_index
+        SELECT
+            blockchain AS blockchain,
+            '0x API' AS project,
+            '1' AS version,
+            block_date AS block_date,
+            block_time AS block_time,
+            maker_symbol AS token_bought_symbol,
+            taker_symbol AS token_sold_symbol,
+            token_pair AS token_pair,
+            maker_token_amount AS token_bought_amount,
+            taker_token_amount AS token_sold_amount,
+            maker_token_amount_raw AS token_bought_amount_raw,
+            taker_token_amount_raw AS token_sold_amount_raw,
+            volume_usd AS amount_usd,
+            maker_token AS token_bought_address,
+            taker_token AS token_sold_address,
+            taker AS taker,
+            maker AS maker,
+            contract_address AS project_contract_address,
+            tx_hash AS tx_hash,
+            tx_from AS tx_from,
+            tx_to AS tx_to,
+            trace_address,
+            evt_index AS evt_index
 
-    FROM {{ model }}
-    {% if not loop.last %}
+        FROM {{ model }}
+        {% if not loop.last %}
      
     UNION ALL
    
     {% endif %}
     {% endfor %}
-)
-;
+);

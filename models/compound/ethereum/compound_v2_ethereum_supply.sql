@@ -22,8 +22,8 @@ with mints as (
         minter as depositor,
         cast(null as varchar(5)) as withdrawn_to,
         cast(null as varchar(5)) as liquidator,
-        cast(mintAmount as decimal(38, 0)) / decimals_mantissa as amount,
-        cast(mintAmount as decimal(38, 0)) / decimals_mantissa * price as usd_amount,
+        cast(mintamount as decimal(38, 0)) / decimals_mantissa as amount,
+        cast(mintamount as decimal(38, 0)) / decimals_mantissa * price as usd_amount,
         evt_tx_hash,
         evt_index,
         evt_block_time,
@@ -32,24 +32,26 @@ with mints as (
     from (
         select * from {{ source('compound_v2_ethereum', 'cErc20_evt_Mint') }}
         {% if is_incremental() %}
-		where evt_block_time >= date_trunc("day", now() - interval '1 week')
-		{% endif %}
+            where evt_block_time >= date_trunc('day', now() - interval '1 week')
+        {% endif %}
         union all
         select * from {{ source('compound_v2_ethereum', 'cEther_evt_Mint') }}
         {% if is_incremental() %}
-		where evt_block_time >= date_trunc("day", now() - interval '1 week')
-		{% endif %}
-    ) evt_mint
-    left join {{ ref('compound_v2_ethereum_ctokens') }} ctokens
-        on evt_mint.contract_address = ctokens.ctoken_address
-    left join {{ source('prices', 'usd') }} p
-        on p.minute = date_trunc('minute', evt_mint.evt_block_time)
-        and p.contract_address = ctokens.asset_address
-        and p.blockchain = 'ethereum'
-        {% if is_incremental() %}
-        and p.minute >= date_trunc("day", now() - interval '1 week')
+            where evt_block_time >= date_trunc('day', now() - interval '1 week')
         {% endif %}
+    ) as evt_mint
+    left join {{ ref('compound_v2_ethereum_ctokens') }} as ctokens
+        on evt_mint.contract_address = ctokens.ctoken_address
+    left join {{ source('prices', 'usd') }} as p
+        on
+            p.minute = date_trunc('minute', evt_mint.evt_block_time)
+            and p.contract_address = ctokens.asset_address
+            and p.blockchain = 'ethereum'
+            {% if is_incremental() %}
+                and p.minute >= date_trunc('day', now() - interval '1 week')
+            {% endif %}
 ),
+
 redeems as (
     select
         '2' as version,
@@ -59,8 +61,8 @@ redeems as (
         redeemer as depositor,
         redeemer as withdrawn_to,
         cast(null as varchar(5)) as liquidator,
-        -cast(redeemAmount as decimal(38, 0)) / decimals_mantissa as amount,
-        -cast(redeemAmount as decimal(38, 0)) / decimals_mantissa * price as usd_amount,
+        -cast(redeemamount as decimal(38, 0)) / decimals_mantissa as amount,
+        -cast(redeemamount as decimal(38, 0)) / decimals_mantissa * price as usd_amount,
         evt_tx_hash,
         evt_index,
         evt_block_time,
@@ -69,23 +71,24 @@ redeems as (
     from (
         select * from {{ source('compound_v2_ethereum', 'cErc20_evt_Redeem') }}
         {% if is_incremental() %}
-		where evt_block_time >= date_trunc("day", now() - interval '1 week')
-		{% endif %}
+            where evt_block_time >= date_trunc('day', now() - interval '1 week')
+        {% endif %}
         union all
         select * from {{ source('compound_v2_ethereum', 'cEther_evt_Redeem') }}
         {% if is_incremental() %}
-		where evt_block_time >= date_trunc("day", now() - interval '1 week')
-		{% endif %}
-    ) evt_mint
-    left join {{ ref('compound_v2_ethereum_ctokens') }} ctokens
-        on evt_mint.contract_address = ctokens.ctoken_address
-    left join {{ source('prices', 'usd') }} p
-        on p.minute = date_trunc('minute', evt_mint.evt_block_time)
-        and p.contract_address = ctokens.asset_address
-        and p.blockchain = 'ethereum'
-        {% if is_incremental() %}
-        and p.minute >= date_trunc("day", now() - interval '1 week')
+            where evt_block_time >= date_trunc('day', now() - interval '1 week')
         {% endif %}
+    ) as evt_mint
+    left join {{ ref('compound_v2_ethereum_ctokens') }} as ctokens
+        on evt_mint.contract_address = ctokens.ctoken_address
+    left join {{ source('prices', 'usd') }} as p
+        on
+            p.minute = date_trunc('minute', evt_mint.evt_block_time)
+            and p.contract_address = ctokens.asset_address
+            and p.blockchain = 'ethereum'
+            {% if is_incremental() %}
+                and p.minute >= date_trunc('day', now() - interval '1 week')
+            {% endif %}
 )
 
 

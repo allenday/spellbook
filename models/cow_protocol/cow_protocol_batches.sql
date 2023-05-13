@@ -8,7 +8,7 @@
 }}
 SELECT *
 FROM
-(
+    (
         SELECT
             'ethereum' AS blockchain,
             'CoW Protocol' AS project,
@@ -50,4 +50,4 @@ FROM
             unwraps,
             token_approvals
         FROM {{ ref('cow_protocol_gnosis_batches') }}
-)
+    )

@@ -25,44 +25,44 @@
 ] %}
 
 WITH
-    signatures as (
-        {% for chain_source in chains %}
+signatures AS (
+    {% for chain_source in chains %}
 
-            SELECT
-                abi,
-                created_at,
-                id,
-                signature,
-                type,
-                concat(id, signature, type) as unique_signature_id
-            FROM {{ chain_source }}
-
-            {% if is_incremental() %}
-            WHERE created_at >= date_trunc("day", now() - interval '2 days')
-            {% endif %}
-
-            {% if not loop.last %}
-            union all
-            {% endif %}
-
-        {% endfor %}
-    )
-
-    SELECT
-    *
-    FROM (
         SELECT
-            id
-            , signature
-            , abi
-            , type
-            , created_at
-            , date_trunc('month',created_at) as created_at_month
-            , unique_signature_id
-            , row_number() over (partition by unique_signature_id order by created_at desc) recency
-        FROM signatures
-    ) a
-    WHERE recency = 1
+            abi,
+            created_at,
+            id,
+            signature,
+            type,
+            concat(id, signature, type) AS unique_signature_id
+        FROM {{ chain_source }}
+
+        {% if is_incremental() %}
+            WHERE created_at >= date_trunc("day", now() - interval "2 days")
+        {% endif %}
+
+        {% if not loop.last %}
+            UNION ALL
+        {% endif %}
+
+    {% endfor %}
+)
+
+SELECT *
+FROM (
+    SELECT
+        id,
+        signature,
+        abi,
+        type,
+        created_at,
+        date_trunc("month", created_at) AS created_at_month,
+        unique_signature_id,
+        row_number() OVER (PARTITION BY unique_signature_id ORDER BY created_at DESC) AS recency
+    FROM signatures
+) AS a
+WHERE
+    recency = 1
     {% if is_incremental() %}
-    AND NOT EXISTS (SELECT 1 FROM {{ this }} WHERE unique_signature_id = a.unique_signature_id)
+        AND NOT EXISTS (SELECT 1 FROM {{ this }} WHERE unique_signature_id = a.unique_signature_id)
     {% endif %}

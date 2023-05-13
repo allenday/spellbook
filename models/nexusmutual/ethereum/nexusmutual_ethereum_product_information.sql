@@ -11,13 +11,14 @@
     )
 }}
 
-SELECT lower(product_contract_address) as product_contract_address,
-       product_name,
-       product_type,
-       date_added,
-       syndicate
+SELECT
+    lower(product_contract_address) AS product_contract_address,
+    product_name,
+    product_type,
+    date_added,
+    syndicate
 FROM (
-VALUES
+    VALUES
     ('0xF5DCe57282A584D2746FaF1593d3121Fcac444dC', 'Compound Sai', 'protocol', '2020-01-01', 'v1'),
     ('0x8B3d70d628Ebd30D4A2ea82DB95bA2e906c71633', 'bZx v1', 'protocol', '2020-01-01', 'v1'),
     ('0x5504a1d88005236147EC86C62cfb53043bD1276a', 'Unknown', 'protocol', '2020-01-01', 'v1'),
@@ -185,4 +186,4 @@ VALUES
     ('0x0000000000000000000000000000000000000030', 'Gearbox V2', 'protocol', '2022-10-31', 'v1'),
     ('0x0000000000000000000000000000000000000031', 'Aura', 'protocol', '2022-11-16', 'v1'),
     ('0x0000000000000000000000000000000000000032', 'Enzyme v4', 'protocol', '2022-11-16', 'v1')
-) temp (product_contract_address, product_name, product_type, date_added, syndicate)
+)

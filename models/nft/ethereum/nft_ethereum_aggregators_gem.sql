@@ -1,21 +1,22 @@
-{{config(alias='aggregators_gem')}}
-WITH vasa_contracts as (
-    SELECT distinct
-    address AS contract_address
+{{ config(alias='aggregators_gem') }}
+WITH vasa_contracts AS (
+    SELECT DISTINCT address AS contract_address
     FROM {{ source('ethereum','creation_traces') }}
-    WHERE `from` = '0x073ab1c0cad3677cde9bdb0cdeedc2085c029579'
-    and block_time >= CAST('2021-10-12' AS TIMESTAMP)
+    WHERE
+        `from` = '0x073ab1c0cad3677cde9bdb0cdeedc2085c029579'
+        AND block_time >= CAST('2021-10-12' AS TIMESTAMP)
 )
 
 
-select
-    c.contract_address
-    ,'Gem' as name
-from vasa_contracts c
-left join {{ source('ethereum','transactions') }} t
-on t.block_time >= CAST('2021-10-12' AS TIMESTAMP) and t.to = c.contract_address
-left join {{ ref('nft_ethereum_transfers') }} nt
-on t.block_number = nt.block_number and t.hash = nt.tx_hash
-group by 1,2
-having count(distinct t.hash) filter(where t.`from` != '0x073ab1c0cad3677cde9bdb0cdeedc2085c029579') > 10
-    and count(distinct nt.contract_address) > 2
+SELECT
+    c.contract_address,
+    'Gem' AS name
+FROM vasa_contracts AS c
+LEFT JOIN {{ source('ethereum','transactions') }} AS t
+    ON t.block_time >= CAST('2021-10-12' AS TIMESTAMP) AND t.to = c.contract_address
+LEFT JOIN {{ ref('nft_ethereum_transfers') }} AS nt
+    ON t.block_number = nt.block_number AND t.hash = nt.tx_hash
+GROUP BY 1, 2
+HAVING
+    count(DISTINCT t.hash) FILTER (WHERE t.`from` != '0x073ab1c0cad3677cde9bdb0cdeedc2085c029579') > 10
+    AND count(DISTINCT nt.contract_address) > 2

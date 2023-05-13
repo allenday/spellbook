@@ -1,8 +1,8 @@
-{{config(alias='balancer_v2_gauges_arbitrum',
+{{ config(alias='balancer_v2_gauges_arbitrum',
         post_hook='{{ expose_spells(\'["arbitrum"]\',
                                     "sector",
                                     "labels",
-                                    \'["jacektrocinski"]\') }}')}}
+                                    \'["jacektrocinski"]\') }}') }}
 
 SELECT
     'arbitrum' AS blockchain,
@@ -16,9 +16,9 @@ SELECT
     'balancer_v2_gauges_arbitrum' AS model_name,
     'identifier' AS label_type
 FROM
-    {{ source('balancer_ethereum', 'ArbitrumRootGaugeFactory_evt_ArbitrumRootGaugeCreated') }} gauge
-    LEFT JOIN {{ source('balancer_arbitrum', 'ChildChainLiquidityGaugeFactory_evt_RewardsOnlyGaugeCreated') }} streamer ON gauge.recipient = streamer.streamer
-    LEFT JOIN {{ ref('labels_balancer_v2_pools_arbitrum') }} pools ON pools.address = streamer.pool
+    {{ source('balancer_ethereum', 'ArbitrumRootGaugeFactory_evt_ArbitrumRootGaugeCreated') }} AS gauge
+LEFT JOIN {{ source('balancer_arbitrum', 'ChildChainLiquidityGaugeFactory_evt_RewardsOnlyGaugeCreated') }} AS streamer ON gauge.recipient = streamer.streamer
+LEFT JOIN {{ ref('labels_balancer_v2_pools_arbitrum') }} AS pools ON pools.address = streamer.pool
 UNION ALL
 SELECT
     'arbitrum' AS blockchain,
@@ -32,8 +32,7 @@ SELECT
     'balancer_v2_gauges_arbitrum' AS model_name,
     'identifier' AS label_type
 FROM
-    {{ source('balancer_ethereum', 'CappedArbitrumRootGaugeFactory_evt_GaugeCreated') }} gauge
-    INNER JOIN {{ source('balancer_ethereum', 'CappedArbitrumRootGaugeFactory_call_create') }} call ON call.call_tx_hash = gauge.evt_tx_hash
-    LEFT JOIN {{ source('balancer_arbitrum', 'ChildChainLiquidityGaugeFactory_evt_RewardsOnlyGaugeCreated') }} streamer ON streamer.streamer = call.recipient
-    LEFT JOIN {{ ref('labels_balancer_v2_pools_arbitrum') }} pools ON pools.address = streamer.pool;
-
+    {{ source('balancer_ethereum', 'CappedArbitrumRootGaugeFactory_evt_GaugeCreated') }} AS gauge
+INNER JOIN {{ source('balancer_ethereum', 'CappedArbitrumRootGaugeFactory_call_create') }} AS call ON call.call_tx_hash = gauge.evt_tx_hash
+LEFT JOIN {{ source('balancer_arbitrum', 'ChildChainLiquidityGaugeFactory_evt_RewardsOnlyGaugeCreated') }} AS streamer ON streamer.streamer = call.recipient
+LEFT JOIN {{ ref('labels_balancer_v2_pools_arbitrum') }} AS pools ON pools.address = streamer.pool;

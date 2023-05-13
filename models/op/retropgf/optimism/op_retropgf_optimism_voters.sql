@@ -14,16 +14,16 @@
 SELECT *
 FROM (
     {% for source in sources %}
-    SELECT
-    'optimism' AS blockchain,
-    '{{ source[0] }}' as round_name,
-    block_date,
-    voter,
-    issuer,
-    can_vote
+        SELECT
+            'optimism' AS blockchain,
+            '{{ source[0] }}' AS round_name,
+            block_date,
+            voter,
+            issuer,
+            can_vote
 
-    FROM {{ source[1] }}
-    {% if not loop.last %}
+        FROM {{ source[1] }}
+        {% if not loop.last %}
     UNION ALL
     {% endif %}
     {% endfor %}

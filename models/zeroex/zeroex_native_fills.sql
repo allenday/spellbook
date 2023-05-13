@@ -19,12 +19,10 @@ ref('zeroex_ethereum_native_fills')
 SELECT *
 FROM (
     {% for model in zeroex_models %}
-    SELECT
-    *
-    FROM {{ model }}
-    {% if not loop.last %}
-    UNION ALL
-    {% endif %}
+        SELECT *
+        FROM {{ model }}
+        {% if not loop.last %}
+            UNION ALL
+        {% endif %}
     {% endfor %}
-)
-;
+);

@@ -1,14 +1,14 @@
-{{config(alias='safe_ethereum')}}
+{{ config(alias='safe_ethereum') }}
 
 SELECT
-    'ethereum' as blockchain,
+    'ethereum' AS blockchain,
     address,
-    'Safe'  || ' version ' || creation_version AS name,
+    'Safe' || ' version ' || creation_version AS name,
     'safe' AS category,
     'soispoke' AS contributor,
     'query' AS source,
-    timestamp('2022-09-01') as created_at,
-    now() as updated_at,
+    timestamp('2022-09-01') AS created_at,
+    now() AS updated_at,
     'safe_ethereum' AS model_name,
     'persona' AS label_type
 FROM {{ ref('safe_ethereum_safes') }}

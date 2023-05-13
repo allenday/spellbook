@@ -21,12 +21,10 @@ ref('zeroex_arbitrum_api_fills_deduped')
 SELECT *
 FROM (
     {% for model in zeroex_models %}
-    SELECT
-      *
-    FROM {{ model }}
-    {% if not loop.last %}
-    UNION ALL
-    {% endif %}
+        SELECT *
+        FROM {{ model }}
+        {% if not loop.last %}
+            UNION ALL
+        {% endif %}
     {% endfor %}
-)
-;
+);

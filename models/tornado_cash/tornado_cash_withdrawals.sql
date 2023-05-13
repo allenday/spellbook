@@ -26,25 +26,26 @@ ref('tornado_cash_arbitrum_withdrawals')
 SELECT *
 FROM (
     {% for tornado_cash_withdrawals_model in tornado_cash_withdrawals_models %}
-    SELECT block_time
-        , currency_contract
-        , currency_symbol
-        , blockchain
-        , tornado_version
-        , tx_from
-        , nullifier
-        , fee
-        , relayer
-        , recipient
-        , contract_address
-        , amount
-        , tx_hash
-        , evt_index
-        , block_date
-    FROM {{ tornado_cash_withdrawals_model }}
-    {% if not loop.last %}
-    UNION ALL
-    {% endif %}
+        SELECT
+            block_time,
+            currency_contract,
+            currency_symbol,
+            blockchain,
+            tornado_version,
+            tx_from,
+            nullifier,
+            fee,
+            relayer,
+            recipient,
+            contract_address,
+            amount,
+            tx_hash,
+            evt_index,
+            block_date
+        FROM {{ tornado_cash_withdrawals_model }}
+        {% if not loop.last %}
+            UNION ALL
+        {% endif %}
     {% endfor %}
 
 )

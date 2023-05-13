@@ -1,0 +1,32 @@
+blocktrekker_admin:
+  target: test # this is the default target
+  outputs:
+    test:
+      type: bigquery # database type
+      method: service-account # authentication method
+      ### database-specific connection details
+      keyfile: ../keys/blocktrekker-admin.json
+      threads: 5
+      project: blocktrekker
+      schema: utils
+      timeout_seconds: 200
+      location: US
+      priority: interactive # Big Query info
+      maximum_bytes_billed: 10000000000
+
+    prod: # additional targets
+      type: bigquery # database type
+      method: service-account # authentication method
+      ### database-specific connection details
+      keyfile: ../keys/blocktrekker-admin.json
+      threads: 32
+      project: blocktrekker
+      schema: utils
+      timeout_seconds: 2000
+      location: US
+      priority: interactive # Big Query info
+      maximum_bytes_billed: 10000000000
+      gcs_bucket: blocktrekker
+
+<profile-name>: # additional profiles
+  ...

@@ -1,4 +1,4 @@
- {{
+{{
   config(
         alias='token_accounts',
         materialized='incremental',
@@ -11,17 +11,20 @@
                                     \'["ilemi"]\') }}')
 }}
 
-WITH 
-      distinct_accounts as (
-            SELECT
-                  distinct 
-                  token_mint_address
-                  , address 
-            FROM {{ source('solana','account_activity') }}
-            WHERE token_mint_address is not null
-            {% if is_incremental() %}
-            AND block_time >= date_trunc("day", now() - interval '1 week')
-            {% endif %}
-      )
-      
-SELECT *, now() as updated_at FROM distinct_accounts
+WITH
+distinct_accounts AS (
+    SELECT DISTINCT
+        token_mint_address,
+        address
+    FROM {{ source('solana','account_activity') }}
+    WHERE
+        token_mint_address IS NOT NULL
+        {% if is_incremental() %}
+            AND block_time >= date_trunc("day", now() - interval "1 week")
+        {% endif %}
+)
+
+SELECT
+    *,
+    now() AS updated_at
+FROM distinct_accounts

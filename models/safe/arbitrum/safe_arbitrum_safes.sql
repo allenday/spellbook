@@ -17,7 +17,7 @@
 select
     'arbitrum' as blockchain,
     et.from as address,
-    case 
+    case
         when et.to = '0x8942595a2dc5181df0465af0d7be08c8f23c93af' then '0.1.0'
         when et.to = '0xb6029ea3b2c51d09a50b53ca8012feeb05bda35a' then '1.0.0'
         when et.to = '0xae32496491b53841efb51829d6f886387708f99b' then '1.1.0'
@@ -32,10 +32,11 @@ select
     try_cast(date_trunc('day', et.block_time) as date) as block_date,
     et.block_time as creation_time,
     et.tx_hash
-from {{ source('arbitrum', 'traces') }} et 
-join {{ ref('safe_arbitrum_singletons') }} s
+from {{ source('arbitrum', 'traces') }} as et
+inner join {{ ref('safe_arbitrum_singletons') }} as s
     on et.to = s.address
-where et.success = true
+where
+    et.success = true
     and et.call_type = 'delegatecall' -- delegatecall to singleton is Safe (proxy) address
     and substring(et.input, 0, 10) in (
         '0x0ec78d9e', -- setup method v0.1.0
@@ -47,5 +48,5 @@ where et.success = true
     and et.block_time > '2021-06-20' -- for initial query optimisation    
     {% endif %}
     {% if is_incremental() %}
-    and et.block_time > date_trunc("day", now() - interval '1 week')
+        and et.block_time > date_trunc('day', now() - interval '1 week')
     {% endif %}

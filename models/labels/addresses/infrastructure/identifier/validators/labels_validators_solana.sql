@@ -1,15 +1,15 @@
-{{config(alias='validators_solana')}}
+{{ config(alias='validators_solana') }}
 
-SELECT distinct
-    'solana' as blockchain,
+SELECT DISTINCT
+    'solana' AS blockchain,
     recipient AS address,
-    'Solana Validator' as name,
+    'Solana Validator' AS name,
     'infrastructure' AS category,
     'soispoke' AS contributor,
     'query' AS source,
-    timestamp('2022-10-11') as created_at,
-    now() as updated_at,
-    'validators_solana' as model_name,
-    'identifier' as label_type
+    timestamp('2022-10-11') AS created_at,
+    now() AS updated_at,
+    'validators_solana' AS model_name,
+    'identifier' AS label_type
 FROM {{ source('solana','rewards') }}
-where reward_type = "Voting"
+WHERE reward_type = 'Voting'

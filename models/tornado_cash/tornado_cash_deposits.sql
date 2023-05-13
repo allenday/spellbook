@@ -26,22 +26,23 @@ ref('tornado_cash_arbitrum_deposits')
 SELECT *
 FROM (
     {% for tornado_cash_deposits_model in tornado_cash_deposits_models %}
-    SELECT block_time
-        , currency_contract
-        , currency_symbol
-        , blockchain
-        , tornado_version
-        , depositor
-        , contract_address
-        , amount
-        , tx_hash
-        , leaf_index
-        , evt_index
-        , block_date
-    FROM {{ tornado_cash_deposits_model }}
-    {% if not loop.last %}
-    UNION ALL
-    {% endif %}
+        SELECT
+            block_time,
+            currency_contract,
+            currency_symbol,
+            blockchain,
+            tornado_version,
+            depositor,
+            contract_address,
+            amount,
+            tx_hash,
+            leaf_index,
+            evt_index,
+            block_date
+        FROM {{ tornado_cash_deposits_model }}
+        {% if not loop.last %}
+            UNION ALL
+        {% endif %}
     {% endfor %}
 
 )

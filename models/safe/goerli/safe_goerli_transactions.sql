@@ -13,7 +13,7 @@
     ) 
 }}
 
-select 
+select
     'goerli' as blockchain,
     try_cast(date_trunc('day', tr.block_time) as date) as block_date,
     tr.block_time,
@@ -32,18 +32,19 @@ select
     tr.code,
     tr.input,
     tr.output,
-    case 
+    case
         when substring(tr.input, 0, 10) = '0x6a761202' then 'execTransaction'
         when substring(tr.input, 0, 10) = '0x468721a7' then 'execTransactionFromModule'
         when substring(tr.input, 0, 10) = '0x5229073f' then 'execTransactionFromModuleReturnData'
         else 'unknown'
     end as method
-from {{ source('goerli', 'traces') }} tr 
-join {{ ref('safe_goerli_safes') }} s
+from {{ source('goerli', 'traces') }} as tr
+inner join {{ ref('safe_goerli_safes') }} as s
     on s.address = tr.from
-join {{ ref('safe_goerli_singletons') }} ss
+inner join {{ ref('safe_goerli_singletons') }} as ss
     on tr.to = ss.address
-where substring(tr.input, 0, 10) in (
+where
+    substring(tr.input, 0, 10) in (
         '0x6a761202', -- execTransaction
         '0x468721a7', -- execTransactionFromModule
         '0x5229073f' -- execTransactionFromModuleReturnData
@@ -53,5 +54,5 @@ where substring(tr.input, 0, 10) in (
     and tr.block_time > '2019-09-03' -- for initial query optimisation    
     {% endif %}
     {% if is_incremental() %}
-    and tr.block_time > date_trunc("day", now() - interval '1 week')
+        and tr.block_time > date_trunc('day', now() - interval '1 week')
     {% endif %}

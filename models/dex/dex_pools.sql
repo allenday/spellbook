@@ -20,19 +20,19 @@
 SELECT *
 FROM (
     {% for dex_pool_model in dex_pool_models %}
-    SELECT
-        blockchain
-        , project
-        , version
-        , pool
-        , fee
-        , token0
-        , token1
-        , creation_block_time
-        , creation_block_number
-        , contract_address
-    FROM {{ dex_pool_model }}
-    {% if not loop.last %}
+        SELECT
+            blockchain,
+            project,
+            version,
+            pool,
+            fee,
+            token0,
+            token1,
+            creation_block_time,
+            creation_block_number,
+            contract_address
+        FROM {{ dex_pool_model }}
+        {% if not loop.last %}
     {% if is_incremental() %}
     WHERE creation_block_time >= date_trunc("day", now() - interval '1 week')
     {% endif %}

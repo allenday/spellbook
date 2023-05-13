@@ -9,7 +9,7 @@ WITH lpda_creations AS (
         _token AS token,
         _vault AS vault,
         'LPDA' AS type,
-        _lpdaInfo AS info,
+        _lpdainfo AS info,
         evt_block_time AS block_time,
         evt_tx_hash AS tx_hash
     FROM

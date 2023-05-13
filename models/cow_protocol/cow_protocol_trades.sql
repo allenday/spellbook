@@ -8,7 +8,7 @@
 }}
 SELECT *
 FROM
-(
+    (
         SELECT
             'ethereum' AS blockchain,
             'CoW Protocol' AS project,
@@ -63,4 +63,4 @@ FROM
             trace_address,
             evt_index
         FROM {{ ref('cow_protocol_gnosis_trades') }}
-)
+    )

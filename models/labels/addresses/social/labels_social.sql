@@ -17,20 +17,20 @@
 SELECT *
 FROM (
     {% for social_model in social_models %}
-    SELECT
-        blockchain,
-        address,
-        name,
-        case when category = 'ENS' then 'social' else category end as category,
-        contributor,
-        source,
-        created_at,
-        updated_at,
-        model_name,
-        label_type
-    FROM {{ social_model }}
-    {% if not loop.last %}
-    UNION ALL
-    {% endif %}
+        SELECT
+            blockchain,
+            address,
+            name,
+            CASE WHEN category = 'ENS' THEN 'social' ELSE category END AS category,
+            contributor,
+            source,
+            created_at,
+            updated_at,
+            model_name,
+            label_type
+        FROM {{ social_model }}
+        {% if not loop.last %}
+            UNION ALL
+        {% endif %}
     {% endfor %}
 )

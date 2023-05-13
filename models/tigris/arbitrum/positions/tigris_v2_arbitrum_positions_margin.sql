@@ -4,53 +4,52 @@
     )
  }}
 
-WITH 
+WITH
 
-margin as (
-    SELECT 
+margin AS (
+    SELECT
         evt_block_time,
         position_id,
         margin
-    FROM 
-    {{ ref('tigris_v2_arbitrum_events_add_margin') }}
+    FROM
+        {{ ref('tigris_v2_arbitrum_events_add_margin') }}
 
     UNION ALL
 
-    SELECT 
+    SELECT
         evt_block_time,
         position_id,
         margin
-    FROM 
-    {{ ref('tigris_v2_arbitrum_events_modify_margin') }}
+    FROM
+        {{ ref('tigris_v2_arbitrum_events_modify_margin') }}
 
     UNION ALL
 
-    SELECT 
+    SELECT
         evt_block_time,
         position_id,
         margin
-    FROM 
-    {{ ref('tigris_v2_arbitrum_events_open_position') }}
+    FROM
+        {{ ref('tigris_v2_arbitrum_events_open_position') }}
 
     UNION ALL
 
-    SELECT 
+    SELECT
         evt_block_time,
         position_id,
-        new_margin as margin 
-    FROM 
-    {{ ref('tigris_v2_arbitrum_positions_close') }}
+        new_margin AS margin
+    FROM
+        {{ ref('tigris_v2_arbitrum_positions_close') }}
 
-    UNION ALL 
+    UNION ALL
 
-    SELECT 
+    SELECT
         evt_block_time,
         position_id,
         margin
-    FROM 
-    {{ ref('tigris_v2_arbitrum_events_limit_order') }}
+    FROM
+        {{ ref('tigris_v2_arbitrum_events_limit_order') }}
 
 )
 
-SELECT * FROM margin  
-;
+SELECT * FROM margin;

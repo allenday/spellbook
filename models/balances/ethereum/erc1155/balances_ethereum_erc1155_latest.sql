@@ -7,15 +7,18 @@
         )
 }}
 SELECT
-    'ethereum' as blockchain,
+    'ethereum' AS blockchain,
     b.wallet_address,
     b.token_address,
-    b.tokenId,
+    b.tokenid,
     b.amount,
-    nft_tokens.name as collection,
+    nft_tokens.name AS collection,
     b.updated_at
-FROM {{ ref('transfers_ethereum_erc1155_rolling_day') }} b
-LEFT JOIN {{ ref('tokens_nft') }} nft_tokens ON nft_tokens.contract_address = b.token_address
-AND nft_tokens.blockchain = 'ethereum'
-WHERE recency_index = 1
-AND amount > 0
+FROM {{ ref('transfers_ethereum_erc1155_rolling_day') }} AS b
+LEFT JOIN {{ ref('tokens_nft') }} AS nft_tokens
+    ON
+        nft_tokens.contract_address = b.token_address
+        AND nft_tokens.blockchain = 'ethereum'
+WHERE
+    recency_index = 1
+    AND amount > 0
