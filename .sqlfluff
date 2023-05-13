@@ -1,0 +1,10 @@
+[sqlfluff]
+dialect = bigquery
+exclude_rules = L016, L030, AM06, ST06
+
+[sqlfluff:templater:jinja]
+apply_dbt_builtins = True
+
+# [sqlfluff:templater:jinja:macros]
+# dbt_config = {% macro config() %}{% for k in kwargs %}{% endfor %}{% endmacro %}
+large_file_skip_byte_limit = 240050
