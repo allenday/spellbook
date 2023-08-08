@@ -1,115 +1,109 @@
-version: 2
-
 sources:
-  - name: gnosis_safe_gnosis
-    freshness:
-      warn_after: { count: 12, period: hour }
-    tables:
-      - name: ProxyFactory_v1_1_1_call_createProxy
-        loaded_at_field: call_block_time
-        description: "Safe v1.1.1 factory createProxy calls"
-        columns:
-          - &call_block_number
-            name: call_block_number
-            description: "Call block number"
-          - &call_block_time
-            name: call_block_time
-            description: "Call block time (UTC)"
-          - &call_success
-            name: call_success
-            description: "Call success"
-          - &call_trace_address
-            name: call_trace_address
-            description: "Call trace address"
-          - &call_tx_hash
-            name: call_tx_hash
-            description: "Call tx hash"
-          - &contract_address
-            name: contract_address
-            description: "Contract address"
-          - &data
-            name: data
-            description: "Initializer data"
-          - &masterCopy
-            name: masterCopy
-            description: "Singleton"
-          - &output_proxy
-            name: output_proxy
-            description: "Address of created Safe proxy"
-      - name: ProxyFactory_v1_1_1_call_createProxyWithNonce
-        loaded_at_field: call_block_time
-        description: "Safe v1.1.1 factory createProxyWithNonce calls"
-        columns:
-          - &_mastercopy
-            name: _mastercopy
-            description: "Singleton"
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-          - *call_tx_hash
-          - *contract_address
-          - &initializer
-            name: initializer
-            description: "Initializer data"
-          - *output_proxy
-          - &saltNonce
-            name: saltNonce
-            description: "Salt nonce"
-      - name: ProxyFactory_v1_1_1_call_createProxyWithCallback
-        loaded_at_field: call_block_time
-        description: "Safe v1.1.1 factory createProxyWithCallback calls"
-        columns:
-          - *_mastercopy
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-          - *call_tx_hash
-          - *contract_address
-          - *initializer
-          - *output_proxy
-          - *saltNonce
-      - name: GnosisSafeProxyFactory_v1_3_0_evt_ProxyCreation
-        loaded_at_field: evt_block_time
-        description: "Safe v1.3.0 factory ProxyCreation events"
-        columns:
-          - *contract_address
-          - &evt_block_number
-            name: evt_block_number
-            description: "Event block number"
-          - &evt_block_time
-            name: evt_block_time
-            description: "Event block time"
-          - &evt_index
-            name: evt_index
-            description: "Event index"
-          - &evt_tx_hash
-            name: evt_tx_hash
-            description: "Event tx hash"
-          - &proxy
-            name: proxy
-            description: "Address of created Safe proxy"
-          - &singleton
-            name: singleton
-            description: "Singleton"
-  - name: xdai_gnosis
-    tables:
-      - name: BlockRewardAuRa_evt_AddedReceiver
-        loaded_at_field: evt_block_time
-        description: "Blockreward receptions"
-        columns:
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - &receiver
-            name: receiver
-            description: "Receiver"
-          - &amount
-            name: amount
-            description: "Amount"
-          - &bridge
-            name: bridge
-            description: "Bridge"
+- freshness:
+    warn_after:
+      count: 12
+      period: hour
+  name: gnosis_safe_gnosis
+  tables:
+  - columns:
+    - &id001
+      description: Call block number
+      name: call_block_number
+    - &id002
+      description: Call block time (UTC)
+      name: call_block_time
+    - &id003
+      description: Call success
+      name: call_success
+    - &id004
+      description: Call trace address
+      name: call_trace_address
+    - &id005
+      description: Call tx hash
+      name: call_tx_hash
+    - &id006
+      description: Contract address
+      name: contract_address
+    - description: Initializer data
+      name: data
+    - description: Singleton
+      name: masterCopy
+    - &id007
+      description: Address of created Safe proxy
+      name: output_proxy
+    description: Safe v1.1.1 factory createProxy calls
+    loaded_at_field: call_block_time
+    name: ProxyFactory_v1_1_1_call_createProxy
+  - columns:
+    - &id008
+      description: Singleton
+      name: _mastercopy
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - &id009
+      description: Initializer data
+      name: initializer
+    - *id007
+    - &id010
+      description: Salt nonce
+      name: saltNonce
+    description: Safe v1.1.1 factory createProxyWithNonce calls
+    loaded_at_field: call_block_time
+    name: ProxyFactory_v1_1_1_call_createProxyWithNonce
+  - columns:
+    - *id008
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id009
+    - *id007
+    - *id010
+    description: Safe v1.1.1 factory createProxyWithCallback calls
+    loaded_at_field: call_block_time
+    name: ProxyFactory_v1_1_1_call_createProxyWithCallback
+  - columns:
+    - *id006
+    - &id011
+      description: Event block number
+      name: evt_block_number
+    - &id012
+      description: Event block time
+      name: evt_block_time
+    - &id013
+      description: Event index
+      name: evt_index
+    - &id014
+      description: Event tx hash
+      name: evt_tx_hash
+    - description: Address of created Safe proxy
+      name: proxy
+    - description: Singleton
+      name: singleton
+    description: Safe v1.3.0 factory ProxyCreation events
+    loaded_at_field: evt_block_time
+    name: GnosisSafeProxyFactory_v1_3_0_evt_ProxyCreation
+- name: xdai_gnosis
+  tables:
+  - columns:
+    - *id006
+    - *id011
+    - *id012
+    - *id013
+    - *id014
+    - description: Receiver
+      name: receiver
+    - description: Amount
+      name: amount
+    - description: Bridge
+      name: bridge
+    description: Blockreward receptions
+    loaded_at_field: evt_block_time
+    name: BlockRewardAuRa_evt_AddedReceiver
+version: 2

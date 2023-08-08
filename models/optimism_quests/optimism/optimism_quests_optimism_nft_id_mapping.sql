@@ -1,39 +1,29 @@
-{{ config(
+{{config(
         schema='optimism_quests_optimism',
-        alias='nft_id_mapping',
-        post_hook='{{ expose_spells(\'["optimism"]\',
-                                    "project",
-                                    "optimism_quests",
-                                    \'["msilb7"]\') }}') }}
+        alias='nft_id_mapping')}}
 
 
 
-with quest_nft_ids as (
-    select
-        contract_project,
-        quest_project,
-        cast(nft_id as varchar(4)) as nft_id
-    from (
-        values
-        ('Beethoven X', 'Beethoven X', 6366),
-        ('Clipper', 'Clipper', 6357),
-        ('Hop Protocol', 'Hop', 6359),
-        ('Kwenta', 'Kwenta', 6364),
-        ('Lyra', 'Lyra', 6358),
-        ('Perpetual Protocol', 'Perpetual Protocol', 6349),
-        ('Pika Protocol', 'Pika', 6361),
-        ('Polynomial Protocol', 'Polynomial', 6346),
-        ('PoolTogether', 'PoolTogether', 6351),
-        ('QiDao', 'QiDao', 6363),
-        ('Quix', 'Quix', 6369),
-        ('Rubicon', 'Rubicon', 6360),
-        ('Stargate Finance', 'Stargate', 6340),
-        ('Synapse', 'Synapse', 6347),
-        ('Synthetix', 'Synthetix', 6362),
-        ('Granary', 'The Granary', 6367),
-        ('Uniswap', 'Uniswap', 6343),
-        ('Velodrome', 'Velodrome', 6344)
-    )
+with quest_nft_ids AS (
+    SELECT contract_project, quest_project, cast(nft_id as STRING) as nft_id
+    FROM UNNEST(ARRAY<STRUCT<contract_project STRING,quest_project STRING,nft_id INT64>> [STRUCT('Beethoven X', 'Beethoven X', 6366),
+STRUCT('Clipper','Clipper', 6357),
+STRUCT('Hop Protocol', 'Hop', 6359),
+STRUCT('Kwenta','Kwenta', 6364),
+STRUCT('Lyra','Lyra', 6358),
+STRUCT('Perpetual Protocol','Perpetual Protocol', 6349),
+STRUCT('Pika Protocol','Pika', 6361),
+STRUCT('Polynomial Protocol','Polynomial', 6346),
+STRUCT('PoolTogether','PoolTogether', 6351),
+STRUCT('QiDao','QiDao', 6363),
+STRUCT('Quix','Quix', 6369),
+STRUCT('Rubicon','Rubicon', 6360),
+STRUCT('Stargate Finance','Stargate', 6340),
+STRUCT('Synapse','Synapse', 6347),
+STRUCT('Synthetix','Synthetix', 6362),
+STRUCT('Granary','The Granary', 6367),
+STRUCT('Uniswap','Uniswap', 6343),
+STRUCT('Velodrome','Velodrome', 6344)])
 )
 
-select * from quest_nft_ids
+SELECT * FROM quest_nft_ids

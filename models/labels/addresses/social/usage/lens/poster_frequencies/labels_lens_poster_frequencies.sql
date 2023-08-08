@@ -1,9 +1,6 @@
 {{config(alias='lens_poster_frequencies'
 
-    ,post_hook='{{ expose_spells(\'["polygon"]\',
-                                    "sector",
-                                    "labels",
-                                    \'["scoffie"]\') }}')
+    )
 }}
 
 WITH lens_addresses as 
@@ -21,7 +18,7 @@ FROM {{ source('lens_polygon','LensHub_evt_ProfileCreated') }} pc
  (
     SELECT
          output_0 as post_id
-         ,CAST(get_json_object(vars, '$.profileId') AS string) as profileId
+         ,CAST(JSON_EXTRACT_SCALAR(vars, '$.profileId') AS string) as profileId
  
     FROM {{ source('lens_polygon','LensHub_call_post') }} cp1
     
@@ -35,7 +32,7 @@ FROM {{ source('lens_polygon','LensHub_evt_ProfileCreated') }} pc
     
     SELECT
         output_0 as post_id
-        ,CAST(get_json_object(vars, '$.profileId') AS string) as profileId
+        ,CAST(JSON_EXTRACT_SCALAR(vars, '$.profileId') AS string) as profileId
     FROM {{ source('lens_polygon','LensHub_call_postWithSig') }} cp2
 
   
@@ -61,17 +58,17 @@ FROM  post_count
 SELECT 
 'polygon' as blockchain 
 ,address
-,CASE WHEN posts_count >= (select p99 from percentile) THEN 'top 1% lens poster'
-      WHEN posts_count >= (select p95 from percentile) THEN 'top 5% lens poster'
-      WHEN posts_count >= (select p90 from percentile) THEN 'top 10% lens poster'
-      WHEN posts_count >= (select p80 from percentile) THEN 'top 20% lens poster'
-      WHEN posts_count <= (select p50 from percentile) THEN 'bottom 50% lens poster'
-      ELSE 'between 50% to 80% lens posters' END AS name
+,CASE WHEN posts_count >= (select p99 from percentile) THEN 'top MOD( 1, lens) poster'
+      WHEN posts_count >= (select p95 from percentile) THEN 'top MOD( 5, lens) poster'
+      WHEN posts_count >= (select p90 from percentile) THEN 'top MOD( 10, lens) poster'
+      WHEN posts_count >= (select p80 from percentile) THEN 'top MOD( 20, lens) poster'
+      WHEN posts_count <= (select p50 from percentile) THEN 'bottom MOD( 50, lens) poster'
+      ELSE 'between MOD( 50, to) MOD( 80, lens) posters' END AS name
  ,'social' AS category
  ,'scoffie' AS contributor
  ,'query' AS source
  ,timestamp('2023-03-17') as created_at
- ,now() as updated_at
+ ,CURRENT_TIMESTAMP() as updated_at
  ,'lens_poster_frequencies' as model_name
  ,'usage' as label_type
 FROM (
@@ -83,7 +80,3 @@ FROM (
     ON la.profileId=pc.profileId 
     GROUP BY 1
 )
-
-
-
-

@@ -1,8 +1,4 @@
-{{config(alias='view_registries',
-        post_hook='{{ expose_spells(\'["ethereum"]\',
-                                    "project",
-                                    "ens",
-                                    \'["antonio-mendes","mewwts"]\') }}')}}
+{{config(alias='view_registries')}}
 SELECT 
   node,
   label,
@@ -12,7 +8,7 @@ SELECT
   FROM (
     SELECT * 
     FROM {{source('ethereumnameservice_ethereum', 'ENSRegistry_evt_NewOwner')}}
-    UNION
+    UNION ALL
     SELECT * FROM {{source('ethereumnameservice_ethereum', 'ENSRegistryWithFallback_evt_NewOwner')}}
   ) r
-GROUP BY node, label ;
+GROUP BY node, label

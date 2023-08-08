@@ -1,14 +1,8 @@
 {{ config(
     alias = 'prices',
-    partition_by = ['day'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['hour', 'blockchain', 'contract_address'],
-    post_hook='{{ expose_spells(\'["avalanche_c", "arbitrum", "bnb", "polygon", "ethereum", "gnosis", "optimism", "fantom"]\',
-                                "sector",
-                                "dex",
-                                \'["Henrystats"]\') }}'
+    partition_by = {"field": "day"},
+    materialized = 'view',
+            unique_key = ['hour', 'blockchain', 'contract_address']
     )
 }}
 
@@ -27,7 +21,7 @@ dex_trades as (
     WHERE d.amount_usd > 0 
         AND d.token_bought_amount_raw > 0 
         {% if is_incremental() %}
-        AND d.block_time >= date_trunc("day", now() - interval '1 week')
+        AND d.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 
     UNION ALL
@@ -44,17 +38,17 @@ dex_trades as (
     WHERE d.amount_usd > 0 
         AND d.token_bought_amount_raw > 0 
         {% if is_incremental() %}
-        AND d.block_time >= date_trunc("day", now() - interval '1 week')
+        AND d.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 )
 
 SELECT 
-    TRY_CAST(date_trunc('day', hour) as date) as day, -- for partitioning 
+    SAFE_CAST(TIMESTAMP_TRUNC(hour, day) as date) AS `day`, -- for partitioning 
     * 
 FROM 
 (
     SELECT 
-        date_trunc('hour', block_time) as hour, 
+        TIMESTAMP_TRUNC(block_time, hour) AS `hour`, 
         contract_address,
         blockchain,
         (PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY price)) AS median_price,
@@ -63,4 +57,3 @@ FROM
     GROUP BY 1, 2, 3
     HAVING COUNT(price) >= 5 
 ) tmp
-;

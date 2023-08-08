@@ -1,13 +1,7 @@
 {{ config(
     alias = 'events',
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['tx_hash', 'evt_index', 'token_id'],
-    post_hook='{{ expose_spells(\'["polygon"]\',
-                            "project",
-                            "oneplanet",
-                            \'["springzh"]\') }}'
+    materialized = 'view',
+            unique_key = ['tx_hash', 'evt_index', 'token_id']
     )
 }}
 
@@ -17,13 +11,13 @@
 {% set c_oneplanet_first_date = "2023-09-03" %}
 
 with source_polygon_transactions as (
-    select block_time, block_number, "from", "to", hash, data
+    select block_time, block_number, "from", "to", `HASH`, data
     from {{ source('polygon','transactions') }}
     {% if not is_incremental() %}
     where block_time >= date '{{c_oneplanet_first_date}}'
     {% endif %}
     {% if is_incremental() %}
-    where block_time >= date_trunc("day", now() - interval '1 week')
+    where block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 )
 ,ref_oneplanet_polygon_base_pairs as (
@@ -31,7 +25,7 @@ with source_polygon_transactions as (
       from {{ ref('oneplanet_polygon_base_pairs') }}
       where 1=1
       {% if is_incremental() %}
-            and block_time >= date_trunc("day", now() - interval '1 week')
+            and block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
       {% endif %}
 )
 ,ref_tokens_nft as (
@@ -57,7 +51,7 @@ with source_polygon_transactions as (
       and minute >= date '{{c_oneplanet_first_date}}'
     {% endif %}
     {% if is_incremental() %}
-      and minute >= date_trunc("day", now() - interval '1 week')
+      and minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 )
 ,iv_base_pairs_priv as (
@@ -229,11 +223,11 @@ with source_polygon_transactions as (
           ,a.price_amount_raw / power(10, e.decimals) * p.price as price_amount_usd
           ,a.platform_fee_amount_raw / power(10, e.decimals) as platform_fee_amount
           ,a.platform_fee_amount_raw / power(10, e.decimals) * p.price as platform_fee_amount_usd
-          ,cast(coalesce(a.platform_fee_amount_raw, 0) / a.price_amount_raw as double) as platform_fee_percentage
+          ,cast(coalesce(a.platform_fee_amount_raw, 0) / a.price_amount_raw as FLOAT64) as platform_fee_percentage
           ,a.creator_fee_amount_raw as royalty_fee_amount_raw
           ,a.creator_fee_amount_raw / power(10, e.decimals) as royalty_fee_amount
           ,a.creator_fee_amount_raw / power(10, e.decimals) * p.price as royalty_fee_amount_usd
-          ,cast(coalesce(a.creator_fee_amount_raw, 0) / a.price_amount_raw as double) as royalty_fee_percentage
+          ,cast(coalesce(a.creator_fee_amount_raw, 0) / a.price_amount_raw as FLOAT64) as royalty_fee_percentage
           ,creator_fee_receiver_1 as royalty_fee_receive_address
           ,agg.name as aggregator_name
           ,agg.contract_address AS aggregator_address
@@ -247,7 +241,7 @@ with source_polygon_transactions as (
   left join source_prices_usd p on p.contract_address = case when a.token_contract_address = '{{c_native_token_address}}' then '{{c_alternative_token_address}}'
                                                             else a.token_contract_address
                                                         end
-    and p.minute = date_trunc('minute', a.block_time)
+    and p.minute = TIMESTAMP_TRUNC(a.block_time, minute)
   left join ref_nft_aggregators agg on agg.contract_address = t.to
 )
 ,iv_columns as (
@@ -258,16 +252,16 @@ with source_polygon_transactions as (
     ,block_time
     ,nft_token_id as token_id
     ,nft_token_name as collection
-    ,cast(price_amount_usd as double) as amount_usd
+    ,cast(price_amount_usd as FLOAT64) as amount_usd
     ,nft_token_standard as token_standard
     ,initcap(trade_type) as trade_type
-    ,cast(nft_token_amount as decimal(38,0)) as number_of_items
+    ,CAST(nft_token_amount AS BIGNUMERIC) as number_of_items
     ,initcap(order_type) as trade_category
     ,'Trade' as evt_type
     ,seller
     ,buyer
-    ,cast(price_amount as double) as amount_original
-    ,cast(price_amount_raw as decimal(38,0)) as amount_raw
+    ,cast(price_amount as FLOAT64) as amount_original
+    ,CAST(price_amount_raw AS BIGNUMERIC) as amount_raw
     ,token_symbol as currency_symbol
     ,token_alternative_symbol as currency_contract
     ,nft_contract_address
@@ -279,19 +273,18 @@ with source_polygon_transactions as (
     ,tx_from
     ,tx_to
     ,evt_index
-    ,cast(platform_fee_amount_raw as double) as platform_fee_amount_raw
-    ,cast(platform_fee_amount as double) as platform_fee_amount
-    ,cast(platform_fee_amount_usd as double) as platform_fee_amount_usd
-    ,cast(platform_fee_percentage as double) as platform_fee_percentage
-    ,cast(royalty_fee_amount_raw as double) as royalty_fee_amount_raw
-    ,cast(royalty_fee_amount as double) as royalty_fee_amount
-    ,cast(royalty_fee_amount_usd as double) as royalty_fee_amount_usd
-    ,cast(royalty_fee_percentage as double) as royalty_fee_percentage
+    ,cast(platform_fee_amount_raw as FLOAT64) as platform_fee_amount_raw
+    ,cast(platform_fee_amount as FLOAT64) as platform_fee_amount
+    ,cast(platform_fee_amount_usd as FLOAT64) as platform_fee_amount_usd
+    ,cast(platform_fee_percentage as FLOAT64) as platform_fee_percentage
+    ,cast(royalty_fee_amount_raw as FLOAT64) as royalty_fee_amount_raw
+    ,cast(royalty_fee_amount as FLOAT64) as royalty_fee_amount
+    ,cast(royalty_fee_amount_usd as FLOAT64) as royalty_fee_amount_usd
+    ,cast(royalty_fee_percentage as FLOAT64) as royalty_fee_percentage
     ,royalty_fee_receive_address
     ,token_symbol as royalty_fee_currency_symbol
-    ,'OnePlanet-' || tx_hash || '-' || cast(evt_index as VARCHAR(10)) || '-' || nft_contract_address || '-' || cast(nft_token_id as VARCHAR(10)) || '-' || cast(sub_idx as VARCHAR(10)) as unique_trade_id
+    ,'OnePlanet-' || tx_hash || '-' || cast(evt_index as STRING) || '-' || nft_contract_address || '-' || cast(nft_token_id as STRING) || '-' || cast(sub_idx as STRING) as unique_trade_id
   from iv_trades
 )
 select *
 from iv_columns
-;

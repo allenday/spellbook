@@ -1,11 +1,9 @@
 {{ config(
     schema = 'element_ethereum',
     alias ='base_trades',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_number','tx_hash','sub_tx_trade_id'],
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_number','tx_hash','sub_tx_trade_id'],
     )
 }}
 

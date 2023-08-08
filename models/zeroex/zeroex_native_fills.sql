@@ -1,9 +1,5 @@
 {{ config(
-        alias ='native_fills',
-        post_hook='{{ expose_spells(\'["ethereum","arbitrum", "optimism", "polygon","bnb"]\',
-                                "project",
-                                "zeroex",
-                                \'["rantum","bakabhai993"]\') }}'
+        alias ='native_fills'
         )
 }}
 
@@ -19,10 +15,11 @@ ref('zeroex_ethereum_native_fills')
 SELECT *
 FROM (
     {% for model in zeroex_models %}
-        SELECT *
-        FROM {{ model }}
-        {% if not loop.last %}
-            UNION ALL
-        {% endif %}
+    SELECT
+    *
+    FROM {{ model }}
+    {% if not loop.last %}
+    UNION ALL
+    {% endif %}
     {% endfor %}
-);
+)

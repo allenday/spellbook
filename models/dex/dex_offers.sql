@@ -1,14 +1,8 @@
 {{ config(
         alias ='offers',
-        partition_by = ['block_date'],
-        materialized = 'incremental',
-        file_format = 'delta',
-        incremental_strategy = 'merge',
-        unique_key = ['block_date', 'blockchain', 'project', 'version', 'tx_hash', 'evt_index'],
-        post_hook='{{ expose_spells(\'["optimism"]\',
-                                "sector",
-                                "dex",
-                                \'["denver"]\') }}'
+        partition_by = {"field": "block_date"},
+        materialized = 'view',
+                        unique_key = ['block_date', 'blockchain', 'project', 'version', 'tx_hash', 'evt_index']
         )
 }}
 
@@ -17,8 +11,8 @@
 ] %}
 
 SELECT *
-FROM (
-    {% for dex_offer_model in dex_offer_models %}
+    FROM (
+        {% for dex_offer_model in dex_offer_models %}
         SELECT
             blockchain,
             project,
@@ -55,5 +49,5 @@ FROM (
         {% if not loop.last %}
         UNION ALL
         {% endif %}
-    {% endfor %}
+        {% endfor %}
 )

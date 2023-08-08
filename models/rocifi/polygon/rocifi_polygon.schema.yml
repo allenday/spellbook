@@ -1,16 +1,20 @@
-version: 2 
-
 models:
-  - name: rocifi_polygon_test_addresses
-    meta:
-      blockchain: polygon
-      project: rocifi
-      contributors: maybeyonas
-    config:
-      tags: ['table', 'addresses', 'polygon', 'rocifi']
-    description: "Test addresses used to test in Production"
-    columns:
-      - name: address
-        description: "Test addresses used to test in Production"
-        tests:
-          - unique
+- columns:
+  - description: Test addresses used to test in Production
+    name: address
+    tests:
+    - unique
+  config:
+    tags:
+    - table
+    - addresses
+    - polygon
+    - rocifi
+  description: Test addresses used to test in Production
+  meta:
+    blockchain: polygon
+    contributors: maybeyonas
+    project: rocifi
+  name: rocifi_polygon_test_addresses
+  tests: []
+version: 2

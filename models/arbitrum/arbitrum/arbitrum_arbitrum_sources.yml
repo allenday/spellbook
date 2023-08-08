@@ -1,9 +1,9 @@
-version: 2
+sources:
+- description: 'Arbitrum contracts on Arbitrum
 
-sources: 
-  - name: arbitrum_airdrop_arbitrum
-    description: >
-      Arbitrum contracts on Arbitrum
-    tables:
-      - name: TokenDistributor_evt_HasClaimed
-        loaded_at_field: evt_block_time
+    '
+  name: arbitrum_airdrop_arbitrum
+  tables:
+  - loaded_at_field: evt_block_time
+    name: TokenDistributor_evt_HasClaimed
+version: 2

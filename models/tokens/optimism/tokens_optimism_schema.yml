@@ -290,5 +290,4 @@ models:
     sector: nft
   name: tokens_optimism_nft_standards
   tests: []
-tests: []
 version: 2

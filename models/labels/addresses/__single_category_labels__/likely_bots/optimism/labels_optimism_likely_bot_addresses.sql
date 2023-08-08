@@ -1,10 +1,6 @@
 {{
     config(
-        alias='likely_bot_addresses',
-        post_hook='{{ expose_spells(\'["optimism"]\', 
-        "sector", 
-        "labels", 
-        \'["msilb7"]\') }}'
+        alias='likely_bot_addresses'
     )
 }}
 
@@ -14,22 +10,22 @@
 
 WITH sender_transfer_rates AS (
     -- For each transaction sender, get their hourly transaction data
-    SELECT `from` AS sender, DATE_TRUNC('hour',block_time) AS hr
+    SELECT `from` AS sender, TIMESTAMP_TRUNC(block_time, hour) AS hr
             , MIN(block_time) AS min_block_time
             , MAX(block_time) AS max_block_time
             , COUNT(*) AS hr_txs
             , SUM(CASE WHEN to IN (SELECT address FROM {{ ref('labels_optimism_likely_bot_contracts') }} WHERE name != 'chain ops bot') THEN 1 ELSE 0 END) AS bot_concentration_txs
             
-            , SUM(CASE WHEN EXISTS (SELECT 1 FROM {{ source('erc20_optimism','evt_Transfer') }} r WHERE t.hash = r.evt_tx_hash AND t.block_number = r.evt_block_number) THEN 1 ELSE 0 END) AS num_erc20_tfer_txs
-            , SUM(CASE WHEN EXISTS (SELECT 1 FROM {{ ref('nft_transfers') }} r WHERE t.hash = r.tx_hash AND t.block_number = r.block_number AND blockchain = 'optimism') THEN 1 ELSE 0 END) AS num_nft_tfer_txs
+            , SUM(CASE WHEN EXISTS (SELECT 1 FROM {{ source('erc20_optimism','evt_Transfer') }} r WHERE t.hash IS NULL AND t.hash = r.evt_tx_hash AND t.block_number = r.evt_block_number) THEN 1 ELSE 0 END) AS num_erc20_tfer_txs
+            , SUM(CASE WHEN EXISTS (SELECT 1 FROM {{ ref('nft_transfers') }} r WHERE t.hash IS NULL AND t.hash = r.tx_hash AND t.block_number = r.block_number AND blockchain = 'optimism') THEN 1 ELSE 0 END) AS num_nft_tfer_txs
 
-            , SUM(CASE WHEN EXISTS (SELECT 1 FROM {{ source('erc20_optimism','evt_Transfer') }} r WHERE t.hash = r.evt_tx_hash AND t.block_number = r.evt_block_number) THEN 1 
-                    WHEN EXISTS (SELECT 1 FROM {{ ref('nft_transfers') }} r WHERE t.hash = r.tx_hash AND t.block_number = r.block_number AND blockchain = 'optimism') THEN 1 
+            , SUM(CASE WHEN EXISTS (SELECT 1 FROM {{ source('erc20_optimism','evt_Transfer') }} r WHERE t.hash IS NULL AND t.hash = r.evt_tx_hash AND t.block_number = r.evt_block_number) THEN 1 
+                    WHEN EXISTS (SELECT 1 FROM {{ ref('nft_transfers') }} r WHERE t.hash IS NULL AND t.hash = r.tx_hash AND t.block_number = r.block_number AND blockchain = 'optimism') THEN 1 
                 ELSE 0 END) AS num_token_tfer_txs
     
-            , SUM(CASE WHEN EXISTS (SELECT 1 FROM {{ ref('dex_trades') }} r WHERE t.hash = r.tx_hash AND t.block_time = r.block_time AND blockchain = 'optimism') THEN 1 ELSE 0 END) AS num_dex_trade_txs
-            , SUM(CASE WHEN EXISTS (SELECT 1 FROM {{ ref('perpetual_trades') }} r WHERE t.hash = r.tx_hash AND t.block_time = r.block_time AND blockchain = 'optimism') THEN 1 ELSE 0 END) AS num_perp_trade_txs
-            , SUM(CASE WHEN EXISTS (SELECT 1 FROM {{ ref('nft_trades') }} r WHERE t.hash = r.tx_hash AND t.block_number = r.block_number AND blockchain = 'optimism') THEN 1 ELSE 0 END) AS num_nft_trade_txs
+            , SUM(CASE WHEN EXISTS (SELECT 1 FROM {{ ref('dex_trades') }} r WHERE t.hash IS NULL AND t.hash = r.tx_hash AND t.block_time = r.block_time AND blockchain = 'optimism') THEN 1 ELSE 0 END) AS num_dex_trade_txs
+            , SUM(CASE WHEN EXISTS (SELECT 1 FROM {{ ref('perpetual_trades') }} r WHERE t.hash IS NULL AND t.hash = r.tx_hash AND t.block_time = r.block_time AND blockchain = 'optimism') THEN 1 ELSE 0 END) AS num_perp_trade_txs
+            , SUM(CASE WHEN EXISTS (SELECT 1 FROM {{ ref('nft_trades') }} r WHERE t.hash IS NULL AND t.hash = r.tx_hash AND t.block_number = r.block_number AND blockchain = 'optimism') THEN 1 ELSE 0 END) AS num_nft_trade_txs
             
             FROM {{ source('optimism','transactions') }} t
 
@@ -40,8 +36,8 @@ WITH sender_transfer_rates AS (
 , first_pass_throughput_filter AS
 (
     -- Filter down this list a bit to help with later mappings
-    SELECT sender, DATE_TRUNC('week',hr) AS wk, SUM(hr_txs) AS wk_txs, MAX(hr_txs) AS max_hr_txs, SUM(bot_concentration_txs) AS bot_concentration_txs,
-        cast(COUNT(*) as double) /cast(7.0*24.0 as double) AS pct_weekly_hours_active,
+    SELECT sender, TIMESTAMP_TRUNC(hr, week) AS wk, SUM(hr_txs) AS wk_txs, MAX(hr_txs) AS max_hr_txs, SUM(bot_concentration_txs) AS bot_concentration_txs,
+        cast(COUNT(*) as FLOAT64) /cast(7.0*24.0 as FLOAT64) AS pct_weekly_hours_active,
         MIN(min_block_time) AS min_block_time,
         MAX(max_block_time) AS max_block_time,
         
@@ -62,12 +58,12 @@ WITH sender_transfer_rates AS (
 
 ,  bot_addresses AS (
 SELECT *,
-    cast(num_erc20_tfer_txs as double) / cast( num_txs as double) AS pct_erc20_tfer_txs,
-    cast(num_nft_tfer_txs as double) / cast( num_txs as double) AS pct_nft_tfer_txs,
-    cast(num_token_tfer_txs as double) / cast( num_txs as double) AS pct_token_tfer_txs,
-    cast(num_dex_trade_txs as double) / cast( num_txs as double) AS pct_dex_trade_txs,
-    cast(num_perp_trade_txs as double) / cast( num_txs as double) AS pct_perp_trade_txs, -- perpetual.trades has some dunesql incompatability
-    cast(num_nft_trade_txs as double) / cast( num_txs as double) AS pct_nft_trade_txs
+    cast(num_erc20_tfer_txs as FLOAT64) / cast( num_txs as FLOAT64) AS pct_erc20_tfer_txs,
+    cast(num_nft_tfer_txs as FLOAT64) / cast( num_txs as FLOAT64) AS pct_nft_tfer_txs,
+    cast(num_token_tfer_txs as FLOAT64) / cast( num_txs as FLOAT64) AS pct_token_tfer_txs,
+    cast(num_dex_trade_txs as FLOAT64) / cast( num_txs as FLOAT64) AS pct_dex_trade_txs,
+    cast(num_perp_trade_txs as FLOAT64) / cast( num_txs as FLOAT64) AS pct_perp_trade_txs, -- perpetual.trades has some dunesql incompatability
+    cast(num_nft_trade_txs as FLOAT64) / cast( num_txs as FLOAT64) AS pct_nft_trade_txs
     
 FROM (
         SELECT sender, MAX(wk_txs) AS max_wk_txs, MAX(max_hr_txs) AS max_hr_txs, AVG(wk_txs) AS avg_wk_txs
@@ -78,9 +74,9 @@ FROM (
             ,SUM(wk_txs) AS num_txs
             ,SUM(bot_concentration_txs) AS bot_concentration_txs
             
-            ,cast(SUM(bot_concentration_txs) as double) / cast(SUM(wk_txs) as double) AS pct_bot_concentration_txs
-            -- DuneSQL ,( cast( date_DIFF('second', MIN(min_block_time), MAX(max_block_time)) as double) / (60.0*60.0) ) AS txs_per_hour
-            ,cast( bigint(MAX(max_block_time)) - bigint(MIN(min_block_time)) as double) / (60.0*60.0) AS txs_per_hour
+            ,cast(SUM(bot_concentration_txs) as FLOAT64) / cast(SUM(wk_txs) as FLOAT64) AS pct_bot_concentration_txs
+            -- DuneSQL ,( cast( date_DIFF('second', MIN(min_block_time), MAX(max_block_time)) as FLOAT64) / (60.0*60.0) ) AS txs_per_hour
+            ,cast( bigint(MAX(max_block_time)) - bigint(MIN(min_block_time)) as FLOAT64) / (60.0*60.0) AS txs_per_hour
 
             ,SUM(num_erc20_tfer_txs) AS num_erc20_tfer_txs
             ,SUM(num_nft_tfer_txs) AS num_nft_tfer_txs
@@ -97,14 +93,14 @@ FROM (
                 OR AVG(wk_txs) >= 1000 --frequency (avg 1k txs per week)
                 OR 
                     (
-                    cast(COUNT(*) as double) / 
-                        ( cast( bigint(MAX(max_block_time)) - bigint(MIN(min_block_time)) as double) / (60.0*60.0) ) >= 25 
-                        -- Dunesql ( cast( date_DIFF('second', MIN(min_block_time), MAX(max_block_time)) as double) / (60.0*60.0) ) >= 25 
+                    cast(COUNT(*) as FLOAT64) / 
+                        ( cast( bigint(MAX(max_block_time)) - bigint(MIN(min_block_time)) as FLOAT64) / (60.0*60.0) ) >= 25 
+                        -- Dunesql ( cast( date_DIFF('second', MIN(min_block_time), MAX(max_block_time)) as FLOAT64) / (60.0*60.0) ) >= 25 
                     AND SUM(wk_txs) >= 100
                     ) --frequency gt 25 txs per hour
-                OR AVG(pct_weekly_hours_active) > 0.5 -- aliveness: transacting at least 50% of hours per week
-                OR MAX(pct_weekly_hours_active) > 0.95 -- aliveness: at peack, transacted at least 95% of hours in a week
-                OR (cast(SUM(bot_concentration_txs) as double) / cast(SUM(wk_txs) as double) > 0.5) --at least half txs go to bots
+                OR AVG(pct_weekly_hours_active) > 0.5 -- aliveness: transacting at least MOD( 50, of) hours per week
+                OR MAX(pct_weekly_hours_active) > 0.95 -- aliveness: at peack, transacted at least MOD( 95, of) hours in a week
+                OR (cast(SUM(bot_concentration_txs) as FLOAT64) / cast(SUM(wk_txs) as FLOAT64) > 0.5) --at least half txs go to bots
         ) ff
 
 )
@@ -117,7 +113,7 @@ select
   'msilb7' AS contributor,
   'query' AS source,
   timestamp('2023-03-11') as created_at,
-  now() as updated_at,
+  CURRENT_TIMESTAMP() as updated_at,
   'likely_bot_addresses' as model_name,
   'persona' as label_type
 

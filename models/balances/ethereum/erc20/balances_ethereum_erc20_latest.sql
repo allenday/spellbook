@@ -1,9 +1,5 @@
 {{ config(
-        alias='erc20_latest',
-        post_hook='{{ expose_spells_hide_trino(\'["ethereum"]\',
-                                            "sector",
-                                            "balances",
-                                            \'["soispoke","dot2dotseurat"]\') }}'
+        alias='erc20_latest'
         )
 }}
 SELECT
@@ -17,7 +13,7 @@ SELECT
 FROM {{ ref('transfers_ethereum_erc20_rolling_hour') }} rh
 LEFT JOIN {{ source('prices', 'usd') }} p
     ON p.contract_address = rh.token_address
-    AND p.minute = date_trunc('minute', rh.last_updated) - INTERVAL 10 minutes
+    AND p.minute = TIMESTAMP_TRUNC(rh.last_updated, minute) - interval 10 minutes
     AND p.blockchain = 'ethereum'
 -- Removes rebase tokens from balances
 LEFT JOIN {{ ref('tokens_ethereum_rebase') }}  as r

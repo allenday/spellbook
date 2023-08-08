@@ -1,10 +1,8 @@
 {{ config(
     alias = 'trades',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'blockchain', 'project', 'version', 'tx_hash', 'evt_index', 'trace_address']
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'blockchain', 'project', 'version', 'tx_hash', 'evt_index', 'trace_address']
     )
 }}
 
@@ -53,7 +51,7 @@ SELECT
             sold_id
         FROM {{ source('curvefi_optimism', 'StableSwap_evt_TokenExchange') }} t
         {% if is_incremental() %}
-        WHERE t.evt_block_time >= date_trunc('day', now() - interval '1 week')
+        WHERE t.evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 
         UNION ALL
@@ -76,7 +74,7 @@ SELECT
             sold_id
         FROM {{ source('curvefi_optimism', 'MetaPoolSwap_evt_TokenExchangeUnderlying') }} t
         {% if is_incremental() %}
-        WHERE t.evt_block_time >= date_trunc('day', now() - interval '1 week')
+        WHERE t.evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 
         UNION ALL
@@ -101,24 +99,24 @@ SELECT
         -- handle for dupes due to decoding issues
         WHERE NOT EXISTS (
             SELECT 1 FROM {{ source('curvefi_optimism', 'MetaPoolSwap_evt_TokenExchangeUnderlying') }} s 
-            WHERE t.evt_block_number = s.evt_block_number
+            WHERE t.evt_block_number IS NULL AND t.evt_block_number = s.evt_block_number
             AND t.evt_tx_hash = s.evt_tx_hash
             AND t.evt_index = s.evt_index
             {% if is_incremental() %}
-            AND s.evt_block_time >= date_trunc('day', now() - interval '1 week')
+            AND s.evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
         )
         AND NOT EXISTS (
             SELECT 1 FROM {{ source('curvefi_optimism', 'StableSwap_evt_TokenExchange') }} s 
-            WHERE t.evt_block_number = s.evt_block_number
+            WHERE t.evt_block_number IS NULL AND t.evt_block_number = s.evt_block_number
             AND t.evt_tx_hash = s.evt_tx_hash
             AND t.evt_index = s.evt_index
             {% if is_incremental() %}
-            AND s.evt_block_time >= date_trunc('day', now() - interval '1 week')
+            AND s.evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
         )
         {% if is_incremental() %}
-        AND t.evt_block_time >= date_trunc('day', now() - interval '1 week')
+        AND t.evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 
         UNION ALL
@@ -143,15 +141,15 @@ SELECT
         
         WHERE NOT EXISTS (
             SELECT 1 FROM {{ source('curvefi_optimism', 'StableSwap_evt_TokenExchange') }} s 
-            WHERE t.evt_block_number = s.evt_block_number
+            WHERE t.evt_block_number IS NULL AND t.evt_block_number = s.evt_block_number
             AND t.evt_tx_hash = s.evt_tx_hash
             AND t.evt_index = s.evt_index
             {% if is_incremental() %}
-            AND s.evt_block_time >= date_trunc('day', now() - interval '1 week')
+            AND s.evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
         )
         {% if is_incremental() %}
-        AND t.evt_block_time >= date_trunc('day', now() - interval '1 week')
+        AND t.evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 
     ) cp
@@ -170,7 +168,7 @@ SELECT DISTINCT
     'optimism' AS blockchain,
     'curve' AS project,
     '1' AS version,
-    TRY_CAST(date_trunc('DAY', dexs.block_time) AS date) AS block_date,
+    SAFE_CAST(TIMESTAMP_TRUNC(dexs.block_time, DAY) AS date) AS block_date,
     dexs.block_time,
     COALESCE(erc20a.symbol,p_bought.symbol)AS token_bought_symbol,
     COALESCE(erc20b.symbol,p_sold.symbol) AS token_sold_symbol
@@ -182,8 +180,8 @@ SELECT DISTINCT
     --On Buy: Metapools seem to always use the curve pool token's decimals (18) if bought_id = 0
     dexs.token_bought_amount_raw / POWER(10 , (CASE WHEN pool_type = 'meta' AND bought_id = 0 THEN 18 ELSE COALESCE(erc20a.decimals,p_bought.decimals) END) ) AS token_bought_amount,
     dexs.token_sold_amount_raw / POWER(10 , (CASE WHEN pool_type = 'meta' AND bought_id = 0 THEN COALESCE(erc20a.decimals,p_bought.decimals) ELSE COALESCE(erc20b.decimals,p_sold.decimals) END) )  AS token_sold_amount,
-    CAST(dexs.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw,
-    CAST(dexs.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw,
+    CAST(dexs.token_bought_amount_raw AS BIGNUMERIC) AS token_bought_amount_raw,
+    CAST(dexs.token_sold_amount_raw AS BIGNUMERIC) AS token_sold_amount_raw,
     coalesce(
 	    --On Sell: Metapools seem to always use the added coin's decimals if it's the one that's bought - even if the other token has less decimals (i.e. USDC)
 	    --On Buy: Metapools seem to always use the curve pool token's decimals (18) if bought_id = 0
@@ -209,7 +207,7 @@ INNER JOIN {{ source('optimism', 'transactions') }} tx
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND tx.block_time >= date_trunc('day', now() - interval '1' week)
+    AND tx.block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1' week)
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} erc20a
     ON erc20a.contract_address = dexs.token_bought_address
@@ -218,23 +216,22 @@ LEFT JOIN {{ ref('tokens_erc20') }} erc20b
     ON erc20b.contract_address = dexs.token_sold_address
     AND erc20b.blockchain = 'optimism'
 LEFT JOIN {{ source('prices', 'usd') }} p_bought
-    ON p_bought.minute = date_trunc('minute', dexs.block_time)
+    ON p_bought.minute = TIMESTAMP_TRUNC(dexs.block_time, minute)
     AND p_bought.contract_address = dexs.token_bought_address
     AND p_bought.blockchain = 'optimism'
     {% if not is_incremental() %}
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p_bought.minute >= date_trunc('day', now() - interval '1 week')
+    AND p_bought.minute >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p_sold
-    ON p_sold.minute = date_trunc('minute', dexs.block_time)
+    ON p_sold.minute = TIMESTAMP_TRUNC(dexs.block_time, minute)
     AND p_sold.contract_address = dexs.token_sold_address
     AND p_sold.blockchain = 'optimism'
     {% if not is_incremental() %}
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p_sold.minute >= date_trunc('day', now() - interval '1 week')
+    AND p_sold.minute >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
-;

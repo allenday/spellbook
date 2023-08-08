@@ -1,10 +1,8 @@
 {{ config(
     alias = 'events',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date','unique_trade_id']
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date','unique_trade_id']
     )
 }}
 
@@ -40,7 +38,7 @@ WITH me_txs AS (
     {% endif %}
     {% if is_incremental() %}
     -- this filter will only be applied on an incremental run
-    AND block_date >= date_trunc("day", now() - interval '1 week')
+    AND block_date >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 
 )
@@ -56,7 +54,7 @@ SELECT
   CAST(block_slot AS BIGINT) as block_number,
   abs(post_balances[0] / 1e9 - pre_balances[0] / 1e9) * p.price AS amount_usd,
   abs(post_balances[0] / 1e9 - pre_balances[0] / 1e9) AS amount_original,
-  CAST(abs(post_balances[0] - pre_balances[0]) AS DECIMAL(38,0)) AS amount_raw,
+  CAST(abs(post_balances[0] - pre_balances[0]) AS BIGNUMERIC) AS amount_raw,
   p.symbol as currency_symbol,
   p.contract_address as currency_contract,
   'metaplex' as token_standard,
@@ -92,17 +90,17 @@ SELECT
          AND array_contains(log_messages, 'Program log: Instruction: SetAuthority') THEN COALESCE(me_instructions[6].account_arguments[9], me_instructions[5].account_arguments[9],
          me_instructions[4].account_arguments[9], me_instructions[2].account_arguments[7], me_instructions[1].account_arguments[10], me_instructions[0].account_arguments[10])::string
        END AS token_id,
-  NULL::string as collection,
+  CAST(NULL AS string) as collection,
   CASE WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
          AND (
                array_contains(log_messages, 'Program log: Instruction: ExecuteSaleV2')
                OR array_contains(log_messages, 'Program log: Instruction: ExecuteSale')
                OR array_contains(log_messages, 'Program log: Instruction: Mip1ExecuteSaleV2')
           )
-         AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN 'Single Item Trade' ELSE NULL::string
+         AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN 'Single Item Trade' ELSE CAST(NULL AS string)
          END as trade_type,
-  CAST(1 AS DECIMAL(38,0)) as number_of_items,
-  NULL::string as trade_category,
+  CAST(1 AS BIGNUMERIC) as number_of_items,
+  CAST(NULL AS string) as trade_category,
   signer as buyer,
   CASE WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
          AND (
@@ -112,17 +110,17 @@ SELECT
           )
          AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN me_instructions[2].account_arguments[1]::string
        WHEN (array_contains(account_keys, 'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb')) THEN '' END as seller,
-  NULL::string as nft_contract_address,
-  NULL::string as aggregator_name,
-  NULL::string as aggregator_address,
-  NULL::string as tx_from,
-  NULL::string as tx_to,
+  CAST(NULL AS string) as nft_contract_address,
+  CAST(NULL AS string) as aggregator_name,
+  CAST(NULL AS string) as aggregator_address,
+  CAST(NULL AS string) as tx_from,
+  CAST(NULL AS string) as tx_to,
   2*(abs(post_balances[0] - pre_balances[0])::string)/100 as platform_fee_amount_raw,
   2*(abs(post_balances[0] / 1e9 - pre_balances[0] / 1e9))/100 as platform_fee_amount,
   2*(abs(post_balances[0] / 1e9 - pre_balances[0] / 1e9) * p.price)/100 as platform_fee_amount_usd,
-  CAST(2 AS DOUBLE) as platform_fee_percentage,
+  CAST(2 AS FLOAT64) as platform_fee_percentage,
   CAST (abs(post_balances[11] - pre_balances[11]) + abs(post_balances[12] - pre_balances[12])
-    + abs(post_balances[13] - pre_balances[13]) + abs(post_balances[14] - pre_balances[14])  + abs(post_balances[15] - pre_balances[15]) AS DOUBLE) as royalty_fee_amount_raw,
+    + abs(post_balances[13] - pre_balances[13]) + abs(post_balances[14] - pre_balances[14])  + abs(post_balances[15] - pre_balances[15]) AS FLOAT64) as royalty_fee_amount_raw,
   abs(post_balances[11] / 1e9 - pre_balances[11] / 1e9) + abs(post_balances[12] / 1e9 - pre_balances[12] / 1e9)
     + abs(post_balances[13] / 1e9 - pre_balances[13] / 1e9) + abs(post_balances[14] / 1e9 - pre_balances[14] / 1e9) + abs(post_balances[15] / 1e9 - pre_balances[15] / 1e9)
     as royalty_fee_amount,
@@ -135,7 +133,7 @@ SELECT
   +abs(post_balances[13] / 1e9 - pre_balances[13] / 1e9)
   +abs(post_balances[14] / 1e9 - pre_balances[14] / 1e9)
   +abs(post_balances[15] / 1e9 - pre_balances[15] / 1e9)) / ((abs(post_balances[0] / 1e9 - pre_balances[0] / 1e9)-0.00204928)) * 100),2) as royalty_fee_percentage,
-  NULL::double as royalty_fee_receive_address,
+  CAST(NULL AS FLOAT64) as royalty_fee_receive_address,
   CASE WHEN (array_contains(account_keys, 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K'))
          AND (
                array_contains(log_messages, 'Program log: Instruction: ExecuteSaleV2')
@@ -143,16 +141,16 @@ SELECT
                OR array_contains(log_messages, 'Program log: Instruction: Mip1ExecuteSaleV2')
           )
           AND array_contains(log_messages, 'Program log: Instruction: Buy') THEN 'SOL'
-         ELSE NULL::string END as royalty_fee_currency_symbol,
+         ELSE CAST(NULL AS string) END as royalty_fee_currency_symbol,
   id  as unique_trade_id,
   instructions,
   signatures,
   log_messages
 FROM me_txs
 LEFT JOIN {{ source('prices', 'usd') }} AS p
-  ON p.minute = date_trunc('minute', block_time)
+  ON p.minute = TIMESTAMP_TRUNC(block_time, minute)
   AND p.blockchain is NULL
   AND p.symbol = 'SOL'
   {% if is_incremental() %}
-  AND p.minute >= date_trunc("day", now() - interval '1 week')
+  AND p.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
   {% endif %}

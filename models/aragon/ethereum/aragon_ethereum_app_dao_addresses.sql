@@ -1,10 +1,8 @@
 {{ config(
     alias = 'app_dao_addresses',
-    partition_by = ['created_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['created_block_time', 'dao_wallet_address', 'blockchain', 'dao', 'dao_creator_tool']
+    partition_by = {"field": "created_date"},
+    materialized = 'view',
+            unique_key = ['created_block_time', 'dao_wallet_address', 'blockchain', 'dao', 'dao_creator_tool']
     )
 }}
 
@@ -12,20 +10,20 @@
 
 -- dune query here  https://dune.com/queries/2100647/3457591
 
-SELECT
-    'ethereum' AS blockchain,
-    'aragon' AS dao_creator_tool,
-    CONCAT('0x', SUBSTRING(topic2, 27, 40)) AS dao,
-    CONCAT('0x', SUBSTRING(topic2, 27, 40)) AS dao_wallet_address,
-    block_time AS created_block_time,
-    TRY_CAST(date_trunc('day', block_time) AS DATE) AS created_date,
-    'aragon_app' AS product
-FROM
-    {{ source('ethereum', 'logs') }}
+SELECT 
+    'ethereum' as blockchain, 
+    'aragon' as dao_creator_tool, 
+    CONCAT('0x', SUBSTRING(topic1, 27, 40)) as dao, 
+    CONCAT('0x', SUBSTRING(topic1, 27, 40)) as dao_wallet_address, 
+    block_time as created_block_time, 
+    SAFE_CAST(TIMESTAMP_TRUNC(block_time, day) as DATE) as created_date, 
+    'aragon_app' as product 
+FROM 
+{{ source('ethereum', 'logs') }}
 {% if not is_incremental() %}
-WHERE block_time >= '{{ project_start_date }}'
+WHERE block_time >= '{{project_start_date}}'
 {% endif %}
 {% if is_incremental() %}
-    WHERE block_time >= date_trunc('day', now() - INTERVAL '1 week')
+WHERE block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}
-    AND topic1 = LOWER('0xbc0b11fe649bb4d67c7fb40936163e5423f45c3ae83fbd8f8f8c75e1a3fa97af')
+AND topic1 = LOWER('0xbc0b11fe649bb4d67c7fb40936163e5423f45c3ae83fbd8f8f8c75e1a3fa97af')

@@ -1,28 +1,21 @@
 {{ config(
         alias ='accounting',
-        partition_by = ['period'],
-        materialized = 'table',
-        file_format = 'delta',
-        post_hook='{{ expose_spells(\'["ethereum"]\',
-                                "project",
-                                "lido",
-                                \'["ppclunghe", "gregshestakovlido "]\') }}'
+        partition_by = {"field": "period"},
+        materialized = 'view'
         )
 }}
 
 with tokens AS (
-select * from (values 
-    (LOWER('0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32')), --LDO
-    (LOWER('0x6B175474E89094C44Da98b954EedeAC495271d0F')),   --DAI
-    (LOWER('0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')),   --USDC
-    (LOWER('0xdAC17F958D2ee523a2206206994597C13D831ec7')), -- USDT
-    (LOWER('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2')),   --WETH
-    (LOWER('0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0')),   --MATIC
-    (LOWER('0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84'))  --stETH
-) as tokens(address)),
+select * FROM UNNEST(ARRAY<STRUCT<address STRING>> [STRUCT(LOWER('0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32')),
+STRUCT(LOWER('0x6B175474E89094C44Da98b954EedeAC495271d0F')),
+STRUCT(LOWER('0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')),
+STRUCT(LOWER('0xdAC17F958D2ee523a2206206994597C13D831ec7')),
+STRUCT(LOWER('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2')),
+STRUCT(LOWER('0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0')),
+STRUCT(LOWER('0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84'))])),
  
 eth_prices as (
- SELECT  DATE_TRUNC('day', minute) AS period, 
+ SELECT  TIMESTAMP_TRUNC(minute, day) AS period, 
         contract_address AS token,
         symbol,
         decimals,
@@ -37,7 +30,7 @@ eth_prices as (
 
 tokens_prices AS (
 
-SELECT  DATE_TRUNC('day', prices.usd.minute) AS period, 
+SELECT  TIMESTAMP_TRUNC(prices.usd.minute, day) AS period, 
         prices.usd.contract_address AS token,
         prices.usd.symbol,
         prices.usd.decimals,
@@ -45,7 +38,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
         eth_prices.price as eth_usd_price,
         prices.usd.price/eth_prices.price as token_eth_price
     FROM {{source('prices','usd')}}
-    left join eth_prices on DATE_TRUNC('day', prices.usd.minute) =  eth_prices.period
+    left join eth_prices on TIMESTAMP_TRUNC(prices.usd.minute, day) =  eth_prices.period
     WHERE prices.usd.blockchain = 'ethereum'
     AND prices.usd.contract_address IN (SELECT address FROM tokens)
     AND EXTRACT(hour FROM prices.usd.minute) = 23
@@ -53,15 +46,15 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
     AND minute >= '2020-10-01'
 union all
 
-SELECT  DATE_TRUNC('day', prices.usd.minute) AS period, 
-        prices.usd.contract_address, --stSOL
+SELECT  TIMESTAMP_TRUNC(prices.usd.minute, day) AS period, 
+        prices.usd.contract_address, 
         'stSOL',
         0,
         prices.usd.price,
         prices.usd.price as eth_usd_price,
         prices.usd.price/eth_prices.price as token_eth_price
     FROM {{source('prices','usd')}}
-    left join eth_prices on DATE_TRUNC('day', prices.usd.minute) =  eth_prices.period
+    left join eth_prices on TIMESTAMP_TRUNC(prices.usd.minute, day) =  eth_prices.period
     WHERE prices.usd.symbol = 'stSOL' 
     AND EXTRACT(hour FROM prices.usd.minute) = 23
     AND EXTRACT(minute FROM prices.usd.minute) = 59
@@ -71,7 +64,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
 
 
     SELECT  accounts.period, 
-            accounts.evt_tx_hash as hash,
+            accounts.evt_tx_hash AS `hash`,
             accounts.primary_label,
             accounts.secondary_label,
             accounts.account,
@@ -94,7 +87,6 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
 
     FROM (
 
-    -- Staked ETH
     SELECT  period,
             tx_hash as evt_tx_hash,
             '1. Assets' AS primary_label,
@@ -102,7 +94,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
             '1.1.1. Staked ETH' AS account,
             '-' AS category,
             COALESCE(amount_staked,0) AS token_amount,
-            coalesce(token, LOWER('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2')) as token --ETH
+            coalesce(token, LOWER('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2')) as token 
     FROM {{ref('lido_ethereum_accounting_deposits')}}
     
     
@@ -117,8 +109,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
             COALESCE(amount_staked,0) AS token_amount,
             LOWER('0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84') AS token
     FROM {{ref('lido_ethereum_accounting_deposits')}}
-    
-    -- ========================================================= Gross staking rewards with the corresponding increase in asset accounts
+
     UNION ALL
     
     SELECT  period,
@@ -170,8 +161,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
     FROM {{ref('lido_ethereum_accounting_revenue')}}
     
     UNION ALL
-    
-    -- ========================================================= Gross staking rewards sent to holders with the corresponding decrease in assets
+
     
     SELECT  period,
             evt_tx_hash,
@@ -196,8 +186,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
     FROM {{ref('lido_ethereum_accounting_revenue')}}
     
     UNION ALL
-    
-    -- ========================================================= Cost of revenue to node operators
+
     
     SELECT  period,
             evt_tx_hash,
@@ -222,12 +211,11 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
     FROM {{ref('lido_ethereum_accounting_revenue')}}
     
     UNION ALL
-    
-    -- ========================================================= Provisions for slashing set aside 
-    -- On the same side of the balance sheet, a decrease in equity must be associated with an increase in liabilities to balance
-    -- Slashing provision should go to an effective liability account through the following steps:
-    -- 1. Recognize the expense and the contra asset account 
-    -- 2. Recognize the slashing liability and the associated asset account
+
+
+
+
+
     
     SELECT  period,
             evt_tx_hash,
@@ -276,8 +264,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
     FROM {{ref('lido_ethereum_accounting_revenue')}}
     
     UNION ALL
-    
-    -- ========================================================= Other expenses
+
     
     SELECT  period,
             evt_tx_hash,
@@ -300,10 +287,9 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
             -0,
             LOWER('0xae7ab96520de3a18e5e111b5eaab095312d7fe84') AS base_token
     FROM {{ref('lido_ethereum_accounting_revenue')}}
-    
-    -- ========================================================= LDO denominated Deposit Referrals
-    -- This only works for LDO denominated expenses.
-    -- Hypothetical DAI or stETH expenses in the same category would have to hit the Surplus and need a separate think
+
+
+
     UNION ALL
     
     SELECT  period,
@@ -312,7 +298,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
             '3.2. Operating Performance' AS secondary_label,
             '3.2.3. Sales & Marketing Incentives' AS account,
             '3.2.3.2. Deposit Referrals' AS category,
-            -COALESCE(CAST(amount_token AS DOUBLE), 0),
+            -COALESCE(CAST(amount_token AS FLOAT64), 0),
             token
     FROM {{ref('lido_ethereum_accounting_ldo_referral_payment')}}
     
@@ -324,7 +310,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
             '3.3. LDO token transactions' AS secondary_label,
             '3.3.1. LDO Contra Equity' AS account,
             '3.3.1.2. Deposit Referrals' AS category,
-            COALESCE(CAST(amount_token AS DOUBLE), 0),
+            COALESCE(CAST(amount_token AS FLOAT64), 0),
             token
     FROM {{ref('lido_ethereum_accounting_ldo_referral_payment')}}
     
@@ -336,7 +322,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
             '3.2. Operating Performance' AS secondary_label,
             '3.2.3. Sales & Marketing Incentives' AS account,
             '3.2.3.2. Deposit Referrals' AS category,
-            -COALESCE(CAST(amount_token AS DOUBLE), 0),
+            -COALESCE(CAST(amount_token AS FLOAT64), 0),
             token
     FROM {{ref('lido_ethereum_accounting_dai_referral_payment')}}
     
@@ -348,16 +334,15 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
             '1.3. Protocol Assets' as secondary_label,
             '1.3.1. Protocol Assets' as account,
             '1.3.1.2. DAI' AS category,
-            -COALESCE(CAST(amount_token AS DOUBLE), 0),
+            -COALESCE(CAST(amount_token AS FLOAT64), 0),
             token
     FROM {{ref('lido_ethereum_accounting_dai_referral_payment')}}
     
     
     UNION ALL
-    
-    -- ========================================================= LDO denominated Liquidity Incentives
-    -- This only works for LDO denominated expenses.
-    -- Hypothetical DAI or stETH expenses in the same category would have to hit the Surplus and need a separate think
+
+
+
     
     SELECT  period,
             evt_tx_hash,
@@ -401,10 +386,9 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
             
     FROM {{ref('lido_ethereum_accounting_liquidity_incentives')}}
     WHERE token NOT IN (LOWER('0x5a98fcbea516cf06857215779fd812ca3bef1b32'))
-    
-    -- ========================================================= LDO denominated Domain Incentives
-    -- This only works for LDO denominated expenses.
-    -- Hypothetical DAI or stETH expenses in the same category would have to hit the Surplus and need a separate think
+
+
+
     UNION ALL
     
     SELECT  period,
@@ -413,7 +397,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
             '3.2. Operating Performance' AS secondary_label,
             '3.2.3. Sales & Marketing Incentives' AS account,
             '3.2.3.3. Domain Incentives' AS category,
-            -amount_token AS value,
+            -amount_token AS `value`,
             token
     FROM {{ref('lido_ethereum_accounting_lox_incentives')}}    
 
@@ -426,7 +410,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
             '3.3. LDO token transactions' AS secondary_label,
             '3.3.1. LDO Contra Equity' AS account,
             '3.3.1.3. Domain Incentives' AS category,
-            amount_token AS value,
+            amount_token AS `value`,
             token
     FROM {{ref('lido_ethereum_accounting_lox_incentives')}}
     WHERE token IN (LOWER('0x5a98fcbea516cf06857215779fd812ca3bef1b32'))
@@ -445,13 +429,11 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
                 WHEN token = LOWER('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2') THEN '1.3.1.3. ETH'
                 ELSE '1.3.1.4. Other'
             END AS category,
-            amount_token AS value,
+            amount_token AS `value`,
             token
     FROM {{ref('lido_ethereum_accounting_lox_incentives')}}
     WHERE token NOT IN (LOWER('0x5a98fcbea516cf06857215779fd812ca3bef1b32'))
-    
-    
-    -- ========================================================= LEGO Grants
+
     UNION ALL
     
     SELECT  period,
@@ -497,7 +479,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
     WHERE token IN (LOWER('0x5a98fcbea516cf06857215779fd812ca3bef1b32'))
     
     UNION ALL
-    -- ========================================================= Operating expenses from service entities
+
     
     SELECT  period,
             evt_tx_hash,
@@ -505,7 +487,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
             '3.2. Operating Performance' AS secondary_label,
             '3.2.4. Operating expenses' AS account,
             '3.2.4.1. Operating expenses' AS category,
-            -amount_token AS value,
+            -amount_token AS `value`,
             token 
     FROM {{ref('lido_ethereum_accounting_operating_expenses')}}
     
@@ -543,9 +525,8 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
     
     
     UNION ALL
-    
-    -- ========================================================= All other operating expenses
-    --not-LDO expenses
+
+
     
     SELECT  period,
             evt_tx_hash,
@@ -577,8 +558,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
             token
     FROM {{ref('lido_ethereum_accounting_other_expenses')}}
     WHERE token NOT IN (LOWER('0x5a98fcbea516cf06857215779fd812ca3bef1b32'))
-    
-    --LDO expenses
+
     UNION ALL
     
     SELECT  period,
@@ -638,7 +618,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
     
     
     UNION ALL
-    -- ========================================================= Non standard protocol surplus revenues
+
     
     SELECT  period,
             evt_tx_hash,
@@ -685,7 +665,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
                 WHEN token = LOWER('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2') THEN '3.1.1.3. ETH'
                 ELSE '3.1.1.4. Other'
             END AS category,
-            CAST(amount_token AS DOUBLE),
+            CAST(amount_token AS FLOAT64),
             token
     FROM {{ref('lido_ethereum_accounting_fundraising')}}
     WHERE token NOT IN (LOWER('0x5a98fcbea516cf06857215779fd812ca3bef1b32'))
@@ -705,7 +685,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
                 WHEN token = LOWER('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2') THEN '1.3.1.3. ETH'
                 ELSE '1.3.1.4. Other'
             END AS category,
-            CAST(amount_token AS DOUBLE),
+            CAST(amount_token AS FLOAT64),
             token
     FROM {{ref('lido_ethereum_accounting_fundraising')}}
     WHERE token NOT IN (LOWER('0x5a98fcbea516cf06857215779fd812ca3bef1b32'))
@@ -713,7 +693,7 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
 
 ) accounts
 
-    LEFT JOIN tokens_prices ON date_trunc('day', accounts.period) = date_trunc('day', tokens_prices.period) 
+    LEFT JOIN tokens_prices ON TIMESTAMP_TRUNC(accounts.period, day) = TIMESTAMP_TRUNC(tokens_prices.period, day) 
     AND ( 
         (
             (accounts.token) = (tokens_prices.token) 
@@ -727,7 +707,3 @@ SELECT  DATE_TRUNC('day', prices.usd.minute) AS period,
     LEFT JOIN {{ref('prices_tokens')}} pt ON accounts.token = pt.contract_address                     
     GROUP BY 1,2,3,4,5,6,8,9, tokens_prices.decimals, pt.decimals, tokens_prices.price, tokens_prices.token_eth_price
     ORDER BY period DESC
-
-
-
-

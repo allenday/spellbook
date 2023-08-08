@@ -1,15 +1,9 @@
 {{ config(
         schema = 'tornado_cash_avalanche_c',
         alias ='withdrawals',
-        materialized='incremental',
+        materialized = 'view',
         partition_by='block_date',
-        file_format = 'delta',
-        incremental_strategy = 'merge',
-        unique_key = ['block_date', 'tx_hash', 'evt_index'],
-        post_hook='{{ expose_spells(\'["avalanche_c"]\',
-                                    "project",
-                                    "tornado_cash",
-                                    \'["hildobby", "dot2dotseurat"]\') }}'
+                        unique_key = ['block_date', 'tx_hash', 'evt_index']
         )
 }}
 
@@ -32,7 +26,7 @@ SELECT tc.evt_block_time AS block_time
         END AS amount
 , tc.evt_tx_hash AS tx_hash
 , tc.evt_index
-, TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
+, SAFE_CAST(TIMESTAMP_TRUNC(tc.evt_block_time, DAY) AS date) AS block_date
 FROM {{ source('tornado_cash_avalanche_c','ETHTornado_evt_Withdrawal') }} tc
 INNER JOIN {{ source('avalanche_c','transactions') }} at
         ON at.hash=tc.evt_tx_hash
@@ -40,11 +34,11 @@ INNER JOIN {{ source('avalanche_c','transactions') }} at
         AND at.block_time >= '{{avalanche_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        AND at.block_time >= date_trunc("day", now() - interval '1 week')
+        AND at.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 {% if not is_incremental() %}
 WHERE tc.evt_block_time >= '{{avalanche_start_date}}'
 {% endif %}
 {% if is_incremental() %}
-WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
+WHERE tc.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}

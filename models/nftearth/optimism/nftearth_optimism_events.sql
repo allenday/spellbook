@@ -1,14 +1,8 @@
 {{ config(
     alias = 'events',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'tx_hash', 'evt_index', 'nft_contract_address', 'token_id', 'sub_type', 'sub_idx'],
-    post_hook='{{ expose_spells(\'["optimism"]\',
-                            "project",
-                            "nftearth",
-                            \'["chuxin"]\') }}'
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'tx_hash', 'evt_index', 'nft_contract_address', 'token_id', 'sub_type', 'sub_idx']
     )
 }}
 
@@ -25,7 +19,7 @@ with source_optimism_transactions as (
     where block_time >= '{{c_seaport_first_date}}'  -- seaport first txn
     {% endif %}
     {% if is_incremental() %}
-    where block_time >= date_trunc("day", now() - interval '1 week')
+    where block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 )
 ,ref_nftearth_optimism_base_pairs as (
@@ -33,7 +27,7 @@ with source_optimism_transactions as (
       from {{ ref('nftearth_optimism_base_pairs') }}
       where 1=1
       {% if is_incremental() %}
-            and block_time >= date_trunc("day", now() - interval '1 week')
+            and block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
       {% endif %}
 )
 ,ref_tokens_nft as (
@@ -59,7 +53,7 @@ with source_optimism_transactions as (
       and minute >= '{{c_seaport_first_date}}'  -- seaport first txn
     {% endif %}
     {% if is_incremental() %}
-      and minute >= date_trunc("day", now() - interval '1 week')
+      and minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 )
 ,iv_base_pairs_priv as (
@@ -244,7 +238,7 @@ with source_optimism_transactions as (
   left join source_prices_usd p on p.contract_address = case when a.token_contract_address = '{{c_native_token_address}}' then '{{c_alternative_token_address}}'
                                                             else a.token_contract_address
                                                         end
-    and p.minute = date_trunc('minute', a.block_time)
+    and p.minute = TIMESTAMP_TRUNC(a.block_time, minute)
   left join ref_nft_aggregators agg on agg.contract_address = t.to
 )
 ,erc721_transfer as (
@@ -259,12 +253,12 @@ with source_optimism_transactions as (
   from {{ source('erc721_optimism','evt_transfer') }}
   where
     (from = '{{non_buyer_address}}'
-    or to = '{{non_buyer_address}}')
+    or `to` = '{{non_buyer_address}}')
     {% if not is_incremental() %}
     and evt_block_time >= '{{c_seaport_first_date}}'  -- seaport first txn
     {% endif %}
     {% if is_incremental() %}
-    and evt_block_time >= date_trunc("day", now() - interval '1 week')
+    and evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 )
 ,erc1155_transfer as (
@@ -279,12 +273,12 @@ with source_optimism_transactions as (
   from {{ source('erc1155_optimism','evt_transfersingle') }}
   where
     (from = '{{non_buyer_address}}'
-    or to = '{{non_buyer_address}}')
+    or `to` = '{{non_buyer_address}}')
     {% if not is_incremental() %}
     and evt_block_time >= '{{c_seaport_first_date}}'  -- seaport first txn
     {% endif %}
     {% if is_incremental() %}
-    and evt_block_time >= date_trunc("day", now() - interval '1 week')
+    and evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 )
 ,all_transfers as (
@@ -334,15 +328,15 @@ with source_optimism_transactions as (
     -- project info (platform or exchange)
     ,t.platform_contract_address as project_contract_address
     ,t.platform_fee_receiver as platform_fee_receive_address
-    ,CAST(t.platform_fee_amount_raw as double) as platform_fee_amount_raw
+    ,CAST(t.platform_fee_amount_raw as FLOAT64) as platform_fee_amount_raw
     ,t.platform_fee_amount
     ,t.platform_fee_amount_usd
-    ,case when t.price_amount_raw > 0 then CAST ((t.platform_fee_amount_raw / t.price_amount_raw * 100) AS DOUBLE) end platform_fee_percentage
+    ,case when t.price_amount_raw > 0 then CAST ((t.platform_fee_amount_raw / t.price_amount_raw * 100) AS FLOAT64) end platform_fee_percentage
 
     -- royalty info
     ,t.creator_fee_receiver_1 as royalty_fee_receive_address
-    ,CAST(t.creator_fee_amount_raw as double) as royalty_fee_amount_raw
-    ,case when t.price_amount_raw > 0 then CAST ((creator_fee_amount_raw / t.price_amount_raw * 100) AS DOUBLE) end royalty_fee_percentage
+    ,CAST(t.creator_fee_amount_raw as FLOAT64) as royalty_fee_amount_raw
+    ,case when t.price_amount_raw > 0 then CAST ((creator_fee_amount_raw / t.price_amount_raw * 100) AS FLOAT64) end royalty_fee_percentage
     ,t.token_symbol as royalty_fee_currency_symbol
     ,t.creator_fee_amount as royalty_fee_amount
     ,t.creator_fee_amount_usd as royalty_fee_amount_usd

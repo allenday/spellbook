@@ -1,128 +1,176 @@
-version: 2
-
 models:
-  - name: tokens_ethereum_erc20
-    meta:
-      blockchain: ethereum
-      sector: tokens
-      project: erc20
-      contributors: soispoke, dot2dotseurat
-    config:
-      tags: ['table', 'erc20']
-    description: "ERC20 Token Addresses, Symbols and Decimals"
-    columns:
-      - name: contract_address
-        description: "ERC20 token contract address"
-        tests:
-          - unique
-      - name: symbol
-        description: "ERC20 token symbol"
-      - name: decimals
-        description: "Number of decimals, refers to how divisible an ERC20 token can be"
+- columns:
+  - description: ERC20 token contract address
+    name: contract_address
+    tests:
+    - unique
+  - description: ERC20 token symbol
+    name: symbol
+    tests: []
+  - description: Number of decimals, refers to how divisible an ERC20 token can be
+    name: decimals
+    tests: []
+  config:
+    tags:
+    - table
+    - erc20
+  description: ERC20 Token Addresses, Symbols and Decimals
+  meta:
+    blockchain: ethereum
+    contributors: soispoke, dot2dotseurat
+    project: erc20
+    sector: tokens
+  name: tokens_ethereum_erc20
+  tests: []
+- columns:
+  - description: Token contract address
+    name: contract_address
+    tests:
+    - unique
+  - description: Token symbol
+    name: symbol
+    tests: []
+  config:
+    tags:
+    - table
+    - erc20
+    - rebase
+  description: 'Ethereum Rebase Token Addresses and Symbols.  A Rebase Token is a
+    cryptocurrency with an algorithmically adjusted supply that controls its price.
 
-  - name: tokens_ethereum_rebase
-    meta:
-      blockchain: ethereum
-      sector: tokens
-      project: erc20
-      contributors: dot2dotseurat
-    config:
-      tags: ['table', 'erc20', 'rebase']
-    description: >
-      Ethereum Rebase Token Addresses and Symbols. 
-      A Rebase Token is a cryptocurrency with an algorithmically adjusted supply that controls its price.
-    columns:
-      - name: contract_address
-        description: "Token contract address"
-        tests:
-          - unique
-      - name: symbol
-        description: "Token symbol"
+    '
+  meta:
+    blockchain: ethereum
+    contributors: dot2dotseurat
+    project: erc20
+    sector: tokens
+  name: tokens_ethereum_rebase
+  tests: []
+- columns:
+  - description: The contract address is the unique address of where the NFTs are
+      stored.
+    name: contract_address
+    tests:
+    - unique
+  - description: NFT Project Name
+    name: name
+    tests: []
+  - description: NFT Token Symbol
+    name: symbol
+    tests: []
+  config:
+    tags:
+    - tokens
+    - ethereum
+    - nft
+    - erc721
+  description: 'Selection of NFT token addresses manually added into spellbook by
+    contributing wizards.
 
-  - name: tokens_ethereum_nft_curated
-    meta:
-      blockchain: ethereum
-      sector: nft
-      contributors: dot2dotseurat, hildobby, 0xbitfly
-    config:
-      tags: ['tokens', 'ethereum', 'nft', 'erc721']
-    description: >
-        Selection of NFT token addresses manually added into spellbook by contributing wizards.
-    columns:
-      - name: contract_address
-        description: "The contract address is the unique address of where the NFTs are stored."
-        tests:
-          - unique
-      - name: name
-        description: "NFT Project Name"
-      - name: symbol
-        description: "NFT Token Symbol"
+    '
+  meta:
+    blockchain: ethereum
+    contributors: dot2dotseurat, hildobby, 0xbitfly
+    sector: nft
+  name: tokens_ethereum_nft_curated
+  tests: []
+- columns:
+  - description: The contract address is the unique address of where the NFTs are
+      stored.
+    name: contract_address
+    tests:
+    - unique
+  - description: NFT Project Name
+    name: name
+    tests: []
+  - description: NFT Token Symbol
+    name: symbol
+    tests: []
+  - description: 'The token standard. This is the set of rules that the contract must
+      respect  to be compatible with the common standards. Accepted values are presently
+      standards represented. If you are adding a token with a new standard, remember
+      to add it the accepted values list.
 
-  - name: tokens_ethereum_nft
-    meta:
-      blockchain: ethereum
-      sector: nft
-      contributors: dot2dotseurat, hildobby
-    config:
-      tags: ['tokens', 'ethereum', 'nft', 'erc721']
-    description: >
-        Aggregation of all NFT token addresses found in tokens_ethereum_nft_wizards_curated & Reservoir's external dataset reservoir.collections.
-    columns:
-      - name: contract_address
-        description: "The contract address is the unique address of where the NFTs are stored."
-        tests:
-          - unique
-      - name: name
-        description: "NFT Project Name"
-      - name: symbol
-        description: "NFT Token Symbol"
-      - name: standard
-        tests:
-          - accepted_values:
-              values: ['erc721', 'erc1155' , 'erc20', 'cryptopunks','superrare']
-        description: >
-            The token standard. This is the set of rules that the contract must respect 
-            to be compatible with the common standards. Accepted values are presently standards represented.
-            If you are adding a token with a new standard, remember to add it the accepted values list.
+      '
+    name: standard
+    tests:
+    - accepted_values:
+        values:
+        - erc721
+        - erc1155
+        - erc20
+        - cryptopunks
+        - superrare
+  config:
+    tags:
+    - tokens
+    - ethereum
+    - nft
+    - erc721
+  description: 'Aggregation of all NFT token addresses found in tokens_ethereum_nft_wizards_curated
+    & Reservoir''s external dataset reservoir.collections.
 
-  - name: tokens_ethereum_erc20_stablecoins
-    meta:
-      blockchain: ethereum
-      sector: tokens
-      project: erc20
-      contributors: gentrexha
-    config:
-      tags: [ 'table', 'erc20', 'stablecoins' ]
-    description: "ERC20 Stablecoin Token Addresses, Symbols and Decimals"
-    columns:
-      - name: contract_address
-        description: "ERC20 stablecoin token contract address"
-        tests:
-          - unique
-      - name: symbol
-        description: "ERC20 stablecoin token symbol"
-      - name: decimals
-        description: "Number of decimals, refers to how divisible an ERC20 stablecoin token can be"
-      - name: name
-        description: "ERC20 stablecoin token name"
+    '
+  meta:
+    blockchain: ethereum
+    contributors: dot2dotseurat, hildobby
+    sector: nft
+  name: tokens_ethereum_nft
+  tests: []
+- columns:
+  - description: ERC20 stablecoin token contract address
+    name: contract_address
+    tests:
+    - unique
+  - description: ERC20 stablecoin token symbol
+    name: symbol
+    tests: []
+  - description: Number of decimals, refers to how divisible an ERC20 stablecoin token
+      can be
+    name: decimals
+    tests: []
+  - description: ERC20 stablecoin token name
+    name: name
+    tests: []
+  config:
+    tags:
+    - table
+    - erc20
+    - stablecoins
+  description: ERC20 Stablecoin Token Addresses, Symbols and Decimals
+  meta:
+    blockchain: ethereum
+    contributors: gentrexha
+    project: erc20
+    sector: tokens
+  name: tokens_ethereum_erc20_stablecoins
+  tests: []
+- columns:
+  - description: the NFT contract address
+    name: contract_address
+    tests:
+    - unique
+  - description: The NFT standard erc721/erc1155/...
+    name: standard
+    tests:
+    - accepted_values:
+        values:
+        - erc721
+        - erc1155
+        - erc20
+        - cryptopunks
+        - superrare
+  config:
+    tags:
+    - nft
+    - ethereum
+  description: 'NFT contract standards
 
-  - name: tokens_ethereum_nft_standards
-    meta:
-      blockchain: ethereum
-      sector: nft
-      contributors: 0xRob
-    config:
-      tags: [ 'nft','ethereum' ]
-    description: >
-      NFT contract standards
-    columns:
-      - name: contract_address
-        description: "the NFT contract address"
-        tests:
-          - unique
-      - name: standard
-        description: "The NFT standard erc721/erc1155/..."
-        tests:
-          - accepted_values:
-              values: ['erc721', 'erc1155' , 'erc20', 'cryptopunks','superrare']
-
+    '
+  meta:
+    blockchain: ethereum
+    contributors: 0xRob
+    sector: nft
+  name: tokens_ethereum_nft_standards
+  tests: []
+version: 2

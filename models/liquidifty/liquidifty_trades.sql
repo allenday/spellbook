@@ -1,11 +1,7 @@
 {{ config(
     schema = 'liquidifty',
-    alias = 'trades',
-    post_hook = '{{ expose_spells(\'["bnb", "ethereum"]\',
-                                    "project",
-                                    "liquidifty",
-                                    \'["bizzyvinci"]\') }}'
-) }}
+    alias = 'trades'
+)}}
 
 select * from {{ ref('liquidifty_bnb_trades') }}
 union all

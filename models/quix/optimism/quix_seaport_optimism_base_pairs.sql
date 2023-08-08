@@ -1,14 +1,8 @@
 {{ config(
     alias = 'base_pairs',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'tx_hash', 'evt_index', 'sub_type', 'sub_idx'],
-    post_hook='{{ expose_spells(\'["optimism"]\',
-                            "project",
-                            "quix",
-                            \'["chuxin"]\') }}'
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'tx_hash', 'evt_index', 'sub_type', 'sub_idx']
     )
 }}
 
@@ -39,7 +33,7 @@ with iv_offer_consideration as (
             ,recipient as receiver
             ,zone
             ,offer_item:token as token_contract_address
-            ,cast(offer_item:amount as numeric(38)) as original_amount
+            ,cast(offer_item:amount as BIGNUMERIC) as original_amount
             ,case offer_item:itemType
                 when '0' then 'native'
                 when '1' then 'erc20'
@@ -73,7 +67,7 @@ with iv_offer_consideration as (
         where evt_block_time >= '{{c_seaport_first_date}}'  -- seaport first txn
         {% endif %}
         {% if is_incremental() %}
-        where evt_block_time >= date_trunc("day", now() - interval '1 week')
+        where evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
     )
     union all
@@ -101,7 +95,7 @@ with iv_offer_consideration as (
             ,consideration_item:recipient as receiver
             ,zone
             ,consideration_item:token as token_contract_address
-            ,cast(consideration_item:amount as numeric(38)) as original_amount
+            ,cast(consideration_item:amount as BIGNUMERIC) as original_amount
             ,case consideration_item:itemType
                 when '0' then 'native'
                 when '1' then 'erc20'
@@ -133,14 +127,14 @@ with iv_offer_consideration as (
         where evt_block_time >= '{{c_seaport_first_date}}'  -- seaport first txn
         {% endif %}
         {% if is_incremental() %}
-        where evt_block_time >= date_trunc("day", now() - interval '1 week')
+        where evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
     )
 )
 
 ,iv_base_pairs as (
     select a.*
-            ,try_cast(date_trunc('day', a.block_time) as date) as block_date
+            ,SAFE_CAST(TIMESTAMP_TRUNC(a.block_time, day) as date) as block_date
             ,case when offer_first_item_type = 'erc20' then 'offer accepted'
                 when offer_first_item_type in ('erc721','erc1155') then 'buy'
                 else 'etc' -- some txns has no nfts

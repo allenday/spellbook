@@ -1,575 +1,704 @@
-version: 2
-
 models:
-  - name: balancer_v2_ethereum_pools_fees
-    meta:
-      blockchain: ethereum
-      project: balancer_v2
-      contributors: jacektrocinski
-    config:
-      tags: ['ethereum', 'balancer', 'pools', 'fees']
-    description: >
-      Balancer v2 swap fees stored at the pool level.
+- columns:
+  - &id001
+    description: Ethereum address for the liquidity pool used in transaction
+    name: contract_address
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - block_number
-            - tx_hash
-            - index
-    columns:
-      - &contract_address
-        name: contract_address
-        description: 'Ethereum address for the liquidity pool used in transaction'
-        tests:
-          - not_null
-      - &tx_hash
-        name: tx_hash
-        description: 'Transaction hash'
-        tests:
-          - not_null
-      - &index
-        name: index
-        description: ''
-        tests:
-          - not_null
-      - &tx_index
-        name: tx_index
-        description: ''
-        tests:
-          - not_null
-      - &block_time
-        name: block_time
-        description: 'Block time in UTC'
-        tests:
-          - not_null
-      - &block_number
-        name: block_number
-        description: 'Block number'
-        tests:
-          - not_null
-      - &swap_fee_percentage
-        name: swap_fee_percentage
-        description: 'Swap fees for the pool, values are returned with 18 decimals (1e18 meaning 100%)'
-        tests:
-          - not_null
+    - not_null
+  - &id009
+    description: Transaction hash
+    name: tx_hash
+    tests:
+    - not_null
+  - description: ''
+    name: index
+    tests:
+    - not_null
+  - description: ''
+    name: tx_index
+    tests:
+    - not_null
+  - &id007
+    description: Block time in UTC
+    name: block_time
+    tests:
+    - not_null
+  - &id006
+    description: Block number
+    name: block_number
+    tests:
+    - not_null
+  - description: Swap fees for the pool, values are returned with 18 decimals (1e18
+      meaning 100%)
+    name: swap_fee_percentage
+    tests:
+    - not_null
+  config:
+    tags:
+    - ethereum
+    - balancer
+    - pools
+    - fees
+  description: 'Balancer v2 swap fees stored at the pool level.
 
-  - name: balancer_ethereum_balances
-    meta:
+    '
+  meta:
+    blockchain: ethereum
+    contributors: jacektrocinski
+    project: balancer_v2
+  name: balancer_v2_ethereum_pools_fees
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - block_number
+      - tx_hash
+      - index
+- columns:
+  - &id005
+    description: UTC event block time truncated to the day mark
+    name: day
+    tests:
+    - not_null
+  - description: Balancer pool contract address
+    name: pool
+    tests: []
+  - description: Token contract address
+    name: token
+    tests: []
+  - description: Balance of a token
+    name: cumulative_amount
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - balancer
+    - balances
+  description: 'ERC20 token rolling sum balances on Balancer, an automated portfolio
+    manager and trading platform.
+
+    '
+  meta:
+    blockchain: ethereum
+    contributors: jacektrocinski
+    project: balancer
+  name: balancer_ethereum_balances
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - day
+      - pool
+      - token
+- columns:
+  - description: UTC event block time truncated to the hour mark
+    name: hour
+    tests:
+    - not_null
+  - *id001
+  - description: BPT median price
+    name: median_price
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - bpt
+    - prices
+  description: 'Balancer Pool Token (BPT) hourly median price by pool on Balancer,
+    an automated portfolio manager and trading platform.
+
+    '
+  meta:
+    blockchain: ethereum
+    contributors: victorstefenon
+    project: balancer_v2
+  name: balancer_v2_ethereum_bpt_prices
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - hour
+      - contract_address
+- columns:
+  - *id001
+  - &id008
+    description: UTC event block date
+    name: block_date
+    tests: []
+  - description: Transaction hash of transfer event
+    name: evt_tx_hash
+    tests:
+    - not_null
+  - &id010
+    description: Event index
+    name: evt_index
+    tests:
+    - not_null
+  - description: Block time of transfer event
+    name: evt_block_time
+    tests:
+    - not_null
+  - description: Block number of transfer event
+    name: evt_block_number
+    tests:
+    - not_null
+  - description: Address of BPT provider of transfer event
+    name: from
+    tests:
+    - not_null
+  - description: Address of BPT receiver of transfer event
+    name: to
+    tests:
+    - not_null
+  - description: Amount of BPT transferred in transfer event
+    name: value
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - bpt
+    - prices
+  description: 'Balancer Pool Token (BPT) transfer logs on Balancer, an automated
+    portfolio manager and trading platform, on Ethereum.
+
+    '
+  meta:
+    blockchain: ethereum
+    contributors: victorstefenon
+    project: balancer_v2
+  name: balancer_v2_ethereum_transfers_bpt
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - evt_tx_hash
+      - evt_index
+      - block_date
+  - check_seed:
+      check_columns:
+      - contract_address
+      - evt_block_number
+      - from
+      - to
+      filter:
+        blockchain: ethereum
+      match_columns:
+      - evt_tx_hash
+      - evt_index
+      - block_date
+      seed_file: ref('balancer_transfers_bpt_seed')
+- columns:
+  - &id002
+    description: Unique encoded identifier that refers to each pool
+    name: pool_id
+    tests:
+    - not_null
+  - &id003
+    description: Contract address for the token
+    name: token_address
+    tests: []
+  - &id004
+    description: Weight of the token in the pool.
+    name: normalized_weight
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - balancer
+    - pools
+    - tokens
+    - weights
+  description: 'Token weights in Balancer pools.
+
+    '
+  meta:
+    blockchain: ethereum
+    contributors: jacektrocinski
+    project: balancer
+  name: balancer_ethereum_pools_tokens_weights
+  tests: []
+- columns:
+  - *id002
+  - *id003
+  - *id004
+  config:
+    tags:
+    - ethereum
+    - balancer
+    - pools
+    - tokens
+    - weights
+  description: 'Token weights in Balancer v1 pools.
+
+    '
+  meta:
+    blockchain: ethereum
+    contributors: jacektrocinski
+    project: balancer
+  name: balancer_v1_ethereum_pools_tokens_weights
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - pool_id
+      - token_address
+- columns:
+  - *id002
+  - *id003
+  - *id004
+  config:
+    tags:
+    - ethereum
+    - balancer
+    - pools
+    - tokens
+    - weights
+  description: 'Token weights in Balancer v2 pools.
+
+    '
+  meta:
+    blockchain: ethereum
+    contributors: jacektrocinski
+    project: balancer
+  name: balancer_v2_ethereum_pools_tokens_weights
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - pool_id
+      - token_address
+- columns:
+  - *id005
+  - description: Address of the wallet holding the veBAL
+    name: wallet_address
+    tests: []
+  - description: Amount of BPT held in the veBAL lock
+    name: bpt_balance
+    tests: []
+  - description: Amount of veBAL
+    name: vebal_balance
+    tests: []
+  - description: Amount of time the BPT was locked for at the last time the lock was
+      updated
+    name: lock_time
+    tests: []
+  config:
+    tags:
+    - balancer
+    - ethereum
+    - vebal
+    - day
+    - markusbkoch
+    - mendesfabio
+  description: 'Daily balances of veBAL per wallet Depends on veBAL_call_create_lock,
+    veBAL_evt_Deposit and veBAL_evt_Withdraw
+
+    '
+  meta:
+    blockchain: ethereum
+    contibutors: markusbkoch, mendesfabio, victorstefenon
+    project: balancer
+  name: balancer_ethereum_vebal_balances_day
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - day
+      - wallet_address
+- columns:
+  - *id006
+  - *id007
+  - description: Block timestamp
+    name: block_timestamp
+    tests: []
+  - description: Address of the wallet holding the veBAL
+    name: wallet_address
+    tests: []
+  - description: Amount of BPT held in the veBAL lock
+    name: bpt_balance
+    tests: []
+  - description: Timestamp at which B-80BAL-20WETH BPT can be unlocked
+    name: unlocked_at
+    tests: []
+  - description: veBAL decay rate (per second)
+    name: slope
+    tests: []
+  - description: veBAL balance at the moment user locks or re-locks
+    name: bias
+    tests: []
+  - description: Block time trunc to date
+    name: block_date
+    tests: []
+  config:
+    tags:
+    - balancer
+    - ethereum
+    - vebal
+    - slope
+    - markusbkoch
+    - mendesfabio
+    - victorstefenon
+  description: 'Slope and bias of veBAL per wallet after each balance update Depends
+    on veBAL_call_create_lock, veBAL_evt_Deposit and veBAL_evt_Withdraw
+
+    '
+  meta:
+    blockchain: ethereum
+    contibutors: markusbkoch, mendesfabio, victorstefenon
+    project: balancer
+  name: balancer_ethereum_vebal_slopes
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - block_number
+      - wallet_address
+- columns:
+  - &id011
+    description: Blockchain
+    name: blockchain
+    tests: []
+  - &id012
+    description: Project name (balancer)
+    name: project
+    tests: []
+  - &id013
+    description: Version of the project
+    name: version
+    tests: []
+  - *id008
+  - *id007
+  - &id014
+    description: Token symbol for token bought in the trade
+    name: token_bought_symbol
+    tests: []
+  - &id015
+    description: Token symbol for token sold in the trade
+    name: token_sold_symbol
+    tests: []
+  - &id016
+    description: Token symbol pair for each token involved in the trade
+    name: token_pair
+    tests: []
+  - &id017
+    description: Value of the token bought at time of execution in the original currency
+    name: token_bought_amount
+    tests: []
+  - &id018
+    description: Value of the token sold at time of execution in the original currency
+    name: token_sold_amount
+    tests: []
+  - &id019
+    description: Raw value of the token bought at time of execution in the original
+      currency
+    name: token_bought_amount_raw
+    tests: []
+  - &id020
+    description: Raw value of the token sold at time of execution in the original
+      currency
+    name: token_sold_amount_raw
+    tests: []
+  - &id021
+    description: USD value of the trade at time of execution
+    name: amount_usd
+    tests: []
+  - &id022
+    description: Contract address of the token bought
+    name: token_bought_address
+    tests: []
+  - &id023
+    description: Contract address of the token sold
+    name: token_sold_address
+    tests: []
+  - &id024
+    description: Address of trader who purchased a token
+    name: taker
+    tests: []
+  - &id025
+    description: Address of trader who sold a token
+    name: maker
+    tests: []
+  - &id026
+    description: Pool address
+    name: project_contract_address
+    tests: []
+  - *id009
+  - &id027
+    description: transaction.from
+    name: tx_from
+    tests: []
+  - &id028
+    description: transaction.to
+    name: tx_to
+    tests: []
+  - &id029
+    description: ''
+    name: trace_address
+    tests: []
+  - *id010
+  config:
+    tags:
+    - balancer
+    - ethereum
+    - amm
+    - trades
+    - dex
+  description: 'DEX trades on balancer on ethereum
+
+    '
+  meta:
+    blockchain: ethereum
+    contributors: bizzyvinci
+    sector: dex
+  name: balancer_ethereum_trades
+  tests: []
+- columns:
+  - *id011
+  - *id012
+  - *id013
+  - *id008
+  - *id007
+  - *id014
+  - *id015
+  - *id016
+  - *id017
+  - *id018
+  - *id019
+  - *id020
+  - *id021
+  - *id022
+  - *id023
+  - *id024
+  - *id025
+  - *id026
+  - *id009
+  - *id027
+  - *id028
+  - *id029
+  - *id010
+  config:
+    tags:
+    - balancer
+    - ethereum
+    - amm
+    - trades
+    - dex
+  description: 'DEX trades on balancer v1 on ethereum
+
+    '
+  meta:
+    blockchain: ethereum
+    contributors: bizzyvinci
+    sector: dex
+  name: balancer_v1_ethereum_trades
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - block_date
+      - blockchain
+      - project
+      - version
+      - tx_hash
+      - evt_index
+      - trace_address
+  - check_dex_seed:
       blockchain: ethereum
       project: balancer
-      contributors: jacektrocinski
-    config:
-      tags: ['ethereum', 'balancer', 'balances']
-    description: >
-      ERC20 token rolling sum balances on Balancer, an automated portfolio manager and trading platform.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - day
-            - pool
-            - token
-    columns:
-      - &day
-        name: day
-        description: 'UTC event block time truncated to the day mark'
-        tests:
-          - not_null
-      - &pool
-        name: pool
-        description: 'Balancer pool contract address'
-      - &token
-        name: token
-        description: 'Token contract address'
-      - &cumulative_amount
-        name: cumulative_amount
-        description: 'Balance of a token'
+      version: 1
+- columns:
+  - *id011
+  - *id012
+  - *id013
+  - *id008
+  - *id007
+  - *id014
+  - *id015
+  - *id016
+  - *id017
+  - *id018
+  - *id019
+  - *id020
+  - *id021
+  - *id022
+  - *id023
+  - *id024
+  - *id025
+  - *id026
+  - *id009
+  - *id027
+  - *id028
+  - *id029
+  - *id010
+  config:
+    tags:
+    - balancer
+    - ethereum
+    - amm
+    - trades
+    - dex
+  description: 'DEX trades on balancer v2 on ethereum
 
-  - name: balancer_v2_ethereum_bpt_prices
-    meta:
-      blockchain: ethereum
-      project: balancer_v2
-      contributors: victorstefenon
-    config:
-      tags: ['ethereum', 'bpt', 'prices']
-    description: >
-      Balancer Pool Token (BPT) hourly median price by pool on Balancer, an automated portfolio manager and trading platform.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - hour
-            - contract_address
-    columns:
-      - &hour
-        name: hour
-        description: 'UTC event block time truncated to the hour mark'
-        tests:
-          - not_null
-      - *contract_address
-      - &median_price
-        name: median_price
-        description: 'BPT median price'
-
-  - name: balancer_v2_ethereum_transfers_bpt
-    meta:
-      blockchain: ethereum
-      project: balancer_v2
-      contributors: victorstefenon
-    config:
-      tags: ['ethereum', 'bpt', 'prices']
-    description: >
-      Balancer Pool Token (BPT) transfer logs on Balancer, an automated portfolio manager and trading platform, on Ethereum.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - evt_tx_hash
-            - evt_index
-            - block_date
-      - check_seed:
-          seed_file: ref('balancer_transfers_bpt_seed')
-          filter:
-            blockchain: ethereum
-          match_columns:
-            - evt_tx_hash
-            - evt_index
-            - block_date
-          check_columns:
-            - contract_address
-            - evt_block_number
-            - from
-            - to
-    columns:
-      - *contract_address
-      - &block_date
-        name: block_date
-        description: "UTC event block date"
-      - &evt_tx_hash
-        name: evt_tx_hash
-        description: 'Transaction hash of transfer event'
-        tests:
-          - not_null
-      - &evt_index
-        name: evt_index
-        description: 'Event index'
-        tests:
-          - not_null
-      - &evt_block_time
-        name: evt_block_time
-        description: 'Block time of transfer event'
-        tests:
-          - not_null
-      - &evt_block_number
-        name: evt_block_number
-        description: 'Block number of transfer event'
-        tests:
-          - not_null
-      - &from
-        name: from
-        description: 'Address of BPT provider of transfer event'
-        tests:
-          - not_null
-      - &to
-        name: to
-        description: 'Address of BPT receiver of transfer event'
-        tests:
-          - not_null
-      - &value
-        name: value
-        description: 'Amount of BPT transferred in transfer event'
-
-  - name: balancer_ethereum_pools_tokens_weights
-    meta:
+    '
+  meta:
+    blockchain: ethereum
+    contributors: bizzyvinci
+    sector: dex
+  name: balancer_v2_ethereum_trades
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - block_date
+      - blockchain
+      - project
+      - version
+      - tx_hash
+      - evt_index
+      - trace_address
+  - check_dex_seed:
       blockchain: ethereum
       project: balancer
-      contributors: jacektrocinski
-    config:
-      tags: ['ethereum', 'balancer', 'pools', 'tokens', 'weights']
-    description: >
-      Token weights in Balancer pools.
-    columns:
-      - &pool_id
-        name: pool_id
-        description: 'Unique encoded identifier that refers to each pool'
-        tests:
-          - not_null
-      - &token_address
-        name: token_address
-        description: 'Contract address for the token'
-      - &normalized_weight
-        name: normalized_weight
-        description: 'Weight of the token in the pool.'
+      version: 2
+- columns:
+  - description: UTC event block time truncated to the day mark
+    name: day
+    tests: []
+  - *id002
+  - description: Symbol of the pool, consisting of the symbol of its tokens and their
+      respective weights
+    name: pool_symbol
+    tests: []
+  - *id003
+  - description: Symbol of the token
+    name: token_symbol
+    tests: []
+  - description: Liquidity of the token in the pool in USD
+    name: usd_amount
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - balancer
+    - pools
+    - liquidity
+  description: 'Balancer v2 pools liquidity by token in Ethereum.
 
-  - name: balancer_v1_ethereum_pools_tokens_weights
-    meta:
-      blockchain: ethereum
-      project: balancer
-      contributors: jacektrocinski
-    config:
-      tags: ['ethereum', 'balancer', 'pools', 'tokens', 'weights']
-    description: >
-      Token weights in Balancer v1 pools.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - pool_id
-            - token_address
-    columns:
-      - *pool_id
-      - *token_address
-      - *normalized_weight
+    '
+  meta:
+    blockchain: ethereum
+    contributors: victorstefenon
+    project: balancer_v2
+  name: balancer_v2_ethereum_liquidity
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - day
+      - pool_id
+      - token_address
+- columns:
+  - description: ID of the voting round
+    name: round_id
+    tests: []
+  - description: Day of the voting round start date
+    name: start_date
+    tests: []
+  - description: Day of the voting round end date
+    name: end_date
+    tests: []
+  - description: Address of the gauge which provider votes for
+    name: gauge
+    tests: []
+  - description: Address of the wallet which voted for the gauge
+    name: provider
+    tests: []
+  - description: Weight of the vote performed by the provider for the gauge
+    name: vote
+    tests: []
+  config:
+    tags:
+    - balancer
+    - ethereum
+    - vebal
+    - votes
+    - markusbkoch
+    - mendesfabio
+    - stefenon
+  description: 'Records of votes for Balancer gauges by provider at each voting round
+    Depends on GaugeController_evt_VoteForGauge and the vebal_slopes spell
 
-  - name: balancer_v2_ethereum_pools_tokens_weights
-    meta:
-      blockchain: ethereum
-      project: balancer
-      contributors: jacektrocinski
-    config:
-      tags: ['ethereum', 'balancer', 'pools', 'tokens', 'weights']
-    description: >
-      Token weights in Balancer v2 pools.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - pool_id
-            - token_address
-    columns:
-      - *pool_id
-      - *token_address
-      - *normalized_weight
+    '
+  meta:
+    blockchain: ethereum
+    contibutors: markusbkoch, mendesfabio, stefenon
+    project: balancer
+  name: balancer_ethereum_vebal_votes
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - round_id
+      - gauge
+      - provider
+- columns:
+  - description: Name of the LBP
+    name: name
+    tests: []
+  - description: ID of the LBP
+    name: pool_id
+    tests: []
+  - description: Contract address of the token sold by the LBP
+    name: token_sold
+    tests: []
+  - description: Symbol of the token sold by the LBP
+    name: token_symbol
+    tests: []
+  - description: LBP start time
+    name: start_time
+    tests: []
+  - description: LBP end time
+    name: end_time
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - balancer
+    - lbp
+  description: 'Record of the Liquidity Boostrapping Pools (LBP) of Balancer, an automated
+    portfolio manager and trading platform, on Ethereum.
 
-  - name: balancer_ethereum_vebal_balances_day
-    meta:
-      blockchain: ethereum
-      project: balancer
-      contibutors: markusbkoch, mendesfabio, victorstefenon
-    config:
-      tags: ['balancer', 'ethereum', 'vebal', 'day', 'markusbkoch', 'mendesfabio']
-    description: >
-        Daily balances of veBAL per wallet
-        Depends on veBAL_call_create_lock, veBAL_evt_Deposit and veBAL_evt_Withdraw
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - day
-            - wallet_address
-    columns:
-      - *day
-      - name: wallet_address
-        description: "Address of the wallet holding the veBAL"
-      - name: bpt_balance
-        description: "Amount of BPT held in the veBAL lock"
-      - name: vebal_balance
-        description: "Amount of veBAL"
-      - name: lock_time
-        description: "Amount of time the BPT was locked for at the last time the lock was updated"
+    '
+  meta:
+    blockchain: ethereum
+    contributors: stefenon
+    project: balancer_v2
+  name: balancer_v2_ethereum_lbps
+  tests: []
+- columns:
+  - description: UTC event block time truncated to the day mark
+    name: day
+    tests: []
+  - *id002
+  - *id003
+  - description: Symbol of the token
+    name: token_symbol
+    tests: []
+  - description: Raw balance of the token in the pool
+    name: token_balance_raw
+    tests: []
+  - description: Scaled balance of the token in the pool
+    name: token_balance
+    tests: []
+  - description: Liquidity of the token in the pool in USD
+    name: usd_amount
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - balancer
+    - pools
+    - liquidity
+  description: 'Balancer v1 pools liquidity by token in Ethereum.
 
-  - name: balancer_ethereum_vebal_slopes
-    meta:
-      blockchain: ethereum
-      project: balancer
-      contibutors: markusbkoch, mendesfabio, victorstefenon
-    config:
-      tags: ['balancer', 'ethereum', 'vebal', 'slope', 'markusbkoch', 'mendesfabio', 'victorstefenon']
-    description: >
-        Slope and bias of veBAL per wallet after each balance update
-        Depends on veBAL_call_create_lock, veBAL_evt_Deposit and veBAL_evt_Withdraw
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - block_number
-            - wallet_address
-    columns:
-      - *block_number
-      - *block_time
-      - name: block_timestamp
-        description: "Block timestamp"
-      - name: wallet_address
-        description: "Address of the wallet holding the veBAL"
-      - name: bpt_balance
-        description: "Amount of BPT held in the veBAL lock"
-      - name: unlocked_at
-        description: "Timestamp at which B-80BAL-20WETH BPT can be unlocked"
-      - name: slope
-        description: "veBAL decay rate (per second)"
-      - name: bias
-        description: "veBAL balance at the moment user locks or re-locks"
-      - name: block_date
-        description: "Block time trunc to date"
-
-  - name: balancer_ethereum_trades
-    meta:
-      blockchain: ethereum
-      sector: dex
-      contributors: bizzyvinci
-    config:
-      tags: ['balancer', 'ethereum', 'amm', 'trades', 'dex']
-    description: >
-      DEX trades on balancer on ethereum
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "Blockchain"
-      - &project
-        name: project
-        description: "Project name (balancer)"
-      - &version
-        name: version
-        description: "Version of the project"
-      - *block_date
-      - *block_time
-      - &token_bought_symbol
-        name: token_bought_symbol
-        description: "Token symbol for token bought in the trade"
-      - &token_sold_symbol
-        name: token_sold_symbol
-        description: "Token symbol for token sold in the trade"
-      - &token_pair
-        name: token_pair
-        description: "Token symbol pair for each token involved in the trade"
-      - &token_bought_amount
-        name: token_bought_amount
-        description: "Value of the token bought at time of execution in the original currency"
-      - &token_sold_amount
-        name: token_sold_amount
-        description: "Value of the token sold at time of execution in the original currency"
-      - &token_bought_amount_raw
-        name: token_bought_amount_raw
-        description: "Raw value of the token bought at time of execution in the original currency"
-      - &token_sold_amount_raw
-        name: token_sold_amount_raw
-        description: "Raw value of the token sold at time of execution in the original currency"
-      - &amount_usd
-        name: amount_usd
-        description: "USD value of the trade at time of execution"
-      - &token_bought_address
-        name: token_bought_address
-        description: "Contract address of the token bought"
-      - &token_sold_address
-        name: token_sold_address
-        description: "Contract address of the token sold"
-      - &taker
-        name: taker
-        description: "Address of trader who purchased a token"
-      - &maker
-        name: maker
-        description: "Address of trader who sold a token"
-      - &project_contract_address
-        name: project_contract_address
-        description: "Pool address"
-      - *tx_hash
-      - &tx_from
-        name: tx_from
-        description: "transaction.from"
-      - &tx_to
-        name: tx_to
-        description: "transaction.to"
-      - &trace_address
-        name: trace_address
-        description: ""
-      - *evt_index
-
-  - name: balancer_v1_ethereum_trades
-    meta:
-      blockchain: ethereum
-      sector: dex
-      contributors: bizzyvinci
-    config:
-      tags: [ 'balancer', 'ethereum', 'amm', 'trades', 'dex' ]
-    description: >
-      DEX trades on balancer v1 on ethereum
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - block_date
-            - blockchain
-            - project
-            - version
-            - tx_hash
-            - evt_index
-            - trace_address
-      - check_dex_seed:
-          blockchain: ethereum
-          project: balancer
-          version: 1
-    columns:
-      - *blockchain
-      - *project
-      - *version
-      - *block_date
-      - *block_time
-      - *token_bought_symbol
-      - *token_sold_symbol
-      - *token_pair
-      - *token_bought_amount
-      - *token_sold_amount
-      - *token_bought_amount_raw
-      - *token_sold_amount_raw
-      - *amount_usd
-      - *token_bought_address
-      - *token_sold_address
-      - *taker
-      - *maker
-      - *project_contract_address
-      - *tx_hash
-      - *tx_from
-      - *tx_to
-      - *trace_address
-      - *evt_index
-
-  - name: balancer_v2_ethereum_trades
-    meta:
-      blockchain: ethereum
-      sector: dex
-      contributors: bizzyvinci
-    config:
-      tags: [ 'balancer', 'ethereum', 'amm', 'trades', 'dex' ]
-    description: >
-      DEX trades on balancer v2 on ethereum
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - block_date
-            - blockchain
-            - project
-            - version
-            - tx_hash
-            - evt_index
-            - trace_address
-      - check_dex_seed:
-          blockchain: ethereum
-          project: balancer
-          version: 2
-    columns:
-      - *blockchain
-      - *project
-      - *version
-      - *block_date
-      - *block_time
-      - *token_bought_symbol
-      - *token_sold_symbol
-      - *token_pair
-      - *token_bought_amount
-      - *token_sold_amount
-      - *token_bought_amount_raw
-      - *token_sold_amount_raw
-      - *amount_usd
-      - *token_bought_address
-      - *token_sold_address
-      - *taker
-      - *maker
-      - *project_contract_address
-      - *tx_hash
-      - *tx_from
-      - *tx_to
-      - *trace_address
-      - *evt_index
-
-  - name: balancer_v2_ethereum_liquidity
-    meta:
-      blockchain: ethereum
-      project: balancer_v2
-      contributors: victorstefenon
-    config:
-      tags: ['ethereum', 'balancer', 'pools', 'liquidity']
-    description: >
-      Balancer v2 pools liquidity by token in Ethereum.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - day
-            - pool_id
-            - token_address
-    columns:
-      - name: day
-        description: 'UTC event block time truncated to the day mark'
-      - *pool_id
-      - name: pool_symbol
-        description: 'Symbol of the pool, consisting of the symbol of its tokens and their respective weights'
-      - *token_address
-      - name: token_symbol
-        description: 'Symbol of the token'
-      - name: usd_amount
-        description: 'Liquidity of the token in the pool in USD'
-
-  - name: balancer_ethereum_vebal_votes
-    meta:
-      blockchain: ethereum
-      project: balancer
-      contibutors: markusbkoch, mendesfabio, stefenon
-    config:
-      tags: ['balancer', 'ethereum', 'vebal', 'votes', 'markusbkoch', 'mendesfabio', 'stefenon']
-    description: >
-        Records of votes for Balancer gauges by provider at each voting round
-        Depends on GaugeController_evt_VoteForGauge and the vebal_slopes spell
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - round_id
-            - gauge
-            - provider
-    columns:
-      - name: round_id
-        description: "ID of the voting round"
-      - name: start_date
-        description: "Day of the voting round start date"
-      - name: end_date
-        description: "Day of the voting round end date"
-      - name: gauge
-        description: "Address of the gauge which provider votes for"
-      - name: provider
-        description: "Address of the wallet which voted for the gauge"
-      - name: vote
-        description: "Weight of the vote performed by the provider for the gauge"
-
-  - name: balancer_v2_ethereum_lbps
-    meta:
-      blockchain: ethereum
-      project: balancer_v2
-      contributors: stefenon
-    config:
-      tags: ['ethereum', 'balancer', 'lbp']
-    description: >
-      Record of the Liquidity Boostrapping Pools (LBP) of Balancer, an automated portfolio manager and trading platform, on Ethereum.
-    columns:
-      - name: name
-        description: 'Name of the LBP'
-      - name: pool_id
-        description: 'ID of the LBP'
-      - name: token_sold
-        description: 'Contract address of the token sold by the LBP'
-      - name: token_symbol
-        description: 'Symbol of the token sold by the LBP'
-      - name: start_time
-        description: 'LBP start time'
-      - name: end_time
-        description: 'LBP end time'
-
-  - name: balancer_v1_ethereum_liquidity
-    meta:
-      blockchain: ethereum
-      project: balancer_v1
-      contributors: markusbkoch, mendesfabio, victorstefenon
-    config:
-      tags: ['ethereum', 'balancer', 'pools', 'liquidity']
-    description: >
-      Balancer v1 pools liquidity by token in Ethereum.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - day
-            - pool_id
-            - token_address
-    columns:
-      - name: day
-        description: 'UTC event block time truncated to the day mark'
-      - *pool_id
-      # - name: pool_symbol
-      #   description: 'Symbol of the pool, consisting of the symbol of its tokens and their respective weights'
-      - *token_address
-      - name: token_symbol
-        description: 'Symbol of the token'
-      - name: token_balance_raw
-        description: 'Raw balance of the token in the pool'
-      - name: token_balance
-        description: 'Scaled balance of the token in the pool'
-      - name: usd_amount
-        description: 'Liquidity of the token in the pool in USD'
+    '
+  meta:
+    blockchain: ethereum
+    contributors: markusbkoch, mendesfabio, victorstefenon
+    project: balancer_v1
+  name: balancer_v1_ethereum_liquidity
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - day
+      - pool_id
+      - token_address
+version: 2

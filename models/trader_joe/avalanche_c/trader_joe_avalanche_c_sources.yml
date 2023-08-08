@@ -1,123 +1,103 @@
+sources:
+- description: Avalanche decoded tables related to Trader Joe contract
+  freshness:
+    warn_after:
+      count: 12
+      period: hour
+  name: trader_joe_avalanche_c
+  tables:
+  - columns:
+    - description: Amount 0 In
+      name: amount0In
+    - description: Amount 0 Out
+      name: amount0Out
+    - description: Amount 1 In
+      name: amount1In
+    - description: Amount 1 Out
+      name: amount1Out
+    - &id001
+      description: Avalanche C-chain address for the liquidity pool used in transaction
+      name: contract_address
+    - &id002
+      description: Block number which processed the unique transaction hash
+      name: evt_block_number
+    - &id003
+      description: Timestamp for block event time in UTC
+      name: evt_block_time
+    - &id004
+      description: Index value of the transaction
+      name: evt_index
+    - &id005
+      description: Primary key of the transaction
+      name: evt_tx_hash
+      tests:
+      - not_null
+    - &id006
+      description: Swap Initiator
+      name: sender
+    - description: Recipient
+      name: to
+    description: Pair swap event decoded table
+    loaded_at_field: evt_block_time
+    name: JoePair_evt_Swap
+  - columns:
+    - description: '0'
+      name: _0
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: pair address
+      name: pair
+    - description: token 0
+      name: token0
+    - description: token 1
+      name: token1
+    description: Factory pair create decoded table
+    loaded_at_field: evt_block_time
+    name: JoeFactory_evt_PairCreated
+  - columns:
+    - description: Token Sold Amount
+      name: amountIn
+    - description: Token Bought Amount
+      name: amountOut
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: Fees paid for swap
+      name: fees
+    - description: id
+      name: id
+    - description: Address receiving the tokens bought
+      name: recipient
+    - *id006
+    - description: Direction of trade
+      name: swapForY
+    - description: volatilityAccumulated
+      name: volatilityAccumulated
+    description: Liquidity book Pair swap event decoded table
+    loaded_at_field: evt_block_time
+    name: LBPair_evt_Swap
+  - columns:
+    - description: LBPair
+      name: LBPair
+    - description: binStep
+      name: binStep
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: pid
+      name: pid
+    - description: tokenX
+      name: tokenX
+    - description: tokenY
+      name: tokenY
+    description: Liquidity Book Factory pair create decoded table
+    loaded_at_field: evt_block_time
+    name: LBFactory_evt_LBPairCreated
 version: 2
-
-sources: 
-  - name: trader_joe_avalanche_c
-    description: "Avalanche decoded tables related to Trader Joe contract"
-    freshness:
-      warn_after: { count: 12, period: hour }
-    tables:
-      - name: JoePair_evt_Swap
-        loaded_at_field: evt_block_time
-        description: "Pair swap event decoded table" 
-        columns:
-          - &amount0In
-            name: amount0In
-            description: "Amount 0 In"
-          - &amount0Out
-            name: amount0Out
-            description: "Amount 0 Out"
-          - &amount1In
-            name: amount1In
-            description: "Amount 1 In"
-          - &amount1Out
-            name: amount1Out
-            description: "Amount 1 Out"
-          - &contract_address
-            name: contract_address
-            description: "Avalanche C-chain address for the liquidity pool used in transaction"
-          - &evt_block_number
-            name: evt_block_number
-            description: "Block number which processed the unique transaction hash"
-          - &evt_block_time
-            name: evt_block_time
-            description: "Timestamp for block event time in UTC"
-          - &evt_index
-            name: evt_index
-            description: "Index value of the transaction"
-          - &evt_tx_hash
-            name: evt_tx_hash
-            description: "Primary key of the transaction"
-            tests:
-              - not_null
-          - &sender
-            name: sender
-            description: "Swap Initiator"
-          - &to
-            name: to
-            description: "Recipient"
-      - name: JoeFactory_evt_PairCreated
-        loaded_at_field: evt_block_time
-        description: "Factory pair create decoded table" 
-        columns:
-          - &_0
-            name: _0
-            description: "0"
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time 
-          - *evt_index
-          - *evt_tx_hash
-          - &pair
-            name: pair
-            description: "pair address"
-          - &token0
-            name: token0
-            description: "token 0"
-          - &token1
-            name: token1
-            description: "token 1"
-      - name: LBPair_evt_Swap
-        loaded_at_field: evt_block_time
-        description: "Liquidity book Pair swap event decoded table" 
-        columns:
-          - &amountIn
-            name: amountIn
-            description: "Token Sold Amount"
-          - &amountOut
-            name: amountOut
-            description: "Token Bought Amount"
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - &fees
-            name: fees
-            description: "Fees paid for swap"
-          - &id
-            name: id
-            description: "id"
-          - &recipient
-            name: recipient
-            description: "Address receiving the tokens bought"
-          - *sender
-          - &swapForY
-            name: swapForY
-            description: "Direction of trade"
-          - &volatilityAccumulated
-            name: volatilityAccumulated
-            description: "volatilityAccumulated"
-      - name: LBFactory_evt_LBPairCreated
-        loaded_at_field: evt_block_time
-        description: "Liquidity Book Factory pair create decoded table" 
-        columns:
-          - &LBPair
-            name: LBPair
-            description: "LBPair"
-          - &binStep
-            name: binStep
-            description: "binStep"
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time 
-          - *evt_index
-          - *evt_tx_hash
-          - &pid
-            name: pid
-            description: "pid"
-          - &tokenX
-            name: tokenX
-            description: "tokenX"
-          - &tokenY
-            name: tokenY
-            description: "tokenY"

@@ -1,27 +1,18 @@
-{{ config(alias='cex') }}
+{{config(alias='cex')}}
 
 SELECT * FROM {{ ref('labels_cex_ethereum') }}
 
-UNION ALL
+UNION All
 
 SELECT * FROM {{ ref('labels_cex_bnb') }}
 
-UNION ALL
+UNION All
 
 -- add address list from CEXs
-SELECT
-    "optimism",
-    address,
-    distinct_name,
-    "institution",
-    "msilb7",
-    "static",
-    "2022-10-10"::timestamp,
-    now(),
-    "cex_optimism",
-    "identifier"
+SELECT 
+"optimism", address, distinct_name, 'institution', 'msilb7','static','2022-10-10'::timestamp,CURRENT_TIMESTAMP(),'cex_optimism','identifier'
 FROM {{ ref('addresses_optimism_cex') }}
 
-UNION ALL
+UNION All
 
 SELECT * FROM {{ ref('labels_cex_fantom') }}

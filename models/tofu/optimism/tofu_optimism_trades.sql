@@ -1,10 +1,6 @@
 {{
  config(
-       alias='trades',
-       post_hook='{{ expose_spells(\'["optimism"]\',
-                                   "project",
-                                   "tofu",
-                                   \'["chuxin"]\') }}')
+       alias='trades')
 }}
 
 select

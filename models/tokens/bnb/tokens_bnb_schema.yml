@@ -1,83 +1,114 @@
-version: 2
-
 models:
-  - name: tokens_bnb_bep20
-    meta:
-      blockchain: bnb
-      sector: tokens
-      project: bep20
-      contributors: hildobby
-    config:
-      tags: ['tokens', 'metadata', 'bep20', 'bnb']
-    description: "BEP20 Token Addresses, Symbols and Decimals"
-    columns:
-      - name: contract_address
-        description: "BEP20 token contract address on BNB"
-        tests:
-          - unique
-      - name: symbol
-        description: "BEP20 token symbol"
-      - name: decimals
-        description: "Number of decimals, refers to how divisible an BEP20 token can be"
+- columns:
+  - description: BEP20 token contract address on BNB
+    name: contract_address
+    tests:
+    - unique
+  - description: BEP20 token symbol
+    name: symbol
+    tests: []
+  - description: Number of decimals, refers to how divisible an BEP20 token can be
+    name: decimals
+    tests: []
+  config:
+    tags:
+    - tokens
+    - metadata
+    - bep20
+    - bnb
+  description: BEP20 Token Addresses, Symbols and Decimals
+  meta:
+    blockchain: bnb
+    contributors: hildobby
+    project: bep20
+    sector: tokens
+  name: tokens_bnb_bep20
+  tests: []
+- columns:
+  - description: NFT Project Name
+    name: name
+    tests: []
+  - description: The contract address is the unique address of where the NFTs are
+      stored.
+    name: contract_address
+    tests:
+    - unique
+  config:
+    tags:
+    - tokens
+    - bnb
+    - nft
+    - erc721
+    - erc1155
+  description: 'Selection of NFT token addresses.
 
-  - name: tokens_bnb_nft_curated
-    meta:
-      blockchain: bnb
-      sector: nft
-      contributors: hildobby
-    config:
-      tags: ['tokens', 'bnb', 'nft', 'erc721', 'erc1155']
-    description: >
-        Selection of NFT token addresses.
-    columns:
-      - name: name
-        description: "NFT Project Name"
-      - name: contract_address
-        description: "The contract address is the unique address of where the NFTs are stored."
-        tests:
-          - unique
+    '
+  meta:
+    blockchain: bnb
+    contributors: hildobby
+    sector: nft
+  name: tokens_bnb_nft_curated
+  tests: []
+- columns:
+  - description: NFT Project Name
+    name: name
+    tests: []
+  - description: The contract address is the unique address of where the NFTs are
+      stored.
+    name: contract_address
+    tests:
+    - unique
+  - description: 'The token standard. This is the set of rules that the contract must
+      respect  to be compatible with the common standards. Accepted values are presently
+      standards represented. If you are adding a token with a new standard, remember
+      to add it the accepted values list.
 
-  - name: tokens_bnb_nft
-    meta:
-      blockchain: bnb
-      sector: nft
-      contributors: 0xRob
-    config:
-      tags: [ 'tokens', 'bnb', 'nft', 'bep721', 'bep1155' ]
-    description: >
-      Selection of NFT token addresses.
-    columns:
-      - name: name
-        description: "NFT Project Name"
-      - name: contract_address
-        description: "The contract address is the unique address of where the NFTs are stored."
-        tests:
-          - unique
-      - name: standard
-        tests:
-          - accepted_values:
-              values: [ 'bep721', 'bep1155']
-        description: >
-          The token standard. This is the set of rules that the contract must respect 
-          to be compatible with the common standards. Accepted values are presently standards represented.
-          If you are adding a token with a new standard, remember to add it the accepted values list.
+      '
+    name: standard
+    tests:
+    - accepted_values:
+        values:
+        - bep721
+        - bep1155
+  config:
+    tags:
+    - tokens
+    - bnb
+    - nft
+    - bep721
+    - bep1155
+  description: 'Selection of NFT token addresses.
 
-  - name: tokens_bnb_nft_standards
-    meta:
-      blockchain: bnb
-      sector: nft
-      contributors: 0xRob
-    config:
-      tags: [ 'nft','bnb' ]
-    description: >
-      NFT contract standards
-    columns:
-      - name: contract_address
-        description: "the NFT contract address"
-        tests:
-          - unique
-      - name: standard
-        description: "The NFT standard erc721/erc1155/..."
-        tests:
-          - accepted_values:
-              values: [ 'bep721', 'bep1155' ]
+    '
+  meta:
+    blockchain: bnb
+    contributors: 0xRob
+    sector: nft
+  name: tokens_bnb_nft
+  tests: []
+- columns:
+  - description: the NFT contract address
+    name: contract_address
+    tests:
+    - unique
+  - description: The NFT standard erc721/erc1155/...
+    name: standard
+    tests:
+    - accepted_values:
+        values:
+        - bep721
+        - bep1155
+  config:
+    tags:
+    - nft
+    - bnb
+  description: 'NFT contract standards
+
+    '
+  meta:
+    blockchain: bnb
+    contributors: 0xRob
+    sector: nft
+  name: tokens_bnb_nft_standards
+  tests: []
+version: 2

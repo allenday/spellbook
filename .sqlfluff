@@ -4,7 +4,17 @@ exclude_rules = L016, L030, AM06, ST06
 
 [sqlfluff:templater:jinja]
 apply_dbt_builtins = True
+templater = dbt
 
 # [sqlfluff:templater:jinja:macros]
 # dbt_config = {% macro config() %}{% for k in kwargs %}{% endfor %}{% endmacro %}
 large_file_skip_byte_limit = 240050
+
+fix_even_unparsable = True
+
+[sqlfluff:templater:jinja:macros]
+expose_spells_hide_trino = {% macro expose_spells_hide_trino(a, b, c, d) %}{% endmacro %}
+expose_spells = {% macro expose_spells(a, b, c, d) %}{% endmacro %}
+mark_as_spell = {% macro mark_as_spell(a, b, c, d) %}{% endmacro %}
+optimize_spells = {% macro optimize_spells(a, b, c, d) %}{% endmacro %}
+

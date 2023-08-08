@@ -1,74 +1,69 @@
-version: 2
-
 sources:
-  - name: rubicon_optimism
-    description: "Optimism decoded tables related to rubicon's implementation of OasisDEX"
-    freshness:
-      warn_after: { count: 12, period: hour } 
-    tables:
-      - name: RubiconMarket_evt_LogTake
-        loaded_at_field: evt_block_time
-        description: "a table of events triggered when a taker fills an outstanding offer" 
-        columns:
-          - &buy_gem
-            name: buy_gem
-          - &contract_address
-            name: contract_address
-          - &evt_block_number
-            name: evt_block_number
-            description: "Block number which processed the unique transaction hash"
-          - &evt_block_time
-            name: evt_block_time
-            description: "Timestamp for block event time in UTC"
-          - &evt_index
-            name: evt_index
-            description: "Index value of the transaction"
-          - &evt_tx_hash
-            name: evt_tx_hash
-            description: "Primary key of the transaction"
-          - &give_amt
-            name: give_amt
-            description: "the amount of the token that the taker payed with"
-          - &id
-            name: id
-            description: "the unique id of the offer"
-          - &maker
-            name: maker
-            description: "the address of the maker"
-          - &pair
-            name: pair
-            description: "the pair of the offer"
-          - &pay_gem
-            name: pay_gem
-            description: "the token the offer is selling"
-          - &take_amt
-            name: take_amt
-            description: "the amount of the token that the taker received"
-          - &taker
-            name: taker
-            description: "the address of the taker"
-          - &timestamp
-            name: timestamp
-            description: "the timestamp of the event creation"
-
-      - name: RubiconMarket_evt_LogMake
-        loaded_at_field: evt_block_time
-        description: "a table of events triggered when a maker creates an offer" 
-        columes: 
-          - *contract_address
-          - *evt_tx_hash
-          - *evt_index
-          - *evt_block_time
-          - *evt_block_number
-          - *id
-          - *pair
-          - *pay_gem
-          - *buy_gem
-          - &pay_amt
-            name: pay_amt
-            description: "the amount of the token being sold"
-          - &buy_amt
-            name: buy_amt
-            description: "the amount of the token being bought"
-          - *maker
-          - *timestamp
+- description: Optimism decoded tables related to rubicon's implementation of OasisDEX
+  freshness:
+    warn_after:
+      count: 12
+      period: hour
+  name: rubicon_optimism
+  tables:
+  - columns:
+    - &id009
+      name: buy_gem
+    - &id001
+      name: contract_address
+    - &id005
+      description: Block number which processed the unique transaction hash
+      name: evt_block_number
+    - &id004
+      description: Timestamp for block event time in UTC
+      name: evt_block_time
+    - &id003
+      description: Index value of the transaction
+      name: evt_index
+    - &id002
+      description: Primary key of the transaction
+      name: evt_tx_hash
+    - description: the amount of the token that the taker payed with
+      name: give_amt
+    - &id006
+      description: the unique id of the offer
+      name: id
+    - &id010
+      description: the address of the maker
+      name: maker
+    - &id007
+      description: the pair of the offer
+      name: pair
+    - &id008
+      description: the token the offer is selling
+      name: pay_gem
+    - description: the amount of the token that the taker received
+      name: take_amt
+    - description: the address of the taker
+      name: taker
+    - &id011
+      description: the timestamp of the event creation
+      name: timestamp
+    description: a table of events triggered when a taker fills an outstanding offer
+    loaded_at_field: evt_block_time
+    name: RubiconMarket_evt_LogTake
+  - columes:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id007
+    - *id008
+    - *id009
+    - description: the amount of the token being sold
+      name: pay_amt
+    - description: the amount of the token being bought
+      name: buy_amt
+    - *id010
+    - *id011
+    description: a table of events triggered when a maker creates an offer
+    loaded_at_field: evt_block_time
+    name: RubiconMarket_evt_LogMake
+version: 2

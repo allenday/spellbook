@@ -1,14 +1,8 @@
 {{ config(
     alias = 'standard_bridge_flows',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'blockchain', 'tx_hash', 'evt_index'],
-    post_hook='{{ expose_spells(\'["optimism"]\',
-                                "sector",
-                                "bridge",
-                                \'["msilb7","soispoke"]\') }}'
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'blockchain', 'tx_hash', 'evt_index']
     )
 }}
 
@@ -18,7 +12,7 @@
 WITH bridge_events AS (
     SELECT
         block_time, 
-        DATE_TRUNC('day',block_time) AS block_date, 
+        TIMESTAMP_TRUNC(block_time, day) AS block_date, 
         sender,
         block_number, 
         tx_hash,
@@ -37,7 +31,7 @@ WITH bridge_events AS (
         , l.block_time
         ,l.block_number
         ,l.tx_hash
-        , '0x' || substring(topic3,27,40) AS bridged_token_address
+        , '0x' || substring(topic2,27,40) AS bridged_token_address
         , conv(
             replace( --bring back non-leading zeroes
                 ltrim( --trim leading spaces
@@ -60,9 +54,9 @@ WITH bridge_events AS (
         FROM {{ source ('optimism', 'logs') }} l
         WHERE topic1 = '0xb0444523268717a02698be47d0803aa7468c00acbed2f8bd93a0459cde61dd89' --Deposit Finalized
         -- Other potentially helpful filters
-        AND (topic2 IS NOT NULL) AND (topic3 IS NOT NULL) AND (topic4 IS NOT NULL) AND (data IS NOT NULL)
+        AND (topic1 IS NOT NULL) AND (topic2 IS NOT NULL) AND (topic3 IS NOT NULL) AND (data IS NOT NULL)
         {% if is_incremental() %}
-        AND block_time > NOW() - interval '14 days'
+        AND block_time > CURRENT_TIMESTAMP() - interval '14 days'
         {% endif %}
         
         UNION ALL
@@ -72,7 +66,7 @@ WITH bridge_events AS (
         , l.block_time
         , l.block_number
         , l.tx_hash
-        , '0x' || substring(topic3,27,40) AS bridged_token_address
+        , '0x' || substring(topic2,27,40) AS bridged_token_address
         , conv(
             replace( --bring back non-leading zeroes
                 ltrim( --trim leading spaces
@@ -95,9 +89,9 @@ WITH bridge_events AS (
         FROM {{ source ('optimism', 'logs') }} l
         WHERE topic1 = '0x73d170910aba9e6d50b102db522b1dbcd796216f5128b445aa2135272886497e' --Withdrawal Initiated
         -- Other potentially helpful filters
-        AND (topic2 IS NOT NULL) AND (topic3 IS NOT NULL) AND (topic4 IS NOT NULL) AND (data IS NOT NULL)
+        AND (topic1 IS NOT NULL) AND (topic2 IS NOT NULL) AND (topic3 IS NOT NULL) AND (data IS NOT NULL)
         {% if is_incremental() %}
-        AND block_time > NOW() - interval '14 days'
+        AND block_time > CURRENT_TIMESTAMP() - interval '14 days'
         {% endif %}
         
         ) a
@@ -108,7 +102,7 @@ WITH bridge_events AS (
         AND a.tx_hash = m.l2_tx_hash
         AND a.tf_index = m.msg_index
         {% if is_incremental() %}
-        AND m.l2_block_time > NOW() - interval '14 days'
+        AND m.l2_block_time > CURRENT_TIMESTAMP() - interval '14 days'
         {% endif %}
 )
 
@@ -149,7 +143,7 @@ LEFT JOIN {{ source('optimism', 'transactions') }} t
         ON t.block_time = tf.block_time
         AND t.hash = tf.tx_hash
         {% if is_incremental() %}
-        AND t.block_time >= (NOW() - interval '14' days)
+        AND t.block_time >= (CURRENT_TIMESTAMP() - interval '14' days)
         {% endif %}
         
 LEFT JOIN {{ ref('tokens_erc20') }} erc
@@ -157,11 +151,11 @@ LEFT JOIN {{ ref('tokens_erc20') }} erc
     AND erc.contract_address = tf.bridged_token_address
     
 LEFT JOIN {{ source('prices', 'usd') }} p
-    ON p.minute = DATE_TRUNC('minute',tf.block_time)
+    ON p.minute = TIMESTAMP_TRUNC(tf.block_time, minute)
     AND p.blockchain = 'optimism'
     AND p.contract_address = tf.bridged_token_address
     {% if is_incremental() %}
-    AND p.minute >= (NOW() - interval '14 days')
+    AND p.minute >= (CURRENT_TIMESTAMP() - interval '14 days')
     {% endif %}
     
 LEFT JOIN {{ ref('chain_ids') }} cid_source

@@ -1,46 +1,37 @@
 {{ config(
     schema = 'aztec_v2_ethereum',
     alias = 'rollupbridge_transfers',
-    partition_by = ['evt_block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['tx_from', 'tx_to', 'value', 'contract_address', 'evt_tx_hash', 'evt_index', 'broad_txn_type', 'spec_txn_type', 'to_protocol', 'from_protocol', 'bridge_address', 'trace_address'],
-    post_hook='{{ expose_spells(\'["ethereum"]\',
-                                "project",
-                                "aztec_v2",
-                                \'["Henrystats"]\') }}'
+    partition_by = {"field": "evt_block_date"},
+    materialized = 'view',
+            unique_key = ['tx_from', 'tx_to', 'value', 'contract_address', 'evt_tx_hash', 'evt_index', 'broad_txn_type', 'spec_txn_type', 'to_protocol', 'from_protocol', 'bridge_address', 'trace_address']
     )
 }}
 
 
-{% set first_transfer_date = '2022-06-06' %} -- first tx date 
+{% set first_transfer_date = '2022-06-06' %} 
 
 WITH  
 
-bridges_label (protocol, version, description, contract_address) as (
-        VALUES 
-            ('Aztec RollupProcessor', '1.0', 'Prod Aztec Rollup', '0xff1f2b4adb9df6fc8eafecdcbf96a2b351680455'),
-            ('Element', '1.0', 'Prod Element Bridge', '0xaed181779a8aabd8ce996949853fea442c2cdb47'),
-            ('Lido', '1.0', 'Prod Lido Bridge', '0x381abf150b53cc699f0dbbbef3c5c0d1fa4b3efd'),
-            ('AceofZk', '1.0', 'Ace Of ZK NFT - nonfunctional', '0x0eb7f9464060289fe4fddfde2258f518c6347a70'),
-            ('Curve', '1.0', 'CurveStEth Bridge', '0x0031130c56162e00a7e9c01ee4147b11cbac8776'),
-            ('Yearn', '1.0', 'Yearn Deposits', '0xe71a50a78cccff7e20d8349eed295f12f0c8c9ef'),
-            ('Aztec', '1.0', 'ERC4626 Tokenized Vault', '0x3578d6d5e1b4f07a48bb1c958cbfec135bef7d98'),
-            ('Curve', '1.0', 'CurveStEth Bridge V2', '0xe09801da4c74e62fb42dfc8303a1c1bd68073d1a'),
-            ('Uniswap', '1.0', 'UniswapDCABridge', '0x94679a39679ffe53b53b6a1187aa1c649a101321')
-), 
+bridges_label AS (SELECT * FROM UNNEST(ARRAY<STRUCT<protocol STRING,version STRING,description STRING,contract_address STRING>> [STRUCT('Aztec RollupProcessor', '1.0', 'Prod Aztec Rollup', '0xff1f2b4adb9df6fc8eafecdcbf96a2b351680455'),
+STRUCT('Element', '1.0', 'Prod Element Bridge', '0xaed181779a8aabd8ce996949853fea442c2cdb47'),
+STRUCT('Lido', '1.0', 'Prod Lido Bridge', '0x381abf150b53cc699f0dbbbef3c5c0d1fa4b3efd'),
+STRUCT('AceofZk', '1.0', 'Ace Of ZK NFT - nonfunctional', '0x0eb7f9464060289fe4fddfde2258f518c6347a70'),
+STRUCT('Curve', '1.0', 'CurveStEth Bridge', '0x0031130c56162e00a7e9c01ee4147b11cbac8776'),
+STRUCT('Yearn', '1.0', 'Yearn Deposits', '0xe71a50a78cccff7e20d8349eed295f12f0c8c9ef'),
+STRUCT('Aztec', '1.0', 'ERC4626 Tokenized Vault', '0x3578d6d5e1b4f07a48bb1c958cbfec135bef7d98'),
+STRUCT('Curve', '1.0', 'CurveStEth Bridge V2', '0xe09801da4c74e62fb42dfc8303a1c1bd68073d1a'),
+STRUCT('Uniswap', '1.0', 'UniswapDCABridge', '0x94679a39679ffe53b53b6a1187aa1c649a101321')])), 
 
 bridges_creation as (
         SELECT 
             bridgeAddress, 
             'Bridge' as contract_type, 
-            AVG(bridgeGasLimit) as blank -- to get unique bridges 
+            AVG(bridgeGasLimit) as blank 
         FROM 
         {{source('aztec_v2_ethereum', 'RollupProcessor_evt_BridgeAdded')}}
         GROUP BY 1, 2 
         
-        UNION 
+        UNION ALL 
         
         SELECT 
             LOWER('0xFF1F2B4ADb9dF6FC8eAFecDcbF96A2B351680455') as bridgeAddress, 
@@ -73,11 +64,11 @@ erc20_tfers as (
         WHERE evt_block_time >= '{{first_transfer_date}}'
         {% endif %}
         {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
         AND `from` IN (SELECT contract_address FROM all_bridges)
         
-        UNION 
+        UNION ALL 
         
         SELECT 
             * 
@@ -87,7 +78,7 @@ erc20_tfers as (
         WHERE evt_block_time >= '{{first_transfer_date}}'
         {% endif %}
         {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
         AND `to` IN (SELECT contract_address FROM all_bridges)
 ),
@@ -101,13 +92,13 @@ eth_tfers as (
         WHERE block_time >= '{{first_transfer_date}}'
         {% endif %}
         {% if is_incremental() %}
-        WHERE block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
         AND `from` IN (SELECT contract_address FROM all_bridges)
         AND (LOWER(call_type) NOT IN ('delegatecall', 'callcode', 'staticcall') or call_type IS NULL)
         AND success = true 
         
-        UNION 
+        UNION ALL 
 
         SELECT 
             * 
@@ -117,7 +108,7 @@ eth_tfers as (
         WHERE block_time >= '{{first_transfer_date}}'
         {% endif %}
         {% if is_incremental() %}
-        WHERE block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
         AND `to` IN (SELECT contract_address FROM all_bridges)
         AND (LOWER(call_type) NOT IN ('delegatecall', 'callcode', 'staticcall') or call_type IS NULL)
@@ -157,7 +148,7 @@ tfers_raw as (
 tfers_categorized as (
         SELECT 
             t.*, 
-            date_trunc('day', t.evt_block_time) as evt_block_date,
+            TIMESTAMP_TRUNC(t.evt_block_time, day) as evt_block_date,
             tk.symbol, 
             tk.decimals, 
             t.value / POW(10, coalesce(tk.decimals, 18)) as value_norm,
@@ -199,4 +190,3 @@ tfers_categorized as (
 ) 
 SELECT * FROM tfers_categorized
 WHERE value_norm != 0
-;

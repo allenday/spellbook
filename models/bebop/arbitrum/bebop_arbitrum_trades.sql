@@ -1,14 +1,8 @@
 {{ config(
     alias = 'trades',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'blockchain', 'project', 'version', 'tx_hash', 'evt_index', 'trace_address'],
-     post_hook='{{ expose_spells(\'["arbitrum"]\',
-                                      "project",
-                                      "bebop",
-                                    \'["alekss"]\') }}'
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'blockchain', 'project', 'version', 'tx_hash', 'evt_index', 'trace_address']
     )
 }}
 
@@ -22,27 +16,27 @@ WITH
       call_tx_hash AS tx_hash,
       evt_index,
       ex.contract_address,
-      get_json_object(order, '$.expiry') AS expiry,
+      JSON_EXTRACT_SCALAR(order, '$.expiry') AS expiry,
       cast(
-        get_json_object(order, '$.taker_address') AS string
+        JSON_EXTRACT_SCALAR(order, '$.taker_address') AS string
       ) AS taker_address,
       array_distinct(
         from_json(
-          get_json_object(order, '$.maker_addresses'), 'array<string>'
+          JSON_EXTRACT_SCALAR(order, '$.maker_addresses'), 'array<string>'
         )
       ) AS maker_addresses,
       arrays_zip(
         array_distinct(
           flatten(
             from_json(
-              get_json_object(order, '$.taker_tokens') , 'array<array<string>>'
+              JSON_EXTRACT_SCALAR(order, '$.taker_tokens') , 'array<array<string>>'
             )
           )
         ),
         array_distinct(
           flatten(
             from_json(
-              get_json_object(order, '$.taker_amounts') , 'array<array<DECIMAL(38, 0)>>'
+              JSON_EXTRACT_SCALAR(order, '$.taker_amounts') , 'array<array<DECIMAL(38, 0)>>'
             )
           )
         )
@@ -51,14 +45,14 @@ WITH
         array_distinct(
           flatten(
             from_json(
-              get_json_object(order, '$.maker_tokens') , 'array<array<string>>'
+              JSON_EXTRACT_SCALAR(order, '$.maker_tokens') , 'array<array<string>>'
             )
           )
         ),
         array_distinct(
           flatten(
             from_json(
-              get_json_object(order, '$.maker_amounts') , 'array<array<DECIMAL(38, 0)>>'
+              JSON_EXTRACT_SCALAR(order, '$.maker_amounts') , 'array<array<DECIMAL(38, 0)>>'
             )
           )
         )
@@ -72,7 +66,7 @@ WITH
       AND evt_block_time >= '{{project_start_date}}'
       {% endif %}
       {% if is_incremental() %}
-      AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+      AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
       {% endif %}
   ),
   explode_taker_tokens_data as (
@@ -109,7 +103,7 @@ SELECT
   'arbitrum' AS blockchain,
   'bebop' AS project,
   '1' AS version,
-  TRY_CAST(date_trunc('DAY', t.block_time) AS date) AS block_date,
+  SAFE_CAST(TIMESTAMP_TRUNC(t.block_time, DAY) AS date) AS block_date,
   t.block_time AS block_time,
   t_bought.symbol AS token_bought_symbol,
   t_sold.symbol AS token_sold_symbol,
@@ -141,21 +135,21 @@ FROM
   AND t_bought.blockchain = 'arbitrum'
   LEFT JOIN {{ ref('tokens_erc20') }} t_sold ON cast(t_sold.contract_address AS string) = t.taker_token
   AND t_sold.blockchain = 'arbitrum'
-  LEFT JOIN {{ source('prices', 'usd') }} p_bought ON p_bought.minute = date_trunc('minute', t.block_time)
+  LEFT JOIN {{ source('prices', 'usd') }} p_bought ON p_bought.minute = TIMESTAMP_TRUNC(t.block_time, minute)
   AND cast(p_bought.contract_address AS string) = t.maker_token
   AND p_bought.blockchain = 'arbitrum'
   {% if not is_incremental() %}
   AND p_bought.minute >= '{{project_start_date}}'
   {% endif %}
   {% if is_incremental() %}
-  AND p_bought.minute >= date_trunc("day", now() - interval '1 week')
+  AND p_bought.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
   {% endif %}
-  LEFT JOIN {{ source('prices', 'usd') }} p_sold ON p_sold.minute = date_trunc('minute', t.block_time)
+  LEFT JOIN {{ source('prices', 'usd') }} p_sold ON p_sold.minute = TIMESTAMP_TRUNC(t.block_time, minute)
   AND cast(p_sold.contract_address AS string) = t.taker_token
   AND p_sold.blockchain = 'arbitrum'
   {% if not is_incremental() %}
   AND p_sold.minute >= '{{project_start_date}}'
   {% endif %}
   {% if is_incremental() %}
-  AND p_sold.minute >= date_trunc("day", now() - interval '1 week')
+  AND p_sold.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
   {% endif %}

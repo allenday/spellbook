@@ -1,9 +1,8 @@
 {{ config(
     schema = 'opensea_v1_ethereum',
     alias = 'events',
-    materialized = 'table',
-    file_format = 'delta',
-    partition_by = ['block_date']
+    materialized = 'view',
+        partition_by = {"field": "block_date"}
     )
 }}
 
@@ -92,8 +91,8 @@ nft_transfers as (
     select
         block_time,
         block_number,
-        from,
-        to,
+        `from`,
+        `to`,
         contract_address as nft_contract_address,
         token_standard,
         token_id,
@@ -148,7 +147,7 @@ SELECT
   'opensea' as project,
   'v1' as version,
   project_contract_address,
-  TRY_CAST(date_trunc('DAY', t.block_time) AS date) AS block_date,
+  SAFE_CAST(TIMESTAMP_TRUNC(t.block_time, DAY) AS date) AS block_date,
   t.block_time,
   t.block_number,
   t.tx_hash,
@@ -156,12 +155,12 @@ SELECT
   t.token_standard,
   nft.name AS collection,
   t.token_id,
-  CAST(t.amount_raw AS DECIMAL(38,0)) as amount_raw,
+  CAST(t.amount_raw AS BIGNUMERIC) as amount_raw,
   t.amount_raw / power(10,erc20.decimals) as amount_original,
   t.amount_raw / power(10,erc20.decimals) * p.price AS amount_usd,
   t.trade_category,
   t.trade_type,
-  CAST(t.number_of_items AS DECIMAL(38,0)) as number_of_items,
+  CAST(t.number_of_items AS BIGNUMERIC) as number_of_items,
   coalesce(t.nft_from, t.seller) AS seller,
   coalesce(t.nft_to, t.buyer) as buyer,
   t.evt_type,
@@ -172,11 +171,11 @@ SELECT
   tx.from as tx_from,
   tx.to as tx_to,
   -- some complex price calculations, (t.amount_raw/t.price_correction) is the original base price for fees.
-  CAST(round((100 * platform_fee),4) AS DOUBLE) AS platform_fee_percentage,
+  CAST(round((100 * platform_fee),4) AS FLOAT64) AS platform_fee_percentage,
   platform_fee * (t.amount_raw/t.price_correction) AS platform_fee_amount_raw,
   platform_fee * (t.amount_raw/t.price_correction) / power(10,erc20.decimals) AS platform_fee_amount,
   platform_fee * (t.amount_raw/t.price_correction) / power(10,erc20.decimals) * p.price AS platform_fee_amount_usd,
-  CAST(round((100 * royalty_fee),4) AS DOUBLE) as royalty_fee_percentage,
+  CAST(round((100 * royalty_fee),4) AS FLOAT64) as royalty_fee_percentage,
   royalty_fee * (t.amount_raw/t.price_correction) AS royalty_fee_amount_raw,
   royalty_fee * (t.amount_raw/t.price_correction) / power(10,erc20.decimals) AS royalty_fee_amount,
   royalty_fee * (t.amount_raw/t.price_correction) / power(10,erc20.decimals) * p.price AS royalty_fee_amount_usd,
@@ -188,9 +187,8 @@ INNER JOIN {{ source('ethereum','transactions') }} tx ON t.block_number = tx.blo
     AND tx.block_time >= '{{START_DATE}}' AND tx.block_time <= '{{END_DATE}}'
 LEFT JOIN {{ ref('tokens_nft') }} nft ON nft.contract_address = t.nft_contract_address and nft.blockchain = 'ethereum'
 LEFT JOIN {{ ref('nft_aggregators') }} agg ON agg.contract_address = tx.to AND agg.blockchain = 'ethereum'
-LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = date_trunc('minute', t.block_time)
+LEFT JOIN {{ source('prices', 'usd') }} p ON p.minute = TIMESTAMP_TRUNC(t.block_time, minute)
     AND p.contract_address = t.currency_contract
     AND p.blockchain ='ethereum'
     AND minute >= '{{START_DATE}}' AND minute <= '{{END_DATE}}'
 LEFT JOIN {{ ref('tokens_erc20') }} erc20 ON erc20.contract_address = t.currency_contract and erc20.blockchain = 'ethereum'
-;

@@ -2,14 +2,8 @@
     config(
         schema = 'balancer_v2_ethereum',
         alias='pools_fees',
-        materialized = 'incremental',
-        file_format = 'delta',
-        incremental_strategy = 'merge',
-        unique_key = ['block_number', 'tx_hash', 'index'],
-        post_hook='{{ expose_spells(\'["ethereum"]\',
-                                    "project",
-                                    "balancer_v2",
-                                    \'["metacrypto", "jacektrocinski"]\') }}'
+        materialized = 'view',
+                        unique_key = ['block_number', 'tx_hash', 'index']
     ) 
 }}
 
@@ -29,16 +23,14 @@ SELECT
     logs.index,
     logs.block_time,
     logs.block_number,
-    bytea2numeric_v3 (SUBSTRING(logs.data FROM 32 FOR 64)) * 1 AS swap_fee_percentage
+    udfs.bytea2numeric_v3 (SUBSTR(logs.data, 32, 64)) * 1 AS swap_fee_percentage
 FROM
     {{ source ('ethereum', 'logs') }}
     INNER JOIN registered_pools ON registered_pools.pool_address = logs.contract_address
-WHERE logs.topic1 = '{{ event_signature }}'
+WHERE logs.topic1 IS NULL AND logs.topic1 = '{{ event_signature }}'
     {% if not is_incremental() %}
     AND logs.block_time >= '{{ project_start_date }}'
     {% endif %}
     {% if is_incremental() %}
-    AND logs.block_time >= DATE_TRUNC('day', NOW() - interval '1 week')
+    AND logs.block_time >= DATE_TRUNC('day', CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
-;
-

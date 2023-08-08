@@ -1,10 +1,6 @@
 {{ config(
         alias ='current_bids',
-        unique_key='punk_id',
-        post_hook='{{ expose_spells_hide_trino(\'["ethereum"]\',
-                                    "project",
-                                    "cryptopunks",
-                                    \'["cat"]\') }}'
+        unique_key='punk_id'
         )
 }}
 
@@ -14,8 +10,8 @@ with combined_events_table as (
     from 
     (    select  event_type
                 , bidder
-                , cast(NULL as varchar(5)) as transfer_from
-                , cast(NULL as varchar(5)) as transfer_to
+                , cast(NULL as STRING) as transfer_from
+                , cast(NULL as STRING) as transfer_to
                 , punk_id
                 , eth_amount
                 , evt_block_time
@@ -27,11 +23,11 @@ with combined_events_table as (
         union all 
 
         select  'Transfer' as event_type
-                , cast(NULL as varchar(5)) as bidder
-                , from as transfer_from
-                , to as transfer_to
+                , cast(NULL as STRING) as bidder
+                , `from` as transfer_from
+                , `to` as transfer_to
                 , punk_id
-                , cast(NULL as double) as eth_amount
+                , cast(NULL as FLOAT64) as eth_amount
                 , evt_block_time
                 , evt_block_number
                 , evt_index
@@ -41,7 +37,7 @@ with combined_events_table as (
         union all 
 
         select  trade_category as event_type
-                , cast(NULL as varchar(5)) as bidder
+                , cast(NULL as STRING) as bidder
                 , seller as transfer_from
                 , buyer as transfer_to
                 , token_id as punk_id
@@ -91,8 +87,8 @@ from
             , b2.min_punk_event_rank as most_recent_offer_accept 
             , b4.min_punk_event_rank as most_recent_bid 
             , b5.min_punk_event_rank as most_recent_withdraw 
-            , array_join(collect_set(c1.transfer_to), ',') as buyers_post_bid
-            , array_join(collect_set(c2.transfer_to), ',') as transfers_post_bid
+            , STRING_AGG(collect_set(c1.transfer_to), ',') as buyers_post_bid
+            , STRING_AGG(collect_set(c2.transfer_to), ',') as transfers_post_bid
     from combined_events_table a 
     left outer join min_event_per_punk b2 on b2.event_type = 'Offer Accepted' and b2.punk_id = a.punk_id
     left outer join min_event_per_punk b4 on b4.event_type = 'Bid Entered' and b4.punk_id = a.punk_id
@@ -117,4 +113,4 @@ where a.punk_id_tx_rank = most_recent_bid -- pull the most recent bid for each p
             or transfers_post_bid is null 
         )
 
-order by evt_block_number desc, evt_index desc 
+order by evt_block_number desc, evt_index desc

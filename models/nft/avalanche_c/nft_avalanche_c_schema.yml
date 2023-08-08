@@ -1,203 +1,252 @@
-version: 2
-
 models:
-  - name: nft_avalanche_c_aggregators
-    meta:
-      blockchain: avalanche_c
-      sector: nft
-      contributors: hildobby
-    config:
-      tags: ['nft', 'avalanche_c', 'aggregators']
-    description: >
-        NFT aggregators
-    columns:
-      - name: contract_address
-        description: "Aggregator project's contract address"
-        tests:
-          - unique
-      - name: name
-        description: "Aggregator project's name"
-
-  - name: nft_avalanche_c_transfers
-    meta:
-      blockchain: avalanche_c
-      sector: nft
-      contributors: hildobby, 0xRob
-    config:
-      tags: ['nft', 'avalanche_c', 'transfers']
-    description: >
-        NFT transfers
+- columns:
+  - description: Aggregator project's contract address
+    name: contract_address
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - unique_transfer_id
-    columns:
-      - name: blockchain
-        description: "Blockchain"
-      - name: block_time
-        description: "UTC event block time"
-      - name: block_number
-        description: "Block number in which the transaction was executed"
-      - name: token_standard
-        tests:
-          - accepted_values:
-              values: ['erc721', 'erc1155']
-        description: "Token standard"
-      - name: transfer_type
-        tests:
-          - accepted_values:
-              values: ['single', 'batch']
-        description: "single or batch transfer of tokens"
-      - name: evt_index
-        description: "Event index"
-      - name: contract_address
-        description: "NFT contract address"
-      - name: token_id
-        description: "ID of transfered token(s)"
-      - name: amount
-        description: "Amount of transfered tokens"
-      - name: from
-        description: "Address that sent the token(s)"
-      - name: to
-        description: "Address that received the token(s)"
-      - name: executed_by
-        description: "Address that executed the transaction"
-      - name: tx_hash
-        description: "Transaction hash"
-      - name: unique_transfer_id
-        tests:
-          - unique
-        description: "Unique transfer ID"
+    - unique
+  - description: Aggregator project's name
+    name: name
+    tests: []
+  config:
+    tags:
+    - nft
+    - avalanche_c
+    - aggregators
+  description: 'NFT aggregators
 
-  - name: nft_avalanche_c_wash_trades
-    meta:
-      blockchain: avalanche_c
-      sector: nft
-      contributors: hildobby
-    config:
-      tags: ['nft', 'avalanche_c', 'wash_trades']
-    description: >
-        NFT wash trades labelling
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "Blockchain"
-      - &project
-        name: project
-        description: "Project"
-      - &version
-        name: version
-        description: "Project version"
-      - &block_time
-        name: block_time
-        description: "UTC event block time"
-      - &token_id
-        name: token_id
-        description: "NFT Token ID"
-      - &token_standard
-        name: token_standard
-        description:  "Token standard"
-      - &trade_category
-        name: trade_category
-        description:  "How was this NFT traded ? (Direct buy, auction, etc...)"
-      - &seller
-        name: seller
-        description:  "Seller wallet address"
-      - &buyer
-        name: buyer
-        description:  "Buyer wallet address"
-      - &nft_contract_address
-        name: nft_contract_address
-        description:  "NFT contract address, only if 1 nft was transacted"
-      - &project_contract_address
-        name: project_contract_address
-        description:  "Contract address used by the project, in this case wyvern contract"
-      - &aggregator_name
-        name: aggregator_name
-        description:  "If the trade was performed via an aggregator, displays aggregator name"
-      - &aggregator_address
-        name: aggregator_address
-        description:  "If the trade was performed via an aggregator, displays aggregator address"
-      - &tx_hash
-        name: tx_hash
-        description:  "Transaction hash"
-      - &block_number
-        name: block_number
-        description: "Block number in which the transaction was executed "
-      - &tx_from
-        name: tx_from
-        description:  "Address that initiated the transaction"
-      - &tx_to
-        name: tx_to
-        description:  "Address that received the transaction"
-      - name: unique_trade_id
-        tests:
-          - is_unique_filtered
-      - &buyer_first_funded_by
-        name: buyer_first_funded_by
-        description: "Which wallet first funded the buyer's wallet in ETH"
-      - &seller_first_funded_by
-        name: seller_first_funded_by
-        description: "Which wallet first funded the seller's wallet in ETH"
-      - &filter_1_same_buyer_seller
-        name: filter_1_same_buyer_seller
-        description: "Were the seller and buyer the same address in the trade?"
-      - &filter_2_back_and_forth_trade
-        name: filter_2_back_and_forth_trade
-        description: "Was the NFT ever traded the other way around (buyer<>seller)"
-      - &filter_3_bought_or_sold_3x
-        name: filter_3_bought_or_sold_3x
-        description: "Was the same NFT bought 3+ times (Excluding ERC1155s)"
-      - &filter_4_first_funded_by_same_wallet
-        name: filter_4_first_funded_by_same_wallet
-        description: "Did the same wallet first fund the seller and buyer's wallets in ETH?"
-      - &is_wash_trade
-        name: is_wash_trade
-        description: "Have any of the filters flag as true? Then it is labelled as a wash trade"
-  
-  - name: nft_avalanche_c_approvals
-    meta:
-      blockchain: avalanche_c
-      sector: nft
-      contributors: hildobby
-    config:
-      tags: ['nft', 'avalanche_c', 'approvals']
-    description: >
-        NFT approvals
+    '
+  meta:
+    blockchain: avalanche_c
+    contributors: hildobby
+    sector: nft
+  name: nft_avalanche_c_aggregators
+  tests: []
+- columns:
+  - description: Blockchain
+    name: blockchain
+    tests: []
+  - description: UTC event block time
+    name: block_time
+    tests: []
+  - description: Block number in which the transaction was executed
+    name: block_number
+    tests: []
+  - description: Token standard
+    name: token_standard
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - block_number
-            - tx_hash
-            - evt_index
-    columns:
-      - name: blockchain
-        description: "Blockchain"
-      - name: block_time
-        description: "UTC event block time"
-      - name: block_date
-        description: "UTC event block date"
-      - name: block_number
-        description: "Block number in which the transaction was executed"
-      - name: address
-        description: "Address for which NFTs were approved"
-      - name: token_standard
-        tests:
-          - accepted_values:
-              values: ['erc721', 'erc1155']
-      - name: approval_for_all
-        description: "Was this an ApprovalForAll or a simple Approval?"
-      - name: contract_address
-        description: "Contract address"
-      - name: token_id
-        description: "NFT token ID"
-      - name: approved
-        description: "Approved"
-      - name: tx_hash
-        description: "Transaction hash"
-      - name: tx_from
-        description: "Address that initiated the transaction"
-      - name: tx_to
-        description: "Address that the transaction points to"
-      - name: evt_index
-        description: "Event index"
+    - accepted_values:
+        values:
+        - erc721
+        - erc1155
+  - description: single or batch transfer of tokens
+    name: transfer_type
+    tests:
+    - accepted_values:
+        values:
+        - single
+        - batch
+  - description: Event index
+    name: evt_index
+    tests: []
+  - description: NFT contract address
+    name: contract_address
+    tests: []
+  - description: ID of transfered token(s)
+    name: token_id
+    tests: []
+  - description: Amount of transfered tokens
+    name: amount
+    tests: []
+  - description: Address that sent the token(s)
+    name: from
+    tests: []
+  - description: Address that received the token(s)
+    name: to
+    tests: []
+  - description: Address that executed the transaction
+    name: executed_by
+    tests: []
+  - description: Transaction hash
+    name: tx_hash
+    tests: []
+  - description: Unique transfer ID
+    name: unique_transfer_id
+    tests:
+    - unique
+  config:
+    tags:
+    - nft
+    - avalanche_c
+    - transfers
+  description: 'NFT transfers
+
+    '
+  meta:
+    blockchain: avalanche_c
+    contributors: hildobby, 0xRob
+    sector: nft
+  name: nft_avalanche_c_transfers
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - unique_transfer_id
+- columns:
+  - description: Blockchain
+    name: blockchain
+    tests: []
+  - description: Project
+    name: project
+    tests: []
+  - description: Project version
+    name: version
+    tests: []
+  - description: UTC event block time
+    name: block_time
+    tests: []
+  - description: NFT Token ID
+    name: token_id
+    tests: []
+  - description: Token standard
+    name: token_standard
+    tests: []
+  - description: How was this NFT traded ? (Direct buy, auction, etc...)
+    name: trade_category
+    tests: []
+  - description: Seller wallet address
+    name: seller
+    tests: []
+  - description: Buyer wallet address
+    name: buyer
+    tests: []
+  - description: NFT contract address, only if 1 nft was transacted
+    name: nft_contract_address
+    tests: []
+  - description: Contract address used by the project, in this case wyvern contract
+    name: project_contract_address
+    tests: []
+  - description: If the trade was performed via an aggregator, displays aggregator
+      name
+    name: aggregator_name
+    tests: []
+  - description: If the trade was performed via an aggregator, displays aggregator
+      address
+    name: aggregator_address
+    tests: []
+  - description: Transaction hash
+    name: tx_hash
+    tests: []
+  - description: 'Block number in which the transaction was executed '
+    name: block_number
+    tests: []
+  - description: Address that initiated the transaction
+    name: tx_from
+    tests: []
+  - description: Address that received the transaction
+    name: tx_to
+    tests: []
+  - name: unique_trade_id
+    tests:
+    - is_unique_filtered
+  - description: Which wallet first funded the buyer's wallet in ETH
+    name: buyer_first_funded_by
+    tests: []
+  - description: Which wallet first funded the seller's wallet in ETH
+    name: seller_first_funded_by
+    tests: []
+  - description: Were the seller and buyer the same address in the trade?
+    name: filter_1_same_buyer_seller
+    tests: []
+  - description: Was the NFT ever traded the other way around (buyer<>seller)
+    name: filter_2_back_and_forth_trade
+    tests: []
+  - description: Was the same NFT bought 3+ times (Excluding ERC1155s)
+    name: filter_3_bought_or_sold_3x
+    tests: []
+  - description: Did the same wallet first fund the seller and buyer's wallets in
+      ETH?
+    name: filter_4_first_funded_by_same_wallet
+    tests: []
+  - description: Have any of the filters flag as true? Then it is labelled as a wash
+      trade
+    name: is_wash_trade
+    tests: []
+  config:
+    tags:
+    - nft
+    - avalanche_c
+    - wash_trades
+  description: 'NFT wash trades labelling
+
+    '
+  meta:
+    blockchain: avalanche_c
+    contributors: hildobby
+    sector: nft
+  name: nft_avalanche_c_wash_trades
+  tests: []
+- columns:
+  - description: Blockchain
+    name: blockchain
+    tests: []
+  - description: UTC event block time
+    name: block_time
+    tests: []
+  - description: UTC event block date
+    name: block_date
+    tests: []
+  - description: Block number in which the transaction was executed
+    name: block_number
+    tests: []
+  - description: Address for which NFTs were approved
+    name: address
+    tests: []
+  - name: token_standard
+    tests:
+    - accepted_values:
+        values:
+        - erc721
+        - erc1155
+  - description: Was this an ApprovalForAll or a simple Approval?
+    name: approval_for_all
+    tests: []
+  - description: Contract address
+    name: contract_address
+    tests: []
+  - description: NFT token ID
+    name: token_id
+    tests: []
+  - description: Approved
+    name: approved
+    tests: []
+  - description: Transaction hash
+    name: tx_hash
+    tests: []
+  - description: Address that initiated the transaction
+    name: tx_from
+    tests: []
+  - description: Address that the transaction points to
+    name: tx_to
+    tests: []
+  - description: Event index
+    name: evt_index
+    tests: []
+  config:
+    tags:
+    - nft
+    - avalanche_c
+    - approvals
+  description: 'NFT approvals
+
+    '
+  meta:
+    blockchain: avalanche_c
+    contributors: hildobby
+    sector: nft
+  name: nft_avalanche_c_approvals
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - block_number
+      - tx_hash
+      - evt_index
+version: 2

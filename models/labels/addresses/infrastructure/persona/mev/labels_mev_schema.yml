@@ -1,43 +1,46 @@
-version: 2
-
 models:
-  - name: labels_mev_ethereum
-    meta:
-      blockchain: ethereum, optimism, polygon, arbitrum
-      sector: labels
-      project: mev
-      contributors: hildobby
-    config:
-      tags: ['labels', 'ethereum', 'MEV']
-    description: "Known MEV wallets on Ethereum"
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "Blockchain"   
-      - &address
-        name: address
-        description: "Address of known MEV wallet"
-      - &name
-        name: name
-        description: "Label name of MEV address"
-      - &category
-        name: category
-        description: "Label category"
-      - &contributor
-        name: contributor
-        description: "Wizard(s) contributing to labels"
-      - &source
-        name: source
-        description: "How were labels generated (could be static or query)"
-      - &created_at
-        name: created_at
-        description: "When were labels created"
-      - &updated_at
-        name: updated_at
-        description: "When were labels updated for the last time"
-      - &model_name
-        name: model_name
-        description: "Name of the label model sourced from"
-      - &label_type
-        name: label_type
-        description: "Type of label (see labels overall readme)"
+- columns:
+  - description: Blockchain
+    name: blockchain
+    tests: []
+  - description: Address of known MEV wallet
+    name: address
+    tests: []
+  - description: Label name of MEV address
+    name: name
+    tests: []
+  - description: Label category
+    name: category
+    tests: []
+  - description: Wizard(s) contributing to labels
+    name: contributor
+    tests: []
+  - description: How were labels generated (could be static or query)
+    name: source
+    tests: []
+  - description: When were labels created
+    name: created_at
+    tests: []
+  - description: When were labels updated for the last time
+    name: updated_at
+    tests: []
+  - description: Name of the label model sourced from
+    name: model_name
+    tests: []
+  - description: Type of label (see labels overall readme)
+    name: label_type
+    tests: []
+  config:
+    tags:
+    - labels
+    - ethereum
+    - MEV
+  description: Known MEV wallets on Ethereum
+  meta:
+    blockchain: ethereum, optimism, polygon, arbitrum
+    contributors: hildobby
+    project: mev
+    sector: labels
+  name: labels_mev_ethereum
+  tests: []
+version: 2

@@ -1,13 +1,9 @@
-{{config(alias='balancer_v2_pools',
-        post_hook='{{ expose_spells(\'["ethereum","arbitrum","optimism", "polygon"]\',
-                                    "sector",
-                                    "labels",
-                                    \'["balancerlabs"]\') }}')}}
+{{config(alias='balancer_v2_pools')}}
 
 SELECT * FROM  {{ ref('labels_balancer_v2_pools_ethereum') }}
-UNION
+UNION ALL
 SELECT * FROM  {{ ref('labels_balancer_v2_pools_arbitrum') }}
-UNION
+UNION ALL
 SELECT * FROM  {{ ref('labels_balancer_v2_pools_optimism') }}
-UNION
+UNION ALL
 SELECT * FROM  {{ ref('labels_balancer_v2_pools_polygon') }}

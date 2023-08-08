@@ -1,143 +1,183 @@
-version: 2
-
 models:
-  - name: transfers_bnb_bep20_agg_hour
-    meta:
-      blockchain: bnb
-      sector: transfers
-      project: bep20
-      contributors: hosuke
-    config:
-      tags: ['transfers', 'bnb', 'bep20', 'agg_hour', 'hosuke']
-    description: >
-      BEP20 tokens' transfers on bnb smart chain aggregated by hour.
+- columns:
+  - &id001
+    name: blockchain
+    tests: []
+  - &id006
+    description: UTC event block time truncated to the hour mark.
+    name: hour
+    tests: []
+  - &id002
+    description: Wallet address of sender or receiver. If amount is negative, wallet
+      address is the sender's.
+    name: wallet_address
+    tests: []
+  - &id003
+    description: Contract address for token
+    name: token_address
+    tests: []
+  - description: BEP20 token symbol
+    name: symbol
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - wallet_address
-            - token_address
-            - hour
-    columns:
-      - &blockchain
-        name: blockchain
-      - &hour
-        name: hour
-        description: "UTC event block time truncated to the hour mark."
-      - &wallet_address
-        name: wallet_address
-        description: "Wallet address of sender or receiver. If amount is negative, wallet address is the sender's."
-      - &token_address
-        name: token_address
-        description: "Contract address for token"
-      - name: symbol
-        description: "BEP20 token symbol"
-        tests:
-          - transfers_wallet_token:
-              seed_file_location: ref('transfers_bnb_bep20_agg_hour_v2')
-              agg_grouping: 'hour'
-      - &amount_raw
-        name: amount_raw
-        description: "Raw amount of BEP20 token held *before* taking into account token decimals"
-      - &amount
-        name: amount
-        description: "Raw amount of BEP20 token held *after* taking into account token decimals"
+    - transfers_wallet_token:
+        agg_grouping: hour
+        seed_file_location: ref('transfers_bnb_bep20_agg_hour_v2')
+  - &id004
+    description: Raw amount of BEP20 token held *before* taking into account token
+      decimals
+    name: amount_raw
+    tests: []
+  - &id005
+    description: Raw amount of BEP20 token held *after* taking into account token
+      decimals
+    name: amount
+    tests: []
+  config:
+    tags:
+    - transfers
+    - bnb
+    - bep20
+    - agg_hour
+    - hosuke
+  description: 'BEP20 tokens'' transfers on bnb smart chain aggregated by hour.
 
-  - name: transfers_bnb_bep20_agg_day
-    meta:
-      blockchain: bnb
-      sector: transfers
-      project: bep20
-      contributors: hosuke
-    config:
-      tags: ['transfers', 'bnb', 'bep20', 'agg_day', 'hosuke']
-    description: >
-      BEP20 tokens' transfers on bnb smart chain aggregated by day.
+    '
+  meta:
+    blockchain: bnb
+    contributors: hosuke
+    project: bep20
+    sector: transfers
+  name: transfers_bnb_bep20_agg_hour
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - wallet_address
+      - token_address
+      - hour
+- columns:
+  - *id001
+  - &id007
+    description: UTC event block time truncated to the day mark.
+    name: day
+    tests: []
+  - *id002
+  - *id003
+  - description: BEP20 token symbol
+    name: symbol
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - wallet_address
-            - token_address
-            - day
-    columns:
-      - *blockchain
-      - &day
-        name: day
-        description: "UTC event block time truncated to the day mark."
-      - *wallet_address
-      - *token_address
-      - name: symbol
-        description: "BEP20 token symbol"
-        tests:
-          - transfers_wallet_token:
-              seed_file_location: ref('transfers_bnb_bep20_agg_day_v2')
-              agg_grouping: 'day'
-      - *amount_raw
-      - *amount
+    - transfers_wallet_token:
+        agg_grouping: day
+        seed_file_location: ref('transfers_bnb_bep20_agg_day_v2')
+  - *id004
+  - *id005
+  config:
+    tags:
+    - transfers
+    - bnb
+    - bep20
+    - agg_day
+    - hosuke
+  description: 'BEP20 tokens'' transfers on bnb smart chain aggregated by day.
 
-  - name: transfers_bnb_bep20_rolling_hour
-    meta:
-      blockchain: bnb
-      sector: transfers
-      project: bep20
-      contributors: hosuke
-    config:
-      tags: [ 'transfers', 'bnb', 'bep20', 'rolling_hour', 'hosuke' ]
-    description: >
-      BEP20 Token Transfers on bnb smart chain per hour.
-    columns:
-      - *blockchain
-      - *hour
-      - *wallet_address
-      - *token_address
-      - &symbol
-        name: symbol
-        description: "BEP20 token symbol"
-      - *amount_raw
-      - *amount
-      - &last_updated
-        name: last_updated
-        description: "UTC timestamp when table was last updated"
-      - &recency_index
-        name: recency_index
-        description: "Index of most recent balance ascending. recency_index=1 is the wallet/contract pair's most recent balance"
+    '
+  meta:
+    blockchain: bnb
+    contributors: hosuke
+    project: bep20
+    sector: transfers
+  name: transfers_bnb_bep20_agg_day
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - wallet_address
+      - token_address
+      - day
+- columns:
+  - *id001
+  - *id006
+  - *id002
+  - *id003
+  - &id008
+    description: BEP20 token symbol
+    name: symbol
+    tests: []
+  - *id004
+  - *id005
+  - &id009
+    description: UTC timestamp when table was last updated
+    name: last_updated
+    tests: []
+  - &id010
+    description: Index of most recent balance ascending. recency_index=1 is the wallet/contract
+      pair's most recent balance
+    name: recency_index
+    tests: []
+  config:
+    tags:
+    - transfers
+    - bnb
+    - bep20
+    - rolling_hour
+    - hosuke
+  description: 'BEP20 Token Transfers on bnb smart chain per hour.
 
-  - name: transfers_bnb_bep20_rolling_day
-    meta:
-      blockchain: bnb
-      sector: transfers
-      project: bep20
-      contributors: hosuke
-    config:
-      tags: [ 'transfers', 'bnb', 'bep20', 'rolling_day', 'hosuke' ]
-    description: >
-      BEP20 Token Transfers on bnb smart chain per day.
-    columns:
-      - *blockchain
-      - *day
-      - *wallet_address
-      - *token_address
-      - *symbol
-      - *amount_raw
-      - *amount
-      - *last_updated
-      - *recency_index
+    '
+  meta:
+    blockchain: bnb
+    contributors: hosuke
+    project: bep20
+    sector: transfers
+  name: transfers_bnb_bep20_rolling_hour
+  tests: []
+- columns:
+  - *id001
+  - *id007
+  - *id002
+  - *id003
+  - *id008
+  - *id004
+  - *id005
+  - *id009
+  - *id010
+  config:
+    tags:
+    - transfers
+    - bnb
+    - bep20
+    - rolling_day
+    - hosuke
+  description: 'BEP20 Token Transfers on bnb smart chain per day.
 
-  - name: transfers_bnb_bep20
-    meta:
-      blockchain: bnb
-      sector: transfers
-      project: bep20
-      contributors: soispoke, dot2dotseurat, tschubotz
-    config:
-      tags: ['transfers', 'bnb', 'bep20']
-    description: "BEP20 Token Transfers on bnb. This table is updated every 30 minutes."
-    columns:
-      - name: unique_transfer_id
-        description: "Unique transfer ID (used for testing for duplicates)"
-      - *blockchain
-      - *wallet_address
-      - *token_address
-      - &evt_block_time
-        name: evt_block_time
-        description: "Timestamp for block event time in UTC"
-      - *amount_raw
+    '
+  meta:
+    blockchain: bnb
+    contributors: hosuke
+    project: bep20
+    sector: transfers
+  name: transfers_bnb_bep20_rolling_day
+  tests: []
+- columns:
+  - description: Unique transfer ID (used for testing for duplicates)
+    name: unique_transfer_id
+    tests: []
+  - *id001
+  - *id002
+  - *id003
+  - description: Timestamp for block event time in UTC
+    name: evt_block_time
+    tests: []
+  - *id004
+  config:
+    tags:
+    - transfers
+    - bnb
+    - bep20
+  description: BEP20 Token Transfers on bnb. This table is updated every 30 minutes.
+  meta:
+    blockchain: bnb
+    contributors: soispoke, dot2dotseurat, tschubotz
+    project: bep20
+    sector: transfers
+  name: transfers_bnb_bep20
+  tests: []
+version: 2

@@ -1,46 +1,44 @@
-version: 2
-
 sources:
-  - name: weth_optimism
-    freshness:
-      warn_after: { count: 12, period: hour }
-    tables:
-      - name: weth9_evt_deposit
-        loaded_at_field: evt_block_time
-        description: "WETH deposits"
-        columns:
-          - &contract_address
-            name: contract_address
-            description: "Contract address for token"
-          - &dst
-            name: dst
-            description: "Wallet address for WETH deposits"
-          - &evt_block_number
-            name: evt_block_number
-            description: "Block event number"
-          - &evt_block_time
-            name: evt_block_time
-            description: "Timestamp for block event time in UTC"
-          - &evt_index
-            name: evt_index
-            description: "Event index"
-          - &evt_tx_hash
-            name: evt_tx_hash
-            description: "Event transaction hash"
-          - &wad
-            name: wad
-            description: "Raw amount of WETH"
-            
-      - name: weth9_evt_withdrawal
-        loaded_at_field: evt_block_time
-        description: "WETH withdrawals"
-        columns:
-          - *contract_address
-          - &src
-            name: src
-            description: "Wallet address for WETH withdrawals"
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - *wad
+- freshness:
+    warn_after:
+      count: 12
+      period: hour
+  name: weth_optimism
+  tables:
+  - columns:
+    - &id001
+      description: Contract address for token
+      name: contract_address
+    - description: Wallet address for WETH deposits
+      name: dst
+    - &id002
+      description: Block event number
+      name: evt_block_number
+    - &id003
+      description: Timestamp for block event time in UTC
+      name: evt_block_time
+    - &id004
+      description: Event index
+      name: evt_index
+    - &id005
+      description: Event transaction hash
+      name: evt_tx_hash
+    - &id006
+      description: Raw amount of WETH
+      name: wad
+    description: WETH deposits
+    loaded_at_field: evt_block_time
+    name: weth9_evt_deposit
+  - columns:
+    - *id001
+    - description: Wallet address for WETH withdrawals
+      name: src
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    description: WETH withdrawals
+    loaded_at_field: evt_block_time
+    name: weth9_evt_withdrawal
+version: 2

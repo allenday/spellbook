@@ -1,158 +1,179 @@
-version: 2
-
 sources:
-  - name: aave_v3_optimism
-    description: "Decoded contracts for aave v3 on Optimism"
-
-    tables:
-      - name: Pool_evt_ReserveDataUpdated
-        loaded_at_field: evt_block_time
-        description: "Provides the liqudity index, stable and variable borrow rates for aave v3 reserves."
-        freshness:
-          warn_after: { count: 12, period: hour }
-          error_after: { count: 24, period: hour }
-        columns:
-        - &contract_address
-          name: contract_address
-          description: "Aave token contract address"       
-        - &evt_block_number
-          name: evt_block_number
-          description: "Event block number"  
-        - &evt_block_time
-          name: evt_block_time
-          description: "Timestamp for block event time in UTC"
-        - &evt_index
-          name: evt_index
-          description: "Event index"  
-        - &evt_tx_hash
-          name: evt_tx_hash
-          description: "Transaction hash of the event" 
-        - name: liqudityIndex
-          description: "Liqudity index value of the reserve"
-        - name: liqudityRate
-          description: "Liqudity rate value of the reserve"
-        - &reserve
-          name: reserve
-          description: "Aave reserve contract address"
-        - name: stableBorrowRate
-          description: "Stable borrow rate value of the reserve"  
-        - name: variableBorrowIndex
-          description: "Variable borrow index value of the reserve"
-        - name: variableBorrowRate
-          description: "Variable borrow rate value of the reserve"     
-
-      - name: Pool_evt_Supply
-        loaded_at_field: evt_block_time
-        description: "Contians all the transactions involving deposits for aave v3 on optimism"
-        freshness:
-          warn_after: { count: 24, period: hour }
-          error_after: { count: 48, period: hour }
-        columns:
-        - &amount
-          name: amount
-          description: "The token transafer amount"       
-        - *contract_address 
-        - *evt_block_number
-        - *evt_block_time
-        - *evt_index
-        - *evt_tx_hash 
-        - name: onBehalfOf
-          description: "The user wallet address if the token is deposited on behalf of another wallet"
-        - name: referralCode
-          description: "Deposit referral number"  
-        - *reserve
-        - &user
-          name: user
-          description: "The user wallet address"
-
-      - name: Pool_evt_Withdraw
-        loaded_at_field: evt_block_time
-        description: "Contians all the transactions involving withdrawals for aave v3 on optimism"
-        freshness:
-          warn_after: { count: 24, period: hour }
-          error_after: { count: 48, period: hour }
-        columns:
-        - *amount       
-        - *contract_address 
-        - *evt_block_number
-        - *evt_block_time
-        - *evt_index
-        - *evt_tx_hash 
-        - *reserve
-        - name: to
-          description: "Wallet address where the tokens are withdrawn and transferred"
-        - *user
-
-      - name: Pool_evt_LiquidationCall
-        loaded_at_field: evt_block_time
-        description: "Contians all the transactions involving liquidation for aave v3 on optimism"
-        freshness:
-          warn_after: { count: 24, period: hour }
-          error_after: { count: 48, period: hour }
-        columns:
-        - name: collateralAsset
-          description: "Token address of the collateral asset"      
-        - *contract_address 
-        - name: debtAsset
-          description: "Token address of the debt asset"
-        - name: debtToCover
-          description: "Amount of debt to be covered through liquidation"  
-        - *evt_block_number
-        - *evt_block_time
-        - *evt_index
-        - *evt_tx_hash 
-        - name: liquidatedCollateralAmount
-          description: "Amount of liquidated collateral asset"  
-        - name: liquidator
-          description: "Liquidator wallet address"
-        - name: receiveAToken
-          description: "Shows if the liquidator will receive atokens or not"
-        - *user
-
-      - name: Pool_evt_Borrow
-        loaded_at_field: evt_block_time
-        description: "Contians all the transactions involving borrows for aave v3 on optimism"
-        freshness:
-          warn_after: { count: 24, period: hour }
-          error_after: { count: 48, period: hour }
-        columns:
-        - *amount     
-        - name: borrowRate
-          description: "The rate at which the tokens are borrowed"
-        - *contract_address 
-        - *evt_block_number
-        - *evt_block_time
-        - *evt_index
-        - *evt_tx_hash 
-        - name: interestRateMode                            
-          description: "The borrowing mode of the debt (1 for stable mode, 2 for variable mode)"
-        - name: onBehalfOf
-          description: "The user wallet address if the token is borrowed on behalf of another wallet"
-        - name: referralCode
-          description: "Borrow referral number" 
-        - *reserve
-        - *user 
-
-      - name: Pool_evt_Repay
-        loaded_at_field: evt_block_time
-        description: "Contians all the transactions involving repays for aave v3 on optimism"
-        freshness:
-          warn_after: { count: 24, period: hour }
-          error_after: { count: 48, period: hour }
-        columns:    
-        - *evt_block_number
-        - *evt_block_time
-        - *evt_index
-        - *evt_tx_hash
-        - name: repayer
-          description: "Wallet address of the repayer" 
-        - *reserve
-        - name: useATokens
-          description: "Specifies if atokens are used or not"
-        - *user
-        - *amount
-        - *contract_address 
-        
-      - name: Pool_evt_FlashLoan
-        loaded_at_field: evt_block_time
-          
+- description: Decoded contracts for aave v3 on Optimism
+  name: aave_v3_optimism
+  tables:
+  - columns:
+    - &id001
+      description: Aave token contract address
+      name: contract_address
+    - &id002
+      description: Event block number
+      name: evt_block_number
+    - &id003
+      description: Timestamp for block event time in UTC
+      name: evt_block_time
+    - &id004
+      description: Event index
+      name: evt_index
+    - &id005
+      description: Transaction hash of the event
+      name: evt_tx_hash
+    - description: Liqudity index value of the reserve
+      name: liqudityIndex
+    - description: Liqudity rate value of the reserve
+      name: liqudityRate
+    - &id006
+      description: Aave reserve contract address
+      name: reserve
+    - description: Stable borrow rate value of the reserve
+      name: stableBorrowRate
+    - description: Variable borrow index value of the reserve
+      name: variableBorrowIndex
+    - description: Variable borrow rate value of the reserve
+      name: variableBorrowRate
+    description: Provides the liqudity index, stable and variable borrow rates for
+      aave v3 reserves.
+    freshness:
+      error_after:
+        count: 24
+        period: hour
+      warn_after:
+        count: 12
+        period: hour
+    loaded_at_field: evt_block_time
+    name: Pool_evt_ReserveDataUpdated
+  - columns:
+    - &id007
+      description: The token transafer amount
+      name: amount
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: The user wallet address if the token is deposited on behalf of
+        another wallet
+      name: onBehalfOf
+    - description: Deposit referral number
+      name: referralCode
+    - *id006
+    - &id008
+      description: The user wallet address
+      name: user
+    description: Contians all the transactions involving deposits for aave v3 on optimism
+    freshness:
+      error_after:
+        count: 48
+        period: hour
+      warn_after:
+        count: 24
+        period: hour
+    loaded_at_field: evt_block_time
+    name: Pool_evt_Supply
+  - columns:
+    - *id007
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - description: Wallet address where the tokens are withdrawn and transferred
+      name: to
+    - *id008
+    description: Contians all the transactions involving withdrawals for aave v3 on
+      optimism
+    freshness:
+      error_after:
+        count: 48
+        period: hour
+      warn_after:
+        count: 24
+        period: hour
+    loaded_at_field: evt_block_time
+    name: Pool_evt_Withdraw
+  - columns:
+    - description: Token address of the collateral asset
+      name: collateralAsset
+    - *id001
+    - description: Token address of the debt asset
+      name: debtAsset
+    - description: Amount of debt to be covered through liquidation
+      name: debtToCover
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: Amount of liquidated collateral asset
+      name: liquidatedCollateralAmount
+    - description: Liquidator wallet address
+      name: liquidator
+    - description: Shows if the liquidator will receive atokens or not
+      name: receiveAToken
+    - *id008
+    description: Contians all the transactions involving liquidation for aave v3 on
+      optimism
+    freshness:
+      error_after:
+        count: 48
+        period: hour
+      warn_after:
+        count: 24
+        period: hour
+    loaded_at_field: evt_block_time
+    name: Pool_evt_LiquidationCall
+  - columns:
+    - *id007
+    - description: The rate at which the tokens are borrowed
+      name: borrowRate
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: The borrowing mode of the debt (1 for stable mode, 2 for variable
+        mode)
+      name: interestRateMode
+    - description: The user wallet address if the token is borrowed on behalf of another
+        wallet
+      name: onBehalfOf
+    - description: Borrow referral number
+      name: referralCode
+    - *id006
+    - *id008
+    description: Contians all the transactions involving borrows for aave v3 on optimism
+    freshness:
+      error_after:
+        count: 48
+        period: hour
+      warn_after:
+        count: 24
+        period: hour
+    loaded_at_field: evt_block_time
+    name: Pool_evt_Borrow
+  - columns:
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: Wallet address of the repayer
+      name: repayer
+    - *id006
+    - description: Specifies if atokens are used or not
+      name: useATokens
+    - *id008
+    - *id007
+    - *id001
+    description: Contians all the transactions involving repays for aave v3 on optimism
+    freshness:
+      error_after:
+        count: 48
+        period: hour
+      warn_after:
+        count: 24
+        period: hour
+    loaded_at_field: evt_block_time
+    name: Pool_evt_Repay
+  - loaded_at_field: evt_block_time
+    name: Pool_evt_FlashLoan
+version: 2

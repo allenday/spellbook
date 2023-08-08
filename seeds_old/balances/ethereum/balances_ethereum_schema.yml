@@ -1,0 +1,13 @@
+version: 2
+
+seeds:
+  - name: genesis_balances_seed
+    description: Legacy values from Postgres for hourly token balances. Sampled on May 5th, 2022.
+    columns:
+      - name: address
+        description: Description of column 1
+        data_type: STRING
+      
+      - name: balance_raw
+        description: Description of column 2
+        data_type: NUMERIC

@@ -1,0 +1,22 @@
+version: 2
+
+seeds:
+  - name: genesis_balances_seed
+    columns:
+      - name: address
+        data_type: STRING
+      - name: balance_raw
+        data_type: BIGNUMERIC
+  - name: airdrop_optimism_addresses_1_0_seed
+    config:
+      column_types:
+        address: STRING
+        a_is_voter: BIGNUMERIC
+        b_is_multisig_signer: BIGNUMERIC
+        c_is_gitcoin: BIGNUMERIC
+        d_is_price_out: BIGNUMERIC
+        e_op_user: BIGNUMERIC
+        f_op_repeat: BIGNUMERIC
+        num_categories_if_op_user: BIGNUMERIC
+        g_overlap_bonus: BIGNUMERIC
+        total_op_eligible_to_claim: BIGNUMERIC

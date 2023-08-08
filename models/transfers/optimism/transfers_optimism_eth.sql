@@ -1,14 +1,9 @@
 {{ 
     config(
         alias ='eth', 
-        materialized ='incremental',
-        file_format ='delta',
-        incremental_strategy='merge',
-        unique_key='unique_transfer_id',
-        post_hook='{{ expose_spells(\'["optimism"]\',
-                                    "sector",
-                                    "transfers",
-                                    \'["msilb7", "chuxin"]\') }}'
+        materialized = 'view',
+                incremental_strategy='merge',
+        unique_key='unique_transfer_id'
     )
 }}
 with eth_transfers as (
@@ -17,8 +12,8 @@ with eth_transfers as (
         ,r.to
         --Using the ETH deposit placeholder address to match with prices tables
         ,lower('0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000') as contract_address
-        ,cast(r.value as double) AS value
-        ,cast(r.value as double)/1e18 as value_decimal
+        ,cast(r.value as FLOAT64) AS `value`
+        ,cast(r.value as FLOAT64)/1e18 as value_decimal
         ,r.tx_hash
         ,r.trace_address
         ,r.block_time as tx_block_time 
@@ -35,10 +30,10 @@ with eth_transfers as (
         (r.call_type not in ('delegatecall', 'callcode', 'staticcall') or r.call_type is null)
         and r.tx_success
         and r.success
-        and r.value > '0'
+        and r.value >0
         {% if is_incremental() %} -- this filter will only be applied on an incremental run 
-        and r.block_time >= date_trunc('day', now() - interval '1 week')
-        and t.block_time >= date_trunc('day', now() - interval '1 week')
+        and r.block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
+        and t.block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 
     union all 
@@ -49,8 +44,8 @@ with eth_transfers as (
         ,r.to
         --Using the ETH deposit placeholder address to match with prices tables
         ,lower('0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000') as contract_address
-        ,cast(r.value as double) AS value
-        ,cast(r.value as double)/1e18 as value_decimal
+        ,cast(r.value as FLOAT64) AS `value`
+        ,cast(r.value as FLOAT64)/1e18 as value_decimal
         ,r.evt_tx_hash as tx_hash
         ,array(r.evt_index) as trace_address
         ,r.evt_block_time as tx_block_time
@@ -66,12 +61,11 @@ with eth_transfers as (
     where 
         r.contract_address = lower('0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000')
         and t.success
-        and r.value > '0'
+        and r.value >0
         {% if is_incremental() %} -- this filter will only be applied on an incremental run 
-        and r.evt_block_time >= date_trunc('day', now() - interval '1 week')
-        and t.block_time >= date_trunc('day', now() - interval '1 week')
+        and r.evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
+        and t.block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 )
 select *
 from eth_transfers
-;

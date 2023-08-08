@@ -1,304 +1,301 @@
-version: 2
-
 sources:
-  - name: gnosis_safe_ethereum
-    freshness:
-      warn_after: { count: 12, period: hour }
-    tables:
-      - name: GnosisSafev1_3_0_evt_SafeSetup
-        loaded_at_field: evt_block_time
-        description: "Safe v1.3.0 setup events"
-        columns:
-          - &contract_address
-            name: contract_address
-            description: "Contract address for token"
-          - &evt_block_number
-            name: evt_block_number
-            description: "Block event number"
-          - &evt_block_time
-            name: evt_block_time
-            description: "Timestamp for block event time in UTC"
-          - &evt_index
-            name: evt_index
-            description: "Event index"
-          - &evt_tx_hash
-            name: evt_tx_hash
-            description: "Event transaction hash"
-          - &fallbackHandler
-            name: fallbackHandler
-            description: "Handler for fallback calls to this contract"
-          - &initializer
-            name: initializer
-            description: "Initializer address"
-          - &initiator
-            name: initiator
-            description: "Initiator (msg.sender) address"
-          - &owners
-            name: owners
-            description: "An array of initial safe owners' addresses"
-          - &threshold
-            name: threshold
-            description: "Number of required confirmations for a Safe transaction"
-      - name: ProxyFactoryv1_0_0_call_createProxy
-        loaded_at_field: call_block_time
-        description: "Safe v1.0.0 factory createProxy calls"
-        columns:
-          - &call_block_number
-            name: call_block_number
-            description: "Call block number"
-          - &call_block_time
-            name: call_block_time
-            description: "Call block time (UTC)"
-          - &call_success
-            name: call_success
-            description: "Call success"
-          - &call_trace_address
-            name: call_trace_address
-            description: "Call trace address"
-          - &call_tx_hash
-            name: call_tx_hash
-            description: "Call tx hash"
-          - *contract_address
-          - &data
-            name: data
-            description: "Initializer data"
-          - &masterCopy
-            name: masterCopy
-            description: "Singleton"
-          - &output_proxy
-            name: output_proxy
-            description: "Address of created Safe proxy"
-      - name: ProxyFactoryv1_0_0_call_createProxyWithNonce
-        loaded_at_field: call_block_time
-        description: "Safe v1.0.0 factory createProxyWithNonce calls"
-        columns:
-          - &_mastercopy
-            name: _mastercopy
-            description: "Singleton"
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-          - *call_tx_hash
-          - *contract_address
-          - *initializer
-          - *output_proxy
-          - &saltNonce
-            name: saltNonce
-            description: "Salt nonce"
-      - name: ProxyFactoryv1_1_0_call_createProxy
-        loaded_at_field: call_block_time
-        description: "Safe v1.1.0 factory createProxy calls"
-        columns:
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-          - *call_tx_hash
-          - *contract_address
-          - *data
-          - *masterCopy
-          - *output_proxy
-      - name: ProxyFactoryv1_1_0_call_createProxyWithNonce
-        loaded_at_field: call_block_time
-        description: "Safe v1.1.0 factory createProxyWithNonce calls"
-        columns:
-          - *_mastercopy
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-          - *call_tx_hash
-          - *contract_address
-          - *initializer
-          - *output_proxy
-          - *saltNonce
-      - name: ProxyFactoryv1_1_1_call_createProxy
-        loaded_at_field: call_block_time
-        description: "Safe v1.1.1 factory createProxy calls"
-        columns:
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-          - *call_tx_hash
-          - *contract_address
-          - *data
-          - *masterCopy
-          - *output_proxy
-      - name: ProxyFactoryv1_1_1_call_createProxyWithNonce
-        loaded_at_field: call_block_time
-        description: "Safe v1.1.1 factory createProxyWithNonce calls"
-        columns:
-          - *_mastercopy
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-          - *call_tx_hash
-          - *contract_address
-          - *initializer
-          - *output_proxy
-          - *saltNonce
-      - name: ProxyFactoryv1_1_1_call_createProxyWithCallback
-        loaded_at_field: call_block_time
-        description: "Safe v1.1.1 factory createProxyWithCallback calls"
-        columns:
-          - *_mastercopy
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-          - *call_tx_hash
-          - *contract_address
-          - *initializer
-          - *output_proxy
-          - *saltNonce
-      - name: GnosisSafeProxyFactory_v1_3_0_evt_ProxyCreation
-        loaded_at_field: evt_block_time
-        description: "Safe v1.3.0 factory ProxyCreation events"
-        columns:
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - &proxy
-            name: proxy
-            description: "Address of created Safe proxy"
-          - &singleton
-            name: singleton
-            description: "Singleton"
-      - name: Safev0_1_0_call_setup
-        loaded_at_field: call_block_time
-        description: "Safe v0.1.0 setup events"
-        columns:
-          - &_owners
-            name: _owners
-            description: "Owners"
-          - &_threshold
-            name: _threshold
-            description: "Threshold"
-          - *call_tx_hash
-          - *contract_address
-          - *data
-          - &to
-            name: to
-            description: "To"
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-      - name: Safev0_1_0_evt_ChangedThreshold
-        loaded_at_field: call_block_time
-        description: "Safe v0.1.0 changed threshold events"
-        columns:
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-          - *call_tx_hash
-          - *contract_address
-          - *_threshold
-      - name: Safev1_0_0_call_setup
-        loaded_at_field: call_block_time
-        description: "Safe v1.0.0 setup events"
-        columns:
-          - *_owners
-          - *_threshold
-          - *call_tx_hash
-          - *contract_address
-          - *data
-          - &payment
-            name: payment
-            description: "Payment"
-          - &paymentReceiver
-            name: paymentReceiver
-            description: "Payment Receiver"
-          - &paymentToken
-            name: paymentToken
-            description: "Payment Token"
-          - *to
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-      - name: Safev1_0_0_evt_ChangedThreshold
-        loaded_at_field: call_block_time
-        description: "Safe v1.0.0 changed threshold events"
-        columns:
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-          - *call_tx_hash
-          - *contract_address
-          - *threshold
-      - name: Safev1_1_0_call_setup
-        loaded_at_field: call_block_time
-        description: "Safe v1.1.0 setup events"
-        columns:
-          - *_owners
-          - *_threshold
-          - *call_tx_hash
-          - *contract_address
-          - *data
-          - *fallbackHandler
-          - *paymentToken
-          - *to
-          - *payment
-          - *paymentReceiver
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-      - name: Safev1_1_0_evt_ChangedThreshold
-        loaded_at_field: call_block_time
-        description: "Safe v1.1.0 changed threshold events"
-        columns:
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-          - *call_tx_hash
-          - *contract_address
-          - *threshold
-      - name: Safev1_1_1_call_setup
-        loaded_at_field: call_block_time
-        description: "Safe v1.1.1 setup events"
-        columns:
-          - *_owners
-          - *_threshold
-          - *call_tx_hash
-          - *contract_address
-          - *data
-          - *fallbackHandler
-          - *payment
-          - *paymentReceiver
-          - *paymentToken
-          - *to
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-      - name: Safev1_1_1_evt_ChangedThreshold
-        loaded_at_field: call_block_time
-        description: "Safe v1.1.1 changed threshold events"
-        columns:
-          - *call_block_number
-          - *call_block_time
-          - *call_success
-          - *call_trace_address
-          - *call_tx_hash
-          - *contract_address
-          - *threshold
-      - name: GnosisSafev1_3_0_evt_ChangedThreshold
-        loaded_at_field: call_block_time
-        description: "Safe v1.3.0 changed threshold events"
-        columns:
-          - *contract_address
-          - *threshold
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
+- freshness:
+    warn_after:
+      count: 12
+      period: hour
+  name: gnosis_safe_ethereum
+  tables:
+  - columns:
+    - &id001
+      description: Contract address for token
+      name: contract_address
+    - &id013
+      description: Block event number
+      name: evt_block_number
+    - &id014
+      description: Timestamp for block event time in UTC
+      name: evt_block_time
+    - &id015
+      description: Event index
+      name: evt_index
+    - &id016
+      description: Event transaction hash
+      name: evt_tx_hash
+    - &id021
+      description: Handler for fallback calls to this contract
+      name: fallbackHandler
+    - &id007
+      description: Initializer address
+      name: initializer
+    - description: Initiator (msg.sender) address
+      name: initiator
+    - description: An array of initial safe owners' addresses
+      name: owners
+    - &id020
+      description: Number of required confirmations for a Safe transaction
+      name: threshold
+    description: Safe v1.3.0 setup events
+    loaded_at_field: evt_block_time
+    name: GnosisSafev1_3_0_evt_SafeSetup
+  - columns:
+    - &id002
+      description: Call block number
+      name: call_block_number
+    - &id003
+      description: Call block time (UTC)
+      name: call_block_time
+    - &id004
+      description: Call success
+      name: call_success
+    - &id005
+      description: Call trace address
+      name: call_trace_address
+    - &id006
+      description: Call tx hash
+      name: call_tx_hash
+    - *id001
+    - &id009
+      description: Initializer data
+      name: data
+    - &id010
+      description: Singleton
+      name: masterCopy
+    - &id008
+      description: Address of created Safe proxy
+      name: output_proxy
+    description: Safe v1.0.0 factory createProxy calls
+    loaded_at_field: call_block_time
+    name: ProxyFactoryv1_0_0_call_createProxy
+  - columns:
+    - &id011
+      description: Singleton
+      name: _mastercopy
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id001
+    - *id007
+    - *id008
+    - &id012
+      description: Salt nonce
+      name: saltNonce
+    description: Safe v1.0.0 factory createProxyWithNonce calls
+    loaded_at_field: call_block_time
+    name: ProxyFactoryv1_0_0_call_createProxyWithNonce
+  - columns:
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id001
+    - *id009
+    - *id010
+    - *id008
+    description: Safe v1.1.0 factory createProxy calls
+    loaded_at_field: call_block_time
+    name: ProxyFactoryv1_1_0_call_createProxy
+  - columns:
+    - *id011
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id001
+    - *id007
+    - *id008
+    - *id012
+    description: Safe v1.1.0 factory createProxyWithNonce calls
+    loaded_at_field: call_block_time
+    name: ProxyFactoryv1_1_0_call_createProxyWithNonce
+  - columns:
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id001
+    - *id009
+    - *id010
+    - *id008
+    description: Safe v1.1.1 factory createProxy calls
+    loaded_at_field: call_block_time
+    name: ProxyFactoryv1_1_1_call_createProxy
+  - columns:
+    - *id011
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id001
+    - *id007
+    - *id008
+    - *id012
+    description: Safe v1.1.1 factory createProxyWithNonce calls
+    loaded_at_field: call_block_time
+    name: ProxyFactoryv1_1_1_call_createProxyWithNonce
+  - columns:
+    - *id011
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id001
+    - *id007
+    - *id008
+    - *id012
+    description: Safe v1.1.1 factory createProxyWithCallback calls
+    loaded_at_field: call_block_time
+    name: ProxyFactoryv1_1_1_call_createProxyWithCallback
+  - columns:
+    - *id001
+    - *id013
+    - *id014
+    - *id015
+    - *id016
+    - description: Address of created Safe proxy
+      name: proxy
+    - description: Singleton
+      name: singleton
+    description: Safe v1.3.0 factory ProxyCreation events
+    loaded_at_field: evt_block_time
+    name: GnosisSafeProxyFactory_v1_3_0_evt_ProxyCreation
+  - columns:
+    - &id018
+      description: Owners
+      name: _owners
+    - &id017
+      description: Threshold
+      name: _threshold
+    - *id006
+    - *id001
+    - *id009
+    - &id019
+      description: To
+      name: to
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    description: Safe v0.1.0 setup events
+    loaded_at_field: call_block_time
+    name: Safev0_1_0_call_setup
+  - columns:
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id001
+    - *id017
+    description: Safe v0.1.0 changed threshold events
+    loaded_at_field: call_block_time
+    name: Safev0_1_0_evt_ChangedThreshold
+  - columns:
+    - *id018
+    - *id017
+    - *id006
+    - *id001
+    - *id009
+    - &id023
+      description: Payment
+      name: payment
+    - &id024
+      description: Payment Receiver
+      name: paymentReceiver
+    - &id022
+      description: Payment Token
+      name: paymentToken
+    - *id019
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    description: Safe v1.0.0 setup events
+    loaded_at_field: call_block_time
+    name: Safev1_0_0_call_setup
+  - columns:
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id001
+    - *id020
+    description: Safe v1.0.0 changed threshold events
+    loaded_at_field: call_block_time
+    name: Safev1_0_0_evt_ChangedThreshold
+  - columns:
+    - *id018
+    - *id017
+    - *id006
+    - *id001
+    - *id009
+    - *id021
+    - *id022
+    - *id019
+    - *id023
+    - *id024
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    description: Safe v1.1.0 setup events
+    loaded_at_field: call_block_time
+    name: Safev1_1_0_call_setup
+  - columns:
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id001
+    - *id020
+    description: Safe v1.1.0 changed threshold events
+    loaded_at_field: call_block_time
+    name: Safev1_1_0_evt_ChangedThreshold
+  - columns:
+    - *id018
+    - *id017
+    - *id006
+    - *id001
+    - *id009
+    - *id021
+    - *id023
+    - *id024
+    - *id022
+    - *id019
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    description: Safe v1.1.1 setup events
+    loaded_at_field: call_block_time
+    name: Safev1_1_1_call_setup
+  - columns:
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id001
+    - *id020
+    description: Safe v1.1.1 changed threshold events
+    loaded_at_field: call_block_time
+    name: Safev1_1_1_evt_ChangedThreshold
+  - columns:
+    - *id001
+    - *id020
+    - *id013
+    - *id014
+    - *id015
+    - *id016
+    description: Safe v1.3.0 changed threshold events
+    loaded_at_field: call_block_time
+    name: GnosisSafev1_3_0_evt_ChangedThreshold
+version: 2

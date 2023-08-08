@@ -2,14 +2,8 @@
     config(
         schema = 'curvefi_optimism',
         alias='gauge_mappings',
-        materialized = 'incremental',
-        file_format = 'delta',
-        incremental_strategy = 'merge',
-        unique_key = ['pool_contract', 'incentives_contract'],
-        post_hook='{{ expose_spells(\'["optimism"]\',
-                                    "project",
-                                    "curvefi",
-                                    \'["msilb7"]\') }}'
+        materialized = 'view',
+                        unique_key = ['pool_contract', 'incentives_contract']
     ) 
 }}
 
@@ -23,7 +17,7 @@ FROM (
     evt_block_time, evt_block_number, contract_address, evt_tx_hash, evt_index
     FROM {{ source ('curvefi_optimism', 'Vyper_contract_evt_DeployedGauge') }}
     {% if is_incremental() %}
-    WHERE evt_block_time >= NOW() - interval '1 week'
+    WHERE evt_block_time >= CURRENT_TIMESTAMP() - interval '1 week'
     {% endif %}
 
     UNION ALL 
@@ -33,7 +27,6 @@ FROM (
     evt_block_time, evt_block_number, contract_address, evt_tx_hash, evt_index
     FROM {{ source ('curvefi_optimism', 'PoolFactory_evt_LiquidityGaugeDeployed') }}
     {% if is_incremental() %}
-    WHERE evt_block_time >= NOW() - interval '1 week'
+    WHERE evt_block_time >= CURRENT_TIMESTAMP() - interval '1 week'
     {% endif %}
 ) a
-

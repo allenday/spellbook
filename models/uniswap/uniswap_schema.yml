@@ -1,154 +1,185 @@
-version: 2
-
 models:
-  - name: uniswap_trades
-    meta:
-      blockchain: ethereum, optimism, polygon, arbitrum, bnb
-      sector: dex
-      project: uniswap
-      contributors: jeff-dude, masquot, soispoke, 0xBoxer, Henrystats, chrispearcx
-    config:
-      tags: ['ethereum', 'optimism', 'polygon', 'uniswap','trades', 'dex', 'jeff-dude','cross-chain', 'bnb']
-    description: >
-        Uniswap trades on all chains across all contracts and versions. This table will load dex trades downstream.
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "Blockchain which the DEX is deployed"
-      - &project 
-        name: project
-        description: "Project name of the DEX"  
-      - &version
-        name: version
-        description: "Version of the contract built and deployed by the DEX project"  
-      - &block_date
-        name: block_date
-        description: "UTC event block date of each DEX trade"
-      - &block_time
-        name: block_time
-        description: "UTC event block time of each DEX trade"
-      - &token_bought_symbol
-        name: token_bought_symbol
-        description: "Token symbol for token bought in the transaction"
-      - &token_sold_symbol
-        name: token_sold_symbol
-        description: "Token symbol for token sold in the transaction"
-      - &token_pair
-        name: token_pair
-        description: "Token symbol pair for each token involved in the transaction"
-      - &token_bought_amount
-        name: token_bought_amount
-        description: "Value of the token bought at time of execution in the original currency"
-      - &token_sold_amount
-        name: token_sold_amount
-        description: "Value of the token sold at time of execution in the original currency"
-      - &token_bought_amount_raw
-        name: token_bought_amount_raw
-        description: "Raw value of the token bought at time of execution in the original currency"
-      - &token_sold_amount_raw
-        name: token_sold_amount_raw
-        description: "Raw value of the token sold at time of execution in the original currency"
-      - &amount_usd
-        name: amount_usd
-        description: "USD value of the trade at time of execution"
-      - &token_bought_address
-        name: token_bought_address
-        description: "Contract address of the token bought"
-      - &token_sold_address
-        name: token_sold_address
-        description: "Contract address of the token sold"
-      - &taker
-        name: taker
-        description: "Address of trader who purchased a token"
-      - &maker
-        name: maker
-        description: "Address of trader who sold a token"
-      - &project_contract_address
-        name: project_contract_address
-        description: "Project contract address which executed the trade on the blockchain"
-      - &tx_hash
-        name: tx_hash
-        description: "Unique transaction hash value tied to each transaction on the DEX"
-      - &tx_from
-        name: tx_from
-        description: "Address which initiated the transaction"
-      - &tx_to
-        name: tx_to
-        description: "Address which received the transaction"
-      - &trace_address
-        name: trace_address
-        description: "address of the trace within the call graph forest"
-      - &evt_index
-        name: evt_index
-        description: "the position of this event log within this transaction"
+- columns:
+  - &id001
+    description: Blockchain which the DEX is deployed
+    name: blockchain
+    tests: []
+  - &id002
+    description: Project name of the DEX
+    name: project
+    tests: []
+  - &id003
+    description: Version of the contract built and deployed by the DEX project
+    name: version
+    tests: []
+  - description: UTC event block date of each DEX trade
+    name: block_date
+    tests: []
+  - description: UTC event block time of each DEX trade
+    name: block_time
+    tests: []
+  - description: Token symbol for token bought in the transaction
+    name: token_bought_symbol
+    tests: []
+  - description: Token symbol for token sold in the transaction
+    name: token_sold_symbol
+    tests: []
+  - description: Token symbol pair for each token involved in the transaction
+    name: token_pair
+    tests: []
+  - description: Value of the token bought at time of execution in the original currency
+    name: token_bought_amount
+    tests: []
+  - description: Value of the token sold at time of execution in the original currency
+    name: token_sold_amount
+    tests: []
+  - description: Raw value of the token bought at time of execution in the original
+      currency
+    name: token_bought_amount_raw
+    tests: []
+  - description: Raw value of the token sold at time of execution in the original
+      currency
+    name: token_sold_amount_raw
+    tests: []
+  - description: USD value of the trade at time of execution
+    name: amount_usd
+    tests: []
+  - description: Contract address of the token bought
+    name: token_bought_address
+    tests: []
+  - description: Contract address of the token sold
+    name: token_sold_address
+    tests: []
+  - description: Address of trader who purchased a token
+    name: taker
+    tests: []
+  - description: Address of trader who sold a token
+    name: maker
+    tests: []
+  - description: Project contract address which executed the trade on the blockchain
+    name: project_contract_address
+    tests: []
+  - description: Unique transaction hash value tied to each transaction on the DEX
+    name: tx_hash
+    tests: []
+  - description: Address which initiated the transaction
+    name: tx_from
+    tests: []
+  - description: Address which received the transaction
+    name: tx_to
+    tests: []
+  - description: address of the trace within the call graph forest
+    name: trace_address
+    tests: []
+  - description: the position of this event log within this transaction
+    name: evt_index
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - uniswap
+    - trades
+    - dex
+    - jeff-dude
+    - cross-chain
 
-  - name: uniswap_liquidity_manager_pools
-    meta:
-      blockchain: optimism
-      project: uniswap
-      contributors: msilb7
-    config:
-      tags: ['optimism','uniswap','pools','liquidity managers']
-    description: >
-        A table containing Uniswap mappings for known liquidity manager pools created.
-    columns:
-      - &blockchain_lm
-        name: blockchain
-        description: 'Blockchain of the LP Token'
-      - &dex_project_name
-        name: dex_project_name
-        description: "DEX Project Name - This will be used for overall DEX LM incentives models"
-      - &dex_project_version
-        name: dex_project_version
-        description: "DEX Project Version - This will be used for overall DEX LM incentives models"
-      - &project_lm
-        name: project
-        description: 'Project Name of the LP Token'
-      - &contract_address_lm
-        name: contract_address
-        description: 'Manager LP Token contract address'
-      - &pool_contract
-        name: pool_contract
-        description: "Uniswap liquidity pool contract address"
-      - &fee
-        name: fee
-        description:  "Swap fee of a Uniswap liquidity pool. Divide by 1e4 or power(10,4) to get the fee percentage"
-      - &token0
-        name: token0
-        description:  "Token0 contract address"
-      - &token1
-        name: token1
-        description:  "Token1 contract address"
+  description: 'Uniswap trades on all chains across all contracts and versions. This
+    table will load dex trades downstream.
 
-  - name: uniswap_pools
-    meta:
-      blockchain: ethereum, polygon, arbitrum
-      sector: dex
-      contributors: hildobby
-    config:
-      tags: ['ethereum', 'polygon', 'arbitrum', 'pools']
-    description: >
-      Uniswap DEX pools
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - blockchain
-            - pool
-    columns:
-      - *blockchain
-      - *project
-      - *version
-      - name: pool
-        description: "DEX pool smart contract address"
-      - name: fee
-        description: "Defined fee"
-      - name: token0
-        description: "First token in pool"
-      - name: token1
-        description: "Second token in pool"
-      - name: creation_block_time
-        description: "Block time of pool creation"
-      - name: creation_block_number
-        description: "Block number of pool creation"
-      - name: contract_address
-        description: "Contract address used to create the pool"
+    '
+  meta:
+    blockchain: ethereum, optimism, polygon, arbitrum, bnb
+    contributors: jeff-dude, masquot, soispoke, 0xBoxer, Henrystats, chrispearcx
+    project: uniswap
+    sector: dex
+  name: uniswap_trades
+  tests: []
+- columns:
+  - description: Blockchain of the LP Token
+    name: blockchain
+    tests: []
+  - description: DEX Project Name - This will be used for overall DEX LM incentives
+      models
+    name: dex_project_name
+    tests: []
+  - description: DEX Project Version - This will be used for overall DEX LM incentives
+      models
+    name: dex_project_version
+    tests: []
+  - description: Project Name of the LP Token
+    name: project
+    tests: []
+  - description: Manager LP Token contract address
+    name: contract_address
+    tests: []
+  - description: Uniswap liquidity pool contract address
+    name: pool_contract
+    tests: []
+  - description: Swap fee of a Uniswap liquidity pool. Divide by 1e4 or power(10,4)
+      to get the fee percentage
+    name: fee
+    tests: []
+  - description: Token0 contract address
+    name: token0
+    tests: []
+  - description: Token1 contract address
+    name: token1
+    tests: []
+  config:
+    tags:
+    - uniswap
+    - pools
+    - liquidity managers
+  description: 'A table containing Uniswap mappings for known liquidity manager pools
+    created.
+
+    '
+  meta:
+    blockchain: optimism
+    contributors: msilb7
+    project: uniswap
+  name: uniswap_liquidity_manager_pools
+  tests: []
+- columns:
+  - *id001
+  - *id002
+  - *id003
+  - description: DEX pool smart contract address
+    name: pool
+    tests: []
+  - description: Defined fee
+    name: fee
+    tests: []
+  - description: First token in pool
+    name: token0
+    tests: []
+  - description: Second token in pool
+    name: token1
+    tests: []
+  - description: Block time of pool creation
+    name: creation_block_time
+    tests: []
+  - description: Block number of pool creation
+    name: creation_block_number
+    tests: []
+  - description: Contract address used to create the pool
+    name: contract_address
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - pools
+  description: 'Uniswap DEX pools
+
+    '
+  meta:
+    blockchain: ethereum, polygon, arbitrum
+    contributors: hildobby
+    sector: dex
+  name: uniswap_pools
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - blockchain
+      - pool
+version: 2

@@ -1,92 +1,140 @@
-version: 2
-
 models:
- - name: aave_v2_avalanche_c_flashloans
-   meta:
-    blockchain: avalanche_c
-    sector: lending
-    contributors: hildobby
-   config:
-      tags: ['avalanche_c', 'flashloans']
-   description: >
-      Aave v2 flashloans on Avalanche
-   tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - tx_hash
-            - evt_index
-   columns:
-      - name: blockchain
-      - name: project
-      - name: version
-      - name: block_time
-      - name: block_number
-      - name: amount
-      - name: amount_usd
-      - name: tx_hash
-      - name: evt_index
-      - name: fee
-      - name: currency_contract
-      - name: currency_symbol
-      - name: recipient
-      - name: contract_address
+- columns:
+  - name: blockchain
+    tests: []
+  - name: project
+    tests: []
+  - name: version
+    tests: []
+  - name: block_time
+    tests: []
+  - name: block_number
+    tests: []
+  - name: amount
+    tests: []
+  - name: amount_usd
+    tests: []
+  - name: tx_hash
+    tests: []
+  - name: evt_index
+    tests: []
+  - name: fee
+    tests: []
+  - name: currency_contract
+    tests: []
+  - name: currency_symbol
+    tests: []
+  - name: recipient
+    tests: []
+  - name: contract_address
+    tests: []
+  config:
+    tags:
+    - avalanche_c
+    - flashloans
+  description: 'Aave v2 flashloans on Avalanche
 
- - name: aave_v3_avalanche_c_flashloans
-   meta:
+    '
+  meta:
     blockchain: avalanche_c
-    sector: lending
     contributors: hildobby
-   config:
-      tags: ['avalanche_c', 'flashloans']
-   description: >
-      Aave v3 flashloans on Avalanche
-   tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - tx_hash
-            - evt_index
-   columns:
-      - name: blockchain
-      - name: project
-      - name: version
-      - name: block_time
-      - name: block_number
-      - name: amount
-      - name: amount_usd
-      - name: tx_hash
-      - name: evt_index
-      - name: fee
-      - name: currency_contract
-      - name: currency_symbol
-      - name: recipient
-      - name: contract_address
+    sector: lending
+  name: aave_v2_avalanche_c_flashloans
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - tx_hash
+      - evt_index
+- columns:
+  - name: blockchain
+    tests: []
+  - name: project
+    tests: []
+  - name: version
+    tests: []
+  - name: block_time
+    tests: []
+  - name: block_number
+    tests: []
+  - name: amount
+    tests: []
+  - name: amount_usd
+    tests: []
+  - name: tx_hash
+    tests: []
+  - name: evt_index
+    tests: []
+  - name: fee
+    tests: []
+  - name: currency_contract
+    tests: []
+  - name: currency_symbol
+    tests: []
+  - name: recipient
+    tests: []
+  - name: contract_address
+    tests: []
+  config:
+    tags:
+    - avalanche_c
+    - flashloans
+  description: 'Aave v3 flashloans on Avalanche
 
- - name: aave_avalanche_c_flashloans
-   meta:
+    '
+  meta:
     blockchain: avalanche_c
-    sector: lending
     contributors: hildobby
-   config:
-      tags: ['avalanche_c', 'flashloans']
-   description: >
-      All Aave flashloans on Avalanche
-   tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - tx_hash
-            - evt_index
-   columns:
-      - name: blockchain
-      - name: project
-      - name: version
-      - name: block_time
-      - name: block_number
-      - name: amount
-      - name: amount_usd
-      - name: tx_hash
-      - name: evt_index
-      - name: fee
-      - name: currency_contract
-      - name: currency_symbol
-      - name: recipient
-      - name: contract_address
+    sector: lending
+  name: aave_v3_avalanche_c_flashloans
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - tx_hash
+      - evt_index
+- columns:
+  - name: blockchain
+    tests: []
+  - name: project
+    tests: []
+  - name: version
+    tests: []
+  - name: block_time
+    tests: []
+  - name: block_number
+    tests: []
+  - name: amount
+    tests: []
+  - name: amount_usd
+    tests: []
+  - name: tx_hash
+    tests: []
+  - name: evt_index
+    tests: []
+  - name: fee
+    tests: []
+  - name: currency_contract
+    tests: []
+  - name: currency_symbol
+    tests: []
+  - name: recipient
+    tests: []
+  - name: contract_address
+    tests: []
+  config:
+    tags:
+    - avalanche_c
+    - flashloans
+  description: 'All Aave flashloans on Avalanche
+
+    '
+  meta:
+    blockchain: avalanche_c
+    contributors: hildobby
+    sector: lending
+  name: aave_avalanche_c_flashloans
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - tx_hash
+      - evt_index
+version: 2

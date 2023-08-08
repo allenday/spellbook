@@ -1,437 +1,594 @@
-version: 2
-
 models:
- - name: aave_v2_ethereum_interest_rates
-   meta:
-     blockchain: ethereum
-     sector: lending
-     project: aave_v2
-     contributors: batwayne, chuxin
-   config:
-     tags: ['ethereum', 'aave_v2', 'interest', 'aave', 'lending']
-   description: "Hourly aave interest rates on ethereum"
-   columns:
-     - &reserve
-       name: reserve
-       description: "Aave reserve contract address"
-     - &symbol
-       name: symbol
-       description: "Symbol of the reserve"
-     - &hour
-       name: hour
-       description: "Block timestamp truncated to hours"
-     - &deposit_apy
-       name: deposit_apy
-       description: "Hourly deposit interest rate value of the reserve"
-     - &stable_borrow_apy
-       name: stable_borrow_apy
-       description: "Hourly stable borrow interest rate value of the reserve" 
-     - &variable_borrow_apy
-       name: variable_borrow_apy
-       description: "Hourly variable borrow interest rate value of the reserve"
-
- - name: aave_ethereum_interest_rates
-   meta:
-     blockchain: ethereum
-     sector: lending
-     project: aave
-     contributors: batwayne, chuxin
-   config:
-     tags: ['ethereum', 'aave_v2', 'interest', 'aave', 'lending']
-   description: "Hourly aave interest rates on ethereum"
-   columns:
-     - *reserve
-     - *symbol
-     - *hour
-     - *deposit_apy
-     - *stable_borrow_apy
-     - *variable_borrow_apy
-       
- - name: aave_v2_ethereum_supply
-   meta:
-     blockchain: ethereum
-     sector: lending
-     project: aave_v2
-     contributors: batwayne, chuxin
-   config:
-     tags: ['ethereum', 'aave_v2', 'supply', 'aave', 'lending']
-   description: "All aave v2 transactions involving supply transactions on ethereum"
-   columns:
-     - &version
-       name: version
-       description: "Aave version"
-     - &transaction_type
-       name: transaction_type
-       description: "The transaction type"
-     - *symbol
-     - &token_address
-       name: token_address
-       description: "Aave reserve contract address"  
-     - &depositor
-       name: depositor
-       description: "Depositor wallet address"
-     - &withdrawn_to
-       name: withdrawn_to
-       description: "The wallet address where the tokens are withdrawn"
-     - &liquidator
-       name: liquidator
-       description: "Liquidator wallet address"
-     - &amount
-       name: amount
-       description: "Token amount present in the transaction. Note: withdraw amounts may be more than deposited amounts due to interest" 
-     - &usd_amount
-       name: usd_amount
-       description: "Token amount in USD" 
-     - &evt_tx_hash
-       name: evt_tx_hash
-       description: "Transaction hash of the event"
-     - &evt_index
-       name: evt_index
-       description: "Event index"   
-     - &evt_block_time
-       name: evt_block_time
-       description: "Timestamp for block event time in UTC"
-     - &evt_block_number
-       name: evt_block_number
-       description: "Event block number"
-       
- - name: aave_v1_ethereum_supply
-   meta:
-     blockchain: ethereum
-     sector: lending
-     project: aave_v1
-     contributors: batwayne, chuxin
-   config:
-     tags: ['ethereum', 'aave_v1', 'supply', 'aave', 'lending']
-   description: "All aave v1 transactions involving supply transactions on ethereum"
-   columns:
-     - *version
-     - *transaction_type
-     - *symbol
-     - *token_address
-     - *depositor
-     - *withdrawn_to
-     - *liquidator
-     - *amount
-     - *usd_amount
-     - *evt_tx_hash
-     - *evt_index
-     - *evt_block_time
-     - *evt_block_number
-       
- - name: aave_v2_ethereum_borrow
-   meta:
-     blockchain: ethereum
-     sector: lending
-     project: aave_v2
-     contributors: batwayne, chuxin
-   config:
-     tags: ['ethereum', 'aave_v2', 'borrow', 'aave', 'lending']
-   description: "All aave v2 transactions involving borrow transactions on ethereum"
-   columns:
-     - *version
-     - *transaction_type
-     - *symbol
-     - *token_address
-     - &borrower
-       name: borrower
-       description: "Borrower wallet address"
-     - &repayer
-       name: repayer
-       description: "Repayer wallet address"
-     - *liquidator
-     - *amount
-     - *usd_amount
-     - *evt_tx_hash
-     - *evt_index
-     - *evt_block_time
-     - *evt_block_number
-       
- - name: aave_v1_ethereum_borrow
-   meta:
-     blockchain: ethereum
-     sector: lending
-     project: aave_v1
-     contributors: batwayne, chuxin
-   config:
-     tags: ['ethereum', 'aave_v1', 'borrow', 'aave', 'lending']
-   description: "All aave v1 transactions involving borrow transactions on ethereum"
-   columns:
-     - *version
-     - *transaction_type
-     - *symbol
-     - *token_address
-     - *borrower
-     - *repayer
-     - *liquidator
-     - *amount
-     - *usd_amount
-     - *evt_tx_hash
-     - *evt_index
-     - *evt_block_time
-     - *evt_block_number
-       
- - name: aave_ethereum_supply
-   meta:
-     blockchain: ethereum
-     sector: lending
-     project: aave
-     contributors: batwayne, chuxin
-   config:
-     tags: ['ethereum', 'aave', 'supply', 'aave', 'lending']
-   description: "All aave transactions involving supply transactions on ethereum"
-   columns:
-     - *version
-     - *transaction_type
-     - *symbol
-     - *token_address
-     - *depositor
-     - *withdrawn_to
-     - *liquidator
-     - *amount
-     - *usd_amount
-     - *evt_tx_hash
-     - *evt_index
-     - *evt_block_time
-     - *evt_block_number 
-       
- - name: aave_ethereum_borrow
-   meta:
-     blockchain: ethereum
-     sector: lending
-     project: aave
-     contributors: batwayne, chuxin
-   config:
-     tags: ['ethereum', 'aave', 'borrow', 'aave', 'lending']
-   description: "All aave v1 transactions involving borrow transactions on ethereum"
-   columns:
-     - *version
-     - *transaction_type
-     - *symbol
-     - *token_address
-     - *borrower
-     - *repayer
-     - *liquidator
-     - *amount
-     - *usd_amount
-     - *evt_tx_hash
-     - *evt_index
-     - *evt_block_time
-     - *evt_block_number
-
- - name: aave_ethereum_votes
-   meta:
+- columns:
+  - &id001
+    description: Aave reserve contract address
+    name: reserve
+    tests: []
+  - &id002
+    description: Symbol of the reserve
+    name: symbol
+    tests: []
+  - &id003
+    description: Block timestamp truncated to hours
+    name: hour
+    tests: []
+  - &id004
+    description: Hourly deposit interest rate value of the reserve
+    name: deposit_apy
+    tests: []
+  - &id005
+    description: Hourly stable borrow interest rate value of the reserve
+    name: stable_borrow_apy
+    tests: []
+  - &id006
+    description: Hourly variable borrow interest rate value of the reserve
+    name: variable_borrow_apy
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - aave_v2
+    - interest
+    - aave
+    - lending
+  description: Hourly aave interest rates on ethereum
+  meta:
     blockchain: ethereum
-    sector: dao
+    contributors: batwayne, chuxin
+    project: aave_v2
+    sector: lending
+  name: aave_v2_ethereum_interest_rates
+  tests: []
+- columns:
+  - *id001
+  - *id002
+  - *id003
+  - *id004
+  - *id005
+  - *id006
+  config:
+    tags:
+    - ethereum
+    - aave_v2
+    - interest
+    - aave
+    - lending
+  description: Hourly aave interest rates on ethereum
+  meta:
+    blockchain: ethereum
+    contributors: batwayne, chuxin
+    project: aave
+    sector: lending
+  name: aave_ethereum_interest_rates
+  tests: []
+- columns:
+  - &id007
+    description: Aave version
+    name: version
+    tests: []
+  - &id008
+    description: The transaction type
+    name: transaction_type
+    tests: []
+  - *id002
+  - &id009
+    description: Aave reserve contract address
+    name: token_address
+    tests: []
+  - &id010
+    description: Depositor wallet address
+    name: depositor
+    tests: []
+  - &id011
+    description: The wallet address where the tokens are withdrawn
+    name: withdrawn_to
+    tests: []
+  - &id012
+    description: Liquidator wallet address
+    name: liquidator
+    tests: []
+  - &id013
+    description: 'Token amount present in the transaction. Note: withdraw amounts
+      may be more than deposited amounts due to interest'
+    name: amount
+    tests: []
+  - &id014
+    description: Token amount in USD
+    name: usd_amount
+    tests: []
+  - &id015
+    description: Transaction hash of the event
+    name: evt_tx_hash
+    tests: []
+  - &id016
+    description: Event index
+    name: evt_index
+    tests: []
+  - &id017
+    description: Timestamp for block event time in UTC
+    name: evt_block_time
+    tests: []
+  - &id018
+    description: Event block number
+    name: evt_block_number
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - aave_v2
+    - supply
+    - aave
+    - lending
+  description: All aave v2 transactions involving supply transactions on ethereum
+  meta:
+    blockchain: ethereum
+    contributors: batwayne, chuxin
+    project: aave_v2
+    sector: lending
+  name: aave_v2_ethereum_supply
+  tests: []
+- columns:
+  - *id007
+  - *id008
+  - *id002
+  - *id009
+  - *id010
+  - *id011
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  - *id017
+  - *id018
+  config:
+    tags:
+    - ethereum
+    - aave_v1
+    - supply
+    - aave
+    - lending
+  description: All aave v1 transactions involving supply transactions on ethereum
+  meta:
+    blockchain: ethereum
+    contributors: batwayne, chuxin
+    project: aave_v1
+    sector: lending
+  name: aave_v1_ethereum_supply
+  tests: []
+- columns:
+  - *id007
+  - *id008
+  - *id002
+  - *id009
+  - &id019
+    description: Borrower wallet address
+    name: borrower
+    tests: []
+  - &id020
+    description: Repayer wallet address
+    name: repayer
+    tests: []
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  - *id017
+  - *id018
+  config:
+    tags:
+    - ethereum
+    - aave_v2
+    - borrow
+    - aave
+    - lending
+  description: All aave v2 transactions involving borrow transactions on ethereum
+  meta:
+    blockchain: ethereum
+    contributors: batwayne, chuxin
+    project: aave_v2
+    sector: lending
+  name: aave_v2_ethereum_borrow
+  tests: []
+- columns:
+  - *id007
+  - *id008
+  - *id002
+  - *id009
+  - *id019
+  - *id020
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  - *id017
+  - *id018
+  config:
+    tags:
+    - ethereum
+    - aave_v1
+    - borrow
+    - aave
+    - lending
+  description: All aave v1 transactions involving borrow transactions on ethereum
+  meta:
+    blockchain: ethereum
+    contributors: batwayne, chuxin
+    project: aave_v1
+    sector: lending
+  name: aave_v1_ethereum_borrow
+  tests: []
+- columns:
+  - *id007
+  - *id008
+  - *id002
+  - *id009
+  - *id010
+  - *id011
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  - *id017
+  - *id018
+  config:
+    tags:
+    - ethereum
+    - aave
+    - supply
+    - aave
+    - lending
+  description: All aave transactions involving supply transactions on ethereum
+  meta:
+    blockchain: ethereum
+    contributors: batwayne, chuxin
+    project: aave
+    sector: lending
+  name: aave_ethereum_supply
+  tests: []
+- columns:
+  - *id007
+  - *id008
+  - *id002
+  - *id009
+  - *id019
+  - *id020
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  - *id017
+  - *id018
+  config:
+    tags:
+    - ethereum
+    - aave
+    - borrow
+    - aave
+    - lending
+  description: All aave v1 transactions involving borrow transactions on ethereum
+  meta:
+    blockchain: ethereum
+    contributors: batwayne, chuxin
+    project: aave
+    sector: lending
+  name: aave_ethereum_borrow
+  tests: []
+- columns:
+  - name: blockchain
+    tests: []
+  - description: Project name of the DAO
+    name: project
+    tests: []
+  - description: Version of the contract built and deployed by the DAO project
+    name: version
+    tests: []
+  - description: UTC event block time of each DAO vote
+    name: block_time
+    tests: []
+  - description: Unique transaction hash value tied to each vote on the DAO
+    name: tx_hash
+    tests: []
+  - &id021
+    description: DAO name
+    name: dao_name
+    tests: []
+  - &id022
+    description: DAO wallet address
+    name: dao_address
+    tests: []
+  - name: proposal_id
+    tests: []
+  - description: Votes weighted by the amount of governance tokens
+    name: votes
+    tests: []
+  - description: Votes share in percent for a given proposal
+    name: votes_share
+    tests: []
+  - name: token_symbol
+    tests: []
+  - name: token_address
+    tests: []
+  - description: USD amount of governance tokens used at the time of the vote
+    name: votes_value_usd
+    tests: []
+  - name: voter_address
+    tests: []
+  - description: 0 = Against, 1 = For, 2 = Abstain votes
+    name: support
+    tests:
+    - accepted_values:
+        values:
+        - for
+        - against
+        - abstain
+  - description: Optional onchain commments to explain votes
+    name: reason
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - votes
+    - dao
+    - cross-chain
+  description: 'DAO votes on all chains across all contracts and versions
+
+    '
+  meta:
+    blockchain: ethereum
     contributors: soispoke
-   config:
-      tags:   ['ethereum', 'votes', 'dao', 'cross-chain']
-   description: >
-      DAO votes on all chains across all contracts and versions
-   columns:
-      - name: blockchain
-      - name: project
-        description: "Project name of the DAO"
-      - name: version
-        description: "Version of the contract built and deployed by the DAO project"
-      - name: block_time
-        description: "UTC event block time of each DAO vote"
-      - name: tx_hash
-        description: "Unique transaction hash value tied to each vote on the DAO"
-      - &dao_name
-        name: dao_name
-        description: "DAO name"
-      - &dao_address
-        name: dao_address
-        description: "DAO wallet address"
-      - &proposal_id
-        name: proposal_id
-      - &votes
-        name: votes
-        description: "Votes weighted by the amount of governance tokens"
-      - &votes_share
-        name: votes_share
-        description: "Votes share in percent for a given proposal"
-      - &token_symbol
-        name: token_symbol
-      - name: token_address
-      - &votes_value_usd
-        name: votes_value_usd
-        description: "USD amount of governance tokens used at the time of the vote"
-      - &voter_address
-        name: voter_address
-      - &support
-        name: support
-        description: "0 = Against, 1 = For, 2 = Abstain votes"
-        tests:
-        - accepted_values:
-            values: ['for', 'against', 'abstain']
-      - &reason
-        name: reason
-        description: "Optional onchain commments to explain votes"
-
- - name: aave_ethereum_proposals
-   meta:
-    blockchain: ethereum
     sector: dao
+  name: aave_ethereum_votes
+  tests: []
+- columns:
+  - name: blockchain
+    tests: []
+  - description: Project name of the DAO
+    name: project
+    tests: []
+  - description: Version of the contract built and deployed by the DAO project
+    name: version
+    tests: []
+  - description: UTC event block time at which the proposal was created
+    name: created_at
+    tests: []
+  - description: Unique transaction hash value tied to each DAO proposal
+    name: tx_hash
+    tests: []
+  - *id021
+  - *id022
+  - name: proposal_id
+    tests:
+    - unique
+  - name: votes_for
+    tests: []
+  - name: votes_against
+    tests: []
+  - description: Total number of governance tokens used to vote on a given DAO proposal
+    name: votes_total
+    tests: []
+  - name: number_of_voters
+    tests: []
+  - description: 'Participation in percent: Number of governance tokens used to vote
+      / Total token supply'
+    name: participation
+    tests: []
+  - description: 'Proposal status: Pending, Queued, Active, Executed, Canceled or
+      Defeated'
+    name: status
+    tests:
+    - accepted_values:
+        values:
+        - Pending
+        - Queued
+        - Active
+        - Executed
+        - Canceled
+        - Defeated
+  - description: Description of the proposal
+    name: description
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - proposals
+    - dao
+    - cross-chain
+  description: 'DAO proposals on all chains across all contracts and versions
+
+    '
+  meta:
+    blockchain: ethereum
     contributors: soispoke
-   config:
-      tags: ['ethereum', 'proposals', 'dao', 'cross-chain']
-   description: >
-      DAO proposals on all chains across all contracts and versions
-   columns:
-      - name: blockchain
-      - name: project
-        description: "Project name of the DAO"
-      - name: version
-        description: "Version of the contract built and deployed by the DAO project"
-      - name: created_at
-        description: "UTC event block time at which the proposal was created"
-      - name: tx_hash
-        description: "Unique transaction hash value tied to each DAO proposal"
-      - *dao_name
-      - *dao_address
-      - name: proposal_id
-        tests:
-          - unique
-      - &votes_for
-        name: votes_for
-      - &votes_against
-        name: votes_against
-      - &votes_total
-        name: votes_total
-        description: "Total number of governance tokens used to vote on a given DAO proposal"
-      - &number_of_voters
-        name: number_of_voters
-      - &participation
-        name: participation
-        description: "Participation in percent: Number of governance tokens used to vote / Total token supply"
-      - &status
-        name: status
-        description: "Proposal status: Pending, Queued, Active, Executed, Canceled or Defeated"
-        tests:
-          - accepted_values:
-              values: ['Pending', 'Queued', 'Active', 'Executed', 'Canceled','Defeated']
-      - &description
-        name: description
-        description: "Description of the proposal"
+    sector: dao
+  name: aave_ethereum_proposals
+  tests: []
+- columns:
+  - name: blockchain
+    tests: []
+  - name: project
+    tests: []
+  - name: version
+    tests: []
+  - name: block_time
+    tests: []
+  - name: block_number
+    tests: []
+  - name: amount
+    tests: []
+  - name: amount_usd
+    tests: []
+  - name: tx_hash
+    tests: []
+  - name: evt_index
+    tests: []
+  - name: fee
+    tests: []
+  - name: currency_contract
+    tests: []
+  - name: currency_symbol
+    tests: []
+  - name: recipient
+    tests: []
+  - name: contract_address
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - flashloans
+  description: 'Aave v1 flashloans on Ethereum
 
- - name: aave_v1_ethereum_flashloans
-   meta:
+    '
+  meta:
     blockchain: ethereum
-    sector: lending
     contributors: hildobby
-   config:
-      tags: ['ethereum', 'flashloans']
-   description: >
-      Aave v1 flashloans on Ethereum
-   tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - tx_hash
-            - evt_index
-   columns:
-      - name: blockchain
-      - name: project
-      - name: version
-      - name: block_time
-      - name: block_number
-      - name: amount
-      - name: amount_usd
-      - name: tx_hash
-      - name: evt_index
-      - name: fee
-      - name: currency_contract
-      - name: currency_symbol
-      - name: recipient
-      - name: contract_address
+    sector: lending
+  name: aave_v1_ethereum_flashloans
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - tx_hash
+      - evt_index
+- columns:
+  - name: blockchain
+    tests: []
+  - name: project
+    tests: []
+  - name: version
+    tests: []
+  - name: block_time
+    tests: []
+  - name: block_number
+    tests: []
+  - name: amount
+    tests: []
+  - name: amount_usd
+    tests: []
+  - name: tx_hash
+    tests: []
+  - name: evt_index
+    tests: []
+  - name: fee
+    tests: []
+  - name: currency_contract
+    tests: []
+  - name: currency_symbol
+    tests: []
+  - name: recipient
+    tests: []
+  - name: contract_address
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - flashloans
+  description: 'Aave v2 flashloans on Ethereum
 
- - name: aave_v2_ethereum_flashloans
-   meta:
+    '
+  meta:
     blockchain: ethereum
-    sector: lending
     contributors: hildobby
-   config:
-      tags: ['ethereum', 'flashloans']
-   description: >
-      Aave v2 flashloans on Ethereum
-   tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - tx_hash
-            - evt_index
-   columns:
-      - name: blockchain
-      - name: project
-      - name: version
-      - name: block_time
-      - name: block_number
-      - name: amount
-      - name: amount_usd
-      - name: tx_hash
-      - name: evt_index
-      - name: fee
-      - name: currency_contract
-      - name: currency_symbol
-      - name: recipient
-      - name: contract_address
+    sector: lending
+  name: aave_v2_ethereum_flashloans
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - tx_hash
+      - evt_index
+- columns:
+  - name: blockchain
+    tests: []
+  - name: project
+    tests: []
+  - name: version
+    tests: []
+  - name: block_time
+    tests: []
+  - name: block_number
+    tests: []
+  - name: amount
+    tests: []
+  - name: amount_usd
+    tests: []
+  - name: tx_hash
+    tests: []
+  - name: evt_index
+    tests: []
+  - name: fee
+    tests: []
+  - name: currency_contract
+    tests: []
+  - name: currency_symbol
+    tests: []
+  - name: recipient
+    tests: []
+  - name: contract_address
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - flashloans
+  description: 'Aave v3 flashloans on Ethereum
 
- - name: aave_v3_ethereum_flashloans
-   meta:
+    '
+  meta:
     blockchain: ethereum
-    sector: lending
     contributors: hildobby
-   config:
-      tags: ['ethereum', 'flashloans']
-   description: >
-      Aave v3 flashloans on Ethereum
-   tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - tx_hash
-            - evt_index
-   columns:
-      - name: blockchain
-      - name: project
-      - name: version
-      - name: block_time
-      - name: block_number
-      - name: amount
-      - name: amount_usd
-      - name: tx_hash
-      - name: evt_index
-      - name: fee
-      - name: currency_contract
-      - name: currency_symbol
-      - name: recipient
-      - name: contract_address
+    sector: lending
+  name: aave_v3_ethereum_flashloans
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - tx_hash
+      - evt_index
+- columns:
+  - name: blockchain
+    tests: []
+  - name: project
+    tests: []
+  - name: version
+    tests: []
+  - name: block_time
+    tests: []
+  - name: block_number
+    tests: []
+  - name: amount
+    tests: []
+  - name: amount_usd
+    tests: []
+  - name: tx_hash
+    tests: []
+  - name: evt_index
+    tests: []
+  - name: fee
+    tests: []
+  - name: currency_contract
+    tests: []
+  - name: currency_symbol
+    tests: []
+  - name: recipient
+    tests: []
+  - name: contract_address
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - flashloans
+  description: 'All Aave flashloans on Ethereum
 
- - name: aave_ethereum_flashloans
-   meta:
+    '
+  meta:
     blockchain: ethereum
-    sector: lending
     contributors: hildobby
-   config:
-      tags: ['ethereum', 'flashloans']
-   description: >
-      All Aave flashloans on Ethereum
-   tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - tx_hash
-            - evt_index
-   columns:
-      - name: blockchain
-      - name: project
-      - name: version
-      - name: block_time
-      - name: block_number
-      - name: amount
-      - name: amount_usd
-      - name: tx_hash
-      - name: evt_index
-      - name: fee
-      - name: currency_contract
-      - name: currency_symbol
-      - name: recipient
-      - name: contract_address
+    sector: lending
+  name: aave_ethereum_flashloans
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - tx_hash
+      - evt_index
+version: 2

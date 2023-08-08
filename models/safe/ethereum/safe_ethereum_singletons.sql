@@ -1,11 +1,7 @@
 {{ 
     config(
-        materialized='table',
-        alias='singletons',
-        post_hook='{{ expose_spells(\'["ethereum"]\',
-                                    "project",
-                                    "safe",
-                                    \'["tschubotz"]\') }}'
+        materialized = 'view',
+        alias='singletons'
     ) 
 }}
 
@@ -15,36 +11,36 @@
 select distinct masterCopy as address 
 from {{ source('gnosis_safe_ethereum', 'ProxyFactoryv1_0_0_call_createProxy') }}
 
-union 
+UNION ALL 
 
 select distinct _mastercopy as address 
 from {{ source('gnosis_safe_ethereum', 'ProxyFactoryv1_0_0_call_createProxyWithNonce') }}
 
-union
+UNION ALL
 
 select distinct masterCopy as address 
 from {{ source('gnosis_safe_ethereum', 'ProxyFactoryv1_1_0_call_createProxy') }}
 
-union 
+UNION ALL 
 select distinct _mastercopy as address 
 from {{ source('gnosis_safe_ethereum', 'ProxyFactoryv1_1_0_call_createProxyWithNonce') }}
 
-union
+UNION ALL
 
 select distinct masterCopy as address 
 from {{ source('gnosis_safe_ethereum', 'ProxyFactoryv1_1_1_call_createProxy') }}
 
-union 
+UNION ALL 
 
 select distinct _mastercopy as address 
 from {{ source('gnosis_safe_ethereum', 'ProxyFactoryv1_1_1_call_createProxyWithNonce') }}
 
-union
+UNION ALL
 
 select distinct _mastercopy as address 
 from {{ source('gnosis_safe_ethereum', 'ProxyFactoryv1_1_1_call_createProxyWithCallback') }}
 
-union
+UNION ALL
 
 select distinct singleton as address 
 from {{ source('gnosis_safe_ethereum', 'GnosisSafeProxyFactory_v1_3_0_evt_ProxyCreation') }}

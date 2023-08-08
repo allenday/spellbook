@@ -1,16 +1,12 @@
 {{ config(
         alias ='owners_over_time',
-        unique_key='day',
-        post_hook='{{ expose_spells_hide_trino(\'["ethereum"]\',
-                                    "project",
-                                    "cryptopunks",
-                                    \'["cat"]\') }}'
+        unique_key='day'
         )
 }}
 
 with transfers_sub_table as (
     select  from
-            , to
+            , `to`
             , evt_block_time
             , evt_block_time_week
             , evt_block_number
@@ -20,16 +16,16 @@ with transfers_sub_table as (
     group by 1,2,3,4,5,6,7
 )
 , transfers as (    
-    select  date_trunc('day',evt_block_time) as day 
-            , from as wallet
+    select  TIMESTAMP_TRUNC(evt_block_time, day) AS `day` 
+            , `from` as wallet
             , count(*)*-1.0 as punk_balance
     from transfers_sub_table
     group by 1,2
     
     union all 
     
-    select  date_trunc('day',evt_block_time) as day 
-            , to as wallet
+    select  TIMESTAMP_TRUNC(evt_block_time, day) AS `day` 
+            , `to` as wallet
             , count(*) as punk_balance
     from transfers_sub_table
     group by 1,2
@@ -39,10 +35,10 @@ with transfers_sub_table as (
             , wallet
             , sum(punk_balance) as daily_transfer_sum
     from transfers 
-    group by day, wallet
+    group by `day`, wallet
 )
 , base_data as (
-    with all_days as (select explode(sequence(to_date('2017-06-23'), to_date(now()), interval 1 day)) as day)
+    with all_days as (select explode(sequence(to_date('2017-06-23'), to_date(CURRENT_TIMESTAMP()), interval 1 day)) AS `day`)
     , all_wallets as (select distinct wallet from punk_transfer_summary)
     
     select  day
@@ -62,5 +58,4 @@ select day
         , count(wallet) filter (where holding > 0) as unique_wallets
 from combined_table
 group by 1
-order by day desc
-;
+order by `day` desc

@@ -1,9 +1,5 @@
-{{ config(alias='institution',
-        post_hook='{{ expose_spells(\'["ethereum","bnb","fantom"]\',
-                                    "sector",
-                                    "labels",
-                                    \'["ilemi"]\') }}'
-) }}
+{{config(alias='institution'
+)}}
 
 {% set institution_models = [
  ref('labels_cex')
@@ -13,20 +9,20 @@
 SELECT *
 FROM (
     {% for institution_model in institution_models %}
-        SELECT
-            blockchain,
-            address,
-            name,
-            category,
-            contributor,
-            source,
-            created_at,
-            updated_at,
-            model_name,
-            label_type
-        FROM {{ institution_model }}
-        {% if not loop.last %}
-            UNION ALL
-        {% endif %}
+    SELECT
+        blockchain
+        , address
+        , name
+        , category
+        , contributor
+        , source
+        , created_at
+        , updated_at
+        , model_name
+        , label_type
+    FROM {{ institution_model }}
+    {% if not loop.last %}
+    UNION ALL
+    {% endif %}
     {% endfor %}
 )

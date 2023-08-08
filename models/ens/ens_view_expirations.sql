@@ -1,8 +1,4 @@
-{{config(alias='view_expirations',
-    post_hook='{{ expose_spells_hide_trino(\'["ethereum"]\',
-                            "project",
-                            "ens",
-                            \'["antonio-mendes","mewwts"]\') }}')}}
+{{config(alias='view_expirations')}}
 SELECT
     label,
     TO_TIMESTAMP(min(expires)) AS min_expires,
@@ -16,11 +12,11 @@ FROM (
         expires,
         evt_block_time
     FROM {{source('ethereumnameservice_ethereum', 'BaseRegistrarImplementation_evt_NameRegistered')}}
-    UNION
+    UNION ALL
     SELECT
         conv((id),10,16) AS label,
         expires,
         evt_block_time
     FROM {{source('ethereumnameservice_ethereum', 'BaseRegistrarImplementation_evt_NameRenewed')}}
 ) AS r
-GROUP BY label ;
+GROUP BY label

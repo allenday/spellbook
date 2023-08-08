@@ -1,15 +1,10 @@
 {{  config(
         alias='api_fills',
-        materialized='incremental',
-        partition_by = ['block_date'],
+        materialized = 'view',
+        partition_by = {"field": "block_date"},
         unique_key = ['block_date', 'tx_hash', 'evt_index'],
         on_schema_change='sync_all_columns',
-        file_format ='delta',
-        incremental_strategy='merge',
-        post_hook='{{ expose_spells(\'["bnb"]\',
-                                "project",
-                                "zeroex",
-                                \'["rantum", "bakabhai993"]\') }}'
+                incremental_strategy='merge'
     )
 }}
 
@@ -42,7 +37,7 @@ WITH zeroex_tx AS (
             )
 
             {% if is_incremental() %}
-            AND evt_block_time >= date_trunc('day', now() - interval '1 week')
+            AND evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
             {% if not is_incremental() %}
             AND evt_block_time >= '{{zeroex_v3_start_date}}'
@@ -51,14 +46,10 @@ WITH zeroex_tx AS (
         UNION ALL
         SELECT tr.tx_hash,
                     '0x' || CASE
-                                WHEN POSITION('869584cd' IN INPUT) <> 0
-                                THEN SUBSTRING(INPUT
-                                        FROM (position('869584cd' IN INPUT) + 32)
-                                        FOR 40)
-                                WHEN POSITION('fbc019a7' IN INPUT) <> 0
-                                THEN SUBSTRING(INPUT
-                                        FROM (position('fbc019a7' IN INPUT) + 32)
-                                        FOR 40)
+                                WHEN STRPOS(INPUT, '869584cd') <> 0
+                                THEN SUBSTR(INPUT, STRPOS(INPUT, '869584cd') + 32, 40)
+                                WHEN STRPOS(INPUT, 'fbc019a7') <> 0
+                                THEN SUBSTR(INPUT, STRPOS(INPUT, 'fbc019a7') + 32, 40)
                             END AS affiliate_address,
                     '0x' || substring(INPUT, 355, 40) AS taker_token,
                 '0x' || substring(INPUT, 419, 40) AS maker_token,
@@ -76,12 +67,12 @@ WITH zeroex_tx AS (
                 '0xdef1c0ded9bec7f1a1670819833240f027b25eff'
                 )
                 AND (
-                        POSITION('869584cd' IN INPUT) <> 0
-                        OR POSITION('fbc019a7' IN INPUT) <> 0
+                        STRPOS(INPUT, '869584cd') <> 0
+                        OR STRPOS(INPUT, 'fbc019a7') <> 0
                     )
 
                 {% if is_incremental() %}
-                AND block_time >= date_trunc('day', now() - interval '1 week')
+                AND block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
                 {% endif %}
                 {% if not is_incremental() %}
                 AND block_time >= '{{zeroex_v3_start_date}}'
@@ -113,7 +104,7 @@ v2_fills_no_bridge AS (
         OR fills.feeRecipientAddress = '0x86003b044f70dac0abc80ac8957305b6370893ed')
 
         {% if is_incremental() %}
-         AND evt_block_time >= date_trunc('day', now() - interval '1 week')
+         AND evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
         {% if not is_incremental() %}
          AND evt_block_time >= '{{zeroex_v3_start_date}}'
@@ -140,7 +131,7 @@ v4_rfq_fills_no_bridge AS (
     JOIN zeroex_tx ON zeroex_tx.tx_hash = fills.evt_tx_hash
 
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc('day', now() - interval '1 week')
+    WHERE evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
     {% if not is_incremental() %}
     WHERE evt_block_time >= '{{zeroex_v4_start_date}}'
@@ -166,7 +157,7 @@ v4_limit_fills_no_bridge AS (
     JOIN zeroex_tx ON zeroex_tx.tx_hash = fills.evt_tx_hash
 
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc('day', now() - interval '1 week')
+    WHERE evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
     {% if not is_incremental() %}
     WHERE evt_block_time >= '{{zeroex_v4_start_date}}'
@@ -192,7 +183,7 @@ otc_fills AS (
     JOIN zeroex_tx ON zeroex_tx.tx_hash = fills.evt_tx_hash
 
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc('day', now() - interval '1 week')
+    WHERE evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
     {% if not is_incremental() %}
     WHERE evt_block_time >= '{{zeroex_v4_start_date}}'
@@ -209,8 +200,8 @@ ERC20BridgeTransfer AS (
             '0x' || substring(DATA, 347, 40)        AS taker,
             '0x' || substring(DATA, 27, 40)         AS taker_token,
             '0x' || substring(DATA, 91, 40)         AS maker_token,
-            bytea2numeric_v3(substring(DATA, 155, 40)) AS taker_token_amount_raw,
-            bytea2numeric_v3(substring(DATA, 219, 40)) AS maker_token_amount_raw,
+            udfs.bytea2numeric_v3(substring(DATA, 155, 40)) AS taker_token_amount_raw,
+            udfs.bytea2numeric_v3(substring(DATA, 219, 40)) AS maker_token_amount_raw,
             'ERC20BridgeTransfer'                   AS type,
             zeroex_tx.affiliate_address             AS affiliate_address,
             TRUE                                    AS swap_flag,
@@ -220,7 +211,7 @@ ERC20BridgeTransfer AS (
     WHERE topic1 = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
 
     {% if is_incremental() %}
-    AND block_time >= date_trunc('day', now() - interval '1 week')
+    AND block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
     {% if not is_incremental() %}
     AND block_time >= '{{zeroex_v3_start_date}}'
@@ -237,8 +228,8 @@ BridgeFill AS (
             '0xdef1c0ded9bec7f1a1670819833240f027b25eff'    AS taker,
             '0x' || substring(DATA, 91, 40)                 AS taker_token,
             '0x' || substring(DATA, 155, 40)                AS maker_token,
-            bytea2numeric_v3('0x' || substring(DATA, 219, 40)) AS taker_token_amount_raw,
-            bytea2numeric_v3('0x' || substring(DATA, 283, 40)) AS maker_token_amount_raw,
+            udfs.bytea2numeric_v3('0x' || substring(DATA, 219, 40)) AS taker_token_amount_raw,
+            udfs.bytea2numeric_v3('0x' || substring(DATA, 283, 40)) AS maker_token_amount_raw,
             'BridgeFill'                                    AS type,
             zeroex_tx.affiliate_address                     AS affiliate_address,
             TRUE                                            AS swap_flag,
@@ -249,7 +240,7 @@ BridgeFill AS (
         AND contract_address = '0xdb6f1920a889355780af7570773609bd8cb1f498'
 
         {% if is_incremental() %}
-        AND block_time >= date_trunc('day', now() - interval '1 week')
+        AND block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
         {% if not is_incremental() %}
         AND block_time >= '{{zeroex_v4_start_date}}'
@@ -265,8 +256,8 @@ NewBridgeFill AS (
             '0xdef1c0ded9bec7f1a1670819833240f027b25eff'    AS taker,
             '0x' || substring(DATA, 91, 40)                 AS taker_token,
             '0x' || substring(DATA, 155, 40)                AS maker_token,
-            bytea2numeric_v3('0x' || substring(DATA, 219, 40)) AS taker_token_amount_raw,
-            bytea2numeric_v3('0x' || substring(DATA, 283, 40)) AS maker_token_amount_raw,
+            udfs.bytea2numeric_v3('0x' || substring(DATA, 219, 40)) AS taker_token_amount_raw,
+            udfs.bytea2numeric_v3('0x' || substring(DATA, 283, 40)) AS maker_token_amount_raw,
             'NewBridgeFill'                                 AS type,
             zeroex_tx.affiliate_address                     AS affiliate_address,
             TRUE                                            AS swap_flag,
@@ -277,7 +268,7 @@ NewBridgeFill AS (
         AND contract_address = '0xdb6f1920a889355780af7570773609bd8cb1f498'
 
         {% if is_incremental() %}
-        AND block_time >= date_trunc('day', now() - interval '1 week')
+        AND block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
         {% if not is_incremental() %}
         AND block_time >= '{{zeroex_v4_start_date}}'
@@ -303,7 +294,7 @@ direct_PLP AS (
     JOIN zeroex_tx ON zeroex_tx.tx_hash = plp.evt_tx_hash
 
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc('day', now() - interval '1 week')
+    WHERE evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
     {% if not is_incremental() %}
     WHERE evt_block_time >= '{{zeroex_v3_start_date}}'
@@ -316,9 +307,9 @@ SELECT   s.tx_hash tx_hash, s.index evt_index, s.contract_address, s.block_time,
             z.taker AS taker,
             z.taker_token,
             z.maker_token,
-            bytea2numeric_v3('0x' || substring(DATA, 91, 40)) AS taker_token_amount_raw,
-            case when length(bytea2numeric_v3('0x' || substring(DATA, 27, 40))) < length(bytea2numeric_v3('0x' || substring(DATA, 219, 40))) 
-                then bytea2numeric_v3('0x' || substring(DATA, 27, 40)) else bytea2numeric_v3('0x' || substring(DATA, 219, 40)) end AS maker_token_amount_raw,
+            udfs.bytea2numeric_v3('0x' || substring(DATA, 91, 40)) AS taker_token_amount_raw,
+            case when length(udfs.bytea2numeric_v3('0x' || substring(DATA, 27, 40))) < length(udfs.bytea2numeric_v3('0x' || substring(DATA, 219, 40))) 
+                then udfs.bytea2numeric_v3('0x' || substring(DATA, 27, 40)) else udfs.bytea2numeric_v3('0x' || substring(DATA, 219, 40)) end AS maker_token_amount_raw,
             'direct_uniswapv2' AS TYPE,
             z.affiliate_address AS affiliate_address,
             TRUE AS swap_flag,
@@ -327,9 +318,9 @@ SELECT   s.tx_hash tx_hash, s.index evt_index, s.contract_address, s.block_time,
     FROM {{ source('bnb', 'logs') }} s
     JOIN zeroex_tx z on z.tx_hash = s.tx_hash and z.evt_index = s.index
     WHERE topic1 = '0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822' -- all the uni v2 swap event
-           and topic2 = '0x000000000000000000000000def1c0ded9bec7f1a1670819833240f027b25eff' -- 0x EP
+           and topic1 = '0x000000000000000000000000def1c0ded9bec7f1a1670819833240f027b25eff' -- 0x EP
         {% if is_incremental() %}
-        AND block_time >= date_trunc('day', now() - interval '1 week')
+        AND block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
         {% if not is_incremental() %}
         AND block_time >= '{{zeroex_v4_start_date}}'
@@ -338,12 +329,12 @@ SELECT   s.tx_hash tx_hash, s.index evt_index, s.contract_address, s.block_time,
     
 )  
 , uni_v2_pair_creation as (
-    SELECT concat('0x', substring(cast(data as varchar(256)),27,40) ) pair
+    SELECT concat('0x', substring(cast(data as STRING),27,40) ) pair
     FROM {{ source('bnb', 'logs') }} creation
     
-    WHERE creation.topic1 = '0x0d3648bd0f6ba80134a33ba9275ac585d9d315f0ad8355cddefde31afa28d0e9'  -- all the uni v2 pair creation event
+    WHERE creation.topic1 IS NULL AND creation.topic1 = '0x0d3648bd0f6ba80134a33ba9275ac585d9d315f0ad8355cddefde31afa28d0e9'  -- all the uni v2 pair creation event
     {% if is_incremental() %}
-        AND block_time >= date_trunc('day', now() - interval '1 week')
+        AND block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
         {% if not is_incremental() %}
         AND block_time >= '{{zeroex_v4_start_date}}'
@@ -357,7 +348,7 @@ select s.*
 
 from uni_v2_swap s 
 
-join uni_v2_pair_creation creation on cast(s.contract_address as varchar(42))  = creation.pair 
+join uni_v2_pair_creation creation on cast(s.contract_address as STRING)  = creation.pair 
 ),  
 
 all_tx AS (
@@ -387,7 +378,7 @@ SELECT distinct
         all_tx.evt_index,
         all_tx.contract_address,
         all_tx.block_time,
-        try_cast(date_trunc('day', all_tx.block_time) AS date) AS block_date,
+        SAFE_CAST(TIMESTAMP_TRUNC(all_tx.block_time, day) AS date) AS block_date,
         maker,
         CASE
             WHEN taker = '0xdef1c0ded9bec7f1a1670819833240f027b25eff' THEN tx.from
@@ -419,13 +410,13 @@ FROM all_tx
 INNER JOIN {{ source('bnb', 'transactions')}} tx ON all_tx.tx_hash = tx.hash
 
 {% if is_incremental() %}
-AND tx.block_time >= date_trunc('day', now() - interval '1 week')
+AND tx.block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}
 {% if not is_incremental() %}
 AND tx.block_time >= '{{zeroex_v3_start_date}}'
 {% endif %}
 
-LEFT JOIN {{ source('prices', 'usd') }} tp ON date_trunc('minute', all_tx.block_time) = tp.minute
+LEFT JOIN {{ source('prices', 'usd') }} tp ON TIMESTAMP_TRUNC(all_tx.block_time, minute) = tp.minute
 AND CASE
         WHEN all_tx.taker_token = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
         ELSE all_tx.taker_token
@@ -433,13 +424,13 @@ AND CASE
 AND tp.blockchain = 'bnb'
 
 {% if is_incremental() %}
-AND tp.minute >= date_trunc('day', now() - interval '1 week')
+AND tp.minute >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}
 {% if not is_incremental() %}
 AND tp.minute >= '{{zeroex_v3_start_date}}'
 {% endif %}
 
-LEFT JOIN {{ source('prices', 'usd') }} mp ON DATE_TRUNC('minute', all_tx.block_time) = mp.minute
+LEFT JOIN {{ source('prices', 'usd') }} mp ON TIMESTAMP_TRUNC(all_tx.block_time, minute) = mp.minute
 AND CASE
         WHEN all_tx.maker_token = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' THEN '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
         ELSE all_tx.maker_token
@@ -447,7 +438,7 @@ AND CASE
 AND mp.blockchain = 'bnb'
 
 {% if is_incremental() %}
-AND mp.minute >= date_trunc('day', now() - interval '1 week')
+AND mp.minute >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}
 {% if not is_incremental() %}
 AND mp.minute >= '{{zeroex_v3_start_date}}'

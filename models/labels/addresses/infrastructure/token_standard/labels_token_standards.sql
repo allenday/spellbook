@@ -1,8 +1,4 @@
-{{config(alias='token_standards',
-        post_hook='{{ expose_spells(\'["arbitrum", "avalanche_c", "bnb", "ethereum", "fantom", "gnosis","goerli","optimism","polygon"]\',
-                                    "sector",
-                                    "labels",
-                                    \'["hildobby"]\') }}')}}
+{{config(alias='token_standards')}}
 
 
 {% set labels_models = [
@@ -25,8 +21,7 @@ FROM (
         SELECT *
         FROM  {{ label }}
         {% if not loop.last %}
-        UNION
+        UNION ALL
         {% endif %}
         {% endfor %}
 )
-;

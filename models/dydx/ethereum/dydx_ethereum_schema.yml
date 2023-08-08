@@ -1,111 +1,139 @@
-version: 2
-
 models:
- - name: dydx_ethereum_votes
-   meta:
-    blockchain: ethereum
-    sector: dao
-    contributors: ivigamberdiev
-   config:
-      tags:   ['ethereum', 'votes', 'dao']
-   description: >
-      DAO votes on all chains across all contracts and versions
-   tests:
-     - dbt_utils.unique_combination_of_columns:
-         combination_of_columns:
-           - tx_hash
-           - voter_address
-   columns:
-      - name: blockchain
-      - name: project
-        description: "Project name of the DAO"
-      - name: version
-        description: "Version of the contract built and deployed by the DAO project"
-      - name: block_time
-        description: "UTC event block time of each DAO vote"
-      - name: tx_hash
-        description: "Unique transaction hash value tied to each vote on the DAO"
-      - &dao_name
-        name: dao_name
-        description: "DAO name"
-      - &dao_address
-        name: dao_address
-        description: "DAO wallet address"
-      - &proposal_id
-        name: proposal_id
-      - &votes
-        name: votes
-        description: "Votes weighted by the amount of governance tokens"
-      - &votes_share
-        name: votes_share
-        description: "Votes share in percent for a given proposal"
-      - &token_symbol
-        name: token_symbol
-      - name: token_address
-      - &votes_value_usd
-        name: votes_value_usd
-        description: "USD amount of governance tokens used at the time of the vote"
-      - &voter_address
-        name: voter_address
-      - &support
-        name: support
-        description: "0 = Against, 1 = For, 2 = Abstain votes"
-        tests:
-        - accepted_values:
-            values: ['for', 'against', 'abstain']
-      - &reason
-        name: reason
-        description: "Optional onchain commments to explain votes"
+- columns:
+  - name: blockchain
+    tests: []
+  - description: Project name of the DAO
+    name: project
+    tests: []
+  - description: Version of the contract built and deployed by the DAO project
+    name: version
+    tests: []
+  - description: UTC event block time of each DAO vote
+    name: block_time
+    tests: []
+  - description: Unique transaction hash value tied to each vote on the DAO
+    name: tx_hash
+    tests: []
+  - &id001
+    description: DAO name
+    name: dao_name
+    tests: []
+  - &id002
+    description: DAO wallet address
+    name: dao_address
+    tests: []
+  - name: proposal_id
+    tests: []
+  - description: Votes weighted by the amount of governance tokens
+    name: votes
+    tests: []
+  - description: Votes share in percent for a given proposal
+    name: votes_share
+    tests: []
+  - name: token_symbol
+    tests: []
+  - name: token_address
+    tests: []
+  - description: USD amount of governance tokens used at the time of the vote
+    name: votes_value_usd
+    tests: []
+  - name: voter_address
+    tests: []
+  - description: 0 = Against, 1 = For, 2 = Abstain votes
+    name: support
+    tests:
+    - accepted_values:
+        values:
+        - for
+        - against
+        - abstain
+  - description: Optional onchain commments to explain votes
+    name: reason
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - votes
+    - dao
+  description: 'DAO votes on all chains across all contracts and versions
 
- - name: dydx_ethereum_proposals
-   meta:
+    '
+  meta:
     blockchain: ethereum
-    sector: dao
     contributors: ivigamberdiev
-   config:
-      tags: ['ethereum', 'proposals', 'dao']
-   description: >
-      DAO proposals on all chains across all contracts and versions
-   tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-              - blockchain
-              - project
-              - version
-              - tx_hash
-   columns:
-      - name: blockchain
-      - name: project
-        description: "Project name of the DAO"
-      - name: version
-        description: "Version of the contract built and deployed by the DAO project"
-      - name: created_at
-        description: "UTC event block time at which the proposal was created"
-      - name: tx_hash
-        description: "Unique transaction hash value tied to each DAO proposal"
-      - *dao_name
-      - *dao_address
-      - name: proposal_id
-        tests:
-          - unique
-      - &votes_for
-        name: votes_for
-      - &votes_against
-        name: votes_against
-      - &votes_total
-        name: votes_total
-        description: "Total number of governance tokens used to vote on a given DAO proposal"
-      - &number_of_voters
-        name: number_of_voters
-      - &participation
-        name: participation
-        description: "Participation in percent: Number of governance tokens used to vote / Total token supply"
-      - &status
-        name: status
-        description: "Proposal status: Pending, Queued, Active, Executed, Canceled or Defeated"
-        tests:
-          - accepted_values:
-              values: ['Pending', 'Queued', 'Active', 'Executed', 'Canceled','Defeated']
-      - &description
-        name: description
-        description: "Description of the proposal"
+    sector: dao
+  name: dydx_ethereum_votes
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - tx_hash
+      - voter_address
+- columns:
+  - name: blockchain
+    tests: []
+  - description: Project name of the DAO
+    name: project
+    tests: []
+  - description: Version of the contract built and deployed by the DAO project
+    name: version
+    tests: []
+  - description: UTC event block time at which the proposal was created
+    name: created_at
+    tests: []
+  - description: Unique transaction hash value tied to each DAO proposal
+    name: tx_hash
+    tests: []
+  - *id001
+  - *id002
+  - name: proposal_id
+    tests:
+    - unique
+  - name: votes_for
+    tests: []
+  - name: votes_against
+    tests: []
+  - description: Total number of governance tokens used to vote on a given DAO proposal
+    name: votes_total
+    tests: []
+  - name: number_of_voters
+    tests: []
+  - description: 'Participation in percent: Number of governance tokens used to vote
+      / Total token supply'
+    name: participation
+    tests: []
+  - description: 'Proposal status: Pending, Queued, Active, Executed, Canceled or
+      Defeated'
+    name: status
+    tests:
+    - accepted_values:
+        values:
+        - Pending
+        - Queued
+        - Active
+        - Executed
+        - Canceled
+        - Defeated
+  - description: Description of the proposal
+    name: description
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - proposals
+    - dao
+  description: 'DAO proposals on all chains across all contracts and versions
+
+    '
+  meta:
+    blockchain: ethereum
+    contributors: ivigamberdiev
+    sector: dao
+  name: dydx_ethereum_proposals
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - blockchain
+      - project
+      - version
+      - tx_hash
+version: 2

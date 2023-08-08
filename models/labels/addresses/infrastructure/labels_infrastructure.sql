@@ -1,11 +1,6 @@
 {{ config(
     alias = 'infrastructure',
-    materialized = 'table',
-    file_format = 'delta',
-    post_hook='{{ expose_spells(\'["ethereum"]\',
-                                "sector",
-                                "labels",
-                                \'["ilemi", "hildobby"]\') }}')
+    materialized = 'view')
 }}
 
 {% set infrastructure_models = [
@@ -25,20 +20,20 @@
 SELECT *
 FROM (
     {% for infrastructure_model in infrastructure_models %}
-        SELECT
-            blockchain,
-            address,
-            name,
-            category,
-            contributor,
-            source,
-            created_at,
-            updated_at,
-            model_name,
-            label_type
-        FROM {{ infrastructure_model }}
-        {% if not loop.last %}
-            UNION ALL
-        {% endif %}
+    SELECT
+        blockchain
+        , address
+        , name
+        , category
+        , contributor
+        , source
+        , created_at
+        , updated_at
+        , model_name
+        , label_type
+    FROM {{ infrastructure_model }}
+    {% if not loop.last %}
+    UNION ALL
+    {% endif %}
     {% endfor %}
 )

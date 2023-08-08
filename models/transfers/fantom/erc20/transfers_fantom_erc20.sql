@@ -1,13 +1,7 @@
 {{ config(
     alias='erc20',
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['transfer_type', 'evt_tx_hash', 'evt_index', 'wallet_address'],
-    post_hook='{{ expose_spells(\'["fantom"]\',
-                                    "sector",
-                                    "transfers",
-                                    \'["soispoke", "dot2dotseurat", "tschubotz", "hosuke"]\') }}'
+    materialized = 'view',
+            unique_key = ['transfer_type', 'evt_tx_hash', 'evt_index', 'wallet_address']
     )
 }}
 
@@ -20,11 +14,11 @@ with
             et.to as wallet_address,
             contract_address as token_address,
             evt_block_time,
-            value as amount_raw
+            `value` as amount_raw
         from
             {{ source('erc20_fantom', 'evt_transfer') }} et
         {% if is_incremental() %}
-            where evt_block_time >= date_trunc("day", now() - interval '1 week')
+            where evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
     ),
     received_transfers as (
@@ -35,11 +29,11 @@ with
             et.from as wallet_address,
             contract_address as token_address,
             evt_block_time,
-            '-' || CAST(value AS VARCHAR(100)) as amount_raw
+            '-' || CAST(`value` AS STRING) as amount_raw
         from
             {{ source('erc20_fantom', 'evt_transfer') }} et
         {% if is_incremental() %}
-            where evt_block_time >= date_trunc("day", now() - interval '1 week')
+            where evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
     )
 
@@ -53,10 +47,10 @@ select
     wallet_address,
     token_address,
     evt_block_time,
-    CAST(amount_raw AS VARCHAR(100)) as amount_raw
+    CAST(amount_raw AS STRING) as amount_raw
 from sent_transfers
 
-union
+UNION ALL
 
 select 
     transfer_type,
@@ -66,5 +60,5 @@ select
     wallet_address,
     token_address,
     evt_block_time, 
-    CAST(amount_raw AS VARCHAR(100)) as amount_raw
+    CAST(amount_raw AS STRING) as amount_raw
 from received_transfers

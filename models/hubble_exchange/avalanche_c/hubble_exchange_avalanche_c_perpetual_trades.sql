@@ -1,14 +1,8 @@
 {{ config(
     alias = 'perpetual_trades',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'blockchain', 'project', 'version', 'tx_hash', 'evt_index'],
-    post_hook='{{ expose_spells(\'["avalanche_c"]\',
-                                "project",
-                                "hubble_exchange",
-                                \'["Henrystats"]\') }}'
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'blockchain', 'project', 'version', 'tx_hash', 'evt_index']
     )
 }}
 
@@ -23,9 +17,9 @@ perp_events as (
            'AVAX'                                                      as virtual_asset,    -- only AVAX can currently be traded on hubble exchange
            ''                                                          as underlying_asset, -- there's no way to track the underlying asset as traders need to deposit into their margin account before they're able to trade which is tracked in a seperate event not tied to the margin positions opened.
            quoteAsset / 1E6                                            as volume_usd,
-           CAST(NULL as double)                                        as fee_usd,          -- no event to track fees
-           CAST(NULL as double)                                        as margin_usd,       -- no event to track margin
-           CAST(quoteAsset as double)                                  as volume_raw,
+           CAST(NULL as FLOAT64)                                        as fee_usd,          -- no event to track fees
+           CAST(NULL as FLOAT64)                                        as margin_usd,       -- no event to track margin
+           CAST(quoteAsset as FLOAT64)                                  as volume_raw,
            trader,
            contract_address                                            as market_address,
            evt_index,
@@ -36,7 +30,7 @@ perp_events as (
     WHERE evt_block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 ), 
 
@@ -52,10 +46,10 @@ trade_data as (
     AND call_block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND call_block_time >= date_trunc("day", now() - interval '1 week')
+    AND call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION ALL
 
     -- open position calls 
     SELECT
@@ -69,10 +63,10 @@ trade_data as (
     AND call_block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND call_block_time >= date_trunc("day", now() - interval '1 week')
+    AND call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 
-    UNION
+    UNION ALL
 
     -- liquidate position events
     SELECT
@@ -86,7 +80,7 @@ trade_data as (
     AND evt_block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 )
 
@@ -94,7 +88,7 @@ SELECT 'avalanche_c'                    as blockchain,
        'hubble_exchange'                as project,
        '1'                              as version,
        'hubble_exchange'                as frontend,
-       date_trunc('day', pe.block_time) as block_date,
+       TIMESTAMP_TRUNC(pe.block_time, day) as block_date,
        pe.block_time,
        pe.virtual_asset,
        pe.underlying_asset,
@@ -123,7 +117,7 @@ INNER JOIN
     AND txns.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND txns.block_time >= date_trunc("day", now() - interval '1 week')
+    AND txns.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 LEFT JOIN 
 trade_data td 

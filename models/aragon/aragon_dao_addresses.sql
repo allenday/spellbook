@@ -1,11 +1,6 @@
 {{ config(
     alias = 'dao_addresses',
-    materialized = 'view',
-    file_format = 'delta',
-    post_hook='{{ expose_spells(\'["ethereum", "gnosis", "polygon"]\',
-                                "project",
-                                "aragon",
-                                \'["Henrystats"]\') }}')
+    materialized = 'view')
 }}
 
 {% set aragon_models = [
@@ -19,17 +14,17 @@ SELECT *
 
 FROM (
     {% for dao_model in aragon_models %}
-        SELECT
-            blockchain,
-            dao_creator_tool,
-            dao,
-            dao_wallet_address,
-            created_block_time,
-            created_date,
-            product
-        FROM {{ dao_model }}
-        {% if not loop.last %}
-            UNION ALL
-        {% endif %}
+    SELECT
+        blockchain,
+        dao_creator_tool, 
+        dao, 
+        dao_wallet_address,
+        created_block_time,
+        created_date,
+        product
+    FROM {{ dao_model }}
+    {% if not loop.last %}
+    UNION ALL
+    {% endif %}
     {% endfor %}
-);
+)

@@ -1,137 +1,169 @@
-version: 2
-
 models:
-  - name: safe_gnosis_singletons
-    meta:
-      blockchain: gnosis
-      project: safe
-      contributors: tschubotz
-    freshness:
-      warn_after: { count: 12, period: hour }
-      error_after: { count: 24, period: hour }
-    config:
-      tags: ['safe', 'singletons', 'gnosis']
-    description: "Singletons addresses used with Safes"
-    columns:
-      - &address
-        name: address
-        description: "Safe contract address"
-        tests:
-          - unique
-          - not_null
-
-  - name: safe_gnosis_safes
-    meta:
-      blockchain: gnosis
-      project: safe
-      contributors: tschubotz
-    freshness:
-      warn_after: { count: 12, period: hour }
-      error_after: { count: 24, period: hour }
-    config:
-      tags: ['safe', 'gnosis']
-    description: "Safe addresses"
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "Blockchain on which the Safe is deployed"
-      - *address
-      - &creation_version
-        name: creation_version
-        description: "Initial version during creation"
-      - &block_date
-        name: block_date
-      - &creation_time
-        name: creation_time
-        description: "Datetime of Safe creation"
-      - &tx_hash
-        name: tx_hash
-
-  - name: safe_gnosis_transactions
-    meta:
-      blockchain: gnosis
-      project: safe
-      contributors: tschubotz
-    freshness:
-      warn_after: { count: 12, period: hour }
-      error_after: { count: 24, period: hour }
-    config:
-      tags: ['safe', 'gnosis']
-    description: "Safe transactions"
-    columns:
-      - *blockchain
-      - *block_date
-      - &block_time
-        name: block_time
-        description: "Datetime of block"
-      - &block_number
-        name: block_number
-        description: "Number of block"
-      - *tx_hash
-      - name: address
-        description: "Safe contract address"
-      - &to
-        name: to
-        description: "Destination address"
-      - &value
-        name: value
-        description: "Value of transaction"
-      - &gas
-        name: gas 
-        description: "Gas limit set for transaction"
-      - &gas_used
-        name: gas_used
-        description: "Gas used during transaction"
-      - &tx_index
-        name: tx_index
-        description: "Transaction index"
-      - &sub_traces
-        name: sub_traces
-        description: "Number of sub traces"
-      - &trace_address
-        name: trace_address
-        description: ""
-      - &success
-        name: success
-        description: "Success state of transaction"
-      - &error
-        name: error
-        description: "Error of transaction if any"
-      - &code
-        name: code
-        description: "Code"
-      - &input
-        name: input
-        description: "Input data"
-      - &output
-        name: output
-        description: "Output data"
-
-  - name: safe_gnosis_xdai_transfers
-    meta:
-      blockchain: gnosis
-      project: safe
-      contributors: tschubotz
-    freshness:
-      warn_after: { count: 12, period: hour }
-      error_after: { count: 24, period: hour }
-    config:
-      tags: ['safe', 'transfers', 'gnosis']
-    description: "xDAI transfers into or out of Safes"
+- columns:
+  - &id001
+    description: Safe contract address
+    name: address
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - block_date
-            - address
-            - tx_hash
-            - trace_address
-    columns:
-      - name: address
-        description: "Safe contract address"
-      - *block_date
-      - *block_time
-      - &amount_raw
-        name: amount_raw
-        description: "Raw amount of transferred xDAI"
-      - *tx_hash
-      - *trace_address
+    - unique
+    - not_null
+  config:
+    tags:
+    - safe
+    - singletons
+    - gnosis
+  description: Singletons addresses used with Safes
+  freshness:
+    error_after:
+      count: 24
+      period: hour
+    warn_after:
+      count: 12
+      period: hour
+  meta:
+    blockchain: gnosis
+    contributors: tschubotz
+    project: safe
+  name: safe_gnosis_singletons
+  tests: []
+- columns:
+  - &id002
+    description: Blockchain on which the Safe is deployed
+    name: blockchain
+    tests: []
+  - *id001
+  - description: Initial version during creation
+    name: creation_version
+    tests: []
+  - &id003
+    name: block_date
+    tests: []
+  - description: Datetime of Safe creation
+    name: creation_time
+    tests: []
+  - &id004
+    name: tx_hash
+    tests: []
+  config:
+    tags:
+    - safe
+    - gnosis
+  description: Safe addresses
+  freshness:
+    error_after:
+      count: 24
+      period: hour
+    warn_after:
+      count: 12
+      period: hour
+  meta:
+    blockchain: gnosis
+    contributors: tschubotz
+    project: safe
+  name: safe_gnosis_safes
+  tests: []
+- columns:
+  - *id002
+  - *id003
+  - &id005
+    description: Datetime of block
+    name: block_time
+    tests: []
+  - description: Number of block
+    name: block_number
+    tests: []
+  - *id004
+  - description: Safe contract address
+    name: address
+    tests: []
+  - description: Destination address
+    name: to
+    tests: []
+  - description: Value of transaction
+    name: value
+    tests: []
+  - description: Gas limit set for transaction
+    name: gas
+    tests: []
+  - description: Gas used during transaction
+    name: gas_used
+    tests: []
+  - description: Transaction index
+    name: tx_index
+    tests: []
+  - description: Number of sub traces
+    name: sub_traces
+    tests: []
+  - &id006
+    description: ''
+    name: trace_address
+    tests: []
+  - description: Success state of transaction
+    name: success
+    tests: []
+  - description: Error of transaction if any
+    name: error
+    tests: []
+  - description: Code
+    name: code
+    tests: []
+  - description: Input data
+    name: input
+    tests: []
+  - description: Output data
+    name: output
+    tests: []
+  config:
+    tags:
+    - safe
+    - gnosis
+  description: Safe transactions
+  freshness:
+    error_after:
+      count: 24
+      period: hour
+    warn_after:
+      count: 12
+      period: hour
+  meta:
+    blockchain: gnosis
+    contributors: tschubotz
+    project: safe
+  name: safe_gnosis_transactions
+  tests: []
+- columns:
+  - description: Safe contract address
+    name: address
+    tests: []
+  - *id003
+  - *id005
+  - description: Raw amount of transferred xDAI
+    name: amount_raw
+    tests: []
+  - *id004
+  - *id006
+  config:
+    tags:
+    - safe
+    - transfers
+    - gnosis
+  description: xDAI transfers into or out of Safes
+  freshness:
+    error_after:
+      count: 24
+      period: hour
+    warn_after:
+      count: 12
+      period: hour
+  meta:
+    blockchain: gnosis
+    contributors: tschubotz
+    project: safe
+  name: safe_gnosis_xdai_transfers
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - block_date
+      - address
+      - tx_hash
+      - trace_address
+version: 2

@@ -1,13 +1,7 @@
 {{ config(
     alias = 'wallet_pnl',
-    materialized='incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['wallet', 'nft_contract_address'],
-    post_hook='{{ expose_spells(\'["ethereum"]\',
-                                "sector",
-                                "nft",
-                                \'["Henrystats"]\') }}'
+    materialized = 'view',
+            unique_key = ['wallet', 'nft_contract_address']
     )
 }}
 
@@ -20,14 +14,14 @@ WITH weekly_unique_wallet_address as
     FROM 
         {{ ref('nft_trades') }}
     WHERE 
-        block_time >= date_trunc("day", now() - interval '1 week')
+        block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         AND blockchain = 'ethereum'
         AND currency_symbol IN ('WETH', 'ETH')
         AND amount_original IS NOT NULL
         AND number_of_items = 1
         AND buyer != seller 
     
-    UNION 
+    UNION ALL 
 
     SELECT DISTINCT
         nft_contract_address,
@@ -35,7 +29,7 @@ WITH weekly_unique_wallet_address as
     FROM 
         {{ ref('nft_trades') }}
     WHERE 
-        block_time >= date_trunc("day", now() - interval '1 week')
+        block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         AND blockchain = 'ethereum'
         AND currency_symbol IN ('WETH', 'ETH')
         AND amount_original IS NOT NULL

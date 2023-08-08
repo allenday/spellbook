@@ -1,15 +1,9 @@
 {{ config(
         schema = 'tornado_cash_ethereum',
         alias ='withdrawals',
-        materialized='incremental',
+        materialized = 'view',
         partition_by='block_date',
-        file_format = 'delta',
-        incremental_strategy = 'merge',
-        unique_key = ['block_date', 'tx_hash', 'evt_index'],
-        post_hook='{{ expose_spells(\'["ethereum"]\',
-                                    "project",
-                                    "tornado_cash",
-                                    \'["hildobby", "dot2dotseurat"]\') }}'
+                        unique_key = ['block_date', 'tx_hash', 'evt_index']
         )
 }}
 
@@ -36,7 +30,7 @@ SELECT tc.evt_block_time AS block_time
         END AS amount
 , tc.evt_tx_hash AS tx_hash
 , tc.evt_index
-, TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
+, SAFE_CAST(TIMESTAMP_TRUNC(tc.evt_block_time, DAY) AS date) AS block_date
 FROM {{ source('tornado_cash_ethereum','eth_evt_Withdrawal') }} tc
 INNER JOIN {{ source('ethereum','transactions') }} et
         ON et.hash=tc.evt_tx_hash
@@ -44,16 +38,16 @@ INNER JOIN {{ source('ethereum','transactions') }} et
         AND et.block_time >= '{{ethereum_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        AND et.block_time >= date_trunc("day", now() - interval '1 week')
+        AND et.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 {% if not is_incremental() %}
 WHERE tc.evt_block_time >= '{{ethereum_start_date}}'
 {% endif %}
 {% if is_incremental() %}
-WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
+WHERE tc.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}
 
-UNION
+UNION ALL
 
 -- Ethereum (ERC20s Part 1)
 SELECT tc.evt_block_time AS block_time
@@ -136,7 +130,7 @@ SELECT tc.evt_block_time AS block_time
         END AS amount
 , tc.evt_tx_hash AS tx_hash
 , tc.evt_index
-, TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
+, SAFE_CAST(TIMESTAMP_TRUNC(tc.evt_block_time, DAY) AS date) AS block_date
 FROM {{ source('tornado_cash_ethereum','erc20_evt_Withdrawal') }} tc
 INNER JOIN {{ source('ethereum','transactions') }} et
         ON et.hash=tc.evt_tx_hash
@@ -144,16 +138,16 @@ INNER JOIN {{ source('ethereum','transactions') }} et
         AND et.block_time >= '{{eth_erc20_pt1_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        AND et.block_time >= date_trunc("day", now() - interval '1 week')
+        AND et.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 {% if not is_incremental() %}
 WHERE tc.evt_block_time >= '{{eth_erc20_pt1_start_date}}'
 {% endif %}
 {% if is_incremental() %}
-WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
+WHERE tc.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}
 
-UNION
+UNION ALL
 
 -- Ethereum (ERC20s Part 2)
 SELECT tc.evt_block_time AS block_time
@@ -236,7 +230,7 @@ SELECT tc.evt_block_time AS block_time
         END AS amount
 , tc.evt_tx_hash AS tx_hash
 , tc.evt_index
-, TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
+, SAFE_CAST(TIMESTAMP_TRUNC(tc.evt_block_time, DAY) AS date) AS block_date
 FROM {{ source('tornado_cash_ethereum','ERC20Tornado_evt_Withdrawal') }} tc
 INNER JOIN {{ source('ethereum','transactions') }} et
         ON et.hash=tc.evt_tx_hash
@@ -244,11 +238,11 @@ INNER JOIN {{ source('ethereum','transactions') }} et
         AND et.block_time >= '{{eth_erc20_pt2_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        AND et.block_time >= date_trunc("day", now() - interval '1 week')
+        AND et.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 {% if not is_incremental() %}
 WHERE tc.evt_block_time >= '{{eth_erc20_pt2_start_date}}'
 {% endif %}
 {% if is_incremental() %}
-WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
+WHERE tc.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}

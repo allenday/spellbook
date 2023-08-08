@@ -1,151 +1,189 @@
-version: 2
-
 models:
-  - name: safe_ethereum_safes
-    meta:
-      blockchain: ethereum
-      project: safe
-      contributors: scherbovich, tschubotz, frankmaseo
-    freshness:
-      warn_after: { count: 12, period: hour }
-      error_after: { count: 24, period: hour }
-    config:
-      tags: ['safe', 'ethereum']
-    description: "Safe addresses"
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "The blockchain on which the Safe is deployed"
-      - &address
-        name: address
-        description: "Safe contract address"
-      - &creation_version
-        name: creation_version
-        description: "Version of initially created safe"
-      - &block_date
-        name: block_date
-      - &creation_time
-        name: creation_time
-        description: "Date/time of safe creation"
-      - &tx_hash
-        name: tx_hash
-
-  - name: safe_ethereum_eth_transfers
-    meta:
-      blockchain: ethereum
-      project: safe
-      contributors: scherbovich, tschubotz
-    freshness:
-      warn_after: { count: 12, period: hour }
-      error_after: { count: 24, period: hour }
-    config:
-      tags: ['safe', 'transfers', 'ethereum']
-    description: "Eth transfers for safes"
-    columns:
-      - *address
-      - *block_date
-      - &block_time
-        name: block_time
-        description: "Date of Eth transfer"
-      - &amount_raw
-        name: amount_raw
-        description: "Raw amount of transfered Eth"
-      - *tx_hash
-      - &trace_address
-        name: trace_address
-
-  - name: safe_ethereum_singletons
-    meta:
-      blockchain: ethereum
-      project: safe
-      contributors: tschubotz
-    freshness:
-      warn_after: { count: 12, period: hour }
-      error_after: { count: 24, period: hour }
-    config:
-      tags: ['safe', 'singletons', 'ethereum']
-    description: "Singletons addresses used with Safes"
-    columns:
-      - name: address
-        description: "Safe contract address"
-        tests:
-          - unique
-          - not_null
-
-  - name: safe_ethereum_transactions
-    meta:
-      blockchain: ethereum
-      project: safe
-      contributors: tschubotz
-    freshness:
-      warn_after: { count: 12, period: hour }
-      error_after: { count: 24, period: hour }
-    config:
-      tags: ['safe', 'ethereum']
-    description: "Safe transactions"
-    columns:
-      - *blockchain
-      - *block_date
-      - *block_time
-      - &block_number
-        name: block_number
-        description: "Number of block"
-      - *tx_hash
-      - name: address
-        description: "Safe contract address"
-      - &to
-        name: to
-        description: "Destination address"
-      - &value
-        name: value
-        description: "Value of transaction"
-      - &gas
-        name: gas 
-        description: "Gas limit set for transaction"
-      - &gas_used
-        name: gas_used
-        description: "Gas used during transaction"
-      - &tx_index
-        name: tx_index
-        description: "Transaction index"
-      - &sub_traces
-        name: sub_traces
-        description: "Number of sub traces"
-      - *trace_address
-      - &success
-        name: success
-        description: "Success state of transaction"
-      - &error
-        name: error
-        description: "Error of transaction if any"
-      - &code
-        name: code
-        description: "Code"
-      - &input
-        name: input
-        description: "Input data"
-      - &output
-        name: output
-        description: "Output data"
-
-  - name: safe_ethereum_signer_thresholds
+- columns:
+  - &id004
+    description: The blockchain on which the Safe is deployed
+    name: blockchain
+    tests: []
+  - &id001
+    description: Safe contract address
+    name: address
+    tests: []
+  - description: Version of initially created safe
+    name: creation_version
+    tests: []
+  - &id002
+    name: block_date
+    tests: []
+  - description: Date/time of safe creation
+    name: creation_time
+    tests: []
+  - &id003
+    name: tx_hash
+    tests: []
+  config:
+    tags:
+    - safe
+    - ethereum
+  description: Safe addresses
+  freshness:
+    error_after:
+      count: 24
+      period: hour
+    warn_after:
+      count: 12
+      period: hour
+  meta:
+    blockchain: ethereum
+    contributors: scherbovich, tschubotz, frankmaseo
+    project: safe
+  name: safe_ethereum_safes
+  tests: []
+- columns:
+  - *id001
+  - *id002
+  - &id005
+    description: Date of Eth transfer
+    name: block_time
+    tests: []
+  - description: Raw amount of transfered Eth
+    name: amount_raw
+    tests: []
+  - *id003
+  - &id006
+    name: trace_address
+    tests: []
+  config:
+    tags:
+    - safe
+    - transfers
+    - ethereum
+  description: Eth transfers for safes
+  freshness:
+    error_after:
+      count: 24
+      period: hour
+    warn_after:
+      count: 12
+      period: hour
+  meta:
+    blockchain: ethereum
+    contributors: scherbovich, tschubotz
+    project: safe
+  name: safe_ethereum_eth_transfers
+  tests: []
+- columns:
+  - description: Safe contract address
+    name: address
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - address
-    meta:
-      blockchain: ethereum
-      project: safe
-      contributors: gentrexha
-    freshness:
-      warn_after: { count: 12, period: hour }
-      error_after: { count: 24, period: hour }
-    config:
-      tags: ['safe', 'ethereum']
-    description: "Safe signer thresholds"
-    columns:
-      - *blockchain
-      - *address
-      - &threshold
-        name: threshold
-        description: "Number of signer threshold"
+    - unique
+    - not_null
+  config:
+    tags:
+    - safe
+    - singletons
+    - ethereum
+  description: Singletons addresses used with Safes
+  freshness:
+    error_after:
+      count: 24
+      period: hour
+    warn_after:
+      count: 12
+      period: hour
+  meta:
+    blockchain: ethereum
+    contributors: tschubotz
+    project: safe
+  name: safe_ethereum_singletons
+  tests: []
+- columns:
+  - *id004
+  - *id002
+  - *id005
+  - description: Number of block
+    name: block_number
+    tests: []
+  - *id003
+  - description: Safe contract address
+    name: address
+    tests: []
+  - description: Destination address
+    name: to
+    tests: []
+  - description: Value of transaction
+    name: value
+    tests: []
+  - description: Gas limit set for transaction
+    name: gas
+    tests: []
+  - description: Gas used during transaction
+    name: gas_used
+    tests: []
+  - description: Transaction index
+    name: tx_index
+    tests: []
+  - description: Number of sub traces
+    name: sub_traces
+    tests: []
+  - *id006
+  - description: Success state of transaction
+    name: success
+    tests: []
+  - description: Error of transaction if any
+    name: error
+    tests: []
+  - description: Code
+    name: code
+    tests: []
+  - description: Input data
+    name: input
+    tests: []
+  - description: Output data
+    name: output
+    tests: []
+  config:
+    tags:
+    - safe
+    - ethereum
+  description: Safe transactions
+  freshness:
+    error_after:
+      count: 24
+      period: hour
+    warn_after:
+      count: 12
+      period: hour
+  meta:
+    blockchain: ethereum
+    contributors: tschubotz
+    project: safe
+  name: safe_ethereum_transactions
+  tests: []
+- columns:
+  - *id004
+  - *id001
+  - description: Number of signer threshold
+    name: threshold
+    tests: []
+  config:
+    tags:
+    - safe
+    - ethereum
+  description: Safe signer thresholds
+  freshness:
+    error_after:
+      count: 24
+      period: hour
+    warn_after:
+      count: 12
+      period: hour
+  meta:
+    blockchain: ethereum
+    contributors: gentrexha
+    project: safe
+  name: safe_ethereum_signer_thresholds
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - address
+version: 2

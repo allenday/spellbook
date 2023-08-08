@@ -1,9 +1,9 @@
-version: 2
+sources:
+- description: 'Pangolin avalanche contracts
 
-sources: 
-  - name: pangolin_exchange_avalanche_c
-    description: >
-      Pangolin avalanche contracts
-    tables:
-      - name: Airdrop_evt_PngClaimed
-        loaded_at_field: evt_block_time
+    '
+  name: pangolin_exchange_avalanche_c
+  tables:
+  - loaded_at_field: evt_block_time
+    name: Airdrop_evt_PngClaimed
+version: 2

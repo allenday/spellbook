@@ -1,6 +1,5 @@
 {{ config (
-    alias = 'job_liquidity_log',
-    post_hook = '{{ expose_spells_hide_trino(\'["ethereum"]\', "project", "keep3r", \'["wei3erHase", "agaperste"]\') }}'
+    alias = 'job_liquidity_log'
 ) }}
 
 WITH job_liquidities AS (
@@ -13,7 +12,7 @@ WITH job_liquidities AS (
         ad.contract_address AS keep3r,
         ad._job AS job,
         ad._liquidity AS token,
-        CAST(ad._amount AS DOUBLE) / 1e18 AS amount
+        CAST(ad._amount AS FLOAT64) / 1e18 AS amount
     FROM
         (
             SELECT
@@ -29,7 +28,7 @@ WITH job_liquidities AS (
                     'keep3r_network_ethereum',
                     'Keep3r_evt_LiquidityAddition'
                 ) }}
-            UNION
+            UNION ALL
             SELECT
                 evt_block_time,
                 evt_tx_hash,
@@ -52,7 +51,7 @@ WITH job_liquidities AS (
         'LiquidityWithdrawal' AS event,
         rm.contract_address keep3r,
         rm._job job,
-        rm._liquidity AS token,- CAST(rm._amount AS DOUBLE) / 1e18 AS amount
+        rm._liquidity AS token,- CAST(rm._amount AS FLOAT64) / 1e18 AS amount
     FROM
         (
             SELECT
@@ -68,7 +67,7 @@ WITH job_liquidities AS (
                     'keep3r_network_ethereum',
                     'Keep3r_evt_LiquidityWithdrawal'
                 ) }}
-            UNION
+            UNION ALL
             SELECT
                 evt_block_time,
                 evt_tx_hash,
@@ -96,7 +95,7 @@ df AS (
         amount
     FROM
         job_liquidities
-    UNION
+    UNION ALL
     SELECT
         migs.event,
         migs.evt_index,

@@ -1,22 +1,17 @@
 {{  config(
         alias='batches',
-        materialized='incremental',
-        partition_by = ['block_date'],
+        materialized = 'view',
+        partition_by = {"field": "block_date"},
         unique_key = ['tx_hash'],
         on_schema_change='sync_all_columns',
-        file_format ='delta',
-        incremental_strategy='merge',
-        post_hook='{{ expose_spells(\'["gnosis"]\',
-                                    "project",
-                                    "cow_protocol",
-                                    \'["bh2smith"]\') }}'
+                incremental_strategy='merge'
     )
 }}
 
 WITH
 -- Find the PoC Query here: https://dune.com/queries/1722419
 batch_counts as (
-    select try_cast(date_trunc('day', s.evt_block_time) as date) as block_date,
+    select SAFE_CAST(TIMESTAMP_TRUNC(s.evt_block_time, day) as date) as block_date,
            s.evt_block_time,
            s.evt_tx_hash,
            solver,
@@ -34,12 +29,12 @@ batch_counts as (
         left outer join {{ source('gnosis_protocol_v2_gnosis', 'GPv2Settlement_evt_Interaction') }} i
             on i.evt_tx_hash = s.evt_tx_hash
             {% if is_incremental() %}
-            AND i.evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND i.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
         join cow_protocol_gnosis.solvers
             on solver = address
     {% if is_incremental() %}
-    WHERE s.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE s.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
     group by s.evt_tx_hash, solver, s.evt_block_time, name
 ),
@@ -54,10 +49,10 @@ batch_values as (
     from {{ ref('cow_protocol_gnosis_trades') }}
         left outer join {{ source('prices', 'usd') }} as p
             on p.contract_address = '0xe91d153e0b41518a2ce8dd3d7944fa863463a97d'
-            and p.minute = date_trunc('minute', block_time)
+            and p.minute = TIMESTAMP_TRUNC(block_time, minute)
             and blockchain = 'gnosis'
     {% if is_incremental() %}
-    WHERE block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
     group by tx_hash, price
 ),
@@ -94,7 +89,7 @@ combined_batch_info as (
         inner join {{ source('gnosis', 'transactions') }} tx
             on evt_tx_hash = hash
             {% if is_incremental() %}
-            AND tx.block_time >= date_trunc("day", now() - interval '1 week')
+            AND tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
     where num_trades > 0 --! Exclude Withdraw Batches
 )

@@ -1,8 +1,4 @@
-{{config(alias='contracts',
-        post_hook='{{ expose_spells(\'["ethereum", "arbitrum", "gnosis", "optimism", "bnb", "avalanche_c", "fantom", "polygon"]\',
-                                    "sector",
-                                    "labels",
-                                    \'["soispoke"]\') }}')
+{{config(alias='contracts')
 }}
 
 SELECT 'ethereum' as blockchain,
@@ -12,11 +8,11 @@ SELECT 'ethereum' as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-26') as created_at,
-       now() as updated_at,
+       CURRENT_TIMESTAMP() as updated_at,
         'contracts' as model_name,
        'identifier' as label_type
 FROM {{ source('ethereum','contracts') }} 
-UNION 
+UNION ALL 
 SELECT 'gnosis' as blockchain,
        address, 
        concat(upper(substring(namespace,1,1)),substring(namespace,2)) || ': ' || name as name,
@@ -24,11 +20,11 @@ SELECT 'gnosis' as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-26') as created_at,
-       now() as updated_at,
+       CURRENT_TIMESTAMP() as updated_at,
         'contracts' as model_name,
        'identifier' as label_type
 FROM {{ source('gnosis','contracts') }} 
-UNION 
+UNION ALL 
 SELECT 'avalanche_c' as blockchain,
        address, 
        concat(upper(substring(namespace,1,1)),substring(namespace,2)) || ': ' || name as name,
@@ -36,11 +32,11 @@ SELECT 'avalanche_c' as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-26') as created_at,
-       now() as updated_at,
+       CURRENT_TIMESTAMP() as updated_at,
         'contracts' as model_name,
        'identifier' as label_type
 FROM {{ source('avalanche_c','contracts') }} 
-UNION 
+UNION ALL 
 SELECT 'arbitrum' as blockchain,
        address, 
        concat(upper(substring(namespace,1,1)),substring(namespace,2)) || ': ' || name as name,
@@ -48,11 +44,11 @@ SELECT 'arbitrum' as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-26') as created_at,
-       now() as updated_at,
+       CURRENT_TIMESTAMP() as updated_at,
        'contracts' as model_name,
        'identifier' as label_type
 FROM {{ source('arbitrum','contracts') }} 
-UNION 
+UNION ALL 
 SELECT 'bnb' as blockchain,
        address, 
        concat(upper(substring(namespace,1,1)),substring(namespace,2)) || ': ' || name as name,
@@ -60,11 +56,11 @@ SELECT 'bnb' as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-26') as created_at,
-       now() as updated_at,
+       CURRENT_TIMESTAMP() as updated_at,
        'contracts' as model_name,
        'identifier' as label_type
 FROM {{ source('bnb','contracts') }} 
-UNION 
+UNION ALL 
 SELECT 'optimism' as blockchain,
        address, 
        concat(upper(substring(namespace,1,1)),substring(namespace,2)) || ': ' || name as name,
@@ -72,11 +68,11 @@ SELECT 'optimism' as blockchain,
        'soispoke' as contributor,
        'query' AS source,
        date('2022-09-26') as created_at,
-       now() as updated_at,
+       CURRENT_TIMESTAMP() as updated_at,
        'contracts' as model_name,
        'identifier' as label_type
 FROM {{ source('optimism','contracts') }} 
-UNION 
+UNION ALL 
 SELECT 'fantom' as blockchain,
        address, 
        concat(upper(substring(namespace,1,1)),substring(namespace,2)) || ': ' || name as name,
@@ -84,11 +80,11 @@ SELECT 'fantom' as blockchain,
        'Henrystats' as contributor,
        'query' AS source,
        date('2022-12-18') as created_at,
-       now() as updated_at,
+       CURRENT_TIMESTAMP() as updated_at,
        'contracts' as model_name,
        'identifier' as label_type
 FROM {{ source('fantom','contracts') }} 
-UNION 
+UNION ALL 
 SELECT 'polygon' as blockchain,
        address, 
        concat(upper(substring(namespace,1,1)),substring(namespace,2)) || ': ' || name as name,
@@ -96,7 +92,7 @@ SELECT 'polygon' as blockchain,
        'Henrystats' as contributor,
        'query' AS source,
        date('2023-01-27') as created_at,
-       now() as updated_at,
+       CURRENT_TIMESTAMP() as updated_at,
        'contracts' as model_name,
        'identifier' as label_type
-FROM {{ source('polygon','contracts') }} 
+FROM {{ source('polygon','contracts') }}

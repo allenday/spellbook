@@ -1,10 +1,6 @@
 {{
     config(
-        alias='contract_deployers_arbitrum',
-        post_hook='{{ expose_spells(\'["arbitrum"]\',
-                                    "sector",
-                                    "labels",
-                                    \'["hildobby", "hosuke"]\') }}'
+        alias='contract_deployers_arbitrum'
     )
 }}
 
@@ -15,7 +11,7 @@ SELECT distinct 'arbitrum'           AS blockchain
               , 'hildobby'           AS contributor
               , 'query'              AS source
               , date('2023-03-03')   AS created_at
-              , NOW()                AS updated_at
+              , CURRENT_TIMESTAMP()                AS updated_at
               , 'contract_deployers' AS model_name
               , 'persona'            AS label_type
 FROM {{ source('arbitrum', 'creation_traces') }} creation

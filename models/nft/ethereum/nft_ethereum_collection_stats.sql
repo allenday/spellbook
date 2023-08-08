@@ -1,14 +1,8 @@
 {{ config(
     alias = 'collection_stats',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'nft_contract_address'],
-    post_hook='{{ expose_spells(\'["ethereum"]\',
-                                "sector",
-                                "nft",
-                                \'["Henrystats"]\') }}'
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'nft_contract_address']
     )
 }}
 
@@ -17,7 +11,7 @@ WITH src_data as
     SELECT 
         nft_contract_address
         , block_time
-        , date_trunc('day', block_time) as block_date
+        , TIMESTAMP_TRUNC(block_time, day) as block_date
         , currency_symbol
         , amount_original
         , amount_usd
@@ -28,7 +22,7 @@ WITH src_data as
         AND tx_from != LOWER('0x0000000000000000000000000000000000000000')
         AND amount_raw > 0
         {% if is_incremental() %}
-        AND block_time >= date_trunc("day", now() - interval '1 week')
+        AND block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 ),
 
@@ -49,15 +43,15 @@ days as
         {% if is_incremental() %}
         explode(
             sequence(
-                date_trunc("day", now() - interval '1 week'), date_trunc('day', now()), interval 1 day
+                date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week'), date_trunc('day', CURRENT_TIMESTAMP()), interval 1 day
             )
-        ) as day
+        ) AS `day`
         {% else %}
         explode(
             sequence(
-                to_date(first_trade_date), date_trunc('day', now()), interval 1 day -- first trade date in nft.trades
+                to_date(first_trade_date), date_trunc('day', CURRENT_TIMESTAMP()), interval 1 day -- first trade date in nft.trades
             )
-        ) as day
+        ) AS `day`
         {% endif %}
         , nft_contract_address
     FROM
@@ -76,7 +70,7 @@ prices as
         AND prices.blockchain = 'ethereum'
         AND prices.minute >= '2017-06-23' --first trade date
         {% if is_incremental() %}
-        AND prices.minute >= date_trunc("day", now() - interval '1 week')
+        AND prices.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 ), 
 
@@ -87,7 +81,7 @@ prof_data as
         src.nft_contract_address,
         percentile_cont(.05) WITHIN GROUP 
             (ORDER BY 
-                CASE 
+                `case` 
                     WHEN src.currency_symbol IN ('ETH', 'WETH') THEN src.amount_original 
                     ELSE src.amount_usd /prices.price
                 END       
@@ -115,7 +109,7 @@ prof_data as
         src_data src
     LEFT JOIN
         prices 
-        ON prices.minute = date_trunc('minute', src.block_time)
+        ON prices.minute = TIMESTAMP_TRUNC(src.block_time, minute)
     GROUP BY
         1, 2
 )

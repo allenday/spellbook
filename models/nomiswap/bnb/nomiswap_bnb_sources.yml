@@ -1,59 +1,52 @@
-version: 2
-
 sources:
-  - name: nomiswap_bnb
-    description: "BNB  Chain decoded tables related to SushiSwap contract"
-    freshness: # default freshness
-      warn_after: { count: 12, period: hour }
-      error_after: { count: 24, period: hour }
-    tables:
-      - name: NomiswapPair_evt_Swap
-        loaded_at_field: evt_block_time
-        description: "NomiSwap swap events table on BNB  Chain"
-        columns:
-          - &amount0In
-            name: amount0In
-          - &amount0Out
-            name: amount0Out
-          - &amount1In
-            name: amount1In
-          - &amount1Out
-            name: amount1Out
-          - &contract_address
-            name: contract_address
-            description: "BNB  Chain address for the liquidity pool used in transaction"
-          - &evt_block_number
-            name: evt_block_number
-            description: "Block number which processed the unique transaction hash"
-          - &evt_block_time
-            name: evt_block_time
-            description: "Timestamp for block event time in UTC"
-          - &evt_index
-            name: evt_index
-            description: "Index value of the transaction"
-          - &evt_tx_hash
-            name: evt_tx_hash
-            description: "Primary key of the transaction"
-            tests:
-              - not_null
-          - &sender
-            name: sender
-          - &to
-            name: to
-      - name: NomiswapFactory_evt_PairCreated
-        loaded_at_field: evt_block_time
-        description: "NomiSwap Pool created events table"
-        columns:
-          - &_0
-            name: _0
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - &pair
-            name: pair
-          - &token0
-            name: token0
-          - &token1
-            name: token1
+- description: BNB  Chain decoded tables related to SushiSwap contract
+  freshness:
+    error_after:
+      count: 24
+      period: hour
+    warn_after:
+      count: 12
+      period: hour
+  name: nomiswap_bnb
+  tables:
+  - columns:
+    - name: amount0In
+    - name: amount0Out
+    - name: amount1In
+    - name: amount1Out
+    - &id001
+      description: BNB  Chain address for the liquidity pool used in transaction
+      name: contract_address
+    - &id002
+      description: Block number which processed the unique transaction hash
+      name: evt_block_number
+    - &id003
+      description: Timestamp for block event time in UTC
+      name: evt_block_time
+    - &id004
+      description: Index value of the transaction
+      name: evt_index
+    - &id005
+      description: Primary key of the transaction
+      name: evt_tx_hash
+      tests:
+      - not_null
+    - name: sender
+    - name: to
+    description: NomiSwap swap events table on BNB  Chain
+    loaded_at_field: evt_block_time
+    name: NomiswapPair_evt_Swap
+  - columns:
+    - name: _0
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - name: pair
+    - name: token0
+    - name: token1
+    description: NomiSwap Pool created events table
+    loaded_at_field: evt_block_time
+    name: NomiswapFactory_evt_PairCreated
+version: 2

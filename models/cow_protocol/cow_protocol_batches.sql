@@ -1,14 +1,10 @@
 {{ config(
-        alias ='batches',
-        post_hook='{{ expose_spells(\'["ethereum", "gnosis"]\',
-                                    "project",
-                                    "cow_protocol",
-                                    \'["bh2smith", "gentrexha"]\') }}'
+        alias ='batches'
         )
 }}
 SELECT *
 FROM
-    (
+(
         SELECT
             'ethereum' AS blockchain,
             'CoW Protocol' AS project,
@@ -50,4 +46,4 @@ FROM
             unwraps,
             token_approvals
         FROM {{ ref('cow_protocol_gnosis_batches') }}
-    )
+)

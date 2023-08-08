@@ -1,14 +1,8 @@
 {{ config(
     alias = 'trades',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['tx_hash','evt_index','nft_contract_address','token_id'],
-    post_hook='{{ expose_spells(\'["avalanche_c"]\',
-                            "project",
-                            "seaport",
-                            \'["sohwak"]\') }}'
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['tx_hash','evt_index','nft_contract_address','token_id']
     )
 }}
 
@@ -24,7 +18,7 @@ with source_avalanche_c_transactions as (
     where block_time >= date '{{c_seaport_first_date}}'  -- seaport first txn
     {% endif %}
     {% if is_incremental() %}
-    where block_time >= date_trunc("day", now() - interval '1 week')
+    where block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 )
 ,ref_seaport_avalanche_c_base_pairs as (
@@ -32,7 +26,7 @@ with source_avalanche_c_transactions as (
       from {{ ref('seaport_avalanche_c_base_pairs') }}
       where 1=1
       {% if is_incremental() %}
-            and block_time >= date_trunc("day", now() - interval '1 week')
+            and block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
       {% endif %}
 )
 ,ref_tokens_nft as (
@@ -58,7 +52,7 @@ with source_avalanche_c_transactions as (
       and minute >= date '{{c_seaport_first_date}}'  -- seaport first txn
     {% endif %}
     {% if is_incremental() %} 
-      and minute >= date_trunc("day", now() - interval '1 week')
+      and minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 )
 ,iv_base_pairs_priv as (
@@ -243,7 +237,7 @@ with source_avalanche_c_transactions as (
   left join source_prices_usd p on p.contract_address = case when a.token_contract_address = '{{c_native_token_address}}' then '{{c_alternative_token_address}}'
                                                             else a.token_contract_address
                                                         end
-    and p.minute = date_trunc('minute', a.block_time)
+    and p.minute = TIMESTAMP_TRUNC(a.block_time, minute)
   left join ref_nft_aggregators agg on agg.contract_address = t.to                                     
 )
 ,iv_columns as (
@@ -324,4 +318,3 @@ with source_avalanche_c_transactions as (
 )
 select *
 from iv_columns
-;

@@ -1,14 +1,8 @@
 {{ config(
         alias = 'events',
-        partition_by = ['block_date'],
-        materialized = 'incremental',
-        file_format = 'delta',
-        incremental_strategy = 'merge',
-        unique_key = ['block_date', 'unique_trade_id'],
-        post_hook='{{ expose_spells(\'["ethereum"]\',
-                                    "project",
-                                    "sudoswap",
-                                    \'["ilemi"]\') }}'
+        partition_by = {"field": "block_date"},
+        materialized = 'view',
+                        unique_key = ['block_date', 'unique_trade_id']
         )
 }}
 
@@ -46,7 +40,7 @@ WITH
             WHERE call_success = true
             {% if is_incremental() %}
             -- this filter will only be applied on an incremental run. We only want to update with new swaps.
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
             UNION ALL
@@ -65,7 +59,7 @@ WITH
             WHERE call_success = true
             {% if is_incremental() %}
             -- this filter will only be applied on an incremental run. We only want to update with new swaps.
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
             UNION ALL
@@ -84,7 +78,7 @@ WITH
             WHERE call_success = true
             {% if is_incremental() %}
             -- this filter will only be applied on an incremental run. We only want to update with new swaps.
-            AND call_block_time >= date_trunc("day", now() - interval '1 week')
+            AND call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
         ) s
     )
@@ -99,7 +93,7 @@ WITH
         ON tr.success and s.call_block_number = tr.block_number and s.call_tx_hash = tr.tx_hash and s.call_trace_address = tr.trace_address
         {% if is_incremental() %}
         -- this filter will only be applied on an incremental run. We only want to update with new swaps.
-        AND tr.block_time >= date_trunc("day", now() - interval '1 week')
+        AND tr.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
         {% if not is_incremental() %}
         AND tr.block_time >= '2022-4-1'
@@ -204,7 +198,7 @@ WITH
                 CASE WHEN (tr.to = sb.protocolfee_recipient) THEN value
                 ELSE 0 END
                  ) as protocol_fee_amount -- what the buyer paid
-            , ARRAY_AGG(distinct CASE WHEN substring(input,1,10)='0x42842e0e' THEN bytea2numeric_v3(substring(input,139,64)) END)
+            , ARRAY_AGG(distinct CASE WHEN substring(input,1,10)='0x42842e0e' THEN udfs.bytea2numeric_v3(substring(input,139,64)) END)
                 as token_id
             , sb.call_tx_hash
             , sb.trade_recipient
@@ -228,7 +222,7 @@ WITH
                 OR cardinality(call_trace_address) = 0 -- In this case the swap function was called directly, all traces are thus subtraces of that call (like 0x34a52a94fce15c090cc16adbd6824948c731ecb19a39350633590a9cd163658b).
                 )
             {% if is_incremental() %}
-            AND tr.block_time >= date_trunc("day", now() - interval '1 week')
+            AND tr.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
             {% if not is_incremental() %}
             AND tr.block_time >= '2022-4-1'
@@ -242,7 +236,7 @@ WITH
             'ethereum' as blockchain
             , 'sudoswap' as project
             , 'v1' as version
-            , TRY_CAST(date_trunc('DAY', call_block_time) AS date) AS block_date
+            , SAFE_CAST(TIMESTAMP_TRUNC(call_block_time, DAY) AS date) AS block_date
             , call_block_time as block_time
             , call_block_number as block_number
             , token_id
@@ -275,12 +269,12 @@ WITH
             , (trade_price-protocol_fee_amount)/(1+pool_fee)*pool_fee/1e18 as pool_fee_amount
             , pool_fee as pool_fee_percentage
             -- royalties don't currently exist on the AMM,
-            , null::double as royalty_fee_amount_raw
-            , null::double as royalty_fee_amount
-            , null::double as royalty_fee_percentage
-            , null::string as royalty_fee_receive_address
-            , null::double as royalty_fee_amount_usd
-            , null::string as royalty_fee_currency_symbol
+            , CAST(null AS FLOAT64) as royalty_fee_amount_raw
+            , CAST(null AS FLOAT64) as royalty_fee_amount
+            , CAST(null AS FLOAT64) as royalty_fee_percentage
+            , CAST(null AS string) as royalty_fee_receive_address
+            , CAST(null AS FLOAT64) as royalty_fee_amount_usd
+            , CAST(null AS string) as royalty_fee_currency_symbol
             -- these 2 are used for matching the aggregator address, dropped later
             , router_caller
             , call_from
@@ -302,16 +296,16 @@ WITH
         INNER JOIN {{ source('ethereum', 'transactions') }} tx
             ON tx.block_number=sc.block_number and tx.hash=sc.tx_hash
             {% if is_incremental() %}
-            AND tx.block_time >= date_trunc("day", now() - interval '1 week')
+            AND tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
             {% if not is_incremental() %}
             AND tx.block_time >= '2022-4-1'
             {% endif %}
         LEFT JOIN {{ source('prices', 'usd') }} pu ON pu.blockchain='ethereum'
-            AND date_trunc('minute', pu.minute)=date_trunc('minute', sc.block_time)
+            AND TIMESTAMP_TRUNC(pu.minute, minute)=TIMESTAMP_TRUNC(sc.block_time, minute)
             AND symbol = 'WETH'
             {% if is_incremental() %}
-            AND pu.minute >= date_trunc("day", now() - interval '1 week')
+            AND pu.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
             {% if not is_incremental() %}
             AND pu.minute >= '2022-4-1'
@@ -335,13 +329,13 @@ WITH
             , block_number
             , explode(token_id) as token_id --nft.trades prefers each token id be its own row
             , token_standard
-            , CAST(number_of_items/number_of_items AS DECIMAL(38,0)) as number_of_items
+            , CAST(number_of_items/number_of_items AS BIGNUMERIC) as number_of_items
             , trade_type
             , trade_category
             , evt_type
             , seller
             , buyer
-            , cast(amount_raw/number_of_items as DECIMAL(38,0)) as amount_raw
+            , cast(amount_raw/number_of_items as BIGNUMERIC) as amount_raw
             , amount_original/number_of_items as amount_original
             , amount_usd/number_of_items as amount_usd
             , currency_symbol
@@ -355,7 +349,7 @@ WITH
             , aggregator_address
             , aggregator_name
             , platform_fee_amount/number_of_items as platform_fee_amount
-            , cast(platform_fee_amount_raw/number_of_items as double) as platform_fee_amount_raw
+            , cast(platform_fee_amount_raw/number_of_items as FLOAT64) as platform_fee_amount_raw
             , platform_fee_amount_usd/number_of_items as platform_fee_amount_usd
             , platform_fee_percentage
             , pool_fee_amount/number_of_items as pool_fee_amount
@@ -388,7 +382,7 @@ SELECT
     , evt_type
     , seller
     , buyer
-    , CAST(amount_raw AS DECIMAL(38,0)) AS amount_raw
+    , CAST(amount_raw AS BIGNUMERIC) AS amount_raw
     , amount_original
     , amount_usd
     , currency_symbol
@@ -417,4 +411,3 @@ SELECT
     , royalty_fee_receive_address
     , 'sudoswap-' || tx_hash || '-' || nft_contract_address ||'-'|| token_id || '-' || seller || 'Trade' AS unique_trade_id
 FROM swaps_exploded
-;

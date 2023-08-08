@@ -1,8 +1,4 @@
-{{config(alias='tornado_cash',
-        post_hook='{{ expose_spells(\'["ethereum", "arbitrum","bnb","avalanche_c","optimism","gnosis"]\',
-                                    "sector",
-                                    "labels",
-                                    \'["soispoke"]\') }}'
+{{config(alias='tornado_cash'
 )}}
 
 WITH tornado_addresses AS (
@@ -12,7 +8,7 @@ SELECT
     depositor AS address,
     'Depositor' as name
 FROM {{ ref('tornado_cash_deposits') }}
-UNION
+UNION ALL
 SELECT
     lower(blockchain) as blockchain,
     tx_hash,
@@ -24,12 +20,12 @@ FROM {{ ref('tornado_cash_withdrawals') }}
 SELECT
     blockchain,
     address,
-    'Tornado Cash ' || array_join(collect_set(name),' and ') AS name,
+    'Tornado Cash ' || STRING_AGG(collect_set(name),' and ') AS name,
     'tornado_cash' AS category,
     'soispoke' AS contributor,
     'query' AS source,
     timestamp('2022-10-01') as created_at,
-    now() as updated_at,
+    CURRENT_TIMESTAMP() as updated_at,
     'tornado_cash' AS model_name,
     'persona' AS label_type
 FROM tornado_addresses

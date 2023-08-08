@@ -1,256 +1,245 @@
 {{ config(
         alias = 'events',
-        partition_by = ['block_date'],
-        materialized = 'incremental',
-        file_format = 'delta',
-        incremental_strategy = 'merge',
-        unique_key = ['block_date', 'unique_trade_id'],
-        post_hook='{{ expose_spells(\'["ethereum"]\',
-                                    "project",
-                                    "archipelago",
-                                    \'["0xRob", "hildobby"]\') }}'
+        partition_by = {"field": "block_date"},
+        materialized = 'view',
+                        unique_key = ['block_date', 'unique_trade_id']
         )
 }}
 
 WITH
-trade_events AS (
-    SELECT
-        contract_address AS project_contract_address,
-        evt_block_number AS block_number,
-        evt_block_time AS block_time,
-        evt_tx_hash AS tx_hash,
-        buyer,
-        seller,
-        cost AS amount_raw,
-        currency AS currency_contract,
-        tradeid AS unique_trade_id
-    FROM {{ source('archipelago_ethereum','ArchipelagoMarket_evt_Trade') }}
-    {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval "1 week")
-    {% endif %}
-    {% if not is_incremental() %}
+    trade_events as (
+        SELECT
+            contract_address as project_contract_address
+            , evt_block_number as block_number
+            , evt_block_time as block_time
+            , evt_tx_hash as tx_hash
+            , buyer
+            , seller
+            , cost as amount_raw
+            , currency as currency_contract
+            , tradeId as unique_trade_id
+        FROM {{ source('archipelago_ethereum','ArchipelagoMarket_evt_Trade') }}
+        {% if is_incremental() %}
+        WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+        {% endif %}
+        {% if not is_incremental() %}
         WHERE evt_block_time >= '2022-6-20'
         {% endif %}
 
-),
+    ),
 
-token_events AS (
-    SELECT
-        evt_block_number AS block_number,
-        evt_block_time AS block_time,
-        evt_tx_hash AS tx_hash,
-        tokenaddress AS nft_contract_address,
-        tokenid AS token_id,
-        tradeid AS unique_trade_id
-    FROM {{ source('archipelago_ethereum','ArchipelagoMarket_evt_TokenTrade') }}
-    {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval "1 week")
-    {% endif %}
-    {% if not is_incremental() %}
+    token_events as (
+        SELECT
+             evt_block_number as block_number
+            , evt_block_time as block_time
+            , evt_tx_hash as tx_hash
+            , tokenAddress as nft_contract_address
+            , tokenId as token_id
+            , tradeId as unique_trade_id
+        FROM {{ source('archipelago_ethereum','ArchipelagoMarket_evt_TokenTrade') }}
+        {% if is_incremental() %}
+        WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+        {% endif %}
+        {% if not is_incremental() %}
         WHERE evt_block_time >= '2022-6-20'
         {% endif %}
 
-),
+    ),
 
-fee_events AS (
-    SELECT
-        evt_block_number AS block_number,
-        evt_block_time AS block_time,
-        evt_tx_hash AS tx_hash,
-        amount AS fee_amount_raw,
-        currency AS fee_currency_contract,
-        recipient AS fee_receive_address,
-        micros / pow(10, 4) AS fee_percentage,
-        tradeid AS unique_trade_id,
-        COALESCE ((
-            upper(recipient) = upper("0xA76456bb6aBC50FB38e17c042026bc27a95C3314")
-            OR upper(recipient) = upper("0x1fC12C9f68A6B0633Ba5897A40A8e61ed9274dC9")
-        ), FALSE)
-            AS is_protocol_fee
-    FROM {{ source('archipelago_ethereum','ArchipelagoMarket_evt_RoyaltyPayment') }}
-    {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval "1 week")
-    {% endif %}
-    {% if not is_incremental() %}
+    fee_events as (
+        SELECT
+             evt_block_number as block_number
+            , evt_block_time as block_time
+            , evt_tx_hash as tx_hash
+            , amount as fee_amount_raw
+            , currency as fee_currency_contract
+            , recipient as fee_receive_address
+            , micros / pow(10,4) as fee_percentage
+            , tradeId as unique_trade_id
+            , case when (
+                upper(recipient) = upper('0xA76456bb6aBC50FB38e17c042026bc27a95C3314')
+                or upper(recipient) = upper('0x1fC12C9f68A6B0633Ba5897A40A8e61ed9274dC9')
+                ) then true else false end
+                as is_protocol_fee
+        FROM {{ source('archipelago_ethereum','ArchipelagoMarket_evt_RoyaltyPayment') }}
+        {% if is_incremental() %}
+        WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+        {% endif %}
+        {% if not is_incremental() %}
         WHERE evt_block_time >= '2022-6-20'
         {% endif %}
 
-),
+    ),
 
-tokens_ethereum_nft AS (
-    SELECT *
-    FROM {{ ref('tokens_nft') }}
-    WHERE blockchain = "ethereum"
-),
+    tokens_ethereum_nft as (
+        SELECT
+            *
+        FROM {{ ref('tokens_nft') }}
+        WHERE blockchain = 'ethereum'
+    ),
 
-nft_ethereum_aggregators AS (
-    SELECT *
-    FROM {{ ref('nft_aggregators') }}
-    WHERE blockchain = "ethereum"
-),
+    nft_ethereum_aggregators as (
+        SELECT
+            *
+        FROM {{ ref('nft_aggregators') }}
+        WHERE blockchain = 'ethereum'
+    ),
 
--- enrichments
+    -- enrichments
 
-trades_with_nft_and_tx AS (
-    SELECT
-        e.*,
-        t.nft_contract_address,
-        t.token_id,
-        tx.from AS tx_from,
-        tx.to AS tx_to
-    FROM trade_events AS e
-    INNER JOIN token_events AS t
-        ON e.block_number = t.block_number AND e.unique_trade_id = t.unique_trade_id
-    INNER JOIN {{ source('ethereum', 'transactions') }} AS tx
-        ON
-            e.block_number = tx.block_number AND e.tx_hash = tx.hash
+    trades_with_nft_and_tx as (
+        select
+            e.*
+            , t.nft_contract_address
+            , t.token_id
+            , tx.from as tx_from
+            , tx.to  as tx_to
+        from trade_events e
+        inner join token_events t
+            ON e.block_number = t.block_number and e.unique_trade_id = t.unique_trade_id
+        inner join {{ source('ethereum', 'transactions') }} tx
+            ON e.block_number = tx.block_number and e.tx_hash = tx.hash
             {% if is_incremental() %}
-                AND tx.block_time >= date_trunc("day", now() - interval "1 week")
+            AND tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
-    {% if not is_incremental() %}
+            {% if not is_incremental() %}
             AND tx.block_time >= '2022-6-20'
             {% endif %}
-),
+    ),
 
-platform_fees AS (
-    SELECT
-        block_number,
-        sum(fee_amount_raw) AS platform_fee_amount_raw,
-        sum(fee_percentage) AS platform_fee_percentage,
-        unique_trade_id
-    FROM fee_events
-    WHERE is_protocol_fee
-    GROUP BY block_number, unique_trade_id
-),
+    platform_fees as (
+        select
+            block_number
+            ,sum(fee_amount_raw) as platform_fee_amount_raw
+            ,sum(fee_percentage) as platform_fee_percentage
+            ,unique_trade_id
+        from fee_events
+            where is_protocol_fee
+        group by block_number,unique_trade_id
+    ),
 
-royalty_fees AS (
-    SELECT
-        block_number,
-        sum(fee_amount_raw) AS royalty_fee_amount_raw,
-        sum(fee_percentage) AS royalty_fee_percentage,
-        CAST(null AS varchar(5)) AS royalty_fee_receive_address, -- we have multiple address so have to null this field
-        unique_trade_id
-    FROM fee_events
-    WHERE NOT is_protocol_fee
-    GROUP BY block_number, unique_trade_id
-),
+    royalty_fees as (
+        select
+            block_number
+            ,sum(fee_amount_raw) as royalty_fee_amount_raw
+            ,sum(fee_percentage) as royalty_fee_percentage
+            ,CAST(null AS STRING) as royalty_fee_receive_address -- we have multiple address so have to null this field
+            ,unique_trade_id
+        from fee_events
+            where not is_protocol_fee
+        group by block_number,unique_trade_id
+    ),
 
 
-trades_with_fees AS (
-    SELECT
-        t.*,
-        pf.platform_fee_amount_raw,
-        pf.platform_fee_percentage,
-        rf.royalty_fee_amount_raw,
-        rf.royalty_fee_percentage,
-        rf.royalty_fee_receive_address
-    FROM trades_with_nft_and_tx AS t
-    LEFT JOIN platform_fees AS pf
-        ON t.block_number = pf.block_number AND t.unique_trade_id = pf.unique_trade_id
-    LEFT JOIN royalty_fees AS rf
-        ON t.block_number = rf.block_number AND t.unique_trade_id = rf.unique_trade_id
+    trades_with_fees as (
+        select
+            t.*
+            , pf.platform_fee_amount_raw
+            , pf.platform_fee_percentage
+            , rf.royalty_fee_amount_raw
+            , rf.royalty_fee_percentage
+            , rf.royalty_fee_receive_address
+        from trades_with_nft_and_tx t
+        left join platform_fees pf
+            ON t.block_number = pf.block_number and t.unique_trade_id = pf.unique_trade_id
+        left join royalty_fees rf
+            ON t.block_number = rf.block_number and t.unique_trade_id = rf.unique_trade_id
 
-),
+    ),
 
-trades_with_price AS (
-    SELECT
-        t.*,
-        p.symbol AS currency_symbol,
-        amount_raw / pow(10, p.decimals) AS amount_original,
-        amount_raw / pow(10, p.decimals) * p.price AS amount_usd,
-        platform_fee_amount_raw / pow(10, p.decimals) AS platform_fee_amount,
-        platform_fee_amount_raw / pow(10, p.decimals) * p.price AS platform_fee_amount_usd,
-        royalty_fee_amount_raw / pow(10, p.decimals) AS royalty_fee_amount,
-        royalty_fee_amount_raw / pow(10, p.decimals) * p.price AS royalty_fee_amount_usd,
-        p.symbol AS royalty_fee_currency_symbol
-    FROM trades_with_fees AS t
-    LEFT JOIN {{ source('prices', 'usd') }} AS p
-        ON
-            p.blockchain = "ethereum"
-            AND p.symbol = "WETH" -- currently we only have ETH trades
-            AND date_trunc("minute", p.minute) = date_trunc("minute", t.block_time)
+    trades_with_price as (
+        select
+            t.*
+            , p.symbol as currency_symbol
+            , amount_raw/pow(10, p.decimals) as amount_original
+            , amount_raw/pow(10, p.decimals)*p.price as amount_usd
+            , platform_fee_amount_raw/pow(10, p.decimals) as platform_fee_amount
+            , platform_fee_amount_raw/pow(10, p.decimals)*p.price as platform_fee_amount_usd
+            , royalty_fee_amount_raw/pow(10, p.decimals) as royalty_fee_amount
+            , royalty_fee_amount_raw/pow(10, p.decimals)*p.price as royalty_fee_amount_usd
+            , p.symbol as royalty_fee_currency_symbol
+        from trades_with_fees t
+        left join {{ source('prices', 'usd') }} p ON p.blockchain='ethereum'
+            AND p.symbol = 'WETH' -- currently we only have ETH trades
+            AND TIMESTAMP_TRUNC(p.minute, minute)=TIMESTAMP_TRUNC(t.block_time, minute)
             {% if is_incremental() %}
-                AND p.minute >= date_trunc("day", now() - interval "1 week")
+            AND p.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
-    {% if not is_incremental() %}
+            {% if not is_incremental() %}
             AND p.minute >= '2022-4-1'
             {% endif %}
-),
+    ),
 
-trades_enhanced AS (
-    SELECT
-        t.*,
-        nft.standard AS token_standard,
-        nft.name AS collection,
-        agg.contract_address AS aggregator_address,
-        agg.name AS aggregator_name
-    FROM trades_with_price AS t
-    LEFT JOIN tokens_ethereum_nft AS nft
-        ON nft_contract_address = nft.contract_address
-    LEFT JOIN nft_ethereum_aggregators AS agg
-        ON tx_to = agg.contract_address
-)
+    trades_enhanced as (
+        select
+            t.*
+            , nft.standard as token_standard
+            , nft.name as collection
+            , agg.contract_address as aggregator_address
+            , agg.name as aggregator_name
+        from trades_with_price t
+        left join tokens_ethereum_nft nft
+            ON nft_contract_address = nft.contract_address
+        left join nft_ethereum_aggregators agg
+            ON tx_to = agg.contract_address
+    )
 
 
 SELECT
-    "ethereum" AS blockchain,
-    "archipelago" AS project,
-    "v1" AS version,
-    TRY_CAST(date_trunc("DAY", te.block_time) AS date) AS block_date,
-    te.block_time,
-    te.block_number,
-    te.token_id,
-    te.token_standard,
-    CAST(1 AS decimal(38, 0)) AS number_of_items,
-    "Single Item Trade" AS trade_type,
-    CASE WHEN te.tx_from = COALESCE(seller_fix.from, te.seller) THEN "Offer Accepted" ELSE "Buy" END AS trade_category,
-    "Trade" AS evt_type,
-    COALESCE(seller_fix.from, te.seller) AS seller,
-    COALESCE(buyer_fix.to, te.buyer) AS buyer,
-    CAST(te.amount_raw AS decimal(38, 0)) AS amount_raw,
-    te.amount_original,
-    te.amount_usd,
-    te.currency_symbol,
-    te.currency_contract,
-    te.project_contract_address,
-    te.nft_contract_address,
-    te.collection,
-    te.tx_hash,
-    te.tx_from,
-    te.tx_to,
-    te.aggregator_address,
-    te.aggregator_name,
-    te.platform_fee_amount,
-    te.platform_fee_amount_raw,
-    te.platform_fee_amount_usd,
-    CAST(te.platform_fee_percentage AS double) AS platform_fee_percentage,
-    te.royalty_fee_amount,
-    te.royalty_fee_amount_usd,
-    te.royalty_fee_amount_raw,
-    te.royalty_fee_currency_symbol,
-    te.royalty_fee_receive_address, -- null here
-    CAST(te.royalty_fee_percentage AS double) AS royalty_fee_percentage,
-    te.unique_trade_id
-FROM trades_enhanced AS te
-LEFT JOIN {{ ref('nft_ethereum_transfers') }} AS buyer_fix
-    ON
-        buyer_fix.block_time = te.block_time
-        AND te.nft_contract_address = buyer_fix.contract_address
-        AND buyer_fix.tx_hash = te.tx_hash
-        AND te.token_id = buyer_fix.token_id
-        AND te.buyer = te.aggregator_address
-        AND buyer_fix.from = te.aggregator_address
-        {% if is_incremental() %}
-            AND buyer_fix.block_time >= date_trunc("day", now() - interval "1 week")
-        {% endif %}
-LEFT JOIN {{ ref('nft_ethereum_transfers') }} AS seller_fix
-    ON
-        seller_fix.block_time = te.block_time
-        AND te.nft_contract_address = seller_fix.contract_address
-        AND seller_fix.tx_hash = te.tx_hash
-        AND te.token_id = seller_fix.token_id
-        AND te.seller = te.aggregator_address
-        AND seller_fix.to = te.aggregator_address
-        {% if is_incremental() %}
-            AND seller_fix.block_time >= date_trunc("day", now() - interval "1 week")
-        {% endif %}
+    'ethereum' as blockchain
+    , 'archipelago' as project
+    , 'v1' as version
+    , SAFE_CAST(TIMESTAMP_TRUNC(te.block_time, DAY) AS date) AS block_date
+    , te.block_time
+    , te.block_number
+    , te.token_id
+    , te.token_standard
+    , CAST(1 AS BIGNUMERIC) as number_of_items
+    , 'Single Item Trade' as trade_type
+    , case when te.tx_from = COALESCE(seller_fix.from, te.seller) then 'Offer Accepted' else 'Buy' end as trade_category
+    , 'Trade' as evt_type
+    , COALESCE(seller_fix.from, te.seller) AS seller
+    , COALESCE(buyer_fix.to, te.buyer) AS buyer
+    , CAST(te.amount_raw AS BIGNUMERIC) AS amount_raw
+    , te.amount_original
+    , te.amount_usd
+    , te.currency_symbol
+    , te.currency_contract
+    , te.project_contract_address
+    , te.nft_contract_address
+    , te.collection
+    , te.tx_hash
+    , te.tx_from
+    , te.tx_to
+    , te.aggregator_address
+    , te.aggregator_name
+    , te.platform_fee_amount
+    , te.platform_fee_amount_raw
+    , te.platform_fee_amount_usd
+    , CAST(te.platform_fee_percentage AS FLOAT64) AS platform_fee_percentage
+    , te.royalty_fee_amount
+    , te.royalty_fee_amount_usd
+    , te.royalty_fee_amount_raw
+    , te.royalty_fee_currency_symbol
+    , te.royalty_fee_receive_address -- null here
+    , CAST(te.royalty_fee_percentage AS FLOAT64) AS royalty_fee_percentage
+    , te.unique_trade_id
+from trades_enhanced te
+left join {{ ref('nft_ethereum_transfers') }} buyer_fix on buyer_fix.block_time=te.block_time
+    and te.nft_contract_address=buyer_fix.contract_address
+    and buyer_fix.tx_hash=te.tx_hash
+    and te.token_id=buyer_fix.token_id
+    and te.buyer=te.aggregator_address
+    and buyer_fix.from=te.aggregator_address
+    {% if is_incremental() %}
+    and buyer_fix.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+    {% endif %}
+left join {{ ref('nft_ethereum_transfers') }} seller_fix on seller_fix.block_time=te.block_time
+    and te.nft_contract_address=seller_fix.contract_address
+    and seller_fix.tx_hash=te.tx_hash
+    and te.token_id=seller_fix.token_id
+    and te.seller=te.aggregator_address
+    and seller_fix.to=te.aggregator_address
+    {% if is_incremental() %}
+    and seller_fix.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+    {% endif %}

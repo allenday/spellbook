@@ -1,97 +1,115 @@
-version: 2
-
 models:
-  - name: dao_votes
-    meta:
-      blockchain: ethereum
-      sector: dao
-      contributors: soispoke
-    config:
-      tags: ['ethereum', 'votes', 'dao', 'cross-chain']
-    description: >
-      DAO votes on all chains across all contracts and versions
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "Blockchain which the DAO is deployed"
-      - &project
-        name: project
-        description: "Project name of the DAO"
-      - &version
-        name: version
-        description: "Version of the contract built and deployed by the DAO project"
-      - &block_time
-        name: block_time
-        description: "UTC event block time of each DAO vote"
-      - &tx_hash
-        name: tx_hash
-        description: "Unique transaction hash value tied to each transaction on the DEX"
-      - &dao_name
-        name: dao_name
-        description: "DAO name"
-      - &dao_address
-        name: dao_address
-        description: "DAO wallet address"
-      - &proposal_id
-        name: proposal_id
-      - &votes
-        name: votes
-        description: "Votes weighted by the amount of governance tokens"
-      - &votes_share
-        name: votes_share
-        description: "Votes share in percent for a given proposal"
-      - &token_symbol
-        name: token_symbol
-      - &token_address
-        name: token_address
-      - &votes_value_usd
-        name: votes_value_usd
-        description: "Value in USD corresponding to the governance tokens used to vote on a given proposal"
-      - &voter_address
-        name: voter_address
-      - &support
-        name: support
-        description: "For, Against or Abstain votes"
-      - &reason
-        name: reason
-        description: "Optional onchain commments to explain votes"
+- columns:
+  - &id001
+    description: Blockchain which the DAO is deployed
+    name: blockchain
+    tests: []
+  - &id002
+    description: Project name of the DAO
+    name: project
+    tests: []
+  - &id003
+    description: Version of the contract built and deployed by the DAO project
+    name: version
+    tests: []
+  - description: UTC event block time of each DAO vote
+    name: block_time
+    tests: []
+  - &id004
+    description: Unique transaction hash value tied to each transaction on the DEX
+    name: tx_hash
+    tests: []
+  - &id005
+    description: DAO name
+    name: dao_name
+    tests: []
+  - &id006
+    description: DAO wallet address
+    name: dao_address
+    tests: []
+  - &id007
+    name: proposal_id
+    tests: []
+  - description: Votes weighted by the amount of governance tokens
+    name: votes
+    tests: []
+  - description: Votes share in percent for a given proposal
+    name: votes_share
+    tests: []
+  - name: token_symbol
+    tests: []
+  - name: token_address
+    tests: []
+  - description: Value in USD corresponding to the governance tokens used to vote
+      on a given proposal
+    name: votes_value_usd
+    tests: []
+  - name: voter_address
+    tests: []
+  - description: For, Against or Abstain votes
+    name: support
+    tests: []
+  - description: Optional onchain commments to explain votes
+    name: reason
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - votes
+    - dao
+    - cross-chain
+  description: 'DAO votes on all chains across all contracts and versions
 
+    '
+  meta:
+    blockchain: ethereum
+    contributors: soispoke
+    sector: dao
+  name: dao_votes
+  tests: []
+- columns:
+  - *id001
+  - *id002
+  - *id003
+  - description: UTC event block time at which the proposal was created
+    name: created_at
+    tests: []
+  - *id004
+  - *id005
+  - *id006
+  - *id007
+  - name: votes_for
+    tests: []
+  - name: votes_against
+    tests: []
+  - description: Total number of governance tokens used to vote on a given proposal
+    name: votes_total
+    tests: []
+  - name: number_of_voters
+    tests: []
+  - description: 'Participation in percent: Number of governance tokens used to vote
+      / Total token supply'
+    name: participation
+    tests: []
+  - description: 'Proposal status: Queued, Active, Executed, Canceled or Defeated'
+    name: status
+    tests: []
+  - description: Description of the proposal
+    name: description
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - proposals
+    - dao
+    - cross-chain
+  description: 'DAO proposals on all chains across all contracts and versions
 
-  - name: dao_proposals
-    meta:
-      blockchain: ethereum
-      sector: dao
-      contributors: soispoke
-    config:
-      tags: ['ethereum', 'proposals', 'dao', 'cross-chain']
-    description: >
-      DAO proposals on all chains across all contracts and versions
-    columns:
-      - *blockchain
-      - *project
-      - *version
-      - &create_at
-        name: created_at
-        description: "UTC event block time at which the proposal was created"
-      - *tx_hash
-      - *dao_name
-      - *dao_address
-      - *proposal_id
-      - &votes_for
-        name: votes_for
-      - &votes_against
-        name: votes_against
-      - &votes_total
-        name: votes_total
-        description: "Total number of governance tokens used to vote on a given proposal"
-      - &number_of_voters
-        name: number_of_voters
-      - &participation
-        name: participation
-        description: "Participation in percent: Number of governance tokens used to vote / Total token supply"
-      - &status
-        name: status
-        description: "Proposal status: Queued, Active, Executed, Canceled or Defeated"
-      - &description
-        name: description
-        description: "Description of the proposal"
+    '
+  meta:
+    blockchain: ethereum
+    contributors: soispoke
+    sector: dao
+  name: dao_proposals
+  tests: []
+version: 2

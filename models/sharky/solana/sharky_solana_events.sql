@@ -1,14 +1,8 @@
 {{ config(
     alias = 'events',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'tx_hash', 'id'],
-    post_hook='{{ expose_spells(\'["solana"]\',
-                                    "project",
-                                    "sharky",
-                                    \'["ennnas", "hosuke"]\') }}'
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'tx_hash', 'id']
     )
 }}
 
@@ -23,7 +17,7 @@ WITH sharky_txs AS (
             {% if not is_incremental() %}
             AND block_time >= '{{ project_start_date }}'
             {% else %}
-            AND block_time >= date_trunc("day", now() - interval '1 week')
+            AND block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
             AND address = '{{sharky_smart_contract}}'
     ),
@@ -37,7 +31,7 @@ WITH sharky_txs AS (
             {% if not is_incremental() %}
             AND minute >= '{{ project_start_date }}'
             {% else %}
-            AND minute >= date_trunc("day", now() - interval '1 week')
+            AND minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
     ),
     filtered_txs AS (
@@ -54,7 +48,7 @@ WITH sharky_txs AS (
         {% if not is_incremental() %}
         WHERE tx.block_time >= '{{ project_start_date }}'
         {% else %}
-        WHERE tx.block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
     ),
     raw_events AS (
@@ -78,7 +72,7 @@ WITH sharky_txs AS (
             ON sharky_txs.block_time = filtered_txs.block_time
             AND sharky_txs.id = filtered_txs.id
         LEFT JOIN sol_price p
-            ON p.minute = date_trunc('minute', filtered_txs.block_time)
+            ON p.minute = TIMESTAMP_TRUNC(filtered_txs.block_time, minute)
     ),
     decoded_events AS (
         SELECT *,
@@ -138,4 +132,3 @@ SELECT *,
                THEN sharky_instructions[0].account_arguments[0]
            END as loan_id
 FROM events
-;

@@ -1,14 +1,8 @@
 {{ config(
         alias ='transfers',
-        partition_by = ['block_date'],
-        materialized = 'incremental',
-        file_format = 'delta',
-        incremental_strategy = 'merge',
-        unique_key = ['blockchain', 'unique_transfer_id'],
-        post_hook='{{ expose_spells(\'["ethereum", "bnb", "avalanche_c", "gnosis", "optimism", "arbitrum", "polygon", "fantom", "goerli"]\',
-                                    "sector",
-                                    "nft",
-                                    \'["hildobby", "0xRob"]\') }}'
+        partition_by = {"field": "block_date"},
+        materialized = 'view',
+                        unique_key = ['blockchain', 'unique_transfer_id']
 )
 }}
 
@@ -39,13 +33,13 @@ FROM (
         , token_id
         , amount
         , `from`
-        , to
+        , `to`
         , executed_by
         , tx_hash
         , unique_transfer_id
     FROM {{ nft_model }}
     {% if is_incremental() %}
-    WHERE block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
     {% if not loop.last %}
     UNION ALL

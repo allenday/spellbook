@@ -1,59 +1,52 @@
 {{ config(
     alias='tokens'
-    , materialized = 'incremental'
+    , materialized = 'view'
     , file_format = 'delta'
     , incremental_strategy = 'merge'
     , unique_key = ['blockchain', 'atoken_address']
-    , post_hook='{{ expose_spells(\'["optimism"]\',
-                                  "project",
-                                  "the_granary",
-                                  \'["msilb7"]\') 
-    }}'
+    
   )
 }}
 
 
-SELECT DISTINCT
-    a.blockchain,
-    a.atoken_address,
-    a.underlying_address,
-    a.atoken_decimals,
-    a.side,
-    a.arate_type,
-    a.atoken_symbol,
-    a.atoken_name
+SELECT distinct a.blockchain
+              , a.atoken_address
+              , a.underlying_address
+              , a.atoken_decimals
+              , a.side
+              , a.arate_type
+              , a.atoken_symbol
+              , a.atoken_name
 
 FROM (
-    SELECT
-        'optimism' AS blockchain,
-        contract_address AS atoken_address,
-        underlyingasset AS underlying_address,
-        atokendecimals AS atoken_decimals,
-        'Supply' AS side,
-        'Variable' AS arate_type,
-        atokensymbol AS atoken_symbol,
-        atokenname AS atoken_name
-    FROM {{ source( 'the_granary_optimism', 'AToken_evt_Initialized' ) }}
-    {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc('day', now() - interval '1 week')
-    {% endif %}
+        SELECT 'optimism'        AS blockchain,
+               contract_address  AS atoken_address,
+               underlyingAsset   AS underlying_address,
+               aTokenDecimals    AS atoken_decimals,
+               'Supply'          AS side,
+               'Variable'        AS arate_type,
+               aTokenSymbol      AS atoken_symbol,
+               aTokenName        AS atoken_name
+        FROM {{source( 'the_granary_optimism', 'AToken_evt_Initialized' ) }}
+            {% if is_incremental() %}
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+            {% endif %}
 
-    UNION ALL
+        UNION ALL
 
-    SELECT
-        'optimism' AS blockchain,
-        contract_address AS atoken_address,
-        underlyingasset AS underlying_address,
-        debttokendecimals AS atoken_decimals,
-        'Borrow' AS side,
-        CASE WHEN
-            debttokenname
+        SELECT
+            'optimism'          AS blockchain,
+            contract_address    AS atoken_address,
+            underlyingAsset     AS underlying_address,
+            debtTokenDecimals   AS atoken_decimals,
+            'Borrow'            AS side,
+            CASE WHEN debtTokenName
             LIKE '%Stable%' THEN 'Stable'
-        ELSE 'Variable' END AS arate_type,
-        debttokensymbol AS atoken_symbol,
-        debttokenname AS atoken_name
-    FROM {{ source( 'the_granary_optimism', 'DebtToken_evt_Initialized' ) }}
-    {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc('day', now() - interval '1 week')
-    {% endif %}
-) AS a
+            ELSE 'Variable' END AS arate_type,
+            debtTokenSymbol     AS atoken_symbol,
+            debtTokenName       AS atoken_name
+        FROM {{source( 'the_granary_optimism', 'DebtToken_evt_Initialized' ) }}
+            {% if is_incremental() %}
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+            {% endif %}
+        ) a

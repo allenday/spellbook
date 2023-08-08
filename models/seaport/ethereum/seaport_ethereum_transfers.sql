@@ -9,15 +9,9 @@
 
 {{ config(
     alias = 'transfers',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'unique_trade_id'],
-    post_hook='{{ expose_spells(\'["ethereum"]\',
-                            "project",
-                            "seaport",
-                            \'["sohawk","soispoke"]\') }}'
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'unique_trade_id']
     )
 }}
 
@@ -26,7 +20,7 @@ with p1_call as (
           ,call_tx_hash as tx_hash
           ,call_block_time as block_time
           ,call_block_number as block_number
-          ,max(get_json_object(parameters, "$.basicOrderType")) as order_type_id
+          ,max(JSON_EXTRACT_SCALAR(parameters, "$.basicOrderType")) as order_type_id
       from {{ source('seaport_ethereum','Seaport_call_fulfillBasicOrder') }}
       {% if is_incremental() %} -- this filter will only be applied on an incremental run
       where call_block_time >= (select max(block_time) from {{ this }})
@@ -45,10 +39,10 @@ with p1_call as (
           ,e.offerer as sender
           ,e.recipient as receiver
           ,e.zone
-          ,concat('0x',substr(get_json_object(offer2, "$.token"),3,40)) as token_contract_address
-          ,get_json_object(offer2, "$.amount") as original_amount
-          ,get_json_object(offer2, "$.itemType") as item_type
-          ,get_json_object(offer2, "$.identifier") as token_id
+          ,concat('0x',substr(JSON_EXTRACT_SCALAR(offer2, "$.token"),3,40)) as token_contract_address
+          ,JSON_EXTRACT_SCALAR(offer2, "$.amount") as original_amount
+          ,JSON_EXTRACT_SCALAR(offer2, "$.itemType") as item_type
+          ,JSON_EXTRACT_SCALAR(offer2, "$.identifier") as token_id
           ,e.contract_address as exchange_contract_address
           ,e.evt_index
       from
@@ -67,12 +61,12 @@ with p1_call as (
           ,'consideration' as sub_type
           ,consideration_idx as sub_idx
           ,e.recipient as sender
-          ,concat('0x',substr(get_json_object(consideration2, "$.recipient"),3,40)) as receiver
+          ,concat('0x',substr(JSON_EXTRACT_SCALAR(consideration2, "$.recipient"),3,40)) as receiver
           ,e.zone
-          ,concat('0x',substr(get_json_object(consideration2, "$.token"),3,40)) as token_contract_address
-          ,get_json_object(consideration2, "$.amount") as original_amount
-          ,get_json_object(consideration2, "$.itemType") as item_type
-          ,get_json_object(consideration2, "$.identifier") as token_id
+          ,concat('0x',substr(JSON_EXTRACT_SCALAR(consideration2, "$.token"),3,40)) as token_contract_address
+          ,JSON_EXTRACT_SCALAR(consideration2, "$.amount") as original_amount
+          ,JSON_EXTRACT_SCALAR(consideration2, "$.itemType") as item_type
+          ,JSON_EXTRACT_SCALAR(consideration2, "$.identifier") as token_id
           ,e.contract_address as exchange_contract_address
           ,e.evt_index
       from
@@ -162,7 +156,7 @@ with p1_call as (
           'ethereum' as blockchain
           ,'seaport' as project
           ,'v1' as version
-          ,TRY_CAST(date_trunc('DAY', a.block_time) AS date) AS block_date
+          ,SAFE_CAST(TIMESTAMP_TRUNC(a.block_time, DAY) AS date) AS block_date
           ,a.block_time
           ,a.block_number
           ,a.nft_token_id as token_id
@@ -210,8 +204,8 @@ with p1_call as (
           '0x0000000000000000000000000000000000000000' then 'ETH'
                 when royalty_amount > 0 then t1.symbol
           end as royalty_fee_currency_symbol
-          ,a.tx_hash || '-' || a.nft_token_id || '-' || a.original_amount::string || '-' ||  concat('0x',substr(seller,3,40)) || '-' ||
-          order_type_id::string || '-' || cast(row_number () over (partition by a.tx_hash order by sub_idx) as
+          ,a.tx_hash || '-' || a.nft_token_id || '-' || a.CAST(original_amount AS string) || '-' ||  concat('0x',substr(seller,3,40)) || '-' ||
+          CAST(order_type_id AS string) || '-' || cast(row_number () over (partition by a.tx_hash order by sub_idx) as
           string) as unique_trade_id,
           a.zone
       from p1_txn_level a
@@ -221,7 +215,7 @@ with p1_call as (
             and tx.block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and tx.block_time >= date_trunc("day", now() - interval '1 week')
+            and tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
         left join {{ ref('nft_ethereum_aggregators_markers') }} agg_m
                 ON RIGHT(tx.data, agg_m.hash_marker_size) = agg_m.hash_marker
@@ -238,7 +232,7 @@ with p1_call as (
             and erct2.evt_block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
+            and erct2.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
         LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
             AND nft_contract_address=erct3.contract_address
@@ -249,7 +243,7 @@ with p1_call as (
             and erct3.evt_block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
+            and erct3.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
         left join {{ ref('tokens_erc20') }} t1
             on t1.contract_address =
@@ -264,10 +258,10 @@ with p1_call as (
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 else a.original_currency_contract
                 end
-            and p1.minute = date_trunc('minute', a.block_time)
+            and p1.minute = TIMESTAMP_TRUNC(a.block_time, minute)
             and p1.blockchain = 'ethereum'
             {% if is_incremental() %}
-            and p1.minute >= date_trunc("day", now() - interval '1 week')
+            and p1.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
             )
 
@@ -275,17 +269,17 @@ with p1_call as (
     select 'available_advanced_orders' as main_type
           ,'bulk' as sub_type
           ,idx as sub_idx
-          ,get_json_object(get_json_object(each, "$.parameters"), "$.zone") as zone
-          ,get_json_object(get_json_object(each, "$.parameters"), "$.offerer") as offerer
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.offer[0]"), "$.token") as offer_token
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.offer[0]"), "$.itemType") as offer_item_type
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.offer[0]"), "$.identifierOrCriteria") as offer_identifier
-          ,get_json_object(get_json_object(each, "$.parameters"), "$.orderType") as offer_order_type
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.consideration[0]"), "$.token") as price_token
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.consideration[0]"), "$.itemType") as price_item_type
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.consideration[0]"), "$.startAmount") as price_amount
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.consideration[1]"), "$.startAmount") as fee_amount
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.consideration[2]"), "$.startAmount") as royalty_amount
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.zone") as zone
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.offerer") as offerer
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.offer[0]"), "$.token") as offer_token
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.offer[0]"), "$.itemType") as offer_item_type
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.offer[0]"), "$.identifierOrCriteria") as offer_identifier
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.orderType") as offer_order_type
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.consideration[0]"), "$.token") as price_token
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.consideration[0]"), "$.itemType") as price_item_type
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.consideration[0]"), "$.startAmount") as price_amount
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.consideration[1]"), "$.startAmount") as fee_amount
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.consideration[2]"), "$.startAmount") as royalty_amount
           ,c.call_tx_hash as tx_hash
           ,c.call_block_time as block_time
           ,c.call_block_number as block_number
@@ -301,17 +295,17 @@ with p1_call as (
       select 'available_orders' as main_type
           ,'bulk' as sub_type
           ,idx as sub_idx
-          ,get_json_object(get_json_object(each, "$.parameters"), "$.zone") as zone
-          ,get_json_object(get_json_object(each, "$.parameters"), "$.offerer") as offerer
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.offer[0]"), "$.token") as offer_token
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.offer[0]"), "$.itemType") as offer_item_type
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.offer[0]"), "$.identifierOrCriteria") as offer_identifier
-          ,get_json_object(get_json_object(each, "$.parameters"), "$.orderType") as offer_order_type
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.consideration[0]"), "$.token") as price_token
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.consideration[0]"), "$.itemType") as price_item_type
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.consideration[0]"), "$.startAmount") as price_amount
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.consideration[1]"), "$.startAmount") as fee_amount
-          ,get_json_object(get_json_object(get_json_object(each, "$.parameters"), "$.consideration[2]"), "$.startAmount") as royalty_amount
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.zone") as zone
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.offerer") as offerer
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.offer[0]"), "$.token") as offer_token
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.offer[0]"), "$.itemType") as offer_item_type
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.offer[0]"), "$.identifierOrCriteria") as offer_identifier
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.orderType") as offer_order_type
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.consideration[0]"), "$.token") as price_token
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.consideration[0]"), "$.itemType") as price_item_type
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.consideration[0]"), "$.startAmount") as price_amount
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.consideration[1]"), "$.startAmount") as fee_amount
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.parameters"), "$.consideration[2]"), "$.startAmount") as royalty_amount
           ,c.call_tx_hash as tx_hash
           ,c.call_block_time as block_time
           ,c.call_block_number as block_number
@@ -327,30 +321,30 @@ with p1_call as (
  select c.*
           ,evt_tx_hash
           ,e.recipient
-          ,get_json_object(offer[0], "$.amount") as evt_token_amount
-          ,get_json_object(consideration[0], "$.token") as evt_price_token
-          ,get_json_object(consideration[0], "$.amount") as evt_price_amount
-          ,get_json_object(consideration[0], "$.itemType") as evt_price_item_type
-          ,get_json_object(consideration[0], "$.recipient") as evt_price_recipient
-          ,get_json_object(consideration[0], "$.identifier") as evt_price_identifier
-          ,get_json_object(consideration[0], "$.token") as evt_fee_token
-          ,get_json_object(consideration[1], "$.amount") as evt_fee_amount
-          ,get_json_object(consideration[1], "$.itemType") as evt_fee_item_type
-          ,get_json_object(consideration[1], "$.recipient") as evt_fee_recipient
-          ,get_json_object(consideration[1], "$.identifier") as evt_fee_identifier
-          ,get_json_object(consideration[2], "$.token") as evt_royalty_token
-          ,get_json_object(consideration[2], "$.amount") as evt_royalty_amount
-          ,get_json_object(consideration[2], "$.itemType") as evt_royalty_item_type
-          ,get_json_object(consideration[2], "$.recipient") as evt_royalty_recipient
-          ,get_json_object(consideration[2], "$.identifier") as evt_royalty_identifier
+          ,JSON_EXTRACT_SCALAR(offer[0], "$.amount") as evt_token_amount
+          ,JSON_EXTRACT_SCALAR(consideration[0], "$.token") as evt_price_token
+          ,JSON_EXTRACT_SCALAR(consideration[0], "$.amount") as evt_price_amount
+          ,JSON_EXTRACT_SCALAR(consideration[0], "$.itemType") as evt_price_item_type
+          ,JSON_EXTRACT_SCALAR(consideration[0], "$.recipient") as evt_price_recipient
+          ,JSON_EXTRACT_SCALAR(consideration[0], "$.identifier") as evt_price_identifier
+          ,JSON_EXTRACT_SCALAR(consideration[0], "$.token") as evt_fee_token
+          ,JSON_EXTRACT_SCALAR(consideration[1], "$.amount") as evt_fee_amount
+          ,JSON_EXTRACT_SCALAR(consideration[1], "$.itemType") as evt_fee_item_type
+          ,JSON_EXTRACT_SCALAR(consideration[1], "$.recipient") as evt_fee_recipient
+          ,JSON_EXTRACT_SCALAR(consideration[1], "$.identifier") as evt_fee_identifier
+          ,JSON_EXTRACT_SCALAR(consideration[2], "$.token") as evt_royalty_token
+          ,JSON_EXTRACT_SCALAR(consideration[2], "$.amount") as evt_royalty_amount
+          ,JSON_EXTRACT_SCALAR(consideration[2], "$.itemType") as evt_royalty_item_type
+          ,JSON_EXTRACT_SCALAR(consideration[2], "$.recipient") as evt_royalty_recipient
+          ,JSON_EXTRACT_SCALAR(consideration[2], "$.identifier") as evt_royalty_identifier
           ,e.evt_index
       from p2_call c
             inner join {{ source('seaport_ethereum','Seaport_evt_OrderFulfilled') }} e
             on e.evt_tx_hash = c.tx_hash
             and e.offerer = concat('0x',substr(c.offerer,3,40))
-            and get_json_object(e.offer[0], "$.token") = c.offer_token
-            and get_json_object(e.offer[0], "$.identifier") = c.offer_identifier
-            and get_json_object(e.offer[0], "$.itemType") = c.offer_item_type
+            and JSON_EXTRACT_SCALAR(e.offer[0], "$.token") = c.offer_token
+            and JSON_EXTRACT_SCALAR(e.offer[0], "$.identifier") = c.offer_identifier
+            and JSON_EXTRACT_SCALAR(e.offer[0], "$.itemType") = c.offer_item_type
 )
 ,p2_transfer_level as (
     select a.main_type
@@ -394,7 +388,7 @@ with p1_call as (
           'ethereum' as blockchain
           ,'seaport' as project
           ,'v1' as version
-          ,TRY_CAST(date_trunc('DAY', a.block_time) AS date) AS block_date
+          ,SAFE_CAST(TIMESTAMP_TRUNC(a.block_time, DAY) AS date) AS block_date
           ,a.block_time
           ,a.block_number
           ,a.nft_token_id as token_id
@@ -441,7 +435,7 @@ with p1_call as (
           '0x0000000000000000000000000000000000000000' then 'ETH'
                 when evt_royalty_amount > 0 then t1.symbol
           end as royalty_fee_currency_symbol
-          ,a.tx_hash || '-' || a.nft_token_id || '-' || a.attempt_amount::string || '-' ||  concat('0x',substr(seller,3,40)) || '-' ||
+          ,a.tx_hash || '-' || a.nft_token_id || '-' || a.CAST(attempt_amount AS string) || '-' ||  concat('0x',substr(seller,3,40)) || '-' ||
           cast(row_number () over (partition by a.tx_hash order by sub_idx) as
           string) as unique_trade_id,
           a.zone
@@ -452,7 +446,7 @@ with p1_call as (
             and tx.block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and tx.block_time >= date_trunc("day", now() - interval '1 week')
+            and tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
         LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
             AND concat('0x',substr(a.nft_address,3,40))=erct2.contract_address
@@ -463,7 +457,7 @@ with p1_call as (
             and erct2.evt_block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
+            and erct2.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
         LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
             AND concat('0x',substr(a.nft_address,3,40))=erct3.contract_address
@@ -474,7 +468,7 @@ with p1_call as (
             and erct3.evt_block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
+            and erct3.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
         left join {{ ref('nft_ethereum_aggregators_markers') }} agg_m
                 ON RIGHT(tx.data, agg_m.hash_marker_size) = agg_m.hash_marker
@@ -494,10 +488,10 @@ with p1_call as (
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 else concat('0x',substr(a.price_token,3,40))
                 end
-            and p1.minute = date_trunc('minute', a.block_time)
+            and p1.minute = TIMESTAMP_TRUNC(a.block_time, minute)
             and p1.blockchain = 'ethereum'
             {% if is_incremental() %}
-            and p1.minute >= date_trunc("day", now() - interval '1 week')
+            and p1.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
             )
 
@@ -505,7 +499,7 @@ with p1_call as (
           ,call_tx_hash as tx_hash
           ,call_block_time as block_time
           ,call_block_number as block_number
-          ,max(get_json_object(get_json_object(order, "$.parameters"), "$.orderType")) as order_type_id
+          ,max(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(order, "$.parameters"), "$.orderType")) as order_type_id
       from {{ source('seaport_ethereum','Seaport_call_fulfillOrder') }}
       {% if is_incremental() %} -- this filter will only be applied on an incremental run
       where call_block_time >= (select max(block_time) from {{ this }})
@@ -516,7 +510,7 @@ with p1_call as (
           ,call_tx_hash as tx_hash
           ,call_block_time as block_time
           ,call_block_number as block_number
-          ,max(get_json_object(get_json_object(advancedOrder, "$.parameters"), "$.orderType")) as order_type_id
+          ,max(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(advancedOrder, "$.parameters"), "$.orderType")) as order_type_id
       from {{ source('seaport_ethereum','Seaport_call_fulfillAdvancedOrder') }}
       {% if is_incremental() %} -- this filter will only be applied on an incremental run
       where call_block_time >= (select max(block_time) from {{ this }})
@@ -533,10 +527,10 @@ with p1_call as (
             ,e.offerer as sender
             ,e.recipient as receiver
             ,e.zone
-            ,concat('0x',substr(get_json_object(offer2, "$.token"),3,40)) as token_contract_address
-            ,get_json_object(offer2, "$.amount") as original_amount
-            ,get_json_object(offer2, "$.itemType") as item_type
-            ,get_json_object(offer2, "$.identifier") as token_id
+            ,concat('0x',substr(JSON_EXTRACT_SCALAR(offer2, "$.token"),3,40)) as token_contract_address
+            ,JSON_EXTRACT_SCALAR(offer2, "$.amount") as original_amount
+            ,JSON_EXTRACT_SCALAR(offer2, "$.itemType") as item_type
+            ,JSON_EXTRACT_SCALAR(offer2, "$.identifier") as token_id
             ,e.contract_address as exchange_contract_address
             ,e.evt_index
         from
@@ -555,12 +549,12 @@ with p1_call as (
             ,'consideration' as sub_type
             ,consideration_idx as sub_idx
             ,e.recipient as sender
-            ,concat('0x',substr(get_json_object(consideration2, "$.recipient"),3,40)) as receiver
+            ,concat('0x',substr(JSON_EXTRACT_SCALAR(consideration2, "$.recipient"),3,40)) as receiver
             ,e.zone
-            ,concat('0x',substr(get_json_object(consideration2, "$.token"),3,40)) as token_contract_address
-            ,get_json_object(consideration2, "$.amount") as original_amount
-            ,get_json_object(consideration2, "$.itemType") as item_type
-            ,get_json_object(consideration2, "$.identifier") as token_id
+            ,concat('0x',substr(JSON_EXTRACT_SCALAR(consideration2, "$.token"),3,40)) as token_contract_address
+            ,JSON_EXTRACT_SCALAR(consideration2, "$.amount") as original_amount
+            ,JSON_EXTRACT_SCALAR(consideration2, "$.itemType") as item_type
+            ,JSON_EXTRACT_SCALAR(consideration2, "$.identifier") as token_id
             ,e.contract_address as exchange_contract_address
             ,e.evt_index
         from
@@ -573,8 +567,8 @@ with p1_call as (
         )
 
 
-,p3_add_rn as (select (max(case when purchase_method = 'Offer Accepted' and sub_type = 'offer' and sub_idx = 0 then token_contract_address::string
-                     when purchase_method = 'Buy' and sub_type = 'consideration' then token_contract_address::string
+,p3_add_rn as (select (max(case when purchase_method = 'Offer Accepted' and sub_type = 'offer' and sub_idx = 0 then CAST(token_contract_address AS string)
+                     when purchase_method = 'Buy' and sub_type = 'consideration' then CAST(token_contract_address AS string)
                 end) over (partition by tx_hash, evt_index)) as avg_original_currency_contract
           ,sum(case when purchase_method = 'Offer Accepted' and sub_type = 'offer' and sub_idx = 0 then original_amount
                     when purchase_method = 'Buy' and sub_type = 'consideration' then original_amount
@@ -582,8 +576,8 @@ with p1_call as (
            / nft_transfer_count as avg_original_amount
           ,sum(case when fee_royalty_yn = 'fee' then original_amount end) over (partition by tx_hash, evt_index) / nft_transfer_count as avg_fee_amount
           ,sum(case when fee_royalty_yn = 'royalty' then original_amount end) over (partition by tx_hash, evt_index) / nft_transfer_count as avg_royalty_amount
-          ,(max(case when fee_royalty_yn = 'fee' then receiver::string end) over (partition by tx_hash, evt_index)) as avg_fee_receive_address
-          ,(max(case when fee_royalty_yn = 'royalty' then receiver::string end) over (partition by tx_hash, evt_index)) as avg_royalty_receive_address
+          ,(max(case when fee_royalty_yn = 'fee' then CAST(receiver AS string) end) over (partition by tx_hash, evt_index)) as avg_fee_receive_address
+          ,(max(case when fee_royalty_yn = 'royalty' then CAST(receiver AS string) end) over (partition by tx_hash, evt_index)) as avg_royalty_receive_address
           ,a.*
       from (select case when purchase_method = 'Offer Accepted' and sub_type = 'consideration' and fee_royalty_idx = 1 then 'fee'
                         when purchase_method = 'Offer Accepted' and sub_type = 'consideration' and fee_royalty_idx = 2 then 'royalty'
@@ -632,7 +626,7 @@ with p1_call as (
           ,token_id as nft_token_id
           ,nft_transfer_count
           ,original_amount as nft_item_count
---         quickfix for Issue #1510 that results in double counting of fees
+--         quickfix for Issue #1510 that results in FLOAT64 counting of fees
 --        ,coalesce(avg_original_amount,0) + coalesce(avg_fee_amount,0) + coalesce(avg_royalty_amount,0) as attempt_amount
           ,coalesce(avg_original_amount,0) as attempt_amount
           ,0 as revert_amount
@@ -649,7 +643,7 @@ with p1_call as (
           'ethereum' as blockchain
           ,'seaport' as project
           ,'v1' as version
-          ,TRY_CAST(date_trunc('DAY', a.block_time) AS date) AS block_date
+          ,SAFE_CAST(TIMESTAMP_TRUNC(a.block_time, DAY) AS date) AS block_date
           ,a.block_time
           ,a.block_number
           ,a.nft_token_id as token_id
@@ -698,8 +692,8 @@ with p1_call as (
           '0x0000000000000000000000000000000000000000' then 'ETH'
           when royalty_amount > 0 then t1.symbol
           end as royalty_fee_currency_symbol
-          ,a.tx_hash || '-' || a.attempt_amount::string || '-' || a.nft_token_id || '-' ||  concat('0x',substr(seller,3,40)) || '-' ||
-          order_type_id::string || '-' || cast(row_number () over (partition by a.tx_hash order by sub_idx) as
+          ,a.tx_hash || '-' || a.CAST(attempt_amount AS string) || '-' || a.nft_token_id || '-' ||  concat('0x',substr(seller,3,40)) || '-' ||
+          CAST(order_type_id AS string) || '-' || cast(row_number () over (partition by a.tx_hash order by sub_idx) as
           string) as unique_trade_id,
           a.zone
       from p3_txn_level a
@@ -709,7 +703,7 @@ with p1_call as (
             and tx.block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and tx.block_time >= date_trunc("day", now() - interval '1 week')
+            and tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
         left join {{ ref('nft_aggregators') }} agg
             ON agg.contract_address = tx.to AND agg.blockchain = 'ethereum'
@@ -726,7 +720,7 @@ with p1_call as (
             and erct2.evt_block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
+            and erct2.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
         LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
             AND nft_contract_address=erct3.contract_address
@@ -737,7 +731,7 @@ with p1_call as (
             and erct3.evt_block_number > 14801608
             {% endif %}
             {% if is_incremental() %}
-            and erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
+            and erct3.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
         left join {{ ref('tokens_erc20') }} t1
             on t1.contract_address =
@@ -752,23 +746,23 @@ with p1_call as (
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
                 else a.original_currency_contract
                 end
-            and p1.minute = date_trunc('minute', a.block_time)
+            and p1.minute = TIMESTAMP_TRUNC(a.block_time, minute)
             and p1.blockchain = 'ethereum'
             {% if is_incremental() %}
-            and p1.minute >= date_trunc("day", now() - interval '1 week')
+            and p1.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
             )
 
 ,p4_call as (select 'match_orders' as main_type
           ,'match_orders' as sub_type
           ,idx as sub_idx
-          ,get_json_object(get_json_object(c.orders[0], "$.parameters"), "$.zone") as zone
-          ,get_json_object(each, "$.offerer") as offerer
-          ,get_json_object(get_json_object(each, "$.item"),"$.token") as offer_token
-          ,get_json_object(get_json_object(each, "$.item"),"$.amount") as offer_amount
-          ,get_json_object(get_json_object(each, "$.item"),"$.itemType") as offer_item_type
-          ,get_json_object(get_json_object(each, "$.item"),"$.identifier") as offer_identifier
-          ,get_json_object(get_json_object(each, "$.item"),"$.recipient") as recipient
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(c.orders[0], "$.parameters"), "$.zone") as zone
+          ,JSON_EXTRACT_SCALAR(each, "$.offerer") as offerer
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.item"),"$.token") as offer_token
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.item"),"$.amount") as offer_amount
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.item"),"$.itemType") as offer_item_type
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.item"),"$.identifier") as offer_identifier
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.item"),"$.recipient") as recipient
           ,c.call_tx_hash as tx_hash
           ,c.call_block_time as block_time
           ,c.call_block_number as block_number
@@ -784,13 +778,13 @@ with p1_call as (
     select 'match_advanced_orders' as main_type
           ,'match_advanced_orders' as sub_type
           ,idx as sub_idx
-          ,get_json_object(get_json_object(c.advancedOrders[0], "$.parameters"), "$.zone") as zone
-          ,get_json_object(each, "$.offerer") as offerer
-          ,get_json_object(get_json_object(each, "$.item"),"$.token") as offer_token
-          ,get_json_object(get_json_object(each, "$.item"),"$.amount") as offer_amount
-          ,get_json_object(get_json_object(each, "$.item"),"$.itemType") as offer_item_type
-          ,get_json_object(get_json_object(each, "$.item"),"$.identifier") as offer_identifier
-          ,get_json_object(get_json_object(each, "$.item"),"$.recipient") as recipient
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(c.advancedOrders[0], "$.parameters"), "$.zone") as zone
+          ,JSON_EXTRACT_SCALAR(each, "$.offerer") as offerer
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.item"),"$.token") as offer_token
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.item"),"$.amount") as offer_amount
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.item"),"$.itemType") as offer_item_type
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.item"),"$.identifier") as offer_identifier
+          ,JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(each, "$.item"),"$.recipient") as recipient
           ,c.call_tx_hash as tx_hash
           ,c.call_block_time as block_time
           ,c.call_block_number as block_number
@@ -880,7 +874,7 @@ with p1_call as (
           'ethereum' as blockchain
           ,'seaport' as project
           ,'v1' as version
-          ,TRY_CAST(date_trunc('DAY', a.block_time) AS date) AS block_date
+          ,SAFE_CAST(TIMESTAMP_TRUNC(a.block_time, DAY) AS date) AS block_date
           ,a.block_time
           ,a.block_number
           ,a.nft_token_id as token_id
@@ -930,7 +924,7 @@ with p1_call as (
           '0x0000000000000000000000000000000000000000' then 'ETH'
                 when evt_royalty_amount > 0 then t1.symbol
           end as royalty_fee_currency_symbol
-          ,a.tx_hash || '-' || a.nft_token_id || '-' || a.attempt_amount::string || '-' || concat('0x',substr(seller,3,40)) || '-' || cast(row_number () over (partition by a.tx_hash order by sub_idx) as
+          ,a.tx_hash || '-' || a.nft_token_id || '-' || a.CAST(attempt_amount AS string) || '-' || concat('0x',substr(seller,3,40)) || '-' || cast(row_number () over (partition by a.tx_hash order by sub_idx) as
           string) as unique_trade_id,
           a.zone
     from p4_transfer_level a
@@ -940,7 +934,7 @@ with p1_call as (
         and tx.block_number > 14801608
         {% endif %}
         {% if is_incremental() %}
-        and tx.block_time >= date_trunc("day", now() - interval '1 week')
+        and tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
     LEFT JOIN {{ source('erc721_ethereum','evt_transfer') }} erct2 ON erct2.evt_block_time=a.block_time
         AND concat('0x',substr(a.nft_address,3,40))=erct2.contract_address
@@ -951,7 +945,7 @@ with p1_call as (
         and erct2.evt_block_number > 14801608
         {% endif %}
         {% if is_incremental() %}
-        and erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        and erct2.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
     LEFT JOIN {{ source('erc1155_ethereum','evt_transfersingle') }} erct3 ON erct3.evt_block_time=a.block_time
         AND concat('0x',substr(a.nft_address,3,40))=erct3.contract_address
@@ -962,7 +956,7 @@ with p1_call as (
         and erct3.evt_block_number > 14801608
         {% endif %}
         {% if is_incremental() %}
-        and erct3.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        and erct3.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
         left join {{ ref('nft_ethereum_aggregators_markers') }} agg_m
                 ON RIGHT(tx.data, agg_m.hash_marker_size) = agg_m.hash_marker
@@ -983,10 +977,10 @@ with p1_call as (
             then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
             else concat('0x',substr(a.price_token,3,40))
             end
-        and p1.minute = date_trunc('minute', a.block_time)
+        and p1.minute = TIMESTAMP_TRUNC(a.block_time, minute)
         and p1.blockchain = 'ethereum'
         {% if is_incremental() %}
-        and p1.minute >= date_trunc("day", now() - interval '1 week')
+        and p1.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
             )
 

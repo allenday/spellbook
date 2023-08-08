@@ -1,127 +1,152 @@
-version: 2
-
 models:
-  - name: jarvis_network_polygon_all_transactions 
-    meta:
-      blockchain: polygon
-      sector: forex
-      project: jarvis_network
-      contributors: 0xroll
-    config:
-      tags: ['polygon','synthereum','currencies','forex', 'Jarvis Network', '0xroll']
-    description: >
-        Jarvis Network Synthereum transactions on Polygon across all contracts and versions. This table will load all synthereum activities downstream.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - block_date
-            - evt_tx_hash
-            - evt_index
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "Blockchain which the contract is deployed" 
-      - &evt_block_time
-        name: evt_block_time
-        description: "UTC event block time of the transaction"
-      - &block_date
-        name: block_date
-        description: "UTC event block date of the transaction"
-      - &action
-        name: action
-        description:  "Transaction description (Mint,Redeem,Exchange)"
-      - &user
-        name: user
-        description:  "Address of the sender"
-      - &recipient
-        name: recipient
-        description:  "Address of the recipient"
-      - &jfiat_token_symbol
-        name: jfiat_token_symbol
-        description:  "Token symbol of jarvis synthetic currency"
-      - &jfiat_token_amount
-        name: jfiat_token_amount
-        description:  "Amount of jarvis synthetic currency token"
-      - &collateral_symbol
-        name: collateral_symbol
-        description:  "Token symbol of collateral"
-      - &collateral_token_amount
-        name: collateral_token_amount,
-        description:  "Collateral token amount"
-      - &net_collateral_amount
-        name: net_collateral_amount
-        description:  "Net Collateral token amount"
-      - &fee_amount
-        name: fee_amount
-        description:  "Fee amount"
-      - &collateral_token_amount_usd
-        name: collateral_token_amount_usd
-        description:  "Collateral token amount in USD"
-      - &net_collateral_amount_usd
-        name: net_collateral_amount_usd
-        description:  "Net collateral amount in USD"
-      - &net_amount_usd
-        name: net_amount_usd
-        description:  "Transaction net amount in usd"
-      - &fee_amount_usd
-        name: fee_amount_usd
-        description:  "Transaction fee in usd"
-      - &evt_tx_hash
-        name: evt_tx_hash
-        description:  "Transaction Hash"
-      - &evt_index
-        name: evt_index
-        description:  "Event index of the transaction"
+- columns:
+  - description: Blockchain which the contract is deployed
+    name: blockchain
+    tests: []
+  - description: UTC event block time of the transaction
+    name: evt_block_time
+    tests: []
+  - description: UTC event block date of the transaction
+    name: block_date
+    tests: []
+  - description: Transaction description (Mint,Redeem,Exchange)
+    name: action
+    tests: []
+  - description: Address of the sender
+    name: user
+    tests: []
+  - description: Address of the recipient
+    name: recipient
+    tests: []
+  - description: Token symbol of jarvis synthetic currency
+    name: jfiat_token_symbol
+    tests: []
+  - description: Amount of jarvis synthetic currency token
+    name: jfiat_token_amount
+    tests: []
+  - description: Token symbol of collateral
+    name: collateral_symbol
+    tests: []
+  - description: Collateral token amount
+    name: collateral_token_amount,
+    tests: []
+  - description: Net Collateral token amount
+    name: net_collateral_amount
+    tests: []
+  - description: Fee amount
+    name: fee_amount
+    tests: []
+  - description: Collateral token amount in USD
+    name: collateral_token_amount_usd
+    tests: []
+  - description: Net collateral amount in USD
+    name: net_collateral_amount_usd
+    tests: []
+  - description: Transaction net amount in usd
+    name: net_amount_usd
+    tests: []
+  - description: Transaction fee in usd
+    name: fee_amount_usd
+    tests: []
+  - description: Transaction Hash
+    name: evt_tx_hash
+    tests: []
+  - description: Event index of the transaction
+    name: evt_index
+    tests: []
+  config:
+    tags:
+    - polygon
+    - synthereum
+    - currencies
+    - forex
+    - Jarvis Network
+    - 0xroll
+  description: 'Jarvis Network Synthereum transactions on Polygon across all contracts
+    and versions. This table will load all synthereum activities downstream.
 
-  - name: jarvis_network_polygon_jfiat_address_mapping 
-    meta:
-      blockchain: polygon
-      sector: forex
-      project: jarvis_network
-      contributors: 0xroll
-    config:
-      tags: ['polygon','synthereum','currencies','forex', 'Jarvis Network', '0xroll']
-    description: >
-        Manually updated table for mapping jarvis synthetic currencies related contracts
-    columns:
-      - &jfiat_symbol
-        name: jfiat_symbol
-        description: "Jarvis synthetic currency token symbol" 
-      - &decimals
-        name: decimals
-        description:  "Token decimals"
-      - &jfiat_token_address
-        name: jfiat_token_address
-        description:  "Jarvis synthetic currency token contract address"
-      - &jfiat_liquidity_address
-        name: jfiat_liquidity_address
-        description:  "Jarvis synthetic currency token liquidity address"
-      - &jfiat_collateral_pool_address
-        name: jfiat_collateral_pool_address
-        description:  "Jarvis synthetic currency token collateral pool address"
-      - &jfiat_chainlink_address
-        name: jfiat_chainlink_address
-        description:  "Chainlink oracle address for synthetic token"
-      - &contract_version
-        name: contract_version
-        description:  "Contract version"
+    '
+  meta:
+    blockchain: polygon
+    contributors: 0xroll
+    project: jarvis_network
+    sector: forex
+  name: jarvis_network_polygon_all_transactions
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - block_date
+      - evt_tx_hash
+      - evt_index
+- columns:
+  - description: Jarvis synthetic currency token symbol
+    name: jfiat_symbol
+    tests: []
+  - &id002
+    description: Token decimals
+    name: decimals
+    tests: []
+  - description: Jarvis synthetic currency token contract address
+    name: jfiat_token_address
+    tests: []
+  - description: Jarvis synthetic currency token liquidity address
+    name: jfiat_liquidity_address
+    tests: []
+  - &id001
+    description: Jarvis synthetic currency token collateral pool address
+    name: jfiat_collateral_pool_address
+    tests: []
+  - description: Chainlink oracle address for synthetic token
+    name: jfiat_chainlink_address
+    tests: []
+  - description: Contract version
+    name: contract_version
+    tests: []
+  config:
+    tags:
+    - polygon
+    - synthereum
+    - currencies
+    - forex
+    - Jarvis Network
+    - 0xroll
+  description: 'Manually updated table for mapping jarvis synthetic currencies related
+    contracts
 
-  - name: jarvis_network_polygon_jfiat_collateral_mapping 
-    meta:
-      blockchain: polygon
-      sector: forex
-      project: jarvis_network
-      contributors: 0xroll
-    config:
-      tags: ['polygon','synthereum','currencies','forex', 'Jarvis Network', '0xroll']
-    description: >
-        Manually updated table for mapping collateral information for jarvis synthetic tokens
-    columns:
-      - *jfiat_collateral_pool_address
-      - &jfiat_collateral_symbol
-        name: jfiat_collateral_symbol
-        description:  "Collateral token symbol"
-      - *decimals
-      - &jfiat_collateral_token_address
-        name: jfiat_collateral_token_address
-        description:  "Collateral token contract address"
+    '
+  meta:
+    blockchain: polygon
+    contributors: 0xroll
+    project: jarvis_network
+    sector: forex
+  name: jarvis_network_polygon_jfiat_address_mapping
+  tests: []
+- columns:
+  - *id001
+  - description: Collateral token symbol
+    name: jfiat_collateral_symbol
+    tests: []
+  - *id002
+  - description: Collateral token contract address
+    name: jfiat_collateral_token_address
+    tests: []
+  config:
+    tags:
+    - polygon
+    - synthereum
+    - currencies
+    - forex
+    - Jarvis Network
+    - 0xroll
+  description: 'Manually updated table for mapping collateral information for jarvis
+    synthetic tokens
+
+    '
+  meta:
+    blockchain: polygon
+    contributors: 0xroll
+    project: jarvis_network
+    sector: forex
+  name: jarvis_network_polygon_jfiat_collateral_mapping
+  tests: []
+version: 2

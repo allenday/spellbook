@@ -1,339 +1,309 @@
-version: 2
-
 sources:
-  - name: aave_v2_ethereum
-    description: "Decoded contracts for aave v2 on Ethereum"
-
-    tables:
-      - name: LendingPool_evt_ReserveDataUpdated
-        loaded_at_field: evt_block_time
-        description: "Provides the liqudity index, stable and variable borrow rates for aave v2 reserves."
-        freshness:
-          warn_after: { count: 12, period: hour }
-          error_after: { count: 24, period: hour }
-        columns:
-        - &contract_address
-          name: contract_address
-          description: "Aave token contract address"       
-        - &evt_block_number
-          name: evt_block_number
-          description: "Event block number"  
-        - &evt_block_time
-          name: evt_block_time
-          description: "Timestamp for block event time in UTC"
-        - &evt_index
-          name: evt_index
-          description: "Event index"  
-        - &evt_tx_hash
-          name: evt_tx_hash
-          description: "Transaction hash of the event" 
-        - name: liqudityIndex
-          description: "Liqudity index value of the reserve"
-        - name: liqudityRate
-          description: "Liqudity rate value of the reserve"
-        - &reserve
-          name: reserve
-          description: "Aave reserve contract address"
-        - name: stableBorrowRate
-          description: "Stable borrow rate value of the reserve"  
-        - name: variableBorrowIndex
-          description: "Variable borrow index value of the reserve"
-        - name: variableBorrowRate
-          description: "Variable borrow rate value of the reserve" 
-          
-      - name: LendingPool_evt_Deposit
-        loaded_at_field: evt_block_time
-        description: "Contians all the transactions involving deposits for aave v2 on ethereum"
-        columns:
-        - &amount
-          name: amount
-          description: "The token transafer amount"       
-        - *contract_address 
-        - *evt_block_number
-        - *evt_block_time
-        - *evt_index
-        - *evt_tx_hash 
-        - name: onBehalfOf
-          description: "The user wallet address if the token is deposited on behalf of another wallet"
-        - name: referral
-          description: "Deposit referral number"  
-        - *reserve
-        - &user
-          name: user
-          description: "The user wallet address"   
-          
-      - name: LendingPool_evt_Withdraw
-        loaded_at_field: evt_block_time
-        description: "Contians all the transactions involving withdrawals for aave v2 on ethereum"
-        columns:
-        - *amount       
-        - *contract_address 
-        - *evt_block_number
-        - *evt_block_time
-        - *evt_index
-        - *evt_tx_hash 
-        - *reserve
-        - name: to
-          description: "Wallet address where the tokens are withdrawn and transferred"
-        - *user
-        
-      - name: LendingPool_evt_LiquidationCall
-        loaded_at_field: evt_block_time
-        description: "Contians all the transactions involving liquidation for aave v2 on ethereum"
-        columns:
-        - name: collateralAsset
-          description: "Token address of the collateral asset"      
-        - *contract_address 
-        - name: debtAsset
-          description: "Token address of the debt asset"
-        - name: debtToCover
-          description: "Amount of debt to be covered through liquidation"  
-        - *evt_block_number
-        - *evt_block_time
-        - *evt_index
-        - *evt_tx_hash 
-        - name: liquidatedCollateralAmount
-          description: "Amount of liquidated collateral asset"  
-        - name: liquidator
-          description: "Liquidator wallet address"
-        - name: receiveAToken
-          description: "Shows if the liquidator will receive atokens or not"
-        - *user
-        
-      - name: LendingPool_evt_Borrow
-        loaded_at_field: evt_block_time
-        description: "Contians all the transactions involving borrows for aave v2 on ethereum"
-        columns:
-        - *reserve
-        - *user
-        - *amount     
-        - name: borrowRate
-          description: "The rate at which the tokens are borrowed"
-        - name: borrowRateMode
-          description: "The borrowing mode of the debt"  
-        - *contract_address 
-        - *evt_block_number
-        - *evt_block_time
-        - *evt_index
-        - *evt_tx_hash 
-        - name: onBehalfOf
-          description: "The user wallet address if the token is borrowed on behalf of another wallet"
-        - name: referral
-          description: "Borrow referral number"  
-          
-      - name: LendingPool_evt_Repay
-        loaded_at_field: evt_block_time
-        description: "Contians all the transactions involving repays for aave v2 on ethereum"
-        columns:
-        - *amount     
-        - *contract_address 
-        - *evt_block_number
-        - *evt_block_time
-        - *evt_index
-        - *evt_tx_hash
-        - name: repayer
-          description: "Wallet address of the repayer" 
-        - *reserve
-        - *user       
-
-      - name: DefaultReserveInterestRateStrategy_call_calculateInterestRates
-
-      - name: LendingPool_evt_FlashLoan
-        loaded_at_field: evt_block_time
-
-  
-
-  
-  - name: aave_ethereum
-    description: "Decoded contracts for Aave v1 on Ethereum"
-
-    tables:
-      - name: LendingPool_evt_Deposit
-        loaded_at_field: evt_block_time
-        description: "Contians all the transactions involving deposits for aave v1 on ethereum"
-        columns:
-        - &_amount
-          name: _amount
-          description: "The transafer amount"
-        - &_referral
-          name: _referral
-          description: "Deposit referral number" 
-        - &_reserve
-          name: _reserve
-          description: "Aave reserve contract address"
-        - &_timestamp
-          name: _timestamp
-          description: "The timestamp of the transaction"
-        - &_user
-          name: _user
-          description: "The user wallet address"  
-        - *contract_address 
-        - *evt_block_number
-        - *evt_block_time
-        - *evt_index
-        - *evt_tx_hash 
-        
-      - name: LendingPool_evt_RedeemUnderlying
-        loaded_at_field: evt_block_time
-        description: "Contians all the transactions involving withdrawals for aave v1 on ethereum"
-        columns:
-        - *_amount
-        - *_reserve
-        - *_timestamp
-        - *_user
-        - *contract_address 
-        - *evt_block_number
-        - *evt_block_time
-        - *evt_index
-        - *evt_tx_hash       
-        
-      - name: LendingPool_evt_LiquidationCall
-        loaded_at_field: evt_block_time
-        description: "Contians all the transactions involving liquidations for aave v1 on ethereum"
-        columns:
-        - *_amount
-        - *_reserve
-        - *_timestamp
-        - *_user
-        - *contract_address 
-        - *evt_block_number
-        - *evt_block_time
-        - *evt_index
-        - *evt_tx_hash           
-        
-      - name: LendingPool_evt_Borrow
-        loaded_at_field: evt_block_time
-        description: "Contians all the transactions involving borrows for aave v1 on ethereum"
-        columns:
-        - *_amount
-        - &_borrowBalanceIncrease
-          name: _borrowBalanceIncrease 
-          description: "Amount of increase in the total debt"  
-        - name: _borrowRate 
-          description: "The rate at which debt is borrowed"   
-        - name: _borrowRateMode 
-          description: "The borrowing mode"   
-        - name: _originationFee
-          description: "Origination fee of the debt"  
-        - *_referral  
-        - *_reserve
-        - *_timestamp
-        - *_user
-        - *contract_address 
-        - *evt_block_number
-        - *evt_block_time
-        - *evt_index
-        - *evt_tx_hash           
-        
-      - name: LendingPool_evt_Repay
-        loaded_at_field: evt_block_time
-        description: "Contians all the transactions involving repays for aave v1 on ethereum"
-        columns:
-        - name: _amountMinusFees
-          description: "The borrowed amount minus fees"  
-        - *_borrowBalanceIncrease 
-        - name: _fees
-          description: "The fees for the given debt"   
-        - name: _repayer 
-          description: "Wallet address of the repayer"   
-        - *_reserve
-        - *_timestamp
-        - *_user
-        - *contract_address 
-        - *evt_block_number
-        - *evt_block_time
-        - *evt_index
-        - *evt_tx_hash              
-
-      - name: AaveGovernanceV2_evt_VoteEmitted
-        loaded_at_field: evt_block_time
-        columns:
-          - name: contract_address
-            description: "DAO governor contract address"
-          - name: evt_block_number
-          - name: evt_block_time
-            description: "UTC event block time of each DAO vote"
-          - name: evt_index
-          - name: evt_tx_hash
-            description: "Unique transaction hash value tied to each vote on the DAO"
-          - &proposalId
-            name: proposalId
-          - &reason
-            name: reason
-          - &voter
-            name: voter
-          - &votes
-            name: votes
-
-      - name: AaveGovernanceV2_evt_ProposalCreated
-        loaded_at_field: evt_block_time
-        columns:
-          - name: contract_address
-            description: "DAO governor contract address"
-          - name: evt_block_number
-          - name: evt_block_time
-            description: "UTC event block time of each DAO vote"
-          - name: evt_index
-          - name: evt_tx_hash
-          - &calldatas
-            name: calldatas
-          - &description
-            name: description
-          - &endBlock
-            name: endBlock
-          - &id
-            name: id
-          - &proposer
-            name: proposer
-          - &signatures
-            name: signatures
-          - &startBlock
-            name: startBlock
-          - &targets
-            name: targets
-          - &values
-            name: values
-
-      - name: AaveGovernanceV2_evt_ProposalCanceled
-        loaded_at_field: evt_block_time
-        columns:
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - *id
-
-      - name: AaveGovernanceV2_evt_ProposalExecuted
-        loaded_at_field: evt_block_time
-        columns:
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - *id
-
-      - name: AaveGovernanceV2_evt_ProposalQueued
-        loaded_at_field: evt_block_time
-        columns:
-          - *contract_address
-          - &eta
-            name: eta
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - *id
-
-      - name: LendingPool_evt_FlashLoan
-        loaded_at_field: evt_block_time
-
-
-
-  - name: aave_v3_ethereum
-    description: "Decoded contracts for Aave v3 on Ethereum"
-
-    tables:
-      - name: Pool_evt_FlashLoan
-        loaded_at_field: evt_block_time
+- description: Decoded contracts for aave v2 on Ethereum
+  name: aave_v2_ethereum
+  tables:
+  - columns:
+    - &id001
+      description: Aave token contract address
+      name: contract_address
+    - &id002
+      description: Event block number
+      name: evt_block_number
+    - &id003
+      description: Timestamp for block event time in UTC
+      name: evt_block_time
+    - &id004
+      description: Event index
+      name: evt_index
+    - &id005
+      description: Transaction hash of the event
+      name: evt_tx_hash
+    - description: Liqudity index value of the reserve
+      name: liqudityIndex
+    - description: Liqudity rate value of the reserve
+      name: liqudityRate
+    - &id006
+      description: Aave reserve contract address
+      name: reserve
+    - description: Stable borrow rate value of the reserve
+      name: stableBorrowRate
+    - description: Variable borrow index value of the reserve
+      name: variableBorrowIndex
+    - description: Variable borrow rate value of the reserve
+      name: variableBorrowRate
+    description: Provides the liqudity index, stable and variable borrow rates for
+      aave v2 reserves.
+    freshness:
+      error_after:
+        count: 24
+        period: hour
+      warn_after:
+        count: 12
+        period: hour
+    loaded_at_field: evt_block_time
+    name: LendingPool_evt_ReserveDataUpdated
+  - columns:
+    - &id007
+      description: The token transafer amount
+      name: amount
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: The user wallet address if the token is deposited on behalf of
+        another wallet
+      name: onBehalfOf
+    - description: Deposit referral number
+      name: referral
+    - *id006
+    - &id008
+      description: The user wallet address
+      name: user
+    description: Contians all the transactions involving deposits for aave v2 on ethereum
+    loaded_at_field: evt_block_time
+    name: LendingPool_evt_Deposit
+  - columns:
+    - *id007
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - description: Wallet address where the tokens are withdrawn and transferred
+      name: to
+    - *id008
+    description: Contians all the transactions involving withdrawals for aave v2 on
+      ethereum
+    loaded_at_field: evt_block_time
+    name: LendingPool_evt_Withdraw
+  - columns:
+    - description: Token address of the collateral asset
+      name: collateralAsset
+    - *id001
+    - description: Token address of the debt asset
+      name: debtAsset
+    - description: Amount of debt to be covered through liquidation
+      name: debtToCover
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: Amount of liquidated collateral asset
+      name: liquidatedCollateralAmount
+    - description: Liquidator wallet address
+      name: liquidator
+    - description: Shows if the liquidator will receive atokens or not
+      name: receiveAToken
+    - *id008
+    description: Contians all the transactions involving liquidation for aave v2 on
+      ethereum
+    loaded_at_field: evt_block_time
+    name: LendingPool_evt_LiquidationCall
+  - columns:
+    - *id006
+    - *id008
+    - *id007
+    - description: The rate at which the tokens are borrowed
+      name: borrowRate
+    - description: The borrowing mode of the debt
+      name: borrowRateMode
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: The user wallet address if the token is borrowed on behalf of another
+        wallet
+      name: onBehalfOf
+    - description: Borrow referral number
+      name: referral
+    description: Contians all the transactions involving borrows for aave v2 on ethereum
+    loaded_at_field: evt_block_time
+    name: LendingPool_evt_Borrow
+  - columns:
+    - *id007
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: Wallet address of the repayer
+      name: repayer
+    - *id006
+    - *id008
+    description: Contians all the transactions involving repays for aave v2 on ethereum
+    loaded_at_field: evt_block_time
+    name: LendingPool_evt_Repay
+  - name: DefaultReserveInterestRateStrategy_call_calculateInterestRates
+  - loaded_at_field: evt_block_time
+    name: LendingPool_evt_FlashLoan
+- description: Decoded contracts for Aave v1 on Ethereum
+  name: aave_ethereum
+  tables:
+  - columns:
+    - &id009
+      description: The transafer amount
+      name: _amount
+    - &id013
+      description: Deposit referral number
+      name: _referral
+    - &id010
+      description: Aave reserve contract address
+      name: _reserve
+    - &id011
+      description: The timestamp of the transaction
+      name: _timestamp
+    - &id012
+      description: The user wallet address
+      name: _user
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    description: Contians all the transactions involving deposits for aave v1 on ethereum
+    loaded_at_field: evt_block_time
+    name: LendingPool_evt_Deposit
+  - columns:
+    - *id009
+    - *id010
+    - *id011
+    - *id012
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    description: Contians all the transactions involving withdrawals for aave v1 on
+      ethereum
+    loaded_at_field: evt_block_time
+    name: LendingPool_evt_RedeemUnderlying
+  - columns:
+    - *id009
+    - *id010
+    - *id011
+    - *id012
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    description: Contians all the transactions involving liquidations for aave v1
+      on ethereum
+    loaded_at_field: evt_block_time
+    name: LendingPool_evt_LiquidationCall
+  - columns:
+    - *id009
+    - &id014
+      description: Amount of increase in the total debt
+      name: _borrowBalanceIncrease
+    - description: The rate at which debt is borrowed
+      name: _borrowRate
+    - description: The borrowing mode
+      name: _borrowRateMode
+    - description: Origination fee of the debt
+      name: _originationFee
+    - *id013
+    - *id010
+    - *id011
+    - *id012
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    description: Contians all the transactions involving borrows for aave v1 on ethereum
+    loaded_at_field: evt_block_time
+    name: LendingPool_evt_Borrow
+  - columns:
+    - description: The borrowed amount minus fees
+      name: _amountMinusFees
+    - *id014
+    - description: The fees for the given debt
+      name: _fees
+    - description: Wallet address of the repayer
+      name: _repayer
+    - *id010
+    - *id011
+    - *id012
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    description: Contians all the transactions involving repays for aave v1 on ethereum
+    loaded_at_field: evt_block_time
+    name: LendingPool_evt_Repay
+  - columns:
+    - description: DAO governor contract address
+      name: contract_address
+    - name: evt_block_number
+    - description: UTC event block time of each DAO vote
+      name: evt_block_time
+    - name: evt_index
+    - description: Unique transaction hash value tied to each vote on the DAO
+      name: evt_tx_hash
+    - name: proposalId
+    - name: reason
+    - name: voter
+    - name: votes
+    loaded_at_field: evt_block_time
+    name: AaveGovernanceV2_evt_VoteEmitted
+  - columns:
+    - description: DAO governor contract address
+      name: contract_address
+    - name: evt_block_number
+    - description: UTC event block time of each DAO vote
+      name: evt_block_time
+    - name: evt_index
+    - name: evt_tx_hash
+    - name: calldatas
+    - name: description
+    - name: endBlock
+    - &id015
+      name: id
+    - name: proposer
+    - name: signatures
+    - name: startBlock
+    - name: targets
+    - name: values
+    loaded_at_field: evt_block_time
+    name: AaveGovernanceV2_evt_ProposalCreated
+  - columns:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id015
+    loaded_at_field: evt_block_time
+    name: AaveGovernanceV2_evt_ProposalCanceled
+  - columns:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id015
+    loaded_at_field: evt_block_time
+    name: AaveGovernanceV2_evt_ProposalExecuted
+  - columns:
+    - *id001
+    - name: eta
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id015
+    loaded_at_field: evt_block_time
+    name: AaveGovernanceV2_evt_ProposalQueued
+  - loaded_at_field: evt_block_time
+    name: LendingPool_evt_FlashLoan
+- description: Decoded contracts for Aave v3 on Ethereum
+  name: aave_v3_ethereum
+  tables:
+  - loaded_at_field: evt_block_time
+    name: Pool_evt_FlashLoan
+version: 2

@@ -16,7 +16,7 @@ leverage as (
     FROM 
     {{ ref('tigris_v1_polygon_events_open_position') }}
 
-    UNION 
+    UNION ALL 
 
     SELECT 
         evt_block_time,
@@ -27,7 +27,7 @@ leverage as (
     FROM 
     {{ ref('tigris_v1_polygon_events_modify_margin') }}
 
-    UNION 
+    UNION ALL 
 
     SELECT 
         evt_block_time,
@@ -40,4 +40,3 @@ leverage as (
 )
 
 SELECT * FROM leverage
-; 

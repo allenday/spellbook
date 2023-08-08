@@ -1,27 +1,20 @@
-{{ config(materialized='view', alias='erc1155') }}
+{{ config(materialized = 'view', alias='erc1155') }}
 
 with
   erc1155_ids_batch AS (
     SELECT
       *,
-      explode(ids) as explode_id,
-      evt_tx_hash || '-' || cast(
-        row_number() OVER (
-          PARTITION BY evt_tx_hash,
-          ids
-          ORDER BY
-            ids
-        ) as string
-      ) as unique_transfer_id
-    FROM {{source('erc1155_ethereum', 'evt_transferbatch')}}
+      explode_id,
+    evt_tx_hash || '-' || CAST(ROW_NUMBER() OVER (PARTITION BY evt_tx_hash, ids ORDER BY ids) AS STRING) AS unique_transfer_id
+  FROM
+    `blocktrekker`.`erc1155_ethereum`.`evt_transferbatch`,
+    UNNEST(ids) AS explode_id
   ),
 
   erc1155_values_batch AS (
     SELECT
       *,
-      explode(
-        values
-      ) as explode_value,
+      explode_value,
       evt_tx_hash || '-' || cast(
         row_number() OVER (
           PARTITION BY evt_tx_hash,
@@ -30,7 +23,8 @@ with
             ids
         ) as string
       ) as unique_transfer_id
-    FROM {{source('erc1155_ethereum', 'evt_transferbatch')}}
+    FROM {{source('erc1155_ethereum', 'evt_transferbatch')}},
+    UNNEST(values) AS explode_value
   ),
 
   erc1155_transfers_batch AS (
@@ -50,18 +44,18 @@ with
   sent_transfers as (
     select
       evt_tx_hash,
-      evt_tx_hash || '-' || evt_index || '-' || to as unique_tx_id,
-      to as wallet_address,
+      evt_tx_hash || '-' || evt_index || '-' || `to` as unique_tx_id,
+      `to` as wallet_address,
       contract_address as token_address,
       evt_block_time,
       id as tokenId,
-      value as amount
+      `value` as amount
     FROM {{source('erc1155_ethereum', 'evt_transfersingle')}} single
     UNION ALL
     select
       evt_tx_hash,
-      evt_tx_hash || '-' || evt_index || '-' || to as unique_tx_id,
-      to as wallet_address,
+      evt_tx_hash || '-' || evt_index || '-' || `to` as unique_tx_id,
+      `to` as wallet_address,
       contract_address as token_address,
       evt_block_time,
       explode_id as tokenId,
@@ -72,8 +66,8 @@ with
   received_transfers as (
     select
       evt_tx_hash,
-      evt_tx_hash || '-' || evt_index || '-' || to as unique_tx_id,
-      from as wallet_address,
+      evt_tx_hash || '-' || evt_index || '-' || `to` as unique_tx_id,
+      `from` as wallet_address,
       contract_address as token_address,
       evt_block_time,
       id as tokenId,
@@ -82,8 +76,8 @@ with
     UNION ALL
     select
       evt_tx_hash,
-      evt_tx_hash || '-' || evt_index || '-' || to as unique_tx_id,
-      from as wallet_address,
+      evt_tx_hash || '-' || evt_index || '-' || `to` as unique_tx_id,
+      `from` as wallet_address,
       contract_address as token_address,
       evt_block_time,
       explode_id as tokenId,

@@ -1,53 +1,43 @@
 {{
     config(
-        alias='trader_platforms',
-        post_hook='{{ expose_spells(\'["ethereum", "fantom", "arbitrum", "avalanche_c", "gnosis", "bnb", "optimism", "polygon"]\',
-                    "sector",
-                    "labels",
-                    \'["gentrexha", "Henrystats"]\') }}'
+        alias='trader_platforms'
     )
 }}
 
 with trader_platforms as (
-    select
-        taker as address,
-        MIN(block_time) as first_trade,
-        COUNT(*) as num_txs, -- to optimize query
-        project,
-        blockchain
+    select taker           as address,
+           MIN(block_time) as first_trade,
+           COUNT(*)        as num_txs, -- to optimize query
+           project,
+           blockchain
     from (
-        select
-            blockchain,
-            taker,
-            project,
-            block_time
+        select blockchain,
+               taker,
+               project,
+               block_time
         from {{ ref('dex_aggregator_trades') }}
-        union all
-        select
-            blockchain,
-            taker,
-            project,
-            block_time
+        UNION ALL
+        select blockchain,
+               taker,
+               project,
+               block_time
         from {{ ref('dex_trades') }}
-    )
+          )
     group by taker, project, blockchain
     order by first_trade
 )
 
-select
-    blockchain,
-    address,
-    array_join(
-        array_distinct(collect_list(concat(upper(substring(project, 1, 1)), substring(project, 2)))),
-        ', '
-    ) || ' User' as name,
-    'dex' as category,
-    'gentrexha' as contributor,
-    'query' as source,
-    timestamp('2022-12-21') as created_at,
-    now() as updated_at,
-    'trader_platforms' as model_name,
-    'persona' as label_type
+select blockchain,
+       address,
+       STRING_AGG(array_distinct(ARRAY_AGG(concat(upper(substring(project, 1, 1)), substring(project, 2)))),
+                  ', ') || ' User' AS name,
+       "dex"                       AS category,
+       "gentrexha"                 AS contributor,
+       "query"                     AS source,
+       timestamp('2022-12-21')     AS created_at,
+       CURRENT_TIMESTAMP()                       AS updated_at,
+       "trader_platforms"          AS model_name,
+       "persona"                   AS label_type
 from trader_platforms
 where address is not null
-group by address, blockchain;
+group by address, blockchain

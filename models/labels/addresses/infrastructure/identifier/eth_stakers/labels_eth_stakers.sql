@@ -1,8 +1,4 @@
-{{config(alias='eth_stakers',
-        post_hook='{{ expose_spells(\'["ethereum"]\',
-                                    "sector",
-                                    "labels",
-                                    \'["hildobby"]\') }}')}}
+{{config(alias='eth_stakers')}}
 
 WITH identified_stakers AS (
     SELECT 'ethereum' AS blockchain
@@ -12,7 +8,7 @@ WITH identified_stakers AS (
     , 'hildobby' AS contributor
     , 'query' AS source
     , timestamp('2023-01-18') AS created_at
-    , NOW() AS updated_at
+    , CURRENT_TIMESTAMP() AS updated_at
     , 'eth_stakers' AS model_name
     , 'identifier' as label_type
     FROM {{ ref('staking_ethereum_entities')}}
@@ -26,15 +22,14 @@ WITH identified_stakers AS (
     , 'hildobby' AS contributor
     , 'query' AS source
     , timestamp('2023-01-18') AS created_at
-    , NOW() AS updated_at
+    , CURRENT_TIMESTAMP() AS updated_at
     , 'eth_stakers' AS model_name
     , 'identifier' as label_type
     FROM {{ source('ethereum', 'traces') }} et
-    LEFT ANTI JOIN identified_stakers is
-        ON et.from = is.address
-    WHERE et.to = '0x00000000219ab540356cbb839cbe05303d7705fa'
+    LEFT JOIN identified_stakers is ON et.from = is.address
+    WHERE et.to IS NULL AND et.to = '0x00000000219ab540356cbb839cbe05303d7705fa'
     AND et.success
-    AND CAST(et.value AS double) > 0
+    AND CAST(et.value AS FLOAT64) > 0
     GROUP BY et.from
     )
 

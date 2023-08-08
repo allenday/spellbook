@@ -1,6 +1,5 @@
 {{ config (
-    alias = 'job_migrations',
-    post_hook = '{{ expose_spells_hide_trino(\'["ethereum"]\', "project", "keep3r", \'["wei3erHase", "agaperste"]\') }}'
+    alias = 'job_migrations'
 ) }}
 
 SELECT
@@ -32,7 +31,7 @@ FROM
                 'keep3r_network_ethereum',
                 'Keep3r_evt_JobMigrationSuccessful'
             ) }}
-        UNION
+        UNION ALL
         SELECT
             evt_block_time,
             evt_tx_hash,

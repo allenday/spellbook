@@ -1,14 +1,22 @@
-version: 2
-
 models:
- - name: nft_ethereum_trades_beta
-   meta:
-     blockchain: ethereum
-     sector: nft
-     contributors: 0xRob
-   config:
-     tags: ['ethereum', 'nft', 'trades', 'beta']
-   description: "New nft trades model"
-   tests:
-     - dbt_utils.unique_combination_of_columns:
-         combination_of_columns: ['project','project_version','block_number','tx_hash','sub_tx_trade_id']
+- config:
+    tags:
+    - ethereum
+    - nft
+    - trades
+    - beta
+  description: New nft trades model
+  meta:
+    blockchain: ethereum
+    contributors: 0xRob
+    sector: nft
+  name: nft_ethereum_trades_beta
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - project
+      - project_version
+      - block_number
+      - tx_hash
+      - sub_tx_trade_id
+version: 2

@@ -1,14 +1,9 @@
-{{
+ {{
   config(
-        alias='fees',
-        post_hook='{{ expose_spells(\'["optimism"]\',
-                                    "project",
-                                    "zonic",
-                                    \'["chuxin"]\') }}')
+        alias='fees')
 }}
 
-select
-    blockchain,
+select blockchain,
     project,
     version,
     block_time,

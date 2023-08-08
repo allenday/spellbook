@@ -2,14 +2,8 @@
     config(
         schema='balancer_v1_ethereum',
         alias='pools_tokens_weights',
-        materialized = 'incremental',
-        file_format = 'delta',
-        incremental_strategy = 'merge',
-        unique_key = ['pool_id', 'token_address'],
-        post_hook='{{ expose_spells(\'["ethereum"]\',
-                                    "project",
-                                    "balancer_v1",
-                                    \'["metacrypto", "jacektrocinski"]\') }}'
+        materialized = 'view',
+                        unique_key = ['pool_id', 'token_address']
     )
 }}
 
@@ -26,17 +20,16 @@ WITH events AS (
         bind.contract_address AS pool,
         bind.token,
         bind.denorm
-    FROM {{ source('balancer_v1_ethereum', 'BPool_call_bind') }} AS bind
-    INNER JOIN {{ source('ethereum', 'transactions') }} AS tx ON tx.hash = bind.call_tx_hash
-    WHERE
-        bind.call_success = TRUE
+    FROM {{ source('balancer_v1_ethereum', 'BPool_call_bind') }} bind
+    INNER JOIN {{ source('ethereum', 'transactions') }} tx ON tx.hash = bind.call_tx_hash 
+    WHERE bind.call_success IS NULL AND bind.call_success = TRUE
         {% if not is_incremental() %}
-        AND bind.call_block_time >= '{{ bind_start_date }}'
-        AND tx.block_time >= '{{ bind_start_date }}'
+        AND bind.call_block_time >= '{{bind_start_date}}'
+        AND tx.block_time >= '{{bind_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-            AND bind.call_block_time >= date_trunc("day", now() - interval "1 week")
-            AND tx.block_time >= date_trunc("day", now() - interval "1 week")
+        AND bind.call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+        AND tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 
     UNION ALL
@@ -49,43 +42,40 @@ WITH events AS (
         rebind.contract_address AS pool,
         rebind.token,
         rebind.denorm
-    FROM {{ source('balancer_v1_ethereum', 'BPool_call_rebind') }} AS rebind
-    INNER JOIN {{ source('ethereum', 'transactions') }} AS tx ON tx.hash = rebind.call_tx_hash
-    WHERE
-        rebind.call_success = TRUE
+    FROM {{ source('balancer_v1_ethereum', 'BPool_call_rebind') }} rebind
+    INNER JOIN {{ source('ethereum', 'transactions') }} tx ON tx.hash = rebind.call_tx_hash 
+    WHERE rebind.call_success IS NULL AND rebind.call_success = TRUE
         {% if not is_incremental() %}
-        AND rebind.call_block_time >= '{{ bind_start_date }}'
-        AND tx.block_time >= '{{ bind_start_date }}'
+        AND rebind.call_block_time >= '{{bind_start_date}}'
+        AND tx.block_time >= '{{bind_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-            AND rebind.call_block_time >= date_trunc("day", now() - interval "1 week")
-            AND tx.block_time >= date_trunc("day", now() - interval "1 week")
+        AND rebind.call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+        AND tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
-
+    
     UNION ALL
-
+    
     -- Unbinds
     SELECT
-        unbind.call_block_number AS block_number,
+        unbind.call_block_number AS block_number, 
         tx.index,
         unbind.call_trace_address,
         unbind.contract_address AS pool,
         unbind.token,
-        "0" AS denorm
-    FROM {{ source('balancer_v1_ethereum', 'BPool_call_unbind') }} AS unbind
-    INNER JOIN {{ source('ethereum', 'transactions') }} AS tx ON tx.hash = unbind.call_tx_hash
-    WHERE
-        unbind.call_success = TRUE
+        0 AS denorm
+    FROM {{ source('balancer_v1_ethereum', 'BPool_call_unbind') }} unbind
+    INNER JOIN {{ source('ethereum', 'transactions') }} tx ON tx.hash = unbind.call_tx_hash 
+    WHERE unbind.call_success IS NULL AND unbind.call_success = TRUE
         {% if not is_incremental() %}
-        AND unbind.call_block_time >= '{{ bind_start_date }}'
-        AND tx.block_time >= '{{ bind_start_date }}'
+        AND unbind.call_block_time >= '{{bind_start_date}}'
+        AND tx.block_time >= '{{bind_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-            AND unbind.call_block_time >= date_trunc("day", now() - interval "1 week")
-            AND tx.block_time >= date_trunc("day", now() - interval "1 week")
+        AND unbind.call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+        AND tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 ),
-
 state_with_gaps AS (
     SELECT
         events.block_number,
@@ -93,43 +83,39 @@ state_with_gaps AS (
         events.token,
         events.denorm,
         LEAD(events.block_number, 1) OVER (
-            PARTITION BY events.pool, events.token
+            PARTITION BY events.pool, events.token 
             ORDER BY events.block_number, index, call_trace_address
         ) AS next_block_number
-    FROM events
-),
-
+    FROM events 
+), 
 settings AS (
     SELECT
-        pool,
-        token,
+        pool, 
+        token, 
         denorm
     FROM state_with_gaps
     WHERE
         next_block_number IS NULL
-        AND denorm != "0"
+        AND denorm <>0
 ),
-
 sum_denorm AS (
     SELECT
         pool,
-        SUM(denorm) AS sum_denorm
+        SUM(denorm) AS sum_denorm_
     FROM state_with_gaps
     WHERE
         next_block_number IS NULL
-        AND denorm != "0"
+        AND denorm <>0
     GROUP BY pool
 ),
-
 norm_weights AS (
     SELECT
         settings.pool AS pool_address,
         token AS token_address,
-        denorm / sum_denorm AS normalized_weight
+        denorm / sum_denorm_ AS normalized_weight
     FROM settings
     INNER JOIN sum_denorm ON settings.pool = sum_denorm.pool
 )
-
 --
 -- Balancer v1 Pools Tokens Weights
 --
@@ -137,4 +123,4 @@ SELECT
     pool_address AS pool_id,
     token_address,
     normalized_weight
-FROM norm_weights;
+FROM norm_weights

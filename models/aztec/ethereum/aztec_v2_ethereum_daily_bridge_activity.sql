@@ -1,10 +1,6 @@
 {{ config(
     schema = 'aztec_v2_ethereum',
-    alias = 'daily_bridge_activity',
-    post_hook='{{ expose_spells(\'["ethereum"]\',
-                                "project",
-                                "aztec_v2",
-                                \'["Henrystats"]\') }}'
+    alias = 'daily_bridge_activity'
     )
 }}
 
@@ -14,7 +10,7 @@ WITH
 
 daily_transfers as (
     SELECT  
-        date_trunc('day', evt_block_time) as date
+        TIMESTAMP_TRUNC(evt_block_time, day) as date
         , bridge_protocol
         , bridge_address
         , contract_address as token_address
@@ -35,7 +31,7 @@ token_addresses as (
 
 token_prices_token as (
     SELECT 
-        date_trunc('day', p.minute) as day, 
+        TIMESTAMP_TRUNC(p.minute, day) AS `day`, 
         p.contract_address as token_address, 
         p.symbol, 
         AVG(p.price) as price
@@ -49,7 +45,7 @@ token_prices_token as (
 
 token_prices_eth as (
     SELECT 
-        date_trunc('day', p.minute) as day, 
+        TIMESTAMP_TRUNC(p.minute, day) AS `day`, 
         AVG(p.price) as price,
         1 as price_eth
     FROM 
@@ -92,5 +88,4 @@ token_prices as (
     from daily_transfers dt
     LEFT JOIN {{ref('tokens_erc20')}} er ON dt.token_address = er.contract_address AND er.blockchain = 'ethereum'
     LEFT join token_prices p on dt.date = p.day and dt.token_address = p.token_address AND dt.token_address != '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-    LEFT JOIN token_prices_eth b on dt.date = b.day AND dt.token_address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' -- using this to get price for missing ETH token 
-; 
+    LEFT JOIN token_prices_eth b on dt.date = b.day AND dt.token_address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' -- using this to get price for missing ETH token

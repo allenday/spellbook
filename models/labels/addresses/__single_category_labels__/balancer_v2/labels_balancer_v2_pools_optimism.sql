@@ -1,13 +1,7 @@
 {{config(
     alias='balancer_v2_pools_optimism',
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['address'],
-    post_hook='{{ expose_spells(\'["optimism"]\',
-                                     "sector",
-                                    "labels",
-                                    \'["balancerlabs"]\') }}'
+    materialized = 'view',
+            unique_key = ['address']
     )
 }}
 
@@ -20,8 +14,8 @@ WITH pools AS (
         ON c.evt_tx_hash = cc.call_tx_hash
         AND SUBSTRING(c.poolId, 0, 42) = cc.output_0
         {% if is_incremental() %}
-        WHERE c.evt_block_time >= date_trunc("day", now() - interval '1 week')
-            AND cc.call_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE c.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+            AND cc.call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
     )
 
@@ -35,8 +29,8 @@ WITH pools AS (
         ON c.evt_tx_hash = cc.call_tx_hash
         AND SUBSTRING(c.poolId, 0, 42) = cc.output_0
         {% if is_incremental() %}
-        WHERE c.evt_block_time >= date_trunc("day", now() - interval '1 week')
-            AND cc.call_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE c.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+            AND cc.call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
     )
 
@@ -50,32 +44,32 @@ WITH pools AS (
         ON c.evt_tx_hash = cc.call_tx_hash
         AND SUBSTRING(c.poolId, 0, 42) = cc.output_0
         {% if is_incremental() %}
-        WHERE c.evt_block_time >= date_trunc("day", now() - interval '1 week')
-            AND cc.call_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE c.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+            AND cc.call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
     )
 
     UNION ALL
-    SELECT c.poolId AS pool_id, explode(cc.tokens) AS token_address, CAST(NULL AS DOUBLE) AS normalized_weight, cc.symbol, 'SP' AS pool_type
+    SELECT c.poolId AS pool_id, explode(cc.tokens) AS token_address, CAST(NULL AS FLOAT64) AS normalized_weight, cc.symbol, 'SP' AS pool_type
     FROM {{ source('balancer_v2_optimism', 'Vault_evt_PoolRegistered') }} c
     INNER JOIN {{ source('balancer_v2_optimism', 'StablePoolFactory_call_create') }} cc
     ON c.evt_tx_hash = cc.call_tx_hash
     AND SUBSTRING(c.poolId, 0, 42) = cc.output_0
     {% if is_incremental() %}
-    WHERE c.evt_block_time >= date_trunc("day", now() - interval '1 week')
-        AND cc.call_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE c.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+        AND cc.call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 
     UNION ALL
 
-    SELECT c.poolId AS pool_id, explode(cc.tokens) AS token_address, CAST(NULL AS DOUBLE) AS normalized_weight, cc.symbol, 'SP' AS pool_type
+    SELECT c.poolId AS pool_id, explode(cc.tokens) AS token_address, CAST(NULL AS FLOAT64) AS normalized_weight, cc.symbol, 'SP' AS pool_type
     FROM {{ source('balancer_v2_optimism', 'Vault_evt_PoolRegistered') }} c
     INNER JOIN {{ source('balancer_v2_optimism', 'MetaStablePoolFactory_call_create') }} cc
     ON c.evt_tx_hash = cc.call_tx_hash
     AND SUBSTRING(c.poolId, 0, 42) = cc.output_0
     {% if is_incremental() %}
-    WHERE c.evt_block_time >= date_trunc("day", now() - interval '1 week')
-        AND cc.call_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE c.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+        AND cc.call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 
     UNION ALL
@@ -86,32 +80,32 @@ WITH pools AS (
     ON c.evt_tx_hash = cc.call_tx_hash
     AND SUBSTRING(c.poolId, 0, 42) = cc.output_0
     {% if is_incremental() %}
-    WHERE c.evt_block_time >= date_trunc("day", now() - interval '1 week')
-        AND cc.call_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE c.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+        AND cc.call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 
     UNION ALL
 
-    SELECT c.poolId AS pool_id, explode(cc.tokens) AS token_address, CAST(NULL AS DOUBLE) AS normalized_weight, cc.symbol, 'SP' AS pool_type
+    SELECT c.poolId AS pool_id, explode(cc.tokens) AS token_address, CAST(NULL AS FLOAT64) AS normalized_weight, cc.symbol, 'SP' AS pool_type
     FROM {{ source('balancer_v2_optimism', 'Vault_evt_PoolRegistered') }} c
     INNER JOIN {{ source('balancer_v2_optimism', 'ComposableStablePoolFactory_call_create') }} cc
     ON c.evt_tx_hash = cc.call_tx_hash
     AND SUBSTRING(c.poolId, 0, 42) = cc.output_0
     {% if is_incremental() %}
-        WHERE c.evt_block_time >= date_trunc("day", now() - interval '1 week')
-            AND cc.call_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE c.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+            AND cc.call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 
     UNION ALL
 
-    SELECT c.poolId AS pool_id, explode(array(cc.mainToken, cc.wrappedToken)) AS zip, CAST(NULL AS DOUBLE) AS normalized_weight, cc.symbol, 'LP' AS pool_type
+    SELECT c.poolId AS pool_id, explode(array(cc.mainToken, cc.wrappedToken)) AS zip, CAST(NULL AS FLOAT64) AS normalized_weight, cc.symbol, 'LP' AS pool_type
     FROM {{ source('balancer_v2_optimism', 'Vault_evt_PoolRegistered') }} c
     INNER JOIN {{ source('balancer_v2_optimism', 'AaveLinearPoolFactory_call_create') }} cc
     ON c.evt_tx_hash = cc.call_tx_hash
     AND SUBSTRING(c.poolId, 0, 42) = cc.output_0
     {% if is_incremental() %}
-        WHERE c.evt_block_time >= date_trunc("day", now() - interval '1 week')
-            AND cc.call_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE c.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+            AND cc.call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 ),
 
@@ -129,13 +123,13 @@ SELECT
   'optimism' AS blockchain,
   SUBSTRING(pool_id, 0, 42) AS address,
   CASE WHEN array_contains(array('SP', 'LP', 'LBP'), pool_type) THEN lower(pool_symbol)
-  ELSE lower(concat(array_join(array_sort(collect_list(token_symbol)), '/'), ' ', array_join(collect_list(cast(norm_weight AS string)), '/')))
+  ELSE lower(concat(STRING_AGG(array_sort(ARRAY_AGG(token_symbol)), '/'), ' ', STRING_AGG(ARRAY_AGG(cast(norm_weight AS string)), '/')))
   END AS name,
   'balancer_v2_pool' AS category,
   'balancerlabs' AS contributor,
   'query' AS source,
   timestamp('2022-12-23') AS created_at,
-  now() AS updated_at,
+  CURRENT_TIMESTAMP() AS updated_at,
   'balancer_v2_pools_optimism' AS model_name,
   'identifier' as label_type
 FROM   (

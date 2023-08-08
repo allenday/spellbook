@@ -1,0 +1,14 @@
+config-version: 2
+name: spellbook
+profile: default
+sources:
+- name: erc721_ethereum
+  tables:
+  - name: evt_approvalForAll
+- name: erc1155_ethereum
+  tables:
+  - name: evt_approvalforall
+- name: erc721_ethereum
+  tables:
+  - name: evt_approval
+version: 2

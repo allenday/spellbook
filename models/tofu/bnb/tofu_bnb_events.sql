@@ -1,14 +1,8 @@
 {{ config(
     alias = 'events',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'unique_trade_id'],
-    post_hook='{{ expose_spells(\'["bnb"]\',
-                                "project",
-                                "tofu",
-                                \'["theachenyj"]\') }}')
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'unique_trade_id'])
 }}
 
 {%- set BNB_ERC20_ADDRESS = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c' %}
@@ -21,22 +15,22 @@ WITH tff AS (
            fee_address,
            royalty_address,
            bundle_size,
-           get_json_object(t, '$.token')   as token,
-           get_json_object(t, '$.tokenId') as token_id,
-           get_json_object(t, '$.amount')  as amount,
+           JSON_EXTRACT_SCALAR(t, '$.token')   as token,
+           JSON_EXTRACT_SCALAR(t, '$.tokenId') as token_id,
+           JSON_EXTRACT_SCALAR(t, '$.amount')  as amount,
            i as bundle_index
     FROM (SELECT call_block_time,
                  call_tx_hash,
-                 get_json_object(get_json_object(detail, '$.settlement'), '$.feeRate') / 1000000     as fee_rate,
-                 get_json_object(get_json_object(detail, '$.settlement'), '$.royaltyRate') / 1000000 as royalty_rate,
-                 get_json_object(get_json_object(detail, '$.settlement'), '$.feeAddress')            as fee_address,
-                 get_json_object(get_json_object(detail, '$.settlement'), '$.royaltyAddress')        as royalty_address,
-                 posexplode(from_json(get_json_object(detail, '$.bundle'), 'array<string>'))         as (i,t),
-                 json_array_length(get_json_object(detail, '$.bundle'))                              as bundle_size
+                 JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(detail, '$.settlement'), '$.feeRate') / 1000000     as fee_rate,
+                 JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(detail, '$.settlement'), '$.royaltyRate') / 1000000 as royalty_rate,
+                 JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(detail, '$.settlement'), '$.feeAddress')            as fee_address,
+                 JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(detail, '$.settlement'), '$.royaltyAddress')        as royalty_address,
+                 posexplode(from_json(JSON_EXTRACT_SCALAR(detail, '$.bundle'), 'array<string>'))         as (i,t),
+                 json_array_length(JSON_EXTRACT_SCALAR(detail, '$.bundle'))                              as bundle_size
           FROM {{ source('tofu_nft_bnb', 'MarketNG_call_run') }}
           WHERE call_success = true
               {% if is_incremental() %}
-              and call_block_time >= date_trunc("day", now() - interval '1 week')
+              and call_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
               {% endif %}
          ) as tmp
 ),
@@ -45,26 +39,26 @@ WITH tff AS (
                 evt_block_time,
                 evt_block_number,
                 evt_index,
-                get_json_object(inventory, '$.seller')   as seller,
-                get_json_object(inventory, '$.buyer')    as buyer,
-                get_json_object(inventory, '$.kind')     as kind,
-                get_json_object(inventory, '$.price')    as price,
-                CASE WHEN get_json_object(inventory, '$.currency') = '0x0000000000000000000000000000000000000000'
+                JSON_EXTRACT_SCALAR(inventory, '$.seller')   as seller,
+                JSON_EXTRACT_SCALAR(inventory, '$.buyer')    as buyer,
+                JSON_EXTRACT_SCALAR(inventory, '$.kind')     as kind,
+                JSON_EXTRACT_SCALAR(inventory, '$.price')    as price,
+                CASE WHEN JSON_EXTRACT_SCALAR(inventory, '$.currency') = '0x0000000000000000000000000000000000000000'
                   THEN '{{BNB_ERC20_ADDRESS}}'
-                  ELSE get_json_object(inventory, '$.currency')
+                  ELSE JSON_EXTRACT_SCALAR(inventory, '$.currency')
                 END as currency,
-                (get_json_object(inventory, '$.currency') = '0x0000000000000000000000000000000000000000') as native_bnb,
+                (JSON_EXTRACT_SCALAR(inventory, '$.currency') = '0x0000000000000000000000000000000000000000') as native_bnb,
                 contract_address
          from {{ source('tofu_nft_bnb', 'MarketNG_evt_EvInventoryUpdate') }}
-         where get_json_object(inventory, '$.status') = '1'
+         where JSON_EXTRACT_SCALAR(inventory, '$.status') = '1'
               {% if is_incremental() %}
-              and evt_block_time >= date_trunc("day", now() - interval '1 week')
+              and evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
               {% endif %}
      )
 SELECT 'bnb'                                 as blockchain
      , 'tofu'                                as project
      , 'v1'                                  as version
-     , date_trunc('day', tfe.evt_block_time) as block_date
+     , TIMESTAMP_TRUNC(tfe.evt_block_time, day) as block_date
      , tfe.evt_block_time                    as block_time
      , tfe.evt_block_number                  as block_number
      , tff.token_id                          as token_id
@@ -74,7 +68,7 @@ SELECT 'bnb'                                 as blockchain
            when tff.bundle_size = 1 then 'Single Item Trade'
            else 'Bundle Trade'
     end                                      as trade_type
-     , CAST(tff.amount AS DECIMAL(38,0))     as number_of_items
+     , CAST(tff.amount AS BIGNUMERIC)     as number_of_items
      , 'Trade'                               as evt_type
      , tfe.seller                            as seller
      , tfe.buyer                             as buyer
@@ -83,7 +77,7 @@ SELECT 'bnb'                                 as blockchain
            when tfe.kind = '2' then 'Sell'
            else 'Auction'
     end                                      as trade_category
-     , CAST(tfe.price AS DECIMAL(38,0))      as amount_raw
+     , CAST(tfe.price AS BIGNUMERIC)      as amount_raw
      , tfe.price / power(10, pu.decimals)    as amount_original
      , pu.price * tfe.price / power(10, pu.decimals) as amount_usd
      , case
@@ -98,14 +92,14 @@ SELECT 'bnb'                                 as blockchain
      , tfe.evt_tx_hash                                                              as tx_hash
      , tx.from                                                                      as tx_from
      , tx.to                                                                        as tx_to
-     , CAST(tfe.price * tff.fee_rate AS DOUBLE)                                     as platform_fee_amount_raw
-     , CAST(tfe.price * tff.fee_rate / power(10, pu.decimals) AS DOUBLE)            as platform_fee_amount
-     , CAST(pu.price * tfe.price * tff.fee_rate / power(10, pu.decimals) AS DOUBLE) as platform_fee_amount_usd
-     , CAST(100 * tff.fee_rate AS DOUBLE)                                           as platform_fee_percentage
+     , CAST(tfe.price * tff.fee_rate AS FLOAT64)                                     as platform_fee_amount_raw
+     , CAST(tfe.price * tff.fee_rate / power(10, pu.decimals) AS FLOAT64)            as platform_fee_amount
+     , CAST(pu.price * tfe.price * tff.fee_rate / power(10, pu.decimals) AS FLOAT64) as platform_fee_amount_usd
+     , CAST(100 * tff.fee_rate AS FLOAT64)                                           as platform_fee_percentage
      , tfe.price * tff.royalty_rate                                                 as royalty_fee_amount_raw
      , tfe.price * tff.royalty_rate / power(10, pu.decimals)                        as royalty_fee_amount
      , pu.price * tfe.price * tff.royalty_rate / power(10, pu.decimals)             as royalty_fee_amount_usd
-     , CAST(100 * tff.royalty_rate AS DOUBLE)                                       as royalty_fee_percentage
+     , CAST(100 * tff.royalty_rate AS FLOAT64)                                       as royalty_fee_percentage
      , tff.royalty_address                                                          as royalty_fee_receive_address
      , case
            when tfe.native_bnb THEN 'BNB'
@@ -120,16 +114,16 @@ FROM tfe
                    ON tx.block_time = tfe.evt_block_time
                        AND tx.hash = tfe.evt_tx_hash
                        {% if is_incremental() %}
-                       and tx.block_time >= date_trunc("day", now() - interval '1 week')
+                       and tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
                        {% endif %}
          LEFT JOIN {{ ref('tokens_bnb_nft') }} nft
                    ON tff.token = nft.contract_address
          LEFT JOIN {{ source('prices', 'usd') }} pu
                    ON pu.blockchain = 'bnb'
-                       AND pu.minute = date_trunc('minute', tfe.evt_block_time)
+                       AND pu.minute = TIMESTAMP_TRUNC(tfe.evt_block_time, minute)
                        AND pu.contract_address = tfe.currency
                        {% if is_incremental() %}
-                       AND pu.minute >= date_trunc("day", now() - interval '1 week')
+                       AND pu.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
                        {% endif %}
          LEFT JOIN {{ ref('nft_bnb_aggregators')}} agg
                    ON agg.contract_address = tx.`to`

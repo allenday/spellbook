@@ -1,7 +1,6 @@
 -- PROTOFORM DISTRIBUTION BID. for example LPDA
 {{ config (
-    alias = 'bids',
-    post_hook = '{{ expose_spells(\'["ethereum"]\', "project", "tessera",\'["amadarrrr"]\') }}'
+    alias = 'bids'
 ) }}
 
 WITH lpda_bid AS (
@@ -9,9 +8,9 @@ WITH lpda_bid AS (
         _user AS user,
         _vault AS vault,
         'LPDA' AS type,
-        CAST(_price AS DOUBLE) / POWER(10, 18) AS price,
+        CAST(_price AS FLOAT64) /POWER(10,18) AS price,
         _quantity AS amount,
-        CAST(_price AS DOUBLE) / POWER(10, 18) * CAST(_quantity AS DOUBLE) AS volume,
+        CAST(_price AS FLOAT64) /POWER(10,18) * CAST(_quantity AS FLOAT64) AS volume,
         evt_block_time AS block_time,
         evt_tx_hash AS tx_hash
     FROM
@@ -20,4 +19,4 @@ WITH lpda_bid AS (
 
 SELECT *
 FROM lpda_bid;
--- union with future distribution modules
+-- UNION ALL with future distribution modules

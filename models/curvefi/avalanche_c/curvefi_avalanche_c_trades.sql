@@ -1,10 +1,8 @@
 {{ config(
     alias = 'trades',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'blockchain', 'project', 'version', 'tx_hash', 'evt_index', 'trace_address'],
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'blockchain', 'project', 'version', 'tx_hash', 'evt_index', 'trace_address'],
     )
 }}
 
@@ -67,7 +65,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{ust_wormhole_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_avalanche_c_token}}'
@@ -84,7 +82,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', '3pool_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -97,7 +95,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{mim_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdt_e_avalanche_c_token}}'
@@ -114,7 +112,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', '3poolV2_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -127,7 +125,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{aave_dai_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{aave_usdc_avalanche_c_token}}'
@@ -144,7 +142,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'AavePool_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -157,7 +155,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{dai_e_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_e_avalanche_c_token}}'
@@ -174,7 +172,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'AavePool_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -187,7 +185,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{dai_e_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_avalanche_c_token}}'
@@ -204,7 +202,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'aave_v3_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -217,7 +215,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{agEUR_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{jEUR_avalanche_c_token}}'
@@ -232,7 +230,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'agEURjEUR_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL  
@@ -245,7 +243,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{arUSD_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_avalanche_c_token}}'
@@ -262,7 +260,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'arUSD_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -275,7 +273,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{av3CRV_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{aave_wbtc_avalanche_c_token}}'
@@ -292,7 +290,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'ATriCryptoPool_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -305,7 +303,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{dai_e_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_avalanche_c_token}}'
@@ -322,7 +320,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'avax3pool_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -335,7 +333,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{axlUSDC_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_avalanche_c_token}}'
@@ -350,7 +348,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'axlUSDCUSDC_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -363,7 +361,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{axlUSDC_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_e_avalanche_c_token}}'
@@ -378,7 +376,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'axlUSDC_USDC_e_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -391,7 +389,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{blizz_dai_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{blizz_usdc_avalanche_c_token}}'
@@ -408,7 +406,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'Blizz_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -421,7 +419,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{dd_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_e_avalanche_c_token}}'
@@ -436,7 +434,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'Curve_DD2_Pool_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -449,7 +447,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{debridge_usdc_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -468,7 +466,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'deBridge_USDC_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -481,7 +479,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{defrost_h20_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{av3CRV_avalanche_c_token}}'
@@ -496,7 +494,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'DefrostH2O_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -509,7 +507,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{defrost_h20_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -528,7 +526,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'DefrostH2O_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -541,7 +539,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{eEUR_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{jEUR_avalanche_c_token}}'
@@ -556,7 +554,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'eEURjEUR_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -569,7 +567,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{frax_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{av3CRV_guage_avalanche_c_token}}'
@@ -584,7 +582,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'frax_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -597,7 +595,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{frax_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -616,7 +614,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'frax_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -629,7 +627,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{fusd_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{mim_avalanche_c_token}}'
@@ -644,7 +642,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'FUSD_MIM_Factory_Pool_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -657,7 +655,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{fusd_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_e_avalanche_c_token}}'
@@ -672,7 +670,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'FUSDUSDC_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -685,7 +683,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{wavax_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{ankr_aAVAXb_avalanche_c_token}}'
@@ -700,7 +698,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'L2StableSwap_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -713,7 +711,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{mai_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{av3CRV_avalanche_c_token}}'
@@ -728,7 +726,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'MAI_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
         
         UNION ALL 
@@ -741,7 +739,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{mai_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -760,7 +758,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'MAI_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -773,7 +771,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{mim_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{av3CRV_avalanche_c_token}}'
@@ -788,7 +786,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'MIM_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -801,7 +799,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{mim_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -820,7 +818,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'MIM_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -833,7 +831,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{moremoney_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{av3CRV_avalanche_c_token}}'
@@ -848,7 +846,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'MoreMoney_USD_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL  
@@ -861,7 +859,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{moremoney_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -880,7 +878,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'MoreMoney_USD_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL  
@@ -893,7 +891,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{nxusd_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -912,7 +910,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'NXUSDaV3CRV_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -925,7 +923,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{aave_wbtc_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{renBTC_avalanche_c_token}}'
@@ -940,7 +938,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'ren_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -953,7 +951,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{wbtc_e_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{renBTC_avalanche_c_token}}'
@@ -968,7 +966,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'ren_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -981,7 +979,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{usdl_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -1000,7 +998,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'Topshelf_USDL_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -1013,7 +1011,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{usdc_e_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{ust_wormhole_avalanche_c_token}}'
@@ -1028,7 +1026,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'USDCe_UST_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -1041,7 +1039,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{usdc_e_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_avalanche_c_token}}'
@@ -1056,7 +1054,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'USD_coin_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -1069,7 +1067,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{usds_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{dai_e_avalanche_c_token}}'
@@ -1088,7 +1086,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'USDS_evt_TokenExchangeUnderlying') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
         UNION ALL 
@@ -1101,7 +1099,7 @@ WITH dexs AS (
             '' AS maker,
             tokens_bought AS token_bought_amount_raw,
             tokens_sold AS token_sold_amount_raw,
-            CAST(NULL as double) as amount_usd,
+            CAST(NULL as FLOAT64) as amount_usd,
             CASE
                 WHEN bought_id = 0 THEN '{{yusd_avalanche_c_token}}'
                 WHEN bought_id = 1 THEN '{{usdc_avalanche_c_token}}'
@@ -1118,7 +1116,7 @@ WITH dexs AS (
             evt_index
             FROM {{ source('curvefi_avalanche_c', 'YUSDPOOL_evt_TokenExchange') }}
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 )
 
@@ -1126,7 +1124,7 @@ SELECT
     'avalanche_c' as blockchain, 
     'curve' as project, 
     '2' as version, 
-    TRY_CAST(date_trunc('DAY', dexs.block_time) as date) as block_date, 
+    SAFE_CAST(TIMESTAMP_TRUNC(dexs.block_time, DAY) as date) as block_date, 
     dexs.block_time, 
     erc20a.symbol as token_bought_symbol, 
     erc20b.symbol as token_sold_symbol, 
@@ -1136,8 +1134,8 @@ SELECT
     END as token_pair, 
     dexs.token_bought_amount_raw / power(10, erc20a.decimals) as token_bought_amount, 
     dexs.token_sold_amount_raw / power(10, erc20b.decimals) as token_sold_amount, 
-    CAST(dexs.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw, 
-    CAST(dexs.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw, 
+    CAST(dexs.token_bought_amount_raw AS BIGNUMERIC) AS token_bought_amount_raw, 
+    CAST(dexs.token_sold_amount_raw AS BIGNUMERIC) AS token_sold_amount_raw, 
     COALESCE(
         dexs.amount_usd, 
         (dexs.token_bought_amount_raw / power(10, p_bought.decimals)) * p_bought.price, 
@@ -1160,7 +1158,7 @@ INNER JOIN {{ source('avalanche_c', 'transactions') }} tx
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND tx.block_time >= date_trunc("day", now() - interval '1 week')
+    AND tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} erc20a
     ON erc20a.contract_address = dexs.token_bought_address
@@ -1169,22 +1167,22 @@ LEFT JOIN {{ ref('tokens_erc20') }} erc20b
     ON erc20b.contract_address = dexs.token_sold_address
     AND erc20b.blockchain = 'avalanche_c'
 LEFT JOIN {{ source('prices', 'usd') }} p_bought
-    ON p_bought.minute = date_trunc('minute', dexs.block_time)
+    ON p_bought.minute = TIMESTAMP_TRUNC(dexs.block_time, minute)
     AND p_bought.contract_address = dexs.token_bought_address
     AND p_bought.blockchain = 'avalanche_c'
     {% if not is_incremental() %}
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p_bought.minute >= date_trunc("day", now() - interval '1 week')
+    AND p_bought.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p_sold
-    ON p_sold.minute = date_trunc('minute', dexs.block_time)
+    ON p_sold.minute = TIMESTAMP_TRUNC(dexs.block_time, minute)
     AND p_sold.contract_address = dexs.token_sold_address
     AND p_sold.blockchain = 'avalanche_c'
     {% if not is_incremental() %}
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p_sold.minute >= date_trunc("day", now() - interval '1 week')
+    AND p_sold.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}

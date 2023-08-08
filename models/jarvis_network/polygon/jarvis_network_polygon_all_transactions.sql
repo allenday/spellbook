@@ -1,15 +1,9 @@
 {{
   config(
     alias='all_transactions',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'evt_tx_hash', 'evt_index'],
-    post_hook='{{ expose_spells(\'["polygon"]\',
-                                      "project",
-                                      "jarvis_network",
-                                      \'["0xroll"]\') }}')
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'evt_tx_hash', 'evt_index'])
 }}
 
 {% set project_start_date = '2021-08-16' %}
@@ -17,7 +11,7 @@
 
 SELECT  'polygon'                                             AS blockchain,
         evt_block_time,
-        try_cast(date_trunc('DAY', evt_block_time) as date)   AS block_date,
+        SAFE_CAST(TIMESTAMP_TRUNC(evt_block_time, DAY) as date)   AS block_date,
         action,
         user,
         recipient,
@@ -64,7 +58,7 @@ FROM
             evt_index
     FROM {{ source('jarvis_network_polygon','SynthereumMultiLpLiquidityPool_evt_Minted') }}
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
     {% if not is_incremental() %}
     WHERE evt_block_time >= '{{ project_start_date }}'
@@ -85,7 +79,7 @@ FROM
             evt_index
     FROM {{ source('jarvis_network_polygon','SynthereumMultiLpLiquidityPool_evt_Redeemed') }}
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
     {% if not is_incremental() %}
     WHERE evt_block_time >= '{{ project_start_date }}'
@@ -106,7 +100,7 @@ FROM
             evt_index
     FROM {{ source('jarvis_network_polygon','SynthereumPoolOnChainPriceFeed_evt_Mint') }}
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
     {% if not is_incremental() %}
     WHERE evt_block_time >= '{{ project_start_date }}'
@@ -127,7 +121,7 @@ FROM
             evt_index
     FROM {{ source('jarvis_network_polygon','SynthereumPoolOnChainPriceFeed_evt_Redeem') }}
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
     {% if not is_incremental() %}
     WHERE evt_block_time >= '{{ project_start_date }}'
@@ -148,7 +142,7 @@ FROM
             evt_index
     FROM {{ source('jarvis_network_polygon','SynthereumPoolOnChainPriceFeed_evt_Exchange') }}
     {% if is_incremental() %}
-    WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
     {% if not is_incremental() %}
     WHERE evt_block_time >= '{{ project_start_date }}'
@@ -161,12 +155,11 @@ FROM
   LEFT JOIN  {{ source('prices', 'usd') }}                                pu
       ON am.blockchain = pu.blockchain
       AND cm.jfiat_collateral_symbol = pu.symbol
-      AND date_trunc('minute',x.evt_block_time) = pu.minute
+      AND TIMESTAMP_TRUNC(x.evt_block_time, minute) = pu.minute
       {% if not is_incremental() %}
       AND pu.minute >= '{{project_start_date}}'
       {% endif %}
       {% if is_incremental() %}
-      AND pu.minute >= date_trunc("day", now() - interval '1 week')
+      AND pu.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
       {% endif %}
 ) p
-;

@@ -1,15 +1,9 @@
 {{ config(
     schema = 'rarible_polygon',
     alias = 'events',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_time', 'unique_trade_id'],
-    post_hook='{{ expose_spells(\'["polygon"]\',
-                              "project",
-                              "rarible",
-                              \'["springzh"]\') }}'
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_time', 'unique_trade_id']
     )
 }}
 
@@ -26,7 +20,7 @@ WITH trades AS (
         rightMaker AS buyer,
         leftMaker AS seller,
         '0x' || right(substring(leftAsset:data, 3, 64), 40) AS nft_contract_address,
-        CAST(bytea2numeric_v3(substr(leftAsset:data, 3 + 64, 64)) AS string) AS token_id,
+        CAST(udfs.bytea2numeric_v3(substr(leftAsset:data, 3 + 64, 64)) AS string) AS token_id,
         newRightFill AS number_of_items,
         CASE WHEN leftAsset:assetClass = '0x73ad2146' THEN 'erc721' ELSE 'erc1155' END AS token_standard, -- 0x73ad2146: erc721; 0x973bb640: erc1155
         CASE WHEN rightAsset:assetClass = '0xaaaebeba' THEN '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
@@ -39,7 +33,7 @@ WITH trades AS (
         AND evt_block_time >= '{{nft_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+        AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 
     UNION ALL
@@ -54,7 +48,7 @@ WITH trades AS (
         leftMaker AS buyer,
         rightMaker AS seller,
         '0x' || right(substring(rightAsset:data, 3, 64), 40) AS nft_contract_address,
-        CAST(bytea2numeric_v3(substr(rightAsset:data, 3 + 64, 64)) AS string) AS token_id,
+        CAST(udfs.bytea2numeric_v3(substr(rightAsset:data, 3 + 64, 64)) AS string) AS token_id,
         newLeftFill AS number_of_items,
         CASE WHEN rightAsset:assetClass = '0x73ad2146' THEN 'erc721' ELSE 'erc1155' END AS token_standard, -- 0x73ad2146: erc721; 0x973bb640: erc1155
         CASE WHEN leftAsset:assetClass = '0xaaaebeba' THEN '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
@@ -67,7 +61,7 @@ WITH trades AS (
         AND evt_block_time >= '{{nft_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+        AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 ),
 
@@ -75,7 +69,7 @@ WITH trades AS (
 trade_amount_detail as (
     SELECT e.block_number AS evt_block_number,
         e.tx_hash AS evt_tx_hash,
-        cast(e.value AS double) as amount_raw,
+        cast(e.value AS FLOAT64) as amount_raw,
         row_number() OVER (PARTITION BY e.tx_hash ORDER BY e.trace_address) AS item_index
     FROM {{ source('polygon', 'traces') }} e
     INNER JOIN trades t ON e.block_number = t.evt_block_number
@@ -84,17 +78,17 @@ trade_amount_detail as (
         AND e.block_time >= '{{nft_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        AND e.block_time >= date_trunc("day", now() - interval '1 week')
+        AND e.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
-    WHERE t.currency_contract = '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
-        AND cast(e.value as double) > 0
+    WHERE t.currency_contract IS NULL AND t.currency_contract = '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
+        AND cast(e.value as FLOAT64) > 0
         AND cardinality(trace_address) > 0 -- exclude the main call record
 
     UNION ALL
 
     SELECT e.evt_block_number,
         e.evt_tx_hash,
-        CAST(e.value as double) AS amount_raw,
+        CAST(e.value as FLOAT64) AS amount_raw,
         row_number() OVER (PARTITION BY e.evt_tx_hash ORDER BY e.evt_index) AS item_index
     FROM {{ source('erc20_polygon', 'evt_transfer') }} e
     INNER JOIN trades t ON e.evt_block_number = t.evt_block_number
@@ -103,7 +97,7 @@ trade_amount_detail as (
         AND e.evt_block_time >= '{{nft_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        AND e.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        AND e.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
     WHERE t.currency_contract <> '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
 ),
@@ -133,7 +127,7 @@ SELECT
   'rarible' AS project,
   'v2' AS version,
   a.evt_tx_hash AS tx_hash,
-  date_trunc('day', a.evt_block_time) AS block_date,
+  TIMESTAMP_TRUNC(a.evt_block_time, day) AS block_date,
   a.evt_block_time AS block_time,
   a.evt_block_number AS block_number,
   coalesce(s.amount_raw,0) / power(10, erc.decimals) * p.price AS amount_usd,
@@ -147,7 +141,7 @@ SELECT
   evt_type,
   CAST(NULL AS string) AS collection,
   CASE WHEN number_of_items = 1 THEN 'Single Item Trade' ELSE 'Bundle Trade' END AS trade_type,
-  CAST(number_of_items AS decimal(38,0)) AS number_of_items,
+  CAST(number_of_items AS BIGNUMERIC) AS number_of_items,
   a.trade_category,
   a.buyer,
   a.seller,
@@ -157,14 +151,14 @@ SELECT
   t.`from` AS tx_from,
   t.`to` AS tx_to,
   coalesce(s.platform_fee_amount_raw,0) as platform_fee_amount_raw,
-  CAST(coalesce(s.platform_fee_amount_raw,0) / power(10, erc.decimals) AS double) AS platform_fee_amount,
-  CAST(coalesce(s.platform_fee_amount_raw,0) / power(10, erc.decimals) * p.price AS double) AS platform_fee_amount_usd,
-  CAST(coalesce(s.platform_fee_amount_raw,0)  / s.amount_raw * 100 as double) as platform_fee_percentage,
-  CAST(coalesce(s.royalty_fee_amount_raw,0) as double) AS royalty_fee_amount_raw,
-  CAST(coalesce(s.royalty_fee_amount_raw,0) / power(10, erc.decimals) as double) AS royalty_fee_amount,
-  CAST(coalesce(s.royalty_fee_amount_raw,0) / power(10, erc.decimals) * p.price AS double) AS royalty_fee_amount_usd,
-  CAST(coalesce(s.royalty_fee_amount_raw,0) / s.amount_raw * 100 AS double) AS royalty_fee_percentage,
-  CAST(NULL AS varchar(5)) AS royalty_fee_receive_address,
+  CAST(coalesce(s.platform_fee_amount_raw,0) / power(10, erc.decimals) AS FLOAT64) AS platform_fee_amount,
+  CAST(coalesce(s.platform_fee_amount_raw,0) / power(10, erc.decimals) * p.price AS FLOAT64) AS platform_fee_amount_usd,
+  CAST(coalesce(s.platform_fee_amount_raw,0)  / s.amount_raw * 100 as FLOAT64) as platform_fee_percentage,
+  CAST(coalesce(s.royalty_fee_amount_raw,0) as FLOAT64) AS royalty_fee_amount_raw,
+  CAST(coalesce(s.royalty_fee_amount_raw,0) / power(10, erc.decimals) as FLOAT64) AS royalty_fee_amount,
+  CAST(coalesce(s.royalty_fee_amount_raw,0) / power(10, erc.decimals) * p.price AS FLOAT64) AS royalty_fee_amount_usd,
+  CAST(coalesce(s.royalty_fee_amount_raw,0) / s.amount_raw * 100 AS FLOAT64) AS royalty_fee_percentage,
+  CAST(NULL AS STRING) AS royalty_fee_receive_address,
   CAST(NULL AS string)  AS royalty_fee_currency_symbol,
   a.evt_tx_hash || '-' || a.evt_type || '-' || a.evt_index || '-' || a.token_id || '-' || CAST(a.number_of_items AS string)  AS unique_trade_id
 FROM trades a
@@ -174,15 +168,15 @@ INNER JOIN {{ source('polygon','transactions') }} t ON a.evt_block_number = t.bl
     AND t.block_time >= '{{nft_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND t.block_time >= date_trunc("day", now() - interval '1 week')
+    AND t.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 LEFT JOIN trade_amount_summary s ON a.evt_block_number = s.evt_block_number AND a.evt_tx_hash = s.evt_tx_hash
 LEFT JOIN {{ ref('tokens_erc20') }} erc ON erc.blockchain = 'polygon' AND erc.contract_address = a.currency_contract
-LEFT JOIN {{ source('prices', 'usd') }} p ON p.contract_address = a.currency_contract AND p.minute = date_trunc('minute', a.evt_block_time)
+LEFT JOIN {{ source('prices', 'usd') }} p ON p.contract_address = a.currency_contract AND p.minute = TIMESTAMP_TRUNC(a.evt_block_time, minute)
     {% if not is_incremental() %}
     AND p.minute >= '{{nft_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p.minute >= date_trunc("day", now() - interval '1 week')
+    AND p.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ ref('nft_aggregators') }} agg ON agg.blockchain = 'polygon' AND agg.contract_address = t.`to`

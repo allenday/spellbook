@@ -1,10 +1,6 @@
 {{
     config(
-        alias='contract_deployers_avalanche_c',
-        post_hook='{{ expose_spells(\'["avalanche_c"]\',
-                                    "sector",
-                                    "labels",
-                                    \'["hildobby", "hosuke"]\') }}'
+        alias='contract_deployers_avalanche_c'
     )
 }}
 
@@ -15,7 +11,7 @@ SELECT distinct 'avalanche_c'        AS blockchain
               , 'hildobby'           as contributor
               , 'query'              AS source
               , date('2023-03-03')   AS created_at
-              , NOW()                as updated_at
+              , CURRENT_TIMESTAMP()                as updated_at
               , 'contract_deployers' AS model_name
               , 'persona'            as label_type
 FROM {{ source('avalanche_c', 'creation_traces') }} creation

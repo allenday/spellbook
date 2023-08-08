@@ -1,199 +1,241 @@
-version: 2
-
 models:
-  - name: dodo_ethereum_trades
-    meta:
-      blockchain: ethereum
-      sector: dex
-      project: dodo
-      contributors: scoffie, owen05
-    config:
-      tags: ['ethereum','dodo','trades', 'dex']
-    description: >
-        Dodo trades on Ethereum.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - block_date
-            - blockchain
-            - project
-            - version
-            - tx_hash
-            - evt_index
-            - trace_address
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "Blockchain which the DEX is deployed (specify: ethereum)"
-      - &project
-        name: project
-        description: "Project name of the DEX (specify: DODO)"
-      - &version
-        name: version
-        description: "Version of dodo contracts (0 - dodo_aggregator, 1 - DODOV1, 2_dvm - DODOV2 public pool, 2_dsp - DODOV2 stable pool, 2_dpp - DODOV2 private pool)"
-      - &block_date
-        name: block_date
-        description: "Truncated to day UTC event block date of each DEX trade"
-      - &block_time
-        name: block_time
-        description: "UTC event block time of each DEX trade"
-      - &token_bought_symbol
-        name: token_bought_symbol
-        description: "Token symbol for token bought in the trade"
-      - &token_sold_symbol
-        name: token_sold_symbol
-        description: "Token symbol for token sold in the trade"
-      - &token_pair
-        name: token_pair
-        description: "Token symbol pair for each token involved in the trade"
-      - &token_bought_amount
-        name: token_bought_amount
-        description: "Value of the token bought at time of execution with its decimals factored in"
-      - &token_sold_amount
-        name: token_sold_amount
-        description: "Value of the token sold at time of execution with its decimals factored in"
-      - &token_bought_amount_raw
-        name: token_bought_amount_raw
-        description: "Raw value of the token bought at time of execution without division by its decimals"
-      - &token_sold_amount_raw
-        name: token_sold_amount_raw
-        description: "Raw value of the token sold at time of execution without division by its decimals"
-      - &amount_usd
-        name: amount_usd
-        description: "USD value of the trade at time of execution"
-      - &token_bought_address
-        name: token_bought_address
-        description: "Contract address of the token bought"
-      - &token_sold_address
-        name: token_sold_address
-        description: "Contract address of the token sold"
-      - &taker
-        name: taker
-        description: "Address of trader who purchased a token"
-      - &maker
-        name: maker
-        description: "Address of trader who sold a token."
-      - &project_contract_address
-        name: project_contract_address
-        description: "Project contract address which executed the trade on the blockchain"
-      - &tx_hash
-        name: tx_hash
-        description: "Unique transaction hash value tied to each transaction on the DEX"
-      - &tx_from
-        name: tx_from
-        description: "Address which initiated the trade"
-      - &tx_to
-        name: tx_to
-        description: "Address which received the trade"
-      - &trace_address
-        name: trace_address
-        description: ""
-      - &evt_index
-        name: evt_index
-        description: "Index of the corresponding trade event"
+- columns:
+  - &id001
+    description: 'Blockchain which the DEX is deployed (specify: ethereum)'
+    name: blockchain
+    tests: []
+  - &id002
+    description: 'Project name of the DEX (specify: DODO)'
+    name: project
+    tests: []
+  - &id003
+    description: Version of dodo contracts (0 - dodo_aggregator, 1 - DODOV1, 2_dvm
+      - DODOV2 public pool, 2_dsp - DODOV2 stable pool, 2_dpp - DODOV2 private pool)
+    name: version
+    tests: []
+  - &id004
+    description: Truncated to day UTC event block date of each DEX trade
+    name: block_date
+    tests: []
+  - &id005
+    description: UTC event block time of each DEX trade
+    name: block_time
+    tests: []
+  - &id006
+    description: Token symbol for token bought in the trade
+    name: token_bought_symbol
+    tests: []
+  - &id007
+    description: Token symbol for token sold in the trade
+    name: token_sold_symbol
+    tests: []
+  - &id008
+    description: Token symbol pair for each token involved in the trade
+    name: token_pair
+    tests: []
+  - &id009
+    description: Value of the token bought at time of execution with its decimals
+      factored in
+    name: token_bought_amount
+    tests: []
+  - &id010
+    description: Value of the token sold at time of execution with its decimals factored
+      in
+    name: token_sold_amount
+    tests: []
+  - &id011
+    description: Raw value of the token bought at time of execution without division
+      by its decimals
+    name: token_bought_amount_raw
+    tests: []
+  - &id012
+    description: Raw value of the token sold at time of execution without division
+      by its decimals
+    name: token_sold_amount_raw
+    tests: []
+  - &id013
+    description: USD value of the trade at time of execution
+    name: amount_usd
+    tests: []
+  - &id014
+    description: Contract address of the token bought
+    name: token_bought_address
+    tests: []
+  - &id015
+    description: Contract address of the token sold
+    name: token_sold_address
+    tests: []
+  - &id016
+    description: Address of trader who purchased a token
+    name: taker
+    tests: []
+  - &id017
+    description: Address of trader who sold a token.
+    name: maker
+    tests: []
+  - &id018
+    description: Project contract address which executed the trade on the blockchain
+    name: project_contract_address
+    tests: []
+  - &id019
+    description: Unique transaction hash value tied to each transaction on the DEX
+    name: tx_hash
+    tests: []
+  - &id020
+    description: Address which initiated the trade
+    name: tx_from
+    tests: []
+  - &id021
+    description: Address which received the trade
+    name: tx_to
+    tests: []
+  - &id022
+    description: ''
+    name: trace_address
+    tests: []
+  - &id023
+    description: Index of the corresponding trade event
+    name: evt_index
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - dodo
+    - trades
+    - dex
+  description: 'Dodo trades on Ethereum.
 
-  - name: dodo_pools_ethereum_trades
-    meta:
-      blockchain: ethereum
-      sector: dex
-      project: dodo_pools
-      contributors: scoffie, owen05
-    config:
-      tags: ['ethereum','dodo','pools', 'trades', 'dex']
-    description: >
-        DodoV1 && DODOV2 pools' trades on Ethereum.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - block_date
-            - blockchain
-            - project
-            - version
-            - tx_hash
-            - evt_index
-            - trace_address
-      - check_dex_seed:
-          blockchain: ethereum
-          project: DODO
-          version: 1
-      - check_dex_seed:
-          blockchain: ethereum
-          project: DODO
-          version: 2_dvm
-      - check_dex_seed:
-          blockchain: ethereum
-          project: DODO
-          version: 2_dsp
-    columns:
-      - *blockchain
-      - *project
-      - *version
-      - *block_date
-      - *block_time
-      - *token_bought_symbol
-      - *token_sold_symbol
-      - *token_pair
-      - *token_bought_amount
-      - *token_sold_amount
-      - *token_bought_amount_raw
-      - *token_sold_amount_raw
-      - *amount_usd
-      - *token_bought_address
-      - *token_sold_address
-      - *taker
-      - *maker
-      - *project_contract_address
-      - *tx_hash
-      - *tx_from
-      - *tx_to
-      - *trace_address
-      - *evt_index
+    '
+  meta:
+    blockchain: ethereum
+    contributors: scoffie, owen05
+    project: dodo
+    sector: dex
+  name: dodo_ethereum_trades
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - block_date
+      - blockchain
+      - project
+      - version
+      - tx_hash
+      - evt_index
+      - trace_address
+- columns:
+  - *id001
+  - *id002
+  - *id003
+  - *id004
+  - *id005
+  - *id006
+  - *id007
+  - *id008
+  - *id009
+  - *id010
+  - *id011
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  - *id017
+  - *id018
+  - *id019
+  - *id020
+  - *id021
+  - *id022
+  - *id023
+  config:
+    tags:
+    - ethereum
+    - dodo
+    - pools
+    - trades
+    - dex
+  description: 'DodoV1 && DODOV2 pools'' trades on Ethereum.
 
-  - name: dodo_aggregator_ethereum_trades
-    meta:
+    '
+  meta:
+    blockchain: ethereum
+    contributors: scoffie, owen05
+    project: dodo_pools
+    sector: dex
+  name: dodo_pools_ethereum_trades
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - block_date
+      - blockchain
+      - project
+      - version
+      - tx_hash
+      - evt_index
+      - trace_address
+  - check_dex_seed:
       blockchain: ethereum
-      sector: dex
-      project: dodo_aggregator
-      contributors: scoffie, owen05
-    config:
-      tags: ['ethereum','dodo',"aggregator", 'trades', 'dex']
-    description: >
-        DODO Aggregation on Ethereum.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - block_date
-            - blockchain
-            - project
-            - version
-            - tx_hash
-            - evt_index
-            - trace_address
-      - check_dex_seed:
-          blockchain: ethereum
-          project: DODO
-          version: 0
-    columns:
-      - *blockchain
-      - *project
-      - *version
-      - *block_date
-      - *block_time
-      - *token_bought_symbol
-      - *token_sold_symbol
-      - *token_pair
-      - *token_bought_amount
-      - *token_sold_amount
-      - *token_bought_amount_raw
-      - *token_sold_amount_raw
-      - *amount_usd
-      - *token_bought_address
-      - *token_sold_address
-      - *taker
-      - *maker
-      - *project_contract_address
-      - *tx_hash
-      - *tx_from
-      - *tx_to
-      - *trace_address
-      - *evt_index
+      project: DODO
+      version: 1
+  - check_dex_seed:
+      blockchain: ethereum
+      project: DODO
+      version: 2_dvm
+  - check_dex_seed:
+      blockchain: ethereum
+      project: DODO
+      version: 2_dsp
+- columns:
+  - *id001
+  - *id002
+  - *id003
+  - *id004
+  - *id005
+  - *id006
+  - *id007
+  - *id008
+  - *id009
+  - *id010
+  - *id011
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  - *id017
+  - *id018
+  - *id019
+  - *id020
+  - *id021
+  - *id022
+  - *id023
+  config:
+    tags:
+    - ethereum
+    - dodo
+    - aggregator
+    - trades
+    - dex
+  description: 'DODO Aggregation on Ethereum.
+
+    '
+  meta:
+    blockchain: ethereum
+    contributors: scoffie, owen05
+    project: dodo_aggregator
+    sector: dex
+  name: dodo_aggregator_ethereum_trades
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - block_date
+      - blockchain
+      - project
+      - version
+      - tx_hash
+      - evt_index
+      - trace_address
+  - check_dex_seed:
+      blockchain: ethereum
+      project: DODO
+      version: 0
+version: 2

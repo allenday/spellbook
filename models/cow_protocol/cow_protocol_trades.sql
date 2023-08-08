@@ -1,14 +1,10 @@
 {{ config(
-        alias ='trades',
-        post_hook='{{ expose_spells(\'["ethereum", "gnosis"]\',
-                                    "project",
-                                    "cow_protocol",
-                                    \'["bh2smith", "gentrexha"]\') }}'
+        alias ='trades'
         )
 }}
 SELECT *
 FROM
-    (
+(
         SELECT
             'ethereum' AS blockchain,
             'CoW Protocol' AS project,
@@ -26,7 +22,7 @@ FROM
             buy_token_address AS token_bought_address,
             sell_token_address AS token_sold_address,
             trader AS taker,
-            CAST(NULL AS VARCHAR(5)) AS maker,
+            CAST(NULL AS STRING) AS maker,
             project_contract_address,
             tx_hash,
             trader AS tx_from,
@@ -55,7 +51,7 @@ FROM
             buy_token_address AS token_bought_address,
             sell_token_address AS token_sold_address,
             trader AS taker,
-            CAST(NULL AS VARCHAR(5)) AS maker,
+            CAST(NULL AS STRING) AS maker,
             project_contract_address,
             tx_hash,
             trader AS tx_from,
@@ -63,4 +59,4 @@ FROM
             trace_address,
             evt_index
         FROM {{ ref('cow_protocol_gnosis_trades') }}
-    )
+)

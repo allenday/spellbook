@@ -1,8 +1,4 @@
-{{config(alias='token_standards_fantom',
-        post_hook='{{ expose_spells(\'["fantom"]\',
-                                    "sector",
-                                    "labels",
-                                    \'["hildobby"]\') }}')}}
+{{config(alias='token_standards_fantom')}}
 
 SELECT distinct 'fantom' AS blockchain
 , erc20.contract_address AS address
@@ -11,13 +7,13 @@ SELECT distinct 'fantom' AS blockchain
 , 'hildobby' AS contributor
 , 'query' AS source
 , date('2023-03-02') AS created_at
-, NOW() AS modified_at
+, CURRENT_TIMESTAMP() AS modified_at
 , 'token_standard' AS model_name
 , 'persona' as label_type
 FROM {{ source('erc20_fantom', 'evt_transfer') }} erc20
 {% if is_incremental() %}
-LEFT ANTI JOIN this t ON t.address = erc20.contract_address
-WHERE erc20.evt_block_time >= date_trunc('day', now() - interval '1 week')
+LEFT JOIN this t ON t.address = erc20.contract_address
+WHERE erc20.evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}
 
 UNION ALL
@@ -29,11 +25,11 @@ SELECT distinct 'fantom' AS blockchain
 , 'hildobby' AS contributor
 , 'query' AS source
 , date('2023-03-02') AS created_at
-, NOW() AS modified_at
+, CURRENT_TIMESTAMP() AS modified_at
 , 'token_standard' AS model_name
 , 'persona' as label_type
 FROM {{ ref('nft_fantom_transfers') }} nft
 {% if is_incremental() %}
-LEFT ANTI JOIN this t ON t.address = nft.contract_address
-WHERE nft.block_time >= date_trunc('day', now() - interval '1 week')
+LEFT JOIN this t ON t.address = nft.contract_address
+WHERE nft.block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}

@@ -1,18 +1,14 @@
-{{ config(alias='app_data',
-        post_hook='{{ expose_spells(\'["ethereum"]\',
-                                    "project",
-                                    "cow_protocol",
-                                    \'["bh2smith"]\') }}'
-) }}
+{{ config(alias='app_data'
+)}}
 
 -- Find the PoC Query here: https://dune.com/queries/1751965
 with
 partially_unpacked_app_content as (
-    select distinct
-        app_hash,
-        content.appcode as app_code,
+    select
+        distinct app_hash,
+        content.appCode as app_code,
         content.environment,
-        content.metadata.orderclass.orderclass as order_class,
+        content.metadata.orderClass.orderClass as order_class,
         content.metadata.quote,
         content.metadata.referrer
     from {{ source('cowswap', 'raw_app_data') }}
@@ -37,10 +33,10 @@ results as (
         environment,
         order_class,
         referrer,
-        cast(quote.slippagebips as integer) as slippage_bips
+        cast(quote.slippageBips as integer) slippage_bips
         -- There is only one App Data using buyAmount/sellAmount fields.
-        -- cast(quote.sellAmount as double) sell_amount,
-        -- cast(quote.buyAmount as double) buy_amount
+        -- cast(quote.sellAmount as FLOAT64) sell_amount,
+        -- cast(quote.buyAmount as FLOAT64) buy_amount
     from unpacked_referrer_app_data
 )
 

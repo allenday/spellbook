@@ -1,9 +1,5 @@
 {{ config(
-        alias ='safes_all',
-        post_hook='{{ expose_spells(\'["arbitrum","avalanche_c","bnb","ethereum","fantom","gnosis","goerli","optimism","polygon"]\',
-                                "project",
-                                "safe",
-                                \'["tschubotz"]\') }}'
+        alias ='safes_all'
         )
 }}
 
@@ -23,16 +19,16 @@
 SELECT *
 FROM (
     {% for safes_model in safe_safes_models %}
-        SELECT
-            blockchain,
-            address,
-            creation_version,
-            block_date,
-            creation_time,
-            tx_hash
-        FROM {{ safes_model }}
-        {% if not loop.last %}
-            UNION ALL
-        {% endif %}
+    SELECT
+        blockchain, 
+        address, 
+        creation_version, 
+        block_date, 
+        creation_time, 
+        tx_hash
+    FROM {{ safes_model }}
+    {% if not loop.last %}
+    UNION ALL
+    {% endif %}
     {% endfor %}
 )

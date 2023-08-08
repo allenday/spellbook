@@ -2,12 +2,8 @@
     config(
         schema = 'velodrome_optimism',
         alias='bribe_mappings',
-        materialized = 'table',
-        unique_key = ['pool_contract', 'incentives_contract', 'allowed_rewards'],
-        post_hook='{{ expose_spells(\'["optimism"]\',
-                                    "project",
-                                    "velodrome",
-                                    \'["msilb7"]\') }}'
+        materialized = 'view',
+        unique_key = ['pool_contract', 'incentives_contract', 'allowed_rewards']
     ) 
 }}
 
@@ -39,7 +35,7 @@ FROM (
         INNER JOIN {{ source('velodrome_optimism', 'GaugeFactory_call_createGauge') }} cg
                 ON cg._external_bribe = ceb.output_0
 
-        WHERE ceb.call_success = true
+        WHERE ceb.call_success IS NULL AND ceb.call_success = true
 
         UNION ALL
 
@@ -58,5 +54,5 @@ FROM (
         INNER JOIN {{ source('velodrome_optimism', 'GaugeFactory_call_createGauge') }} cg
                 ON cg._internal_bribe = cib.output_0
 
-        WHERE cib.call_success = true
+        WHERE cib.call_success IS NULL AND cib.call_success = true
 ) a

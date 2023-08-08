@@ -1,15 +1,9 @@
 {{ config(
     tags=['prod_exclude'],
     alias = 'raw_trades',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'composite_index', 'tx_hash'],
-    post_hook='{{ expose_spells(\'["ethereum"]\',
-                                "project",
-                                "hashflow",
-                                \'["justabi", "jeff-dude"]\') }}'
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'composite_index', 'tx_hash']
     )
 }}
 
@@ -23,7 +17,7 @@ with ethereum_traces as (
                    '0xa18607ca4a3804cc3cd5730eafefcc47a7641643', '0x6ad3dac99c9a4a480748c566ce7b3503506e3d71')
         and block_time >= '{{ project_start_date }}'
     {% if is_incremental() %}
-        and block_time >= date_trunc('day', now() - interval '10 days')
+        and block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '10 days')
     {% endif %}
 ),
 
@@ -32,7 +26,7 @@ ethereum_transactions as (
     from {{ source('ethereum', 'transactions') }}
     where block_time >= '{{ project_start_date }}'
     {% if is_incremental() %}
-        and block_time >= date_trunc('day', now() - interval '10 days')
+        and block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '10 days')
     {% endif %}
 ),
 
@@ -42,7 +36,7 @@ prices_usd as (
     where `minute` >= '{{ project_start_date }}'
         and blockchain = 'ethereum'
     {% if is_incremental() %}
-        and `minute` >= date_trunc('day', now() - interval '10 days')
+        and `minute` >= date_trunc('day', CURRENT_TIMESTAMP() - interval '10 days')
     {% endif %}
 ),
 
@@ -57,7 +51,7 @@ hashflow_pool_evt_trade as (
     from {{ source('hashflow_ethereum', 'pool_evt_trade') }}
     where evt_block_time >= '{{ project_start_date }}'
     {% if is_incremental() %}
-        and evt_block_time >= date_trunc('day', now() - interval '10 days')
+        and evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '10 days')
     {% endif %}
 ),
 
@@ -72,44 +66,44 @@ ethereum_logs as (
 new_router as (
     select
         cast(coalesce(l.evt_index, -1) as int) as composite_index,
-        cast(get_json_object(quote,'$.flag') as string) as source,
+        cast(JSON_EXTRACT_SCALAR(quote,'$.flag') as string) as source,
         t.call_block_time as block_time,
         t.call_tx_hash as tx_hash,
         t.call_success as fill_status,
         'tradeSingleHop' as method_id,
         t.contract_address as router_contract,
-        ('0x' || substring(get_json_object(quote,'$.pool') from 3)) as pool,
+        ('0x' || SUBSTR(JSON_EXTRACT_SCALAR(quote,'$.pool'), 3)) as pool,
         tx.from as trader,
-        ('0x' || substring(get_json_object(quote,'$.quoteToken') from 3)) as maker_token,
-        ('0x' || substring(get_json_object(quote,'$.baseToken') from 3)) as taker_token,
-        case when get_json_object(quote,'$.quoteToken') = '0x0000000000000000000000000000000000000000' then 'ETH'
+        ('0x' || SUBSTR(JSON_EXTRACT_SCALAR(quote,'$.quoteToken'), 3)) as maker_token,
+        ('0x' || SUBSTR(JSON_EXTRACT_SCALAR(quote,'$.baseToken'), 3)) as taker_token,
+        case when JSON_EXTRACT_SCALAR(quote,'$.quoteToken') = '0x0000000000000000000000000000000000000000' then 'ETH'
             else mp.symbol end as maker_symbol,
-        case when get_json_object(quote,'$.baseToken') = '0x0000000000000000000000000000000000000000' then 'ETH'
+        case when JSON_EXTRACT_SCALAR(quote,'$.baseToken') = '0x0000000000000000000000000000000000000000' then 'ETH'
             else tp.symbol end as taker_symbol,
         case when l.evt_tx_hash is not null then l.`quoteTokenAmount`/power(10, mp.decimals)
-            else cast(get_json_object(quote,'$.maxQuoteTokenAmount') as float)/power(10,mp.decimals) end  as maker_token_amount,
+            else cast(JSON_EXTRACT_SCALAR(quote,'$.maxQuoteTokenAmount') as FLOAT64)/power(10,mp.decimals) end  as maker_token_amount,
         case when l.evt_tx_hash is not null then l.`baseTokenAmount`/power(10, tp.decimals)
-            else cast(get_json_object(quote,'$.maxBaseTokenAmount') as float)/power(10,tp.decimals) end  as taker_token_amount,
+            else cast(JSON_EXTRACT_SCALAR(quote,'$.maxBaseTokenAmount') as FLOAT64)/power(10,tp.decimals) end  as taker_token_amount,
         case when l.evt_tx_hash is not null
             then coalesce(
                         l.`baseTokenAmount`/power(10, tp.decimals) * tp.price,
                         `quoteTokenAmount`/power(10, mp.decimals) * mp.price)
             else coalesce(
-                    cast(get_json_object(quote,'$.maxBaseTokenAmount') as float)/power(10, tp.decimals) * tp.price,
-                    cast(get_json_object(quote,'$.maxQuoteTokenAmount') as float)/power(10, mp.decimals) * mp.price) end as amount_usd
+                    cast(JSON_EXTRACT_SCALAR(quote,'$.maxBaseTokenAmount') as FLOAT64)/power(10, tp.decimals) * tp.price,
+                    cast(JSON_EXTRACT_SCALAR(quote,'$.maxQuoteTokenAmount') as FLOAT64)/power(10, mp.decimals) * mp.price) end as amount_usd
     from {{ source('hashflow_ethereum', 'router_call_tradesinglehop') }} t
     inner join ethereum_transactions tx on tx.hash = t.call_tx_hash
-    left join hashflow_pool_evt_trade l on l.txid = ('0x' || substring(get_json_object(quote,'$.txid') from 3))
-    left join prices_usd tp on tp.minute = date_trunc('minute', t.call_block_time)
+    left join hashflow_pool_evt_trade l on l.txid = ('0x' || SUBSTR(JSON_EXTRACT_SCALAR(quote,'$.txid'), 3))
+    left join prices_usd tp on tp.minute = TIMESTAMP_TRUNC(t.call_block_time, minute)
         and tp.contract_address =
-            case when get_json_object(quote,'$.baseToken') = '0x0000000000000000000000000000000000000000'
+            case when JSON_EXTRACT_SCALAR(quote,'$.baseToken') = '0x0000000000000000000000000000000000000000'
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-            else ('0x' || substring(get_json_object(quote,'$.baseToken') from 3)) end
-    left join prices_usd mp on mp.minute = date_trunc('minute', t.call_block_time)
+            else ('0x' || SUBSTR(JSON_EXTRACT_SCALAR(quote,'$.baseToken'), 3)) end
+    left join prices_usd mp on mp.minute = TIMESTAMP_TRUNC(t.call_block_time, minute)
         and mp.contract_address =
-            case when get_json_object(quote,'$.quoteToken') = '0x0000000000000000000000000000000000000000'
+            case when JSON_EXTRACT_SCALAR(quote,'$.quoteToken') = '0x0000000000000000000000000000000000000000'
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-            else ('0x' || substring(get_json_object(quote,'$.quoteToken') from 3)) end
+            else ('0x' || SUBSTR(JSON_EXTRACT_SCALAR(quote,'$.quoteToken'), 3)) end
 ),
 
 event_decoding_legacy_router as (
@@ -166,11 +160,11 @@ legacy_router_w_integration as (
     from ethereum_traces t
     inner join ethereum_transactions tx on tx.hash = t.tx_hash
     left join event_decoding_legacy_router l on l.tx_id = substring(t.input, 325, 32) -- join on tx_id 1:1, no dup
-    left join prices_usd tp on tp.minute = date_trunc('minute', t.block_time)
+    left join prices_usd tp on tp.minute = TIMESTAMP_TRUNC(t.block_time, minute)
         and tp.contract_address =
             case when substring(input, 81, 20) = '0x0000000000000000000000000000000000000000'
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' else substring(input, 81, 20) end
-    left join prices_usd mp on mp.minute = date_trunc('minute', t.block_time)
+    left join prices_usd mp on mp.minute = TIMESTAMP_TRUNC(t.block_time, minute)
         and mp.contract_address =
             case when substring(input, 113, 20) = '0x0000000000000000000000000000000000000000'
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' else substring(input, 113, 20) end
@@ -206,11 +200,11 @@ legacy_router_w_integration as (
     from ethereum_traces t
     inner join ethereum_transactions tx on tx.hash = t.tx_hash
     left join event_decoding_legacy_router l on l.tx_id = substring(t.input, 485, 32)
-    left join prices_usd tp on tp.minute = date_trunc('minute', t.block_time)
+    left join prices_usd tp on tp.minute = TIMESTAMP_TRUNC(t.block_time, minute)
         and tp.contract_address =
             case when substring(input, 177, 20) = '0x0000000000000000000000000000000000000000'
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' else substring(input, 177, 20) end
-    left join prices_usd mp on mp.minute = date_trunc('minute', t.block_time)
+    left join prices_usd mp on mp.minute = TIMESTAMP_TRUNC(t.block_time, minute)
         and mp.contract_address =
             case when substring(input, 209, 20) = '0x0000000000000000000000000000000000000000'
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' else substring(input, 209, 20) end
@@ -247,7 +241,7 @@ legacy_routers as (
                 then cast(conv(substring(input, 113, 20), 16, 10) as decimal)/1e18 * price
             else cast(conv(substring(input, 145, 20), 16, 10) as decimal)/1e18 * price end as amount_usd
     from ethereum_traces t
-    left join prices_usd p on minute = date_trunc('minute', t.block_time)
+    left join prices_usd p on minute = TIMESTAMP_TRUNC(t.block_time, minute)
     left join erc20_tokens e on e.contract_address = substring(input, 81, 20)
     where cast(trace_address as string) = '{}'  --top level call
         and `to` in ('0x9d4fc735e1a596420d24a266b7b5402fe4ec153c', '0x2405cb057a9baf85daa11ce9832baed839b6871c')
@@ -275,8 +269,8 @@ legacy_routers as (
                 cast(conv(substring(input, 145, 20), 16, 10) as decimal)/power(10, tp.decimals) * tp.price,
                 cast(conv(substring(input, 177, 20), 16, 10) as decimal)/power(10, mp.decimals) * mp.price) as amount_usd
     from ethereum_traces t
-    left join prices_usd tp on tp.minute = date_trunc('minute', t.block_time) and tp.contract_address = substring(input, 81, 20)
-    left join prices_usd mp on mp.minute = date_trunc('minute', t.block_time) and mp.contract_address = substring(input, 113, 20)
+    left join prices_usd tp on tp.minute = TIMESTAMP_TRUNC(t.block_time, minute) and tp.contract_address = substring(input, 81, 20)
+    left join prices_usd mp on mp.minute = TIMESTAMP_TRUNC(t.block_time, minute) and mp.contract_address = substring(input, 113, 20)
     where cast(trace_address as string) = '{}'
         and `to` in ('0x455a3B3Be6e7C8843f2b03A1cA22A5a5727ef5C4','0x9d4fc735e1a596420d24a266b7b5402fe4ec153c', '0x2405cb057a9baf85daa11ce9832baed839b6871c','0x043389f397ad72619d05946f5f35426a7ace6613')
         and substring(input, 1, 4) in ('0x064f0410','0x4d0246ad') -- token to token
@@ -309,7 +303,7 @@ legacy_routers as (
                 then cast(conv(substring(input, 113, 20), 16, 10) as decimal)/1e18 * price
             else cast(conv(substring(input, 145, 20), 16, 10) as decimal)/1e18 * price end as amount_usd
     from ethereum_traces t
-    left join prices_usd p on minute = date_trunc('minute', t.block_time)
+    left join prices_usd p on minute = TIMESTAMP_TRUNC(t.block_time, minute)
     left join erc20_tokens e on e.contract_address = substring(input, 81, 20)
     where cast(trace_address as string) = '{}'
         and `to` in ('0x455a3B3Be6e7C8843f2b03A1cA22A5a5727ef5C4','0x043389f397ad72619d05946f5f35426a7ace6613')
@@ -344,11 +338,11 @@ new_pool as (
                 l.`quoteTokenAmount`/power(10, mp.decimals) * mp.price) as amount_usd
     from hashflow_pool_evt_trade l
     inner join ethereum_transactions tx on tx.hash = l.evt_tx_hash
-    left join prices_usd tp on tp.minute = date_trunc('minute', tx.block_time)
+    left join prices_usd tp on tp.minute = TIMESTAMP_TRUNC(tx.block_time, minute)
         and tp.contract_address =
             case when l.`baseToken` = '0x0000000000000000000000000000000000000000'
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' else l.`baseToken` end
-    left join prices_usd mp on mp.minute = date_trunc('minute', tx.block_time)
+    left join prices_usd mp on mp.minute = TIMESTAMP_TRUNC(tx.block_time, minute)
         and mp.contract_address =
             case when l.`quoteToken` = '0x0000000000000000000000000000000000000000'
                 then '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' else l.`quoteToken` end
@@ -398,7 +392,7 @@ all_trades as (
 )
 
 select
-    try_cast(date_trunc('day', block_time) AS date) AS block_date,
+    SAFE_CAST(TIMESTAMP_TRUNC(block_time, day) AS date) AS block_date,
     block_time,
     composite_index,
     fill_status,
@@ -417,4 +411,3 @@ select
     amount_usd
 from all_trades
 where fill_status is true
-;

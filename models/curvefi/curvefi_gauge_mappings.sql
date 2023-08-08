@@ -1,10 +1,6 @@
 {{ config(
     schema = 'curvefi',
-    alias = 'gauge_mappings',
-    post_hook='{{ expose_spells(\'["optimism"]\',
-                                "project",
-                                "curvefi",
-                                \'["msilb7"]\') }}'
+    alias = 'gauge_mappings'
     )
 }}
 

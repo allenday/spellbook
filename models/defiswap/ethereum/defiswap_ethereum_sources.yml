@@ -1,73 +1,74 @@
-version: 2
-
 sources:
-  - name: defiswap_ethereum
-    description: >
-      Decoded tables related to defiswap dex swap.
-    freshness: # default freshness
-      warn_after: { count: 12, period: hour }
-      error_after: { count: 24, period: hour }
-    tables:
-      - name: CroDefiSwapPair_evt_Swap
-        description: >
-          Decoded table related to the defiswap swap events.
-        loaded_at_field: evt_block_time
-        columns:
-          - &amount0In
-            name: amount0In
-          - &amount0Out
-            name: amount0Out
-          - &amount1In
-            name: amount1In
-          - &amount1Out
-            name: amount1Out
-          - &contract_address
-            name: contract_address
-            description: "Ethereum address for the liquidity pool used in transaction"
-          - &evt_block_number
-            name: evt_block_number
-            description: "Block number which processed the unique transaction hash"
-          - &evt_block_time
-            name: evt_block_time
-            description: "Timestamp for block event time in UTC"
-          - &evt_index
-            name: evt_index
-            description: "Index value of the transaction event"
-          - &evt_tx_hash
-            name: evt_tx_hash
-            description: "Tx hash of the transaction"
-          - &sender
-            name: sender
-            description: "msg.sender for the trace"
-          - &to
-            name: to
-            description: "Taker for the trade"
-  - name: crodefi_ethereum
-    description: >
-      Decoded tables related to defiswap dex pair creation.
-    freshness: # default freshness
-      warn_after: { count: 12, period: hour }
-      error_after: { count: 24, period: hour }
-    tables:
-      - name: CroDefiSwapFactory_evt_PairCreated
-        description: >
-          Decoded table related to the defiswap pair creations.
-        loaded_at_field: evt_block_time
-        columns:
-          - &_0
-            name: _0
-            description: "Serial ID for defiswap pairs"
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time 
-          - *evt_index
-          - *evt_tx_hash
-          - &pair
-            name: pair
-            description: "Address for the token pair"
-          - &token0
-            name: token0
-            description: "Address for token0"
-          - &token1
-            name: token1
-            description: "Address for token1"
+- description: 'Decoded tables related to defiswap dex swap.
+
+    '
+  freshness:
+    error_after:
+      count: 24
+      period: hour
+    warn_after:
+      count: 12
+      period: hour
+  name: defiswap_ethereum
+  tables:
+  - columns:
+    - name: amount0In
+    - name: amount0Out
+    - name: amount1In
+    - name: amount1Out
+    - &id001
+      description: Ethereum address for the liquidity pool used in transaction
+      name: contract_address
+    - &id002
+      description: Block number which processed the unique transaction hash
+      name: evt_block_number
+    - &id003
+      description: Timestamp for block event time in UTC
+      name: evt_block_time
+    - &id004
+      description: Index value of the transaction event
+      name: evt_index
+    - &id005
+      description: Tx hash of the transaction
+      name: evt_tx_hash
+    - description: msg.sender for the trace
+      name: sender
+    - description: Taker for the trade
+      name: to
+    description: 'Decoded table related to the defiswap swap events.
+
+      '
+    loaded_at_field: evt_block_time
+    name: CroDefiSwapPair_evt_Swap
+- description: 'Decoded tables related to defiswap dex pair creation.
+
+    '
+  freshness:
+    error_after:
+      count: 24
+      period: hour
+    warn_after:
+      count: 12
+      period: hour
+  name: crodefi_ethereum
+  tables:
+  - columns:
+    - description: Serial ID for defiswap pairs
+      name: _0
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: Address for the token pair
+      name: pair
+    - description: Address for token0
+      name: token0
+    - description: Address for token1
+      name: token1
+    description: 'Decoded table related to the defiswap pair creations.
+
+      '
+    loaded_at_field: evt_block_time
+    name: CroDefiSwapFactory_evt_PairCreated
+version: 2

@@ -1,14 +1,9 @@
 {{ config(
         alias ='bep20_agg_hour',
-        partition_by = ['hour'],
-        materialized ='incremental',
-        file_format ='delta',
-        incremental_strategy='merge',
-        unique_key=['wallet_address', 'token_address', 'hour'],
-        post_hook='{{ expose_spells(\'["bnb"]\',
-                                        "sector",
-                                        "transfers",
-                                        \'["hosuke"]\') }}'
+        partition_by = {"field": "hour"},
+        materialized = 'view',
+                incremental_strategy='merge',
+        unique_key=['wallet_address', 'token_address', 'hour']
         )
 }}
 
@@ -18,11 +13,11 @@ with
             `to` as wallet_address,
             contract_address as token_address,
             evt_block_time,
-            value as amount_raw
+            `value` as amount_raw
         from
             {{ source('erc20_bnb', 'evt_Transfer') }}
         {% if is_incremental() %}
-        where evt_block_time >= date_trunc('day', now() - interval '1 week')
+        where evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
     )
     ,
@@ -35,7 +30,7 @@ with
         from
             {{ source('erc20_bnb', 'evt_Transfer') }}
         {% if is_incremental() %}
-        where evt_block_time >= date_trunc('day', now() - interval '1 week')
+        where evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
     )
     ,
@@ -48,7 +43,7 @@ with
         from
             {{ source('bnb_bnb', 'WBNB_evt_Deposit') }}
         {% if is_incremental() %}
-        where evt_block_time >= date_trunc('day', now() - interval '1 week')
+        where evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
     )
     ,
@@ -61,7 +56,7 @@ with
         from
             {{ source('bnb_bnb', 'WBNB_evt_Withdrawal') }}
         {% if is_incremental() %}
-        where evt_block_time >= date_trunc('day', now() - interval '1 week')
+        where evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
     )
     ,
@@ -73,7 +68,7 @@ with
             amount_raw
         from sent_transfers
 
-        union
+        UNION ALL
 
         select
             wallet_address,
@@ -82,7 +77,7 @@ with
             amount_raw
         from received_transfers
 
-        union
+        UNION ALL
 
         select
             wallet_address,
@@ -91,7 +86,7 @@ with
             amount_raw
         from deposited_wbnb
 
-        union
+        UNION ALL
 
         select
             wallet_address,
@@ -102,7 +97,7 @@ with
     )
 select
     'bnb' as blockchain,
-    date_trunc('hour', tr.evt_block_time) as hour,
+    TIMESTAMP_TRUNC(tr.evt_block_time, hour) AS `hour`,
     tr.wallet_address,
     tr.token_address,
     t.symbol,
@@ -111,4 +106,3 @@ select
 from transfers_bnb_bep20 tr
 left join {{ ref('tokens_bnb_bep20') }} t on t.contract_address = tr.token_address
 group by 1, 2, 3, 4, 5
-;

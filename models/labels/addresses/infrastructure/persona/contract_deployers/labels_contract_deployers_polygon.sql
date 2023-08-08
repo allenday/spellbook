@@ -1,10 +1,6 @@
 {{
     config(
-        alias='contract_deployers_polygon',
-        post_hook='{{ expose_spells(\'["polygon"]\',
-                                    "sector",
-                                    "labels",
-                                    \'["hildobby", "hosuke"]\') }}'
+        alias='contract_deployers_polygon'
     )
 }}
 
@@ -15,7 +11,7 @@ SELECT distinct 'polygon'            AS blockchain
               , 'hildobby'           AS contributor
               , 'query'              AS source
               , date('2023-03-03')   AS created_at
-              , NOW()                AS updated_at
+              , CURRENT_TIMESTAMP()                AS updated_at
               , 'contract_deployers' AS model_name
               , 'persona'            AS label_type
 FROM {{ source('polygon', 'creation_traces') }} creation

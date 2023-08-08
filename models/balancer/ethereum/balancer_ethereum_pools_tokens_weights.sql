@@ -11,7 +11,7 @@ FROM
                 token_address,
                 normalized_weight
         FROM {{ ref('balancer_v1_ethereum_pools_tokens_weights') }}
-        UNION
+        UNION ALL
         SELECT
                 pool_id,
                 token_address,

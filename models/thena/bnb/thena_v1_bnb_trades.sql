@@ -1,15 +1,9 @@
 {{ config(
     schema = 'thena_v1_bnb',
     alias = 'trades',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'blockchain', 'project', 'version', 'tx_hash', 'evt_index', 'trace_address'],
-    post_hook='{{ expose_spells(\'["bnb"]\',
-                                "project",
-                                "thena_v1",
-                                \'["hsrvc"]\') }}'
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'blockchain', 'project', 'version', 'tx_hash', 'evt_index', 'trace_address']
     )
 }}
 
@@ -23,7 +17,7 @@ WITH dexs AS
         ''                                                                              AS maker,
         CASE WHEN amount0Out = '0' THEN amount1Out ELSE amount0Out END                  AS token_bought_amount_raw,
         CASE WHEN amount0In = '0' OR amount1Out = '0' THEN amount1In ELSE amount0In END AS token_sold_amount_raw,
-        cast(NULL as double)                                                            AS amount_usd,
+        cast(NULL as FLOAT64)                                                            AS amount_usd,
         CASE WHEN amount0Out = '0' THEN f.token1 ELSE f.token0 END                      AS token_bought_address,
         CASE WHEN amount0In = '0' OR amount1Out = '0' THEN f.token1 ELSE f.token0 END   AS token_sold_address,
         t.contract_address                                                              AS project_contract_address,
@@ -35,7 +29,7 @@ WITH dexs AS
         INNER JOIN {{ source('thena_bnb', 'PairFactoryUpgradeable_evt_PairCreated') }} f
     ON t.contract_address = f.pair
     {% if is_incremental() %}
-    AND t.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    AND t.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 )
 
@@ -43,7 +37,7 @@ SELECT
     'bnb'                                                        AS blockchain
      , 'thena'                                                   AS project
      , '1'                                                       AS version
-     , TRY_CAST(date_trunc('DAY', dexs.block_time) AS date)      AS block_date
+     , SAFE_CAST(TIMESTAMP_TRUNC(dexs.block_time, DAY) AS date)      AS block_date
      , dexs.block_time
      , bep20a.symbol                                             AS token_bought_symbol
      , bep20b.symbol                                             AS token_sold_symbol
@@ -53,8 +47,8 @@ SELECT
        end                                                       AS token_pair
      , dexs.token_bought_amount_raw / power(10, bep20a.decimals) AS token_bought_amount
      , dexs.token_sold_amount_raw / power(10, bep20b.decimals)   AS token_sold_amount
-     , CAST(dexs.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw
-     , CAST(dexs.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw
+     , CAST(dexs.token_bought_amount_raw AS BIGNUMERIC) AS token_bought_amount_raw
+     , CAST(dexs.token_sold_amount_raw AS BIGNUMERIC) AS token_sold_amount_raw
      , coalesce(
         dexs.amount_usd
         , (dexs.token_bought_amount_raw / power(10, p_bought.decimals)) * p_bought.price
@@ -77,7 +71,7 @@ INNER JOIN {{ source('bnb', 'transactions') }} tx
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND tx.block_time >= date_trunc("day", now() - interval '1 week')
+    AND tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} bep20a
     ON bep20a.contract_address = dexs.token_bought_address
@@ -86,23 +80,22 @@ LEFT JOIN {{ ref('tokens_erc20') }} bep20b
     ON bep20b.contract_address = dexs.token_sold_address
     AND bep20b.blockchain = 'bnb'
 LEFT JOIN {{ source('prices', 'usd') }} p_bought
-    ON p_bought.minute = date_trunc('minute', dexs.block_time)
+    ON p_bought.minute = TIMESTAMP_TRUNC(dexs.block_time, minute)
     AND p_bought.contract_address = dexs.token_bought_address
     AND p_bought.blockchain = 'bnb'
     {% if not is_incremental() %}
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p_bought.minute >= date_trunc("day", now() - interval '1 week')
+    AND p_bought.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p_sold
-    ON p_sold.minute = date_trunc('minute', dexs.block_time)
+    ON p_sold.minute = TIMESTAMP_TRUNC(dexs.block_time, minute)
     AND p_sold.contract_address = dexs.token_sold_address
     AND p_sold.blockchain = 'bnb'
     {% if not is_incremental() %}
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p_sold.minute >= date_trunc("day", now() - interval '1 week')
+    AND p_sold.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
-;

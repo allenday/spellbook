@@ -1,13 +1,15 @@
-version: 2
+sources:
+- description: 'Decoded event table for swaps and pairs created on glacier exchange
 
-sources: 
-  - name: glacier_avalanche_c
-    freshness:
-          warn_after: { count: 12, period: hour }
-    description: >
-      Decoded event table for swaps and pairs created on glacier exchange
-    tables:
-      - name: Pair_evt_Swap
-        loaded_at_field: evt_block_time
-      - name: PairFactory_evt_PairCreated
-        loaded_at_field: evt_block_time
+    '
+  freshness:
+    warn_after:
+      count: 12
+      period: hour
+  name: glacier_avalanche_c
+  tables:
+  - loaded_at_field: evt_block_time
+    name: Pair_evt_Swap
+  - loaded_at_field: evt_block_time
+    name: PairFactory_evt_PairCreated
+version: 2

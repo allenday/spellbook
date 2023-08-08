@@ -58,5 +58,4 @@ funders as (
         GROUP BY 1 
 )
 
-SELECT * FROM funders 
-
+SELECT * FROM funders

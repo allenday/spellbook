@@ -2,10 +2,7 @@
         schema = 'op_token_optimism'
         , alias='metadata'
         , unique_key = ['contract_address']
-        , post_hook='{{ expose_spells(\'["optimism"]\',
-                                  "project",
-                                  "op_token",
-                                  \'["msilb7"]\') }}'
+        
   )
 }}
 
@@ -13,16 +10,16 @@
 
 WITH global_values AS (
 
-    SELECT
-        'optimism' AS native_blockchain,
-        contract_address,
-        symbol,
-        decimals,
-        cast(POWER(2, 32) AS double) AS total_initial_supply,
-        cast('2022-05-31' AS date) AS token_launch_date
+  SELECT
+    'optimism' AS native_blockchain,
+    contract_address,
+    symbol,
+    decimals,
+    cast(POWER(2,32) as FLOAT64) AS total_initial_supply,
+    cast('2022-05-31' AS date) AS token_launch_date
 
-    FROM {{ ref('tokens_optimism_erc20') }} AS t
-    WHERE t.contract_address = '0x4200000000000000000000000000000000000042'
+    FROM {{ref('tokens_optimism_erc20')}} t
+    WHERE t.contract_address IS NULL AND t.contract_address = '0x4200000000000000000000000000000000000042'
 
 )
 

@@ -1,39 +1,42 @@
-version: 2
-
 models:
-  - name: chain_ids
-    meta:
-      blockchain: ethereum
-      project: chain_info
-      contributors: msilb7
-    config:
-      tags: ['chains','cross-chain']
-    description: >
-        Table mapping chain IDs to names
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-              - chain_id
-              - network_id
-    columns:
-      - &chain_name
-        name: chain_name
-        description: "Full name of the Blockchain"
-      - &chain_shortname
-        name: chain_shortname
-        description: "Short name of the Blockchain"
-      - &native_currency_symbol
-        name: native_currency_symbol
-        description: "Symbol of the chain's native currency"
-      - &chain_id
-        name: chain_id
-        description:  "ID of the chain per EIP155"  
-      - &network_id
-        name: network_id
-        description:  "ID of the network (usually the same as the Chain ID)" 
-      - &info_url
-        name: info_url
-        description:  "URL with information about the blockchain" 
-      - &explorer
-        name: explorer
-        description:  "URL for each chain's main block explorer (first from the chainlist array)" 
+- columns:
+  - description: Full name of the Blockchain
+    name: chain_name
+    tests: []
+  - description: Short name of the Blockchain
+    name: chain_shortname
+    tests: []
+  - description: Symbol of the chain's native currency
+    name: native_currency_symbol
+    tests: []
+  - description: ID of the chain per EIP155
+    name: chain_id
+    tests: []
+  - description: ID of the network (usually the same as the Chain ID)
+    name: network_id
+    tests: []
+  - description: URL with information about the blockchain
+    name: info_url
+    tests: []
+  - description: URL for each chain's main block explorer (first from the chainlist
+      array)
+    name: explorer
+    tests: []
+  config:
+    tags:
+    - chains
+    - cross-chain
+  description: 'Table mapping chain IDs to names
+
+    '
+  meta:
+    blockchain: ethereum
+    contributors: msilb7
+    project: chain_info
+  name: chain_ids
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - chain_id
+      - network_id
+version: 2

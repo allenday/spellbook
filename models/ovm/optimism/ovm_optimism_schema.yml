@@ -1,103 +1,107 @@
-version: 2
-
 models:
-  - name: ovm_optimism_l2_token_factory
+- columns:
+  - description: Address of the factory contract creating the token
+    name: factory_address
+    tests: []
+  - description: Token address on L1
+    name: l1_token
+    tests: []
+  - description: Token address on L2
+    name: l2_token
+    tests: []
+  - description: Token symbol
+    name: symbol
+    tests: []
+  - description: Token name
+    name: name
+    tests: []
+  - description: Token decimals (assume 18 unless we have an L1 mapping
+    name: name
+    tests: []
+  - description: Transaction hash of token creation transaction
+    name: call_tx_hash
+    tests: []
+  - description: Block time of token creation transaction
+    name: call_block_time
+    tests: []
+  - description: Block number of token creation transaction
+    name: call_block_number
+    tests: []
+  config:
+    tags:
+    - cross-chain
+    - optimism
+    - tokens
+  description: Tokens created by Optimism's L2 Token Factory
+  meta:
+    blockchain: optimism
+    contributors: msilb7
+    project: ovm_optimism
+  name: ovm_optimism_l2_token_factory
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - l1_token
+      - l2_token
+- columns:
+  - description: Type of message
+    name: msg_type
+    tests: []
+  - description: Event type
+    name: event
+    tests: []
+  - description: Address sending the message
+    name: sender
+    tests: []
+  - description: Date of the block time
+    name: l2_block_date
+    tests: []
+  - description: block time of the transaction
+    name: l2_block_time
+    tests: []
+  - description: Block number of the transaction
+    name: l2_block_number
+    tests: []
+  - description: Transaction hash
+    name: l2_tx_hash
+    tests: []
+  - description: Address of the contract
+    name: contract_address
+    tests: []
+  - description: Target address of the message
+    name: target
+    tests: []
+  - description: Nonce or Hash of the message
+    name: message_nonce_hash
+    tests: []
+  - description: Index value of the transaction
+    name: evt_index
+    tests: []
+  - description: OVM version
+    name: version
+    tests: []
+  - description: Index of the message within the transaction. We use this to join
+      messages with deposits/withdrawals since they follow the same order.
+    name: msg_index
+    tests: []
+  config:
+    tags:
+    - cross-chain
+    - optimism
+    - messages
+  description: 'Table aggregating messages through Optimism''s cross-domain messenger
 
-    meta:
-      blockchain: optimism
-      project: ovm_optimism
-      contributors: msilb7
-
-    config:
-      tags: ['cross-chain', 'optimism', 'tokens']
-    description: "Tokens created by Optimism's L2 Token Factory"
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - l1_token
-            - l2_token
-    columns:
-      - &factory_address
-        name: factory_address
-        description: "Address of the factory contract creating the token"
-      - &l1_token
-        name: l1_token
-        description: "Token address on L1"
-      - &l2_token
-        name: l2_token
-        description: "Token address on L2"
-      - &symbol
-        name: symbol
-        description: "Token symbol"
-      - &name
-        name: name
-        description: "Token name"
-      - &decimals
-        name: name
-        description: "Token decimals (assume 18 unless we have an L1 mapping"
-      - &call_tx_hash
-        name: call_tx_hash
-        description: "Transaction hash of token creation transaction"
-      - &call_block_time
-        name: call_block_time
-        description: "Block time of token creation transaction"
-      - &call_block_number
-        name: call_block_number
-        description: "Block number of token creation transaction"
-
-  - name: ovm_optimism_cross_domain_messenger_messages
-    meta:
-      project: ovm_optimism
-      contributors: msilb7
-    config:
-      tags: ['cross-chain','optimism', 'messages']
-    description: >
-        Table aggregating messages through Optimism's cross-domain messenger
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-              - msg_type
-              - l2_block_date
-              - l2_tx_hash
-              - evt_index
-              - msg_index
-    columns:
-      - &msg_type
-        name: msg_type
-        description: Type of message
-      - &event
-        name: event
-        description: Event type
-      - &sender
-        name: sender
-        description: Address sending the message
-      - &l2_block_date
-        name: l2_block_date
-        description: Date of the block time
-      - &l2_block_time
-        name: l2_block_time
-        description: block time of the transaction
-      - &l2_block_number
-        name: l2_block_number
-        description: Block number of the transaction
-      - &l2_tx_hash
-        name: l2_tx_hash
-        description: Transaction hash
-      - &contract_address
-        name: contract_address
-        description: Address of the contract
-      - &target
-        name: target
-        description: Target address of the message
-      - &message_nonce_hash
-        name: message_nonce_hash
-        description: Nonce or Hash of the message
-      - &evt_index
-        name: evt_index
-        description: "Index value of the transaction"
-      - &version
-        name: version
-        description: OVM version
-      - &msg_index
-        name: msg_index
-        description: Index of the message within the transaction. We use this to join messages with deposits/withdrawals since they follow the same order.
+    '
+  meta:
+    contributors: msilb7
+    project: ovm_optimism
+  name: ovm_optimism_cross_domain_messenger_messages
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - msg_type
+      - l2_block_date
+      - l2_tx_hash
+      - evt_index
+      - msg_index
+version: 2

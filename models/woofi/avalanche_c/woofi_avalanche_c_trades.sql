@@ -1,15 +1,9 @@
 {{ config
 (
     alias ='trades',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'blockchain', 'project', 'version', 'tx_hash', 'evt_index', 'trace_address'],
-    post_hook='{{ expose_spells(\'["avalanche_c"]\',
-                                    "project",
-                                    "woofi",
-                                    \'["scoffie"]\') }}'
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'blockchain', 'project', 'version', 'tx_hash', 'evt_index', 'trace_address']
 )
 }}
     
@@ -25,7 +19,7 @@ WITH dexs as
             ,to AS maker
             ,fromAmount AS token_bought_amount_raw
             ,toAmount AS token_sold_amount_raw
-            ,cast(NULL as double) AS amount_usd
+            ,cast(NULL as FLOAT64) AS amount_usd
             ,fromToken AS token_bought_address
             ,toToken AS token_sold_address
             ,contract_address AS project_contract_address
@@ -37,7 +31,7 @@ WITH dexs as
         WHERE from <> '0x5aa6a4e96a9129562e2fc06660d07feddaaf7854' -- woorouter
 
         {% if is_incremental() %}
-        AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+        AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 
         UNION ALL 
@@ -50,7 +44,7 @@ WITH dexs as
             ,to AS maker
             ,fromAmount AS token_bought_amount_raw
             ,toAmount AS token_sold_amount_raw
-            ,cast(NULL as double) AS amount_usd
+            ,cast(NULL as FLOAT64) AS amount_usd
             ,fromToken AS token_bought_address
             ,toToken AS token_sold_address
             ,contract_address AS project_contract_address
@@ -61,7 +55,7 @@ WITH dexs as
             {{ source('woofi_avalanche_c', 'WooRouterV2_evt_WooRouterSwap')}}
 
         {% if is_incremental() %}
-        WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 
 
@@ -72,7 +66,7 @@ SELECT
     'avalanche_c' AS blockchain
     ,project
     ,version
-    ,TRY_CAST(date_trunc('DAY', dexs.block_time) AS date) AS block_date
+    ,SAFE_CAST(TIMESTAMP_TRUNC(dexs.block_time, DAY) AS date) AS block_date
     ,dexs.block_time
     ,erc20a.symbol AS token_bought_symbol
     ,erc20b.symbol AS token_sold_symbol
@@ -82,8 +76,8 @@ SELECT
     end as token_pair
     ,dexs.token_bought_amount_raw / power(10, erc20a.decimals) AS token_bought_amount
     ,dexs.token_sold_amount_raw / power(10, erc20b.decimals) AS token_sold_amount
-    ,CAST(dexs.token_bought_amount_raw AS DECIMAL(38,0)) AS token_bought_amount_raw
-    ,CAST(dexs.token_sold_amount_raw AS DECIMAL(38,0)) AS token_sold_amount_raw
+    ,CAST(dexs.token_bought_amount_raw AS BIGNUMERIC) AS token_bought_amount_raw
+    ,CAST(dexs.token_sold_amount_raw AS BIGNUMERIC) AS token_sold_amount_raw
     ,coalesce(
         dexs.amount_usd
         , (dexs.token_bought_amount_raw
@@ -124,7 +118,7 @@ INNER JOIN {{ source('avalanche_c', 'transactions')}} tx
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND tx.block_time >= date_trunc("day", now() - interval '1 week')
+    AND tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ ref('tokens_erc20') }} erc20a
     ON erc20a.contract_address = dexs.token_bought_address
@@ -133,33 +127,32 @@ LEFT JOIN {{ ref('tokens_erc20') }} erc20b
     ON erc20b.contract_address = dexs.token_sold_address
     AND erc20b.blockchain = 'avalanche_c'
 LEFT JOIN {{ source('prices', 'usd') }} p_bought
-    ON p_bought.minute = date_trunc('minute', dexs.block_time)
+    ON p_bought.minute = TIMESTAMP_TRUNC(dexs.block_time, minute)
     AND p_bought.contract_address = dexs.token_bought_address
     AND p_bought.blockchain = 'avalanche_c'
     {% if not is_incremental() %}
     AND p_bought.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p_bought.minute >= date_trunc("day", now() - interval '1 week')
+    AND p_bought.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p_sold
-    ON p_sold.minute = date_trunc('minute', dexs.block_time)
+    ON p_sold.minute = TIMESTAMP_TRUNC(dexs.block_time, minute)
     AND p_sold.contract_address = dexs.token_sold_address
     AND p_sold.blockchain = 'avalanche_c'
     {% if not is_incremental() %}
     AND p_sold.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p_sold.minute >= date_trunc("day", now() - interval '1 week')
+    AND p_sold.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 LEFT JOIN {{ source('prices', 'usd') }} p_avx
-    ON p_avx.minute = date_trunc('minute', dexs.block_time)
+    ON p_avx.minute = TIMESTAMP_TRUNC(dexs.block_time, minute)
     AND p_avx.blockchain is null
     AND p_avx.symbol = 'AVAX'
     {% if not is_incremental() %}
     AND p_avx.minute >= '{{project_start_date}}'
     {% endif %}
     {% if is_incremental() %}
-    AND p_avx.minute >= date_trunc("day", now() - interval '1 week')
+    AND p_avx.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
-;

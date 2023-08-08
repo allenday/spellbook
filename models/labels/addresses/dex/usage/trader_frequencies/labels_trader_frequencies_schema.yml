@@ -1,45 +1,58 @@
-version: 2
-
 models:
-  - name: labels_trader_frequencies
-    meta:
-      blockchain: ethereum, fantom, bnb, avalanche_c, arbitrum, polygon, gnosis, optimism
-      sector: labels
-      category: trader_frequencies
-      contributors: gentrexha, Henrystats
-    config:
-      tags: ['labels', 'ethereum', 'fantom', 'bnb', 'avalanche_c', 'arbitrum', 'polygon', 'gnosis', 'optimism', 'trader_frequencies', 'dex', 'dex_aggregator']
-    description: "Trader frequencies (daily, weekly, monthly) for traders who use dex and dex aggregators"
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "Blockchain"   
-      - &address
-        name: address
-        description: "Address of trader"
-        test:
-          - unique
-      - &name
-        name: name
-        description: "Label name"
-      - &category
-        name: category
-        description: "Label category"
-      - &contributor
-        name: contributor
-        description: "Wizard(s) contributing to labels"
-      - &source
-        name: source
-        description: "How were labels generated (query)"
-      - &created_at
-        name: created_at
-        description: "When were labels created"
-      - &updated_at
-        name: updated_at
-        description: "When were labels updated for the last time"
-      - &model_name
-        name: model_name
-        description: "Name of the label model sourced from"
-      - &label_type
-        name: label_type
-        description: "Type of label (see labels overall readme)"
+- columns:
+  - description: Blockchain
+    name: blockchain
+    tests: []
+  - description: Address of trader
+    name: address
+    test:
+    - unique
+    tests: []
+  - description: Label name
+    name: name
+    tests: []
+  - description: Label category
+    name: category
+    tests: []
+  - description: Wizard(s) contributing to labels
+    name: contributor
+    tests: []
+  - description: How were labels generated (query)
+    name: source
+    tests: []
+  - description: When were labels created
+    name: created_at
+    tests: []
+  - description: When were labels updated for the last time
+    name: updated_at
+    tests: []
+  - description: Name of the label model sourced from
+    name: model_name
+    tests: []
+  - description: Type of label (see labels overall readme)
+    name: label_type
+    tests: []
+  config:
+    tags:
+    - labels
+    - ethereum
+    - fantom
+    - bnb
+    - avalanche_c
+    - arbitrum
+    - polygon
+    - gnosis
+    - optimism
+    - trader_frequencies
+    - dex
+    - dex_aggregator
+  description: Trader frequencies (daily, weekly, monthly) for traders who use dex
+    and dex aggregators
+  meta:
+    blockchain: ethereum, fantom, bnb, avalanche_c, arbitrum, polygon, gnosis, optimism
+    category: trader_frequencies
+    contributors: gentrexha, Henrystats
+    sector: labels
+  name: labels_trader_frequencies
+  tests: []
+version: 2

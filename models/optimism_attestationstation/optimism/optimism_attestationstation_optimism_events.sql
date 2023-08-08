@@ -1,67 +1,58 @@
 {{ config(
     alias = 'events',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_time', 'tx_hash', 'evt_index'],
-    post_hook='{{ expose_spells(\'["optimism"]\',
-                                "project",
-                                "optimism_attestationstation",
-                                \'["chuxin"]\') }}'
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_time', 'tx_hash', 'evt_index']
     )
 }}
 SELECT
-    *,
-    concat_ws(', ', val) AS val_string
+  *
+  , concat_ws(', ', val) AS val_string
 
-FROM (
-    SELECT
-        date_trunc('day', evt_block_time) AS block_date,
-        evt_tx_hash AS tx_hash,
-        evt_block_number AS block_number,
-        evt_block_time AS block_time,
-        evt_index,
-        about AS recipient,
-        creator AS issuer,
-        contract_address,
-        key AS key_raw
+  FROM (
+    select 
+        TIMESTAMP_TRUNC(evt_block_time, day) as block_date
+        ,evt_tx_hash as tx_hash
+        ,evt_block_number as block_number
+        ,evt_block_time as block_time
+        ,evt_index
+        ,about as recipient
+        ,creator as issuer
+        ,contract_address
+        ,key as key_raw
         ,
         REGEXP_REPLACE(--Replace invisible characters
             decode(
                 unhex(
-                    if(
-                        substring(key, 1, 6) IN ('0xab7e', '0x9e43'), --Handle for Clique
-                        hex(key),
-                        substring(key, 3)
-                    )
+                  if (
+                    substring(key, 1, 6) in ("0xab7e", "0x9e43"), --Handle for Clique
+                    hex(key),
+                    substring(key, 3)
+                  )
                 ),
-                'utf8'
-            ),
-            '[^\x20-\x7E]', '')
-            AS key,
+                "utf8"
+              ) 
+            , '[^\x20-\x7E]','')
+        as key
 
-        val AS val_raw,
+        ,val as val_raw
 
-        split(
-            REGEXP_REPLACE(--Replace invisible characters
-                CASE
-                    WHEN cast(REGEXP_REPLACE(unhex(substring(val, 3)), '[^\x20-\x7E]', '') AS varchar(100)) != ''
-                        THEN cast(unhex(substring(val, 3)) AS varchar(100))
-                    ELSE cast(bytea2numeric_v3(substring(val, 3)) AS varchar(100))
-                END,
-                '[^\x20-\x7E]', ''
-            ),
-            ','
-        ) AS val,
+        ,split(
+                REGEXP_REPLACE(--Replace invisible characters
+                        CASE WHEN cast( REGEXP_REPLACE(TO_BASE64(FROM_HEX(substring(val, 3))), '[^\x20-\x7E]','') as STRING) != ""
+                            THEN cast(TO_BASE64(FROM_HEX(substring(val, 3))) as STRING)
+                            ELSE cast(udfs.bytea2numeric_v3(substring(val, 3)) as STRING)
+                        END  
+                  , '[^\x20-\x7E]','')
+              ,",") as val
+            
 
+        ,udfs.bytea2numeric_v3(substring(val, 3)) AS val_byte2numeric
 
-        bytea2numeric_v3(substring(val, 3)) AS val_byte2numeric
-
-    FROM {{ source('attestationstation_optimism','AttestationStation_evt_AttestationCreated') }}
-    WHERE
+    from {{source('attestationstation_optimism','AttestationStation_evt_AttestationCreated')}}
+    where 
         true
         {% if is_incremental() %}
-            AND evt_block_time >= date_trunc('day', now() - interval '1 week')
+        and evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
-) AS a
+  ) a

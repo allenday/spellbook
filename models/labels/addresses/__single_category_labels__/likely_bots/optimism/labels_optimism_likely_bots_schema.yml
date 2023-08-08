@@ -1,80 +1,92 @@
-version: 2
-
 models:
-  - name: labels_optimism_likely_bot_contracts
-    meta:
-      blockchain: optimism
-      sector: labels
-      category: bot_contracts
-      contributors: msilb7
-    config:
-      tags: ['labels', 'optimism','bots']
-    description: "Likely bot contract labels"
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - address
-            - name
-            - category
-            - blockchain
-    
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "Blockchain"   
-      - &address
-        name: address
-        description: "Address"
-      - &name
-        name: name
-        description: "Label name"
-      - &category
-        name: category
-        description: "Label category"
-      - &contributor
-        name: contributor
-        description: "Wizard(s) contributing to labels"
-      - &source
-        name: source
-        description: "How were labels generated (query)"
-      - &created_at
-        name: created_at
-        description: "When were labels created"
-      - &updated_at
-        name: updated_at
-        description: "When were labels updated for the last time"
-      - &model_name
-        name: model_name
-        description: "Name of the label model sourced from"
-      - &label_type
-        name: label_type
-        description: "Type of label (see labels overall readme)"
-
-  - name: labels_optimism_likely_bot_addresses
-    meta:
-      blockchain: optimism
-      sector: labels
-      category: bot_addresses
-      contributors: msilb7
-    config:
-      tags: ['labels', 'optimism','bots']
-    description: "Likely bot address labels"
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - address
-            - name
-            - category
-            - blockchain
-    
-    columns:
-      - *blockchain
-      - *address
-      - *name
-      - *category
-      - *contributor
-      - *source
-      - *created_at
-      - *updated_at
-      - *model_name
-      - *label_type
+- columns:
+  - &id001
+    description: Blockchain
+    name: blockchain
+    tests: []
+  - &id002
+    description: Address
+    name: address
+    tests: []
+  - &id003
+    description: Label name
+    name: name
+    tests: []
+  - &id004
+    description: Label category
+    name: category
+    tests: []
+  - &id005
+    description: Wizard(s) contributing to labels
+    name: contributor
+    tests: []
+  - &id006
+    description: How were labels generated (query)
+    name: source
+    tests: []
+  - &id007
+    description: When were labels created
+    name: created_at
+    tests: []
+  - &id008
+    description: When were labels updated for the last time
+    name: updated_at
+    tests: []
+  - &id009
+    description: Name of the label model sourced from
+    name: model_name
+    tests: []
+  - &id010
+    description: Type of label (see labels overall readme)
+    name: label_type
+    tests: []
+  config:
+    tags:
+    - labels
+    - optimism
+    - bots
+  description: Likely bot contract labels
+  meta:
+    blockchain: optimism
+    category: bot_contracts
+    contributors: msilb7
+    sector: labels
+  name: labels_optimism_likely_bot_contracts
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - address
+      - name
+      - category
+      - blockchain
+- columns:
+  - *id001
+  - *id002
+  - *id003
+  - *id004
+  - *id005
+  - *id006
+  - *id007
+  - *id008
+  - *id009
+  - *id010
+  config:
+    tags:
+    - labels
+    - optimism
+    - bots
+  description: Likely bot address labels
+  meta:
+    blockchain: optimism
+    category: bot_addresses
+    contributors: msilb7
+    sector: labels
+  name: labels_optimism_likely_bot_addresses
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - address
+      - name
+      - category
+      - blockchain
+version: 2

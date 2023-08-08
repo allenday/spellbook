@@ -1,11 +1,11 @@
+sources:
+- description: "Decoded event table for swaps on dfx finance \n"
+  freshness:
+    warn_after:
+      count: 12
+      period: hour
+  name: dfx_finance_ethereum
+  tables:
+  - loaded_at_field: evt_block_time
+    name: Curve_evt_Trade
 version: 2
-
-sources: 
-  - name: dfx_finance_ethereum
-    freshness:
-          warn_after: { count: 12, period: hour }
-    description: >
-      Decoded event table for swaps on dfx finance 
-    tables:
-      - name: Curve_evt_Trade
-        loaded_at_field: evt_block_time

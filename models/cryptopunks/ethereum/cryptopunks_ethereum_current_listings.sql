@@ -1,10 +1,6 @@
 {{ config(
         alias ='current_listings',
-        unique_key='punk_id',
-        post_hook='{{ expose_spells(\'["ethereum"]\',
-                                    "project",
-                                    "cryptopunks",
-                                    \'["cat"]\') }}'
+        unique_key='punk_id'
         )
 }}
 
@@ -15,7 +11,7 @@ with all_listing_events as (
                     when event_type = 'Offered' and to is not null then 'Private Listing'
                 else 'Listing Withdrawn' end as event_sub_type
             , eth_amount as listed_price
-            , to as listing_offered_to
+            , `to` as listing_offered_to
             , evt_block_number
             , evt_index
             , evt_block_time
@@ -26,8 +22,8 @@ with all_listing_events as (
     select  token_id as punk_id
             , 'Punk Bought' as event_type
             , 'Punk Bought' as event_sub_type
-            , cast(NULL as double) as listed_price
-            , cast(NULL as varchar(5)) as listing_offered_to
+            , cast(NULL as FLOAT64) as listed_price
+            , cast(NULL as STRING) as listing_offered_to
             , block_number as evt_block_number
             , evt_index
             , block_time as evt_block_time
@@ -38,8 +34,8 @@ with all_listing_events as (
     select  punk_id
             , 'Punk Transfer' as event_type
             , 'Punk Transfer' as event_sub_type
-            , cast(NULL as double) as listed_price
-            , cast(NULL as varchar(5)) as listing_offered_to
+            , cast(NULL as FLOAT64) as listed_price
+            , cast(NULL as STRING) as listing_offered_to
             , evt_block_number
             , evt_index
             , evt_block_time
@@ -69,4 +65,4 @@ from
     ) a 
 ) b
 where punk_event_index = 1 and event_type = 'Offered' and event_sub_type = 'Public Listing' 
-order by listed_price asc, evt_block_time desc 
+order by listed_price asc, evt_block_time desc

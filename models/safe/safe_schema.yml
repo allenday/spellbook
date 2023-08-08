@@ -1,31 +1,44 @@
-version: 2
-
 models:
-  - name: safe_safes_all
-    meta:
-      blockchain: arbitrum, avalanche_c, bnb, ethereum, fantom, gnosis, goerli, optimism, polygon
-      project: safe
-      contributors: [tschubotz]
-    config:
-      tags: ['arbitrum', 'avalanche_c', 'bnb', 'ethereum', 'fantom', 'gnosis', 'goerli', 'optimism', 'polygon', 'safe']
-    description: >
-        Lists all Safes across chains.
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "Blockchain on which the Safe is deployed"
-      - &address
-        name: address
-        description: "Safe contract address"
-      - &creation_version
-        name: creation_version
-        description: "Initial version during creation"
-      - &block_date
-        name: block_date
-        description: "Date of Safe creation"
-      - &creation_time
-        name: creation_time
-        description: "Datetime of Safe creation"
-      - &tx_hash
-        name: tx_hash
-        description: "Tx hash of Safe creation"
+- columns:
+  - description: Blockchain on which the Safe is deployed
+    name: blockchain
+    tests: []
+  - description: Safe contract address
+    name: address
+    tests: []
+  - description: Initial version during creation
+    name: creation_version
+    tests: []
+  - description: Date of Safe creation
+    name: block_date
+    tests: []
+  - description: Datetime of Safe creation
+    name: creation_time
+    tests: []
+  - description: Tx hash of Safe creation
+    name: tx_hash
+    tests: []
+  config:
+    tags:
+    - arbitrum
+    - avalanche_c
+    - bnb
+    - ethereum
+    - fantom
+    - gnosis
+    - goerli
+    - optimism
+    - polygon
+    - safe
+  description: 'Lists all Safes across chains.
+
+    '
+  meta:
+    blockchain: arbitrum, avalanche_c, bnb, ethereum, fantom, gnosis, goerli, optimism,
+      polygon
+    contributors:
+    - tschubotz
+    project: safe
+  name: safe_safes_all
+  tests: []
+version: 2

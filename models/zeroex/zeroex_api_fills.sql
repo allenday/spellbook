@@ -1,9 +1,5 @@
 {{ config(
-        alias ='api_fills',
-        post_hook='{{ expose_spells(\'["ethereum","arbitrum", "optimism", "polygon","fantom","avalanche_c"]\',
-                                "project",
-                                "zeroex",
-                                \'["rantum","bakabhai993"]\') }}'
+        alias ='api_fills'
         )
 }}
 
@@ -21,10 +17,11 @@ ref('zeroex_arbitrum_api_fills')
 SELECT *
 FROM (
     {% for model in zeroex_models %}
-        SELECT *
-        FROM {{ model }}
-        {% if not loop.last %}
-            UNION ALL
-        {% endif %}
+    SELECT
+    *
+    FROM {{ model }}
+    {% if not loop.last %}
+    UNION ALL
+    {% endif %}
     {% endfor %}
-);
+)

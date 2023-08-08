@@ -1,8 +1,7 @@
-version: 2
-
 sources:
-  - name: syndicate_v2_ethereum
-    description: "syndicate dao deployed event"
-    tables:
-      - name: ERC20ClubFactory_evt_ERC20ClubCreated
-        loaded_at_field: evt_block_time
+- description: syndicate dao deployed event
+  name: syndicate_v2_ethereum
+  tables:
+  - loaded_at_field: evt_block_time
+    name: ERC20ClubFactory_evt_ERC20ClubCreated
+version: 2

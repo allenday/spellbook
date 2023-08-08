@@ -21,7 +21,7 @@
       {{ clustered_cols(label="clustered by") }}
       {{ location_clause() }}
       {{ comment_clause() }}
-      {{ tblproperties_clause() }}
+      -- {{ tblproperties_clause() }}
       as
       {{ compiled_code }}
     {%- endif -%}

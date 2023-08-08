@@ -1,70 +1,89 @@
-version: 2
-
 models:
-  - name: opensea_solana_events
-    meta:
-      blockchain: solana
-      project: opensea
-      contributors: rchen8, soispoke
-    config:
-      tags: ['solana','opensea','events']
-    description: >
-        OpenSea events on Solana
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "Blockchain"
-      - &tx_hash
-        name: tx_hash
-        description: "Transaction hash"
-      - &block_time
-        name: block_time
-        description: "UTC event block time"
-      - &currency_symbol
-        name: currency_symbol
-        description: "Currency Symbol of the trade value"
-      - &currency_contract
-        name: currency_contract
-        description: "Contract address of the currency in which the trade is denominated in"
-      - &token_standard
-        name: token_standard
-        description: "Token standard (Metaplex for Solana NFTs)"
-      - &amount_original
-        name: amount_original
-        description: "Value of the trade at time of execution in the original currency"
-      - &amount_usd
-        name: amount_usd
-        description:  "USD value of the trade at time of execution"
-      - &project_contract_address
-        name: project_contract_address
-        description:  "Contract address used by the v1 project"
-      - &evt_type
-        name: evt_type
-        description:  "Event type (Trade, Mint, Burn, Transaction)"
-      - &unique_trade_id
-        name: unique_trade_id
-        description:  "Unique trade id, combination of signatures[0] and id"
-        tests:
-          - unique
+- columns:
+  - &id001
+    description: Blockchain
+    name: blockchain
+    tests: []
+  - &id002
+    description: Transaction hash
+    name: tx_hash
+    tests: []
+  - &id003
+    description: UTC event block time
+    name: block_time
+    tests: []
+  - &id004
+    description: Currency Symbol of the trade value
+    name: currency_symbol
+    tests: []
+  - &id005
+    description: Contract address of the currency in which the trade is denominated
+      in
+    name: currency_contract
+    tests: []
+  - &id006
+    description: Token standard (Metaplex for Solana NFTs)
+    name: token_standard
+    tests: []
+  - &id007
+    description: Value of the trade at time of execution in the original currency
+    name: amount_original
+    tests: []
+  - &id008
+    description: USD value of the trade at time of execution
+    name: amount_usd
+    tests: []
+  - &id009
+    description: Contract address used by the v1 project
+    name: project_contract_address
+    tests: []
+  - &id010
+    description: Event type (Trade, Mint, Burn, Transaction)
+    name: evt_type
+    tests: []
+  - &id011
+    description: Unique trade id, combination of signatures[0] and id
+    name: unique_trade_id
+    tests:
+    - unique
+  config:
+    tags:
+    - solana
+    - opensea
+    - events
+  description: 'OpenSea events on Solana
 
-  - name: opensea_solana_trades
-    meta:
-      blockchain: solana
-      project: opensea
-      contributors: soispoke
-    config:
-      tags: ['solana','opensea','trades']
-    description: >
-        OpenSea trades on Solana
-    columns:
-      - *blockchain
-      - *tx_hash
-      - *block_time
-      - *currency_symbol
-      - *currency_contract
-      - *token_standard
-      - *amount_original
-      - *amount_usd
-      - *project_contract_address
-      - *evt_type
-      - *unique_trade_id
+    '
+  meta:
+    blockchain: solana
+    contributors: rchen8, soispoke
+    project: opensea
+  name: opensea_solana_events
+  tests: []
+- columns:
+  - *id001
+  - *id002
+  - *id003
+  - *id004
+  - *id005
+  - *id006
+  - *id007
+  - *id008
+  - *id009
+  - *id010
+  - *id011
+  config:
+    tags:
+    - solana
+    - opensea
+    - trades
+  description: 'OpenSea trades on Solana
+
+    '
+  meta:
+    blockchain: solana
+    contributors: soispoke
+    project: opensea
+  name: opensea_solana_trades
+  tests: []
+version: 2

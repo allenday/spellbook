@@ -1,111 +1,99 @@
-version: 2
-
 sources:
-  - name: ironbank_ethereum
-    description: "decoded events and function calls for ironbank on ethereum"
-    tables:
-      - name: CErc20Delegator_evt_Borrow
-        loaded_at_field: evt_block_time
-        description: "" # to-do
-        columns:
-          - &contract_address
-            name: contract_address
-            description: "The address for the liquidity pool used in transaction"
-          - &evt_block_number
-            name: evt_block_number
-            description: "Block number which processed the unique transaction hash"
-          - &evt_block_time
-            name: evt_block_time
-            description: "Timestamp for block event time in UTC"
-          - &evt_index
-            name: evt_index
-            description: "Index value of the transaction"
-          - &evt_tx_hash
-            name: evt_tx_hash
-            description: "Primary key of the transaction"
-          - &borrower
-            name: borrower
-            description: "Borrower wallet address"
-          - &borrowAmount
-            name: borrowAmount
-            description: "The amount of the underlying asset to borrow"
-          - &accountBorrows
-            name: accountBorrows
-            description: "The borrow balance of the account"
-          - &totalBorrows
-            name: totalBorrows
-            description: "The total borrows with interest"
-      - name: CErc20Delegator_evt_Mint
-        loaded_at_field: evt_block_time
-        description: "" # to-do
-        columns:
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - &minter
-            name: minter
-            description: "Minter wallet address"
-          - &mintAmount
-            name: mintAmount
-            description: "The amount of the underlying asset to supply"
-          - &mintTokens
-            name: mintTokens
-            description: "the number of iTokens to be minted"
-      - name: CErc20Delegator_evt_RepayBorrow
-        loaded_at_field: evt_block_time
-        description: "" # to-do
-        columns:
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - &payer
-            name: payer
-            description: "Payer wallet address"
-          - *borrower
-          - &repayAmount
-            name: repayAmount
-            description: "The amount of underlying tokens being returned"
-          - *accountBorrows
-          - *totalBorrows
-      - name: CErc20Delegator_evt_Redeem
-        loaded_at_field: evt_block_time
-        description: "" # to-do
-        columns:
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - &redeemer
-            name: redeemer
-            description: "Redeemer wallet address"
-          - &redeemAmount
-            name: redeemAmount
-            description: "The amount of underlying to receive from redeeming iTokens"
-          - &redeemTokens
-            name: redeemTokens
-            description: "The number of iTokens to redeem into underlying"
-      - name: CErc20Delegator_evt_LiquidateBorrow
-        loaded_at_field: evt_block_time
-        description: "" # to-do
-        columns:
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - &liquidator
-            name: liquidator
-            description: "The address repaying the borrow and seizing collateral"
-          - *borrower
-          - *repayAmount
-          - &cTokenCollateral
-            name: cTokenCollateral
-            description: "The market in which to seize collateral from the borrower"
-          - &seizeTokens
-            name: seizeTokens
-            description: "The number of iTokens to seize"
+- description: decoded events and function calls for ironbank on ethereum
+  name: ironbank_ethereum
+  tables:
+  - columns:
+    - &id001
+      description: The address for the liquidity pool used in transaction
+      name: contract_address
+    - &id002
+      description: Block number which processed the unique transaction hash
+      name: evt_block_number
+    - &id003
+      description: Timestamp for block event time in UTC
+      name: evt_block_time
+    - &id004
+      description: Index value of the transaction
+      name: evt_index
+    - &id005
+      description: Primary key of the transaction
+      name: evt_tx_hash
+    - &id006
+      description: Borrower wallet address
+      name: borrower
+    - description: The amount of the underlying asset to borrow
+      name: borrowAmount
+    - &id007
+      description: The borrow balance of the account
+      name: accountBorrows
+    - &id008
+      description: The total borrows with interest
+      name: totalBorrows
+    description: ''
+    loaded_at_field: evt_block_time
+    name: CErc20Delegator_evt_Borrow
+  - columns:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: Minter wallet address
+      name: minter
+    - description: The amount of the underlying asset to supply
+      name: mintAmount
+    - description: the number of iTokens to be minted
+      name: mintTokens
+    description: ''
+    loaded_at_field: evt_block_time
+    name: CErc20Delegator_evt_Mint
+  - columns:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: Payer wallet address
+      name: payer
+    - *id006
+    - &id009
+      description: The amount of underlying tokens being returned
+      name: repayAmount
+    - *id007
+    - *id008
+    description: ''
+    loaded_at_field: evt_block_time
+    name: CErc20Delegator_evt_RepayBorrow
+  - columns:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: Redeemer wallet address
+      name: redeemer
+    - description: The amount of underlying to receive from redeeming iTokens
+      name: redeemAmount
+    - description: The number of iTokens to redeem into underlying
+      name: redeemTokens
+    description: ''
+    loaded_at_field: evt_block_time
+    name: CErc20Delegator_evt_Redeem
+  - columns:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - description: The address repaying the borrow and seizing collateral
+      name: liquidator
+    - *id006
+    - *id009
+    - description: The market in which to seize collateral from the borrower
+      name: cTokenCollateral
+    - description: The number of iTokens to seize
+      name: seizeTokens
+    description: ''
+    loaded_at_field: evt_block_time
+    name: CErc20Delegator_evt_LiquidateBorrow
+version: 2

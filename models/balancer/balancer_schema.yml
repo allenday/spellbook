@@ -1,121 +1,139 @@
-version: 2
-
 models:
-  - name: balancer_trades
-    meta:
-      blockchain: arbitrum, ethereum, optimism, polygon
-      sector: dex
-      contributors: bizzyvinci
-    config:
-      tags: ['balancer', 'amm', 'trades', 'dex']
-    description: >
-      DEX trades on balancer on all chains
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "Blockchain"
-      - &project
-        name: project
-        description: "Project name (balancer)"
-      - &version
-        name: version
-        description: "Version of the project"
-      - &block_date
-        name: block_date
-        description: "Block date in UTC"
-      - &block_time
-        name: block_time
-        description: 'Block time in UTC'
-      - &token_bought_symbol
-        name: token_bought_symbol
-        description: "Token symbol for token bought in the trade"
-      - &token_sold_symbol
-        name: token_sold_symbol
-        description: "Token symbol for token sold in the trade"
-      - &token_pair
-        name: token_pair
-        description: "Token symbol pair for each token involved in the trade"
-      - &token_bought_amount
-        name: token_bought_amount
-        description: "Value of the token bought at time of execution in the original currency"
-      - &token_sold_amount
-        name: token_sold_amount
-        description: "Value of the token sold at time of execution in the original currency"
-      - &token_bought_amount_raw
-        name: token_bought_amount_raw
-        description: "Raw value of the token bought at time of execution in the original currency"
-      - &token_sold_amount_raw
-        name: token_sold_amount_raw
-        description: "Raw value of the token sold at time of execution in the original currency"
-      - &amount_usd
-        name: amount_usd
-        description: "USD value of the trade at time of execution"
-      - &token_bought_address
-        name: token_bought_address
-        description: "Contract address of the token bought"
-      - &token_sold_address
-        name: token_sold_address
-        description: "Contract address of the token sold"
-      - &taker
-        name: taker
-        description: "Address of trader who purchased a token"
-      - &maker
-        name: maker
-        description: "Address of trader who sold a token"
-      - &project_contract_address
-        name: project_contract_address
-        description: "Pool address"
-      - &tx_hash
-        name: tx_hash
-        description: 'Transaction hash'
-      - &tx_from
-        name: tx_from
-        description: "transaction.from"
-      - &tx_to
-        name: tx_to
-        description: "transaction.to"
-      - &trace_address
-        name: trace_address
-        description: ""
-      - &evt_index
-        name: evt_index
-        description: 'Event index'
-  
-  - name: balancer_gauge_mappings
-    meta:
-      blockchain: optimism
-      sector: dex
-      contributors: msilb7
-    config:
-      tags: ['balancer', 'amm', 'trades', 'dex', 'incentives']
-    description: >
-      Gauge to Pool mappings for balancer on all chains
-    columns:
-      - *blockchain
-      - *project
-      - *version
-      - &pool_contract
-        name: pool_contract
-        description: "Address of the liquidity pool contract"
-      - &pool_id
-        name: pool_id
-        description: 'Unique encoded identifier that refers to each pool'
-      - &incentives_contract
-        name: incentives_contract
-        description: "Address of the contract where incentives are stored and emitted."
-      - &incentives_type
-        name: incentives_type
-        description: "Description of the incentives address type."
-      - &evt_block_time
-        name: evt_block_time
-        description: 'Block time in UTC'
-      - &evt_block_number
-        name: evt_block_number
-        description: 'Block Number'
-      - &contract_address
-        name: contract_address
-        description: 'Gauge Creator Contract Address'
-      - &evt_tx_hash
-        name: evt_tx_hash
-        description: 'Tx Hash'
-      - *evt_index
+- columns:
+  - &id001
+    description: Blockchain
+    name: blockchain
+    tests: []
+  - &id002
+    description: Project name (balancer)
+    name: project
+    tests: []
+  - &id003
+    description: Version of the project
+    name: version
+    tests: []
+  - description: Block date in UTC
+    name: block_date
+    tests: []
+  - description: Block time in UTC
+    name: block_time
+    tests: []
+  - description: Token symbol for token bought in the trade
+    name: token_bought_symbol
+    tests: []
+  - description: Token symbol for token sold in the trade
+    name: token_sold_symbol
+    tests: []
+  - description: Token symbol pair for each token involved in the trade
+    name: token_pair
+    tests: []
+  - description: Value of the token bought at time of execution in the original currency
+    name: token_bought_amount
+    tests: []
+  - description: Value of the token sold at time of execution in the original currency
+    name: token_sold_amount
+    tests: []
+  - description: Raw value of the token bought at time of execution in the original
+      currency
+    name: token_bought_amount_raw
+    tests: []
+  - description: Raw value of the token sold at time of execution in the original
+      currency
+    name: token_sold_amount_raw
+    tests: []
+  - description: USD value of the trade at time of execution
+    name: amount_usd
+    tests: []
+  - description: Contract address of the token bought
+    name: token_bought_address
+    tests: []
+  - description: Contract address of the token sold
+    name: token_sold_address
+    tests: []
+  - description: Address of trader who purchased a token
+    name: taker
+    tests: []
+  - description: Address of trader who sold a token
+    name: maker
+    tests: []
+  - description: Pool address
+    name: project_contract_address
+    tests: []
+  - description: Transaction hash
+    name: tx_hash
+    tests: []
+  - description: transaction.from
+    name: tx_from
+    tests: []
+  - description: transaction.to
+    name: tx_to
+    tests: []
+  - description: ''
+    name: trace_address
+    tests: []
+  - &id004
+    description: Event index
+    name: evt_index
+    tests: []
+  config:
+    tags:
+    - balancer
+    - amm
+    - trades
+    - dex
+  description: 'DEX trades on balancer on Ethereum
+
+    '
+  meta:
+    blockchain: ethereum
+    contributors: bizzyvinci
+    sector: dex
+  name: balancer_trades
+  tests: []
+- columns:
+  - *id001
+  - *id002
+  - *id003
+  - description: Address of the liquidity pool contract
+    name: pool_contract
+    tests: []
+  - description: Unique encoded identifier that refers to each pool
+    name: pool_id
+    tests: []
+  - description: Address of the contract where incentives are stored and emitted.
+    name: incentives_contract
+    tests: []
+  - description: Description of the incentives address type.
+    name: incentives_type
+    tests: []
+  - description: Block time in UTC
+    name: evt_block_time
+    tests: []
+  - description: Block Number
+    name: evt_block_number
+    tests: []
+  - description: Gauge Creator Contract Address
+    name: contract_address
+    tests: []
+  - description: Tx Hash
+    name: evt_tx_hash
+    tests: []
+  - *id004
+  config:
+    tags:
+    - balancer
+    - amm
+    - trades
+    - dex
+    - incentives
+    - optimism
+  description: 'Gauge to Pool mappings for balancer on optimism
+
+    '
+  meta:
+    blockchain: optimism
+    contributors: msilb7
+    sector: dex
+  name: balancer_gauge_mappings
+  tests: []
+version: 2

@@ -1,6 +1,5 @@
 {{ config (
-    alias = 'vaults',
-    post_hook = '{{ expose_spells(\'["ethereum"]\', "project", "tessera",\'["amadarrrr"]\') }}'
+    alias = 'vaults'
 ) }}
 -- VAULT DEPLOY
 SELECT
@@ -11,4 +10,4 @@ SELECT
     evt_block_time AS block_time,
     evt_tx_hash AS tx_hash
 FROM
-    {{ source('tessera_ethereum','VaultFactory_evt_DeployVault') }};
+    {{ source('tessera_ethereum','VaultFactory_evt_DeployVault') }}

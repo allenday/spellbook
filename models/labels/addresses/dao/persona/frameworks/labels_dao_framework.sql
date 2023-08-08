@@ -14,7 +14,7 @@ WITH dao_address_w_name AS (
     FROM {{ ref('dao_addresses') }}
     WHERE dao_creator_tool != 'zodiac' -- excluding zodiac since they're gnosis safes
 
-    UNION  -- using a union because there are daos whose contract address also receives and send funds
+    UNION ALL  -- using a UNION ALL because there are daos whose contract address also receives and send funds
 
     SELECT
     blockchain,
@@ -36,7 +36,7 @@ SELECT
     'henrystats' as contributor,
     'query' as source, 
     timestamp('2022-11-05') as created_at,
-    now() as updated_at,
+    CURRENT_TIMESTAMP() as updated_at,
     'dao_framework' as model_name,
     'persona' as label_type
 FROM dao_address_w_name

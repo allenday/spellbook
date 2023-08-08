@@ -28,5 +28,32 @@ blocktrekker_admin:
       maximum_bytes_billed: 10000000000
       gcs_bucket: blocktrekker
 
+blocktrekker_databricks:
+  target: dev
+  outputs:
+    dev:
+      type: databricks
+      method: service-principal
+      token: dapi8779486ae6d91e4606939529dc91dfcc
+      host: https://8132882202601730.0.gcp.databricks.com/
+      cluster: 0725-162803-u5sykljb
+      http_path: /sql/1.0/warehouses/2eb4908793d7ba81
+      schema: default
+      threads: 8
+      logs:
+        dbt: ERROR
+
+blocktrekker_spark:
+  target: dev
+  outputs:
+    dev:
+      type: databricks
+      method: thrift
+      schema: default
+      host: 35.225.66.59
+      port: 10002
+      logs:
+        dbt: ERROR
+
 <profile-name>: # additional profiles
   ...

@@ -1,59 +1,48 @@
-version: 2
-
 sources:
-  - name: uniswap_v3_optimism
-    description: "Optimism decoded tables related to Uniswap v3 contract"
-    freshness:
-      warn_after: { count: 12, period: hour }
-    tables:
-      - name: Pair_evt_Swap
-        loaded_at_field: evt_block_time
-        description: "" # to-do
-        columns:
-          - &amount1
-            name: amount1
-          - &amount0
-            name: amount0
-          - &contract_address
-            name: contract_address
-          - &evt_block_number
-            name: evt_block_number
-            description: "Block number which processed the unique transaction hash"
-          - &evt_block_time
-            name: evt_block_time
-            description: "Timestamp for block event time in UTC"
-          - &evt_index
-            name: evt_index
-            description: "Index value of the transaction"
-          - &evt_tx_hash
-            name: evt_tx_hash
-            description: "Primary key of the transaction"
-          - &liquidity
-            name: liquidity
-          - &recipient
-            name: recipient
-          - &sender
-            name: sender
-          - &sqrtPriceX96
-            name: sqrtPriceX96
-          - &tick
-            name: tick
-      - name: factory_evt_poolcreated
-        loaded_at_field: evt_block_time
-        description: "" # to-do
-        columns:
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - &fee
-            name: fee
-          - &pool
-            name: pool
-          - &tickSpacing
-            name: tickSpacing
-          - &token0
-            name: token0
-          - &token1
-            name: token1
+- description: Optimism decoded tables related to Uniswap v3 contract
+  freshness:
+    warn_after:
+      count: 12
+      period: hour
+  name: uniswap_v3_optimism
+  tables:
+  - columns:
+    - name: amount1
+    - name: amount0
+    - &id001
+      name: contract_address
+    - &id002
+      description: Block number which processed the unique transaction hash
+      name: evt_block_number
+    - &id003
+      description: Timestamp for block event time in UTC
+      name: evt_block_time
+    - &id004
+      description: Index value of the transaction
+      name: evt_index
+    - &id005
+      description: Primary key of the transaction
+      name: evt_tx_hash
+    - name: liquidity
+    - name: recipient
+    - name: sender
+    - name: sqrtPriceX96
+    - name: tick
+    description: ''
+    loaded_at_field: evt_block_time
+    name: Pair_evt_Swap
+  - columns:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - name: fee
+    - name: pool
+    - name: tickSpacing
+    - name: token0
+    - name: token1
+    description: ''
+    loaded_at_field: evt_block_time
+    name: factory_evt_poolcreated
+version: 2

@@ -45,7 +45,7 @@ mt_filter as (
         FROM
         (
         SELECT 
-            date_trunc('day', block_time) as day,
+            TIMESTAMP_TRUNC(block_time, day) AS `day`,
             nft_contract_address,
             token_id as nft_token_id, 
             COUNT(1) as num_sales 
@@ -66,7 +66,7 @@ sb_filter as (
         FROM 
         (
         SELECT 
-            date_trunc('day', t.block_time) as day, 
+            TIMESTAMP_TRUNC(t.block_time, day) AS `day`, 
             CASE WHEN t.seller > t.buyer THEN t.seller ELSE t.buyer END as address1, 
             CASE WHEN t.seller > t.buyer THEN t.buyer ELSE t.seller END as address2, 
             COUNT(DISTINCT(tx_hash)) as num_sales 
@@ -75,7 +75,7 @@ sb_filter as (
         LEFT JOIN 
         {{ ref('nft_ethereum_aggregators') }} agg 
             ON agg.contract_address = t.buyer 
-        WHERE t.project = 'blur'
+        WHERE t.project IS NULL AND t.project = 'blur'
         AND agg.contract_address IS NULL 
         GROUP BY 1, 2, 3 
         ) foo 
@@ -91,11 +91,11 @@ lv_filter as (
             day, 
             nft_address,
             os_vol, 
-            SUM(os_vol) OVER (PARTITION BY nft_address ORDER BY day ROWS BETWEEN 30 PRECEDING AND CURRENT ROW) 30d_vol 
+            SUM(os_vol) OVER (PARTITION BY nft_address ORDER BY `day` ROWS BETWEEN 30 PRECEDING AND CURRENT ROW) 30d_vol 
         FROM
         (
         SELECT 
-            date_trunc('day', t.block_time) as day,
+            TIMESTAMP_TRUNC(t.block_time, day) AS `day`,
             x2.nft_address,
             SUM(t.amount_usd) as os_vol 
         FROM 
@@ -108,7 +108,7 @@ lv_filter as (
         ) x2 
         LEFT JOIN trades t 
             ON x2.nft_address = t.nft_contract_address
-        WHERE t.project = 'opensea'
+        WHERE t.project IS NULL AND t.project = 'opensea'
         GROUP BY 1, 2 
         ) foo 
         ) foo2 
@@ -133,11 +133,11 @@ hp_filter as (
             day, 
             nft_address, 
             highprice_cutoff as high_price, 
-            MAX(highprice_cutoff) OVER (PARTITION BY nft_address ORDER BY day ROWS BETWEEN 30 PRECEDING AND CURRENT ROW) as highprice_cutoff
+            MAX(highprice_cutoff) OVER (PARTITION BY nft_address ORDER BY `day` ROWS BETWEEN 30 PRECEDING AND CURRENT ROW) as highprice_cutoff
         FROM
         (
         SELECT 
-            date_trunc('day', t.block_time) as day, 
+            TIMESTAMP_TRUNC(t.block_time, day) AS `day`, 
             x2.nft_address,
             MAX(t.amount_usd) as highprice_cutoff 
         FROM 
@@ -150,11 +150,11 @@ hp_filter as (
         royal_settings r 
             ON t.nft_contract_address = r.collection 
             AND r.fee = 0 
-        WHERE t.project = 'blur'
+        WHERE t.project IS NULL AND t.project = 'blur'
         ) x2 
         LEFT JOIN trades t 
             ON x2.nft_address = t.nft_contract_address
-        WHERE t.project = 'opensea'
+        WHERE t.project IS NULL AND t.project = 'opensea'
         GROUP BY 1, 2 
         ) foo 
         ) foo2 
@@ -175,7 +175,7 @@ wf_filter as (
         LEFT JOIN 
         {{ ref('opensea_inorganic_volume_filter_wallet_funders') }} f2
             ON f2.wallet = t.seller 
-        WHERE t.project = 'blur'
+        WHERE t.project IS NULL AND t.project = 'blur'
         AND f1.funder = f2.funder 
         OR (f1.funder = t.seller OR f2.funder = t.buyer)
 ),
@@ -193,7 +193,7 @@ circular_buyer as (
             buyer 
         FROM 
         trades t 
-        WHERE t.project = 'blur'
+        WHERE t.project IS NULL AND t.project = 'blur'
         AND token_standard = 'erc721'
         AND buyer <> LOWER('0x39da41747a83aee658334415666f3ef92dd0d541')
         GROUP BY 2, 3, 4 
@@ -214,7 +214,7 @@ circular_seller as (
             seller 
         FROM 
         trades t 
-        WHERE t.project = 'blur'
+        WHERE t.project IS NULL AND t.project = 'blur'
         AND token_standard = 'erc721'
         AND buyer <> LOWER('0x39da41747a83aee658334415666f3ef92dd0d541')
         GROUP BY 2, 3, 4 
@@ -224,7 +224,7 @@ circular_seller as (
 
 trades_enrich as (
         SELECT 
-            date_trunc('day', t.block_time) as day, 
+            TIMESTAMP_TRUNC(t.block_time, day) AS `day`, 
             t.block_time, 
             t.project, 
             t.nft_contract_address,
@@ -240,7 +240,7 @@ trades_enrich as (
         FROM 
         trades t 
         LEFT JOIN {{ source('prices', 'usd') }} p 
-            ON p.minute = date_trunc('minute', t.block_time)
+            ON p.minute = TIMESTAMP_TRUNC(t.block_time, minute)
             AND p.contract_address = t.currency_contract 
             AND p.blockchain = 'ethereum'
             AND p.minute >= '{{project_start_date}}'
@@ -248,7 +248,7 @@ trades_enrich as (
         {{ ref('tokens_erc20') }} erc20 
             ON t.currency_contract = erc20.contract_address
             AND erc20.blockchain = 'ethereum'
-        WHERE t.project = 'blur'
+        WHERE t.project IS NULL AND t.project = 'blur'
 ),
 
 filtered_trades as (

@@ -1,39 +1,47 @@
-version: 2
-
 models:
-  - name: addresses_events_ethereum_first_funded_by
-    meta:
-      blockchain: ethereum
-      sector: addresses_events
-      project: addresses
-      contributors: hildobby
-    config:
-      tags: ['table', 'funded', 'addresses_events', 'ethereum']
-    description: "Table showing who first funded each Ethereum address in ETH"
+- columns:
+  - description: Blockchain
+    name: blockchain
+    tests: []
+  - description: Concerned Ethereum address
+    name: address
     tests:
-      - check_seed:
-          seed_file: ref('first_funded_by_seed')
-          filter:
-            blockchain: ethereum
-          match_columns:
-            - blockchain
-            - address
-          check_columns:
-            - first_funded_by
-            - block_number
-            - tx_hash
-    columns:
-      - name: blockchain
-        description: "Blockchain"
-      - name: address
-        description: "Concerned Ethereum address"
-        tests:
-          - unique
-      - name: first_funded_by
-        description: "Which Ethereum address first funded the address with ETH"
-      - name: block_time
-        description: "The block time on which the address was first funded with ETH"
-      - name: block_number
-        description: "The block number on which the address was first funded with ETH"
-      - name: tx_hash
-        description: "The transaction hash on which the address was first funded with ETH"
+    - unique
+  - description: Which Ethereum address first funded the address with ETH
+    name: first_funded_by
+    tests: []
+  - description: The block time on which the address was first funded with ETH
+    name: block_time
+    tests: []
+  - description: The block number on which the address was first funded with ETH
+    name: block_number
+    tests: []
+  - description: The transaction hash on which the address was first funded with ETH
+    name: tx_hash
+    tests: []
+  config:
+    tags:
+    - table
+    - funded
+    - addresses_events
+    - ethereum
+  description: Table showing who first funded each Ethereum address in ETH
+  meta:
+    blockchain: ethereum
+    contributors: hildobby
+    project: addresses
+    sector: addresses_events
+  name: addresses_events_ethereum_first_funded_by
+  tests:
+  - check_seed:
+      check_columns:
+      - first_funded_by
+      - block_number
+      - tx_hash
+      filter:
+        blockchain: ethereum
+      match_columns:
+      - blockchain
+      - address
+      seed_file: ref('first_funded_by_seed')
+version: 2

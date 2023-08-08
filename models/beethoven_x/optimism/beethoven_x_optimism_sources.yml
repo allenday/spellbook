@@ -1,36 +1,28 @@
-version: 2
-
 sources:
-  - name: balancer_v2
-    description: "Optimism decoded tables related to beethoven x's implementation of balancer contracts"
-    freshness:
-      warn_after: { count: 12, period: hour }
-    tables:
-      - name: Vault_evt_Swap
-        loaded_at_field: evt_block_time
-        description: "" # to-do
-        columns:
-          - &amountIn
-            name: amountIn
-          - &amountOut
-            name: amountOut
-          - &contract_address
-            name: contract_address
-          - &evt_block_number
-            name: evt_block_number
-            description: "Block number which processed the unique transaction hash"
-          - &evt_block_time
-            name: evt_block_time
-            description: "Timestamp for block event time in UTC"
-          - &evt_index
-            name: evt_index
-            description: "Index value of the transaction"
-          - &evt_tx_hash
-            name: evt_tx_hash
-            description: "Primary key of the transaction"
-          - &poolId
-            name: poolId
-          - &tokenIn
-            name: tokenIn
-          - &tokenOut
-            name: tokenOut
+- description: Optimism decoded tables related to beethoven x's implementation of
+    balancer contracts
+  freshness:
+    warn_after:
+      count: 12
+      period: hour
+  name: balancer_v2
+  tables:
+  - columns:
+    - name: amountIn
+    - name: amountOut
+    - name: contract_address
+    - description: Block number which processed the unique transaction hash
+      name: evt_block_number
+    - description: Timestamp for block event time in UTC
+      name: evt_block_time
+    - description: Index value of the transaction
+      name: evt_index
+    - description: Primary key of the transaction
+      name: evt_tx_hash
+    - name: poolId
+    - name: tokenIn
+    - name: tokenOut
+    description: ''
+    loaded_at_field: evt_block_time
+    name: Vault_evt_Swap
+version: 2

@@ -1,24 +1,23 @@
 {{ config(
         alias ='erc721_agg_hour',
-        materialized ='incremental',
-        file_format ='delta',
-        incremental_strategy='merge',
+        materialized = 'view',
+                incremental_strategy='merge',
         unique_key='unique_transfer_id'
         )
 }}
 
 select
     'ethereum' as blockchain,
-    date_trunc('hour', evt_block_time) as hour,
+    TIMESTAMP_TRUNC(evt_block_time, hour) AS `hour`,
     wallet_address,
     token_address,
-    tokenid,
-    wallet_address || '-' || date_trunc('hour', evt_block_time) || '-' || token_address || '-' || tokenid as unique_transfer_id,
+    tokenId,
+    wallet_address || '-' || TIMESTAMP_TRUNC(evt_block_time, hour) || '-' || token_address || '-'  || tokenId as unique_transfer_id,
     SUM(amount) as amount
 from {{ ref('transfers_ethereum_erc721') }}
 {% if is_incremental() %}
 -- this filter will only be applied on an incremental run
-    where evt_block_time >= date_trunc('hour', now() - interval '1 week')
+where evt_block_time >= date_trunc('hour', CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}
-group by 1, 2, 3, 4, 5, 6
--- having sum(amount) = 1 -- commenting this out as it seems to affect the rolling models 
+group by 1,2,3,4,5,6
+-- having sum(amount) = 1 -- commenting this out as it seems to affect the rolling models

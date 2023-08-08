@@ -1,59 +1,83 @@
-version: 2
-
 models:
-  - name: tokens_erc20
-    meta:
-      blockchain: arbitrum, avalanche_c, bnb, ethereum, gnosis, optimism, fantom
-      sector: tokens
-      contributors: hildobby, 0xManny, dot2dotseurat, soispoke, mtitus6
-    config:
-      tags: ['tokens','erc20', 'arbitrum', 'avalanche_c', 'bnb','ethereum', 'gnosis','optimism', 'fantom']
-    description: >
-        Crosschain ERC20 tokens
-    columns:
-      - name: contract_address
-        description: "ERC20 Token's contract address"
-      - name: symbol
-        description: "ERC20 Token's symbol"
-      - name: decimals
-        description: "ERC20 Token's number of decimals"
+- columns:
+  - description: ERC20 Token's contract address
+    name: contract_address
+    tests: []
+  - description: ERC20 Token's symbol
+    name: symbol
+    tests: []
+  - description: ERC20 Token's number of decimals
+    name: decimals
+    tests: []
+  config:
+    tags:
+    - tokens
+    - erc20
+    - ethereum
 
-  - name: tokens_nft
-    meta:
-      blockchain: avalanche_c, bnb, ethereum, gnosis, optimism, fantom
-      sector: tokens
-      contributors: hildobby, 0xManny, dot2dotseurat, soispoke
-    config:
-      tags: ['tokens','nft', 'avalanche_c', 'bnb','ethereum', 'gnosis','optimism', 'fantom']
-    description: >
-        Crosschain NFT (ERC721 and ERC1155) tokens
-    columns:
-      - name: contract_address
-        description: "NFT Token's contract address"
-      - name: name
-        description: "NFT collection name"
-      - name: symbol
-        description: "NFT collection symbol"
-      - name: standard
-        description: "NFT collection standard"
+  description: 'Ethereum ERC20 tokens'
+  meta:
+    blockchain: ethereum,
+    contributors: hildobby, 0xManny, dot2dotseurat, soispoke, mtitus6
+    sector: tokens
+  name: tokens_erc20
+  tests: []
+- columns:
+  - description: NFT Token's contract address
+    name: contract_address
+    tests: []
+  - description: NFT collection name
+    name: name
+    tests: []
+  - description: NFT collection symbol
+    name: symbol
+    tests: []
+  - description: NFT collection standard
+    name: standard
+    tests: []
+  config:
+    tags:
+    - tokens
+    - nft
+    - ethereum
+  description: 'Ethereum (ERC721 and ERC1155) tokens
 
-  - name: tokens_native
-    meta:
-      blockchain: avalanche_c, bnb, ethereum, gnosis, optimism, ethereum, arbitrum, solana, fantom
-      sector: tokens
-      contributors: ilemi
-    config:
-      tags: ['tokens','native', 'avalanche_c', 'bnb','ethereum', 'gnosis','optimism','ethereum','solana','arbitrum', 'fantom']
-    description: >
-        The chain native token and symbol, and the prices.usd symbol/address that is closest.
-    columns:
-      - name: chain
-        description: "the chain, as it's named in Dune"
-      - name: symbol
-        description: "Token's symbol"
-      - name: price_symbol
-        description: "Token's prices.usd symbol"
-      - name: price_address
-        description: "Token's prices.usd contract address"
-      - name: decimals
-        description: "Token's number of decimals"
+    '
+  meta:
+    blockchain: ethereum
+    contributors: hildobby, 0xManny, dot2dotseurat, soispoke
+    sector: tokens
+  name: tokens_nft
+  tests: []
+- columns:
+  - description: the chain, as it's named in Dune
+    name: chain
+    tests: []
+  - description: Token's symbol
+    name: symbol
+    tests: []
+  - description: Token's prices.usd symbol
+    name: price_symbol
+    tests: []
+  - description: Token's prices.usd contract address
+    name: price_address
+    tests: []
+  - description: Token's number of decimals
+    name: decimals
+    tests: []
+  config:
+    tags:
+    - tokens
+    - native
+    - ethereum
+  description: 'The chain native token and symbol, and the prices.usd symbol/address
+    that is closest.
+
+    '
+  meta:
+    blockchain: ethereum
+    contributors: ilemi
+    sector: tokens
+  name: tokens_native
+  tests: []
+version: 2

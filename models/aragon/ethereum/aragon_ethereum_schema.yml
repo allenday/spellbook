@@ -1,94 +1,116 @@
-version: 2
-
 models:
-  - name: aragon_ethereum_client_dao_addresses
-    meta:
-      blockchain: ethereum
-      project: aragon
-      contributors: Henrystats 
-    config:
-      tags: [ 'ethereum', 'dao', 'aragon', 'dao creator tools', 'Henrystats', 'Aragon Client']
-    description: >
-      wallet addresses of daos created on aragon client
+- columns:
+  - &id001
+    description: blockchain which the DAO is deployed
+    name: blockchain
+    tests: []
+  - description: Name of creator tool used to create DAO
+    name: dao_creator_tool
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - created_date
-            - blockchain
-            - dao_creator_tool
-            - dao
-            - dao_wallet_address
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "blockchain which the DAO is deployed"
-      - name: dao_creator_tool
-        description: "Name of creator tool used to create DAO"
-        tests:
-          - dao_addresses_creator_tool:
-              dao_addresses_seed: ref('dao_addresses_seed')
-      - &dao
-        name: dao
-        description: "address of the dao deployed"
-      - &dao_wallet_address
-        name: dao_wallet_address
-        desciption: "wallet address used by DAO to receive & transfer funds"
-      - &created_date
-        name: created_date
-        description: "UTC event block date of DAO creation"
-      - &created_block_time
-        name: created_block_time
-        description: "UTC event block time of DAO creation"
-      - &product
-        name: product
-        description: "Aragon Product used to deploy DAO"
+    - dao_addresses_creator_tool:
+        dao_addresses_seed: ref('dao_addresses_seed')
+  - &id002
+    description: address of the dao deployed
+    name: dao
+    tests: []
+  - &id003
+    desciption: wallet address used by DAO to receive & transfer funds
+    name: dao_wallet_address
+    tests: []
+  - &id004
+    description: UTC event block date of DAO creation
+    name: created_date
+    tests: []
+  - &id005
+    description: UTC event block time of DAO creation
+    name: created_block_time
+    tests: []
+  - &id006
+    description: Aragon Product used to deploy DAO
+    name: product
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - dao
+    - aragon
+    - dao creator tools
+    - Henrystats
+    - Aragon Client
+  description: 'wallet addresses of daos created on aragon client
 
-  - name: aragon_ethereum_app_dao_addresses
-    meta:
-      blockchain: ethereum
-      project: aragon
-      contributors: Henrystats 
-    config:
-      tags: [ 'ethereum', 'dao', 'aragon', 'dao creator tools', 'Henrystats', 'Aragon App']
-    description: >
-      wallet addresses of daos created on aragon app 
+    '
+  meta:
+    blockchain: ethereum
+    contributors: Henrystats
+    project: aragon
+  name: aragon_ethereum_client_dao_addresses
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - created_date
+      - blockchain
+      - dao_creator_tool
+      - dao
+      - dao_wallet_address
+- columns:
+  - *id001
+  - description: Name of creator tool used to create DAO
+    name: dao_creator_tool
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - created_date
-            - blockchain
-            - dao_creator_tool
-            - dao
-            - dao_wallet_address
-    columns:
-      - *blockchain
-      - name: dao_creator_tool
-        description: "Name of creator tool used to create DAO"
-        tests:
-          - dao_addresses_creator_tool:
-              dao_addresses_seed: ref('dao_addresses_seed')
-      - *dao
-      - *dao_wallet_address
-      - *created_date
-      - *created_block_time
-      - *product
+    - dao_addresses_creator_tool:
+        dao_addresses_seed: ref('dao_addresses_seed')
+  - *id002
+  - *id003
+  - *id004
+  - *id005
+  - *id006
+  config:
+    tags:
+    - ethereum
+    - dao
+    - aragon
+    - dao creator tools
+    - Henrystats
+    - Aragon App
+  description: "wallet addresses of daos created on aragon app \n"
+  meta:
+    blockchain: ethereum
+    contributors: Henrystats
+    project: aragon
+  name: aragon_ethereum_app_dao_addresses
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - created_date
+      - blockchain
+      - dao_creator_tool
+      - dao
+      - dao_wallet_address
+- columns:
+  - *id001
+  - description: Name of creator tool used to create DAO
+    name: dao_creator_tool
+    tests: []
+  - *id002
+  - *id003
+  - *id004
+  - *id005
+  - *id006
+  config:
+    tags:
+    - ethereum
+    - dao
+    - aragon
+    - dao creator tools
+    - Henrystats
+  description: 'wallet addresses of daos created across all aragon products
 
-  - name: aragon_ethereum_dao_addresses
-    meta:
-      blockchain: ethereum
-      project: aragon
-      contributors: Henrystats 
-    config:
-      tags: [ 'ethereum', 'dao', 'aragon', 'dao creator tools', 'Henrystats']
-    description: >
-      wallet addresses of daos created across all aragon products
-    columns:
-      - *blockchain
-      - &dao_creator_tool
-        name: dao_creator_tool
-        description: "Name of creator tool used to create DAO"
-      - *dao
-      - *dao_wallet_address
-      - *created_date
-      - *created_block_time
-      - *product
+    '
+  meta:
+    blockchain: ethereum
+    contributors: Henrystats
+    project: aragon
+  name: aragon_ethereum_dao_addresses
+  tests: []
+version: 2

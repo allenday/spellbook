@@ -1,89 +1,91 @@
-version: 2
-
 models:
-  - name: opensea_inorganic_volume_filter_looksrare
-    meta:
-      blockchain: ethereum
-      project: opensea
-      contributors: Henrystats 
-    config:
-      tags: [ 'ethereum','inorganic_volume_filter', 'looksrare', 'Henrystats']
-    description: >
-      inorganic volume filter for looksrare trades 
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - day 
-            - block_time 
-            - nft_contract_address 
-            - nft_token_id 
-            - tx_hash 
-            - inorganic_filters
-            - unique_trade_id
-    columns:
-      - &day
-        name: day
-        description: "Date of nft trade"
-      - &block_time
-        name: block_time
-        description: "block time of transaction"
-      - &project
-        name: project 
-        description: "nft project where trade happned - looksrare for this filter"
-      - &nft_contract_address
-        name: nft_contract_address
-        desciption: "NFT contract address"
-      - &nft_token_id
-        name: nft_token_id
-        description: "NFT Token ID"
-      - &tx_hash
-        name: tx_hash
-        description: "blockchain transaction id"
-      - &currency
-        name: currency 
-        description: "asset used to trade nft"
-      - &amount
-        name: amount
-        description: "amount of currency used in trade"
-      - &usd_price
-        name: usd_price
-        description: "usd price of currency at tx time "
-      - &usd_amount
-        name: usd_amount
-        description: "usd value of currency traded"
-      - &buyer
-        name: buyer
-        description: "nft buyer"
-      - &seller
-        name: seller
-        description: "nft seller"
-      - &mt_filter
-        name: mt_filter
-        desciption: "multiple trades filter"
-      - &sb_filter
-        name: sb_filter
-        description: "same buyer/seller combination filter"
-      - &lv_filter
-        name: lv_filter
-        description: "os low volume filter"
-      - &hp_filter
-        name: hp_filter
-        description: "high price filter"
-      - &wf_filter
-        name: wf_filter
-        description: "wallet funder filter"
-      - &cb_filter
-        name: cb_filter
-        description: "circular buyer filter"
-      - &cs_filter
-        name: cs_filter
-        description: "circular seller filter"
-      - &inorganic_filters
-        name: inorganic_filters
-        description: "array with all filters"
-      - &any_filter
-        name: any_filter
-        description: "classification of trade"
-      - &unique_trade_id 
-        name: unique_trade_id
-        description: "Unique txid of trade"
+- columns:
+  - description: Date of nft trade
+    name: day
+    tests: []
+  - description: block time of transaction
+    name: block_time
+    tests: []
+  - description: nft project where trade happned - looksrare for this filter
+    name: project
+    tests: []
+  - desciption: NFT contract address
+    name: nft_contract_address
+    tests: []
+  - description: NFT Token ID
+    name: nft_token_id
+    tests: []
+  - description: blockchain transaction id
+    name: tx_hash
+    tests: []
+  - description: asset used to trade nft
+    name: currency
+    tests: []
+  - description: amount of currency used in trade
+    name: amount
+    tests: []
+  - description: 'usd price of currency at tx time '
+    name: usd_price
+    tests: []
+  - description: usd value of currency traded
+    name: usd_amount
+    tests: []
+  - description: nft buyer
+    name: buyer
+    tests: []
+  - description: nft seller
+    name: seller
+    tests: []
+  - desciption: multiple trades filter
+    name: mt_filter
+    tests: []
+  - description: same buyer/seller combination filter
+    name: sb_filter
+    tests: []
+  - description: os low volume filter
+    name: lv_filter
+    tests: []
+  - description: high price filter
+    name: hp_filter
+    tests: []
+  - description: wallet funder filter
+    name: wf_filter
+    tests: []
+  - description: circular buyer filter
+    name: cb_filter
+    tests: []
+  - description: circular seller filter
+    name: cs_filter
+    tests: []
+  - description: array with all filters
+    name: inorganic_filters
+    tests: []
+  - description: classification of trade
+    name: any_filter
+    tests: []
+  - description: Unique txid of trade
+    name: unique_trade_id
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - inorganic_volume_filter
+    - looksrare
+    - Henrystats
+  description: "inorganic volume filter for looksrare trades \n"
+  meta:
+    blockchain: ethereum
+    contributors: Henrystats
+    project: opensea
+  name: opensea_inorganic_volume_filter_looksrare
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - day
+      - block_time
+      - nft_contract_address
+      - nft_token_id
+      - tx_hash
+      - inorganic_filters
+      - unique_trade_id
+version: 2

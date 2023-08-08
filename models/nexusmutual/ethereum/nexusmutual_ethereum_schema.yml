@@ -1,148 +1,154 @@
-version: 2
-
 models:
-  - name: nexusmutual_ethereum_product_information
-    meta:
-      blockchain: ethereum
-      project: nexusmutual
-      contributors: [guyhow]
-    description: >
-        nexusmutual product information for v1
+- columns:
+  - name: date_added
+    tests: []
+  - name: product_contract_address
     tests:
-      - check_seed:
-          seed_file: ref('nexusmutual_ethereum_product_information_seed')
-          match_columns:
-            - product_contract_address
-          check_columns:
-            - product_name
-            - product_type
-            - syndicate
-    columns:
-      - &date_added
-        name: date_added
-      - &product_contract_address
-        name: product_contract_address
-        tests:
-          - unique
-      - &product_name
-        name: product_name
-      - &product_type
-        name: product_type
-      - &syndicate
-        name: syndicate
+    - unique
+  - name: product_name
+    tests: []
+  - name: product_type
+    tests: []
+  - name: syndicate
+    tests: []
+  description: 'nexusmutual product information for v1
 
-  - name: nexusmutual_ethereum_quotation_trades
-    meta:
-      blockchain: ethereum
-      project: nexusmutual
-      contributors: [zxf, jonah]
-    config:
-      tags: ['ethereum','nexusmutual','trades']
-    description: >
-        nexusmutual quotation trades on Ethereum
+    '
+  meta:
+    blockchain: ethereum
+    contributors:
+    - guyhow
+    project: nexusmutual
+  name: nexusmutual_ethereum_product_information
+  tests:
+  - check_seed:
+      check_columns:
+      - product_name
+      - product_type
+      - syndicate
+      match_columns:
+      - product_contract_address
+      seed_file: ref('nexusmutual_ethereum_product_information_seed')
+- columns:
+  - name: cid
+    tests: []
+  - name: contract_address
+    tests: []
+  - name: symbol
+    tests: []
+  - name: evt_index
+    tests: []
+  - name: evt_tx_hash
+    tests: []
+  - name: curr
+    tests: []
+  - name: premium
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - block_date
-            - evt_tx_hash
-            - evt_index
-    columns:
-      - &cid
-        name: cid
-      - &contract_address
-        name: contract_address
-      - &symbol
-        name: symbol
-      - &evt_index
-        name: evt_index
-      - &evt_tx_hash
-        name: evt_tx_hash
-      - &curr
-        name: curr
-      - &premium
-        name: premium
-        tests:
-          - nexusmutual_trades_column_values:
-              nexusmutual_ethereum_trades_seed: ref('nexusmutual_ethereum_trades_seed')
-      - &pre_amount
-        name: pre_amount
-      - &premium_nxm
-        name: premium_nxm
-        tests:
-          - nexusmutual_trades_column_values:
-              nexusmutual_ethereum_trades_seed: ref('nexusmutual_ethereum_trades_seed')
-      - &pre_nxm_amount
-        name: pre_nxm_amount
-      - &sc_add
-        name: sc_add
-      - &sum_assured
-        name: sum_assured
-        tests:
-          - nexusmutual_trades_column_values:
-              nexusmutual_ethereum_trades_seed: ref('nexusmutual_ethereum_trades_seed')
-      - &block_hash
-        name: block_hash
-      - &nonce
-        name: nonce
-      - &gas_limit
-        name: gas_limit
-      - &gas_price
-        name: gas_price
-      - &gas_used
-        name: gas_used
-      - &max_fee_per_gas
-        name: max_fee_per_gas
-      - &max_priority_fee_per_gas
-        name: max_priority_fee_per_gas
-      - &priority_fee_per_gas
-        name: priority_fee_per_gas
-      - &success
-        name: success
-      - &tx_type
-        name: tx_type
-      - &tx_value
-        name: tx_value
-      - &evt_block_number
-        name: evt_block_number
-      - &evt_block_time
-        name: evt_block_time
-      - &evt_expiry
-        name: evt_expiry
-      - &evt_expiry_date
-        name: evt_expiry_date
-      - &block_date
-        name: block_date
-        description: "UTC event block date of each DEX trade"
-      - &token_address
-        name: token_address
-        description: "Contract address for the token"
+    - nexusmutual_trades_column_values:
+        nexusmutual_ethereum_trades_seed: ref('nexusmutual_ethereum_trades_seed')
+  - name: pre_amount
+    tests: []
+  - name: premium_nxm
+    tests:
+    - nexusmutual_trades_column_values:
+        nexusmutual_ethereum_trades_seed: ref('nexusmutual_ethereum_trades_seed')
+  - name: pre_nxm_amount
+    tests: []
+  - name: sc_add
+    tests: []
+  - name: sum_assured
+    tests:
+    - nexusmutual_trades_column_values:
+        nexusmutual_ethereum_trades_seed: ref('nexusmutual_ethereum_trades_seed')
+  - name: block_hash
+    tests: []
+  - name: nonce
+    tests: []
+  - name: gas_limit
+    tests: []
+  - name: gas_price
+    tests: []
+  - name: gas_used
+    tests: []
+  - name: max_fee_per_gas
+    tests: []
+  - name: max_priority_fee_per_gas
+    tests: []
+  - name: priority_fee_per_gas
+    tests: []
+  - name: success
+    tests: []
+  - name: tx_type
+    tests: []
+  - name: tx_value
+    tests: []
+  - name: evt_block_number
+    tests: []
+  - name: evt_block_time
+    tests: []
+  - name: evt_expiry
+    tests: []
+  - name: evt_expiry_date
+    tests: []
+  - description: UTC event block date of each DEX trade
+    name: block_date
+    tests: []
+  - description: Contract address for the token
+    name: token_address
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - nexusmutual
+    - trades
+  description: 'nexusmutual quotation trades on Ethereum
 
-  - name: nexusmutual_ethereum_capital_pool_eth_daily_transaction_summary
-    meta:
-      blockchain: ethereum
-      project: nexusmutual
-      contributors: [guyhow]
-    config:
-      tags: ['ethereum','nexusmutual','trades']
-    description: >
-        Daily summary for ethereum entering and leaving the nexus mutual capital pool contracts
+    '
+  meta:
+    blockchain: ethereum
+    contributors:
+    - zxf
+    - jonah
+    project: nexusmutual
+  name: nexusmutual_ethereum_quotation_trades
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - block_date
+      - evt_tx_hash
+      - evt_index
+- columns:
+  - description: 'Table primary key: day of summarised transctions'
+    name: day
     tests:
-      - check_seed:
-          seed_file: ref('nexusmutual_ethereum_capital_pool_eth_daily_transaction_summary_seed')
-          match_columns:
-            - day
-          check_columns:
-            - eth_ingress
-            - eth_egress
-    columns:
-      - &day
-        name: day
-        description: "Table primary key: day of summarised transctions"
-        tests:
-          - unique
-      - &eth_ingress
-        name: ingress ethereum
-        description: "Sum of incoming transctions over the time covered by day"
-      - &eth_egress
-        name: egress ethereum
-        description: "Sum of outgoing transctions over the time covered by day"
+    - unique
+  - description: Sum of incoming transctions over the time covered by day
+    name: ingress ethereum
+    tests: []
+  - description: Sum of outgoing transctions over the time covered by day
+    name: egress ethereum
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - nexusmutual
+    - trades
+  description: 'Daily summary for ethereum entering and leaving the nexus mutual capital
+    pool contracts
+
+    '
+  meta:
+    blockchain: ethereum
+    contributors:
+    - guyhow
+    project: nexusmutual
+  name: nexusmutual_ethereum_capital_pool_eth_daily_transaction_summary
+  tests:
+  - check_seed:
+      check_columns:
+      - eth_ingress
+      - eth_egress
+      match_columns:
+      - day
+      seed_file: ref('nexusmutual_ethereum_capital_pool_eth_daily_transaction_summary_seed')
+version: 2

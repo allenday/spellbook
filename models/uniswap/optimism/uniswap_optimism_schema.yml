@@ -1,179 +1,227 @@
-version: 2
-
 models:
-  - name: uniswap_optimism_pools
-    meta:
-      blockchain: optimism
-      project: uniswap
-      contributors: msilb7, chuxin
-    config:
-      tags: ['optimism','uniswap','pools']
-    description: >
-        A canonical table containing all Uniswap pools created on Optimism. Pools from OVM1 will be missing from factory_evt_poolcreated, so we use this table to get pool information.
-    columns:
-      - &pool
-        name: pool
-        description: "Uniswap liquidity pool contract address"
-        tests:
-          - unique
-      - &token0
-        name: token0
-        description:  "Token0 contract address"
-      - &token1
-        name: token1
-        description:  "Token1 contract address"
-      - &fee
-        name: fee
-        description:  "Swap fee of a Uniswap liquidity pool. Divide by 1e6 or power(10,6) to get the fee percentage"
-
-  - name: uniswap_optimism_ovm1_pool_mapping
-    meta:
-      blockchain: optimism
-      project: uniswap
-      contributors: msilb7, chuxin
-    config:
-      tags: ['optimism','uniswap','pools']
-    description: >
-        A canonical table containing all Uniswap pool address changes between OVM1 and the EVM Equivalence regenesis release.
+- columns:
+  - description: Uniswap liquidity pool contract address
+    name: pool
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-              - oldAddress
-              - newAddress
-    columns:
-      - &oldAddress
-        name: oldAddress
-        description: "Uniswap liquidity pool contract address in OVM1"
-      - &newAddress
-        name: newAddress
-        description: "Uniswap liquidity pool contract address in the EVM Equivalence regenesis release."
-      - *token0
-      - *token1
-      - *fee
+    - unique
+  - &id001
+    description: Token0 contract address
+    name: token0
+    tests: []
+  - &id002
+    description: Token1 contract address
+    name: token1
+    tests: []
+  - &id003
+    description: Swap fee of a Uniswap liquidity pool. Divide by 1e6 or power(10,6)
+      to get the fee percentage
+    name: fee
+    tests: []
+  config:
+    tags:
+    - optimism
+    - uniswap
+    - pools
+  description: 'A canonical table containing all Uniswap pools created on Optimism.
+    Pools from OVM1 will be missing from factory_evt_poolcreated, so we use this table
+    to get pool information.
 
-  - name: uniswap_v3_optimism_trades
-    meta:
+    '
+  meta:
+    blockchain: optimism
+    contributors: msilb7, chuxin
+    project: uniswap
+  name: uniswap_optimism_pools
+  tests: []
+- columns:
+  - description: Uniswap liquidity pool contract address in OVM1
+    name: oldAddress
+    tests: []
+  - description: Uniswap liquidity pool contract address in the EVM Equivalence regenesis
+      release.
+    name: newAddress
+    tests: []
+  - *id001
+  - *id002
+  - *id003
+  config:
+    tags:
+    - optimism
+    - uniswap
+    - pools
+  description: 'A canonical table containing all Uniswap pool address changes between
+    OVM1 and the EVM Equivalence regenesis release.
+
+    '
+  meta:
+    blockchain: optimism
+    contributors: msilb7, chuxin
+    project: uniswap
+  name: uniswap_optimism_ovm1_pool_mapping
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - oldAddress
+      - newAddress
+- columns:
+  - &id004
+    description: Blockchain which the DEX is deployed
+    name: blockchain
+    tests: []
+  - &id005
+    description: Project name of the DEX
+    name: project
+    tests: []
+  - &id006
+    description: Version of the contract built and deployed by the DEX project
+    name: version
+    tests: []
+  - &id007
+    description: UTC event block date of each DEX trade
+    name: block_date
+    tests: []
+  - &id008
+    description: UTC event block time of each DEX trade
+    name: block_time
+    tests: []
+  - &id009
+    description: Token symbol for token bought in the transaction
+    name: token_bought_symbol
+    tests: []
+  - &id010
+    description: Token symbol for token sold in the transaction
+    name: token_sold_symbol
+    tests: []
+  - &id011
+    description: Token symbol pair for each token involved in the transaction
+    name: token_pair
+    tests: []
+  - &id012
+    description: Value of the token bought at time of execution in the original currency
+    name: token_bought_amount
+    tests: []
+  - &id013
+    description: Value of the token sold at time of execution in the original currency
+    name: token_sold_amount
+    tests: []
+  - &id014
+    description: Raw value of the token bought at time of execution in the original
+      currency
+    name: token_bought_amount_raw
+    tests: []
+  - &id015
+    description: Raw value of the token sold at time of execution in the original
+      currency
+    name: token_sold_amount_raw
+    tests: []
+  - &id016
+    description: USD value of the trade at time of execution
+    name: amount_usd
+    tests: []
+  - &id017
+    description: Contract address of the token bought
+    name: token_bought_address
+    tests: []
+  - &id018
+    description: Contract address of the token sold
+    name: token_sold_address
+    tests: []
+  - &id019
+    description: Address of trader who purchased a token
+    name: taker
+    tests: []
+  - &id020
+    description: Address of trader who sold a token
+    name: maker
+    tests: []
+  - &id021
+    description: Project contract address which executed the trade on the blockchain
+    name: project_contract_address
+    tests: []
+  - &id022
+    description: Unique transaction hash value tied to each transaction on the DEX
+    name: tx_hash
+    tests: []
+  - &id023
+    description: Address which initiated the transaction
+    name: tx_from
+    tests: []
+  - &id024
+    description: Address which received the transaction
+    name: tx_to
+    tests: []
+  - &id025
+    description: ''
+    name: trace_address
+    tests: []
+  - &id026
+    description: ''
+    name: evt_index
+    tests: []
+  config:
+    tags:
+    - optimism
+    - uniswap
+    - dex
+  description: 'A table containing all trades of uniswap v3 on optimism
+
+    '
+  meta:
+    blockchain: optimism
+    contributors: 0xBoxer, jeff-dude
+    project: uniswap
+  name: uniswap_v3_optimism_trades
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - block_date
+      - blockchain
+      - project
+      - version
+      - tx_hash
+      - evt_index
+      - trace_address
+  - check_dex_seed:
       blockchain: optimism
       project: uniswap
-      contributors: 0xBoxer, jeff-dude
-    config:
-      tags: ['optimism','uniswap','dex']
-    description: >
-        A table containing all trades of uniswap v3 on optimism
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-              - block_date
-              - blockchain
-              - project
-              - version
-              - tx_hash
-              - evt_index
-              - trace_address
-      - check_dex_seed:
-          blockchain: optimism
-          project: uniswap
-          version: 3
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "Blockchain which the DEX is deployed"
-      - &project
-        name: project
-        description: "Project name of the DEX"
-      - &version
-        name: version
-        description: "Version of the contract built and deployed by the DEX project"
-      - &block_date
-        name: block_date
-        description: "UTC event block date of each DEX trade"
-      - &block_time
-        name: block_time
-        description: "UTC event block time of each DEX trade"
-      - &token_bought_symbol
-        name: token_bought_symbol
-        description: "Token symbol for token bought in the transaction"
-      - &token_sold_symbol
-        name: token_sold_symbol
-        description: "Token symbol for token sold in the transaction"
-      - &token_pair
-        name: token_pair
-        description: "Token symbol pair for each token involved in the transaction"
-      - &token_bought_amount
-        name: token_bought_amount
-        description: "Value of the token bought at time of execution in the original currency"
-      - &token_sold_amount
-        name: token_sold_amount
-        description: "Value of the token sold at time of execution in the original currency"
-      - &token_bought_amount_raw
-        name: token_bought_amount_raw
-        description: "Raw value of the token bought at time of execution in the original currency"
-      - &token_sold_amount_raw
-        name: token_sold_amount_raw
-        description: "Raw value of the token sold at time of execution in the original currency"
-      - &amount_usd
-        name: amount_usd
-        description: "USD value of the trade at time of execution"
-      - &token_bought_address
-        name: token_bought_address
-        description: "Contract address of the token bought"
-      - &token_sold_address
-        name: token_sold_address
-        description: "Contract address of the token sold"
-      - &taker
-        name: taker
-        description: "Address of trader who purchased a token"
-      - &maker
-        name: maker
-        description: "Address of trader who sold a token"
-      - &project_contract_address
-        name: project_contract_address
-        description: "Project contract address which executed the trade on the blockchain"
-      - &tx_hash
-        name: tx_hash
-        description: "Unique transaction hash value tied to each transaction on the DEX"
-      - &tx_from
-        name: tx_from
-        description: "Address which initiated the transaction"
-      - &tx_to
-        name: tx_to
-        description: "Address which received the transaction"
-      - &trace_address
-        name: trace_address
-        description: ""
-      - &evt_index
-        name: evt_index
-        description: ""
-  - name: uniswap_optimism_trades
-    meta:
-      blockchain: optimism
-      project: uniswap
-      contributors: 0xBoxer, jeff-dude
-    config:
-      tags: ['optimism','uniswap','dex.trades']
-    description: >
-        A table containing all trades of uniswap on optimism. future proof for more protocol version on this chain
-    columns:
-      - *blockchain
-      - *project
-      - *version
-      - *block_date
-      - *block_time
-      - *token_bought_symbol
-      - *token_sold_symbol
-      - *token_pair
-      - *token_bought_amount
-      - *token_sold_amount
-      - *token_bought_amount_raw
-      - *token_sold_amount_raw
-      - *amount_usd
-      - *token_bought_address
-      - *token_sold_address
-      - *taker
-      - *maker
-      - *project_contract_address
-      - *tx_hash
-      - *tx_from
-      - *tx_to
-      - *trace_address
-      - *evt_index
+      version: 3
+- columns:
+  - *id004
+  - *id005
+  - *id006
+  - *id007
+  - *id008
+  - *id009
+  - *id010
+  - *id011
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  - *id017
+  - *id018
+  - *id019
+  - *id020
+  - *id021
+  - *id022
+  - *id023
+  - *id024
+  - *id025
+  - *id026
+  config:
+    tags:
+    - optimism
+    - uniswap
+    - dex.trades
+  description: 'A table containing all trades of uniswap on optimism. future proof
+    for more protocol version on this chain
+
+    '
+  meta:
+    blockchain: optimism
+    contributors: 0xBoxer, jeff-dude
+    project: uniswap
+  name: uniswap_optimism_trades
+  tests: []
+version: 2

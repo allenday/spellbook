@@ -1,11 +1,6 @@
 {{ config(
     alias = 'view_pools',
-    materialized='table',
-    file_format = 'delta',
-    post_hook='{{ expose_spells(\'["ethereum"]\',
-                                "project",
-                                "curvefi",
-                                \'["yulesa", "agaperste", "ilemi"]\') }}'
+    materialized = 'view'
     )
  }}
 
@@ -18,15 +13,15 @@ WITH regular_pools AS (
         pool_address,
         token_address,
         gauge_contract,
-        coin0,
-        coin1,
-        coin2,
-        undercoin0,
-        undercoin1,
-        undercoin2,
-        undercoin3,
+        IFNULL(coin0,'0x0000000000000000000000000000000000000000') as coin0,
+        IFNULL(coin1,'0x0000000000000000000000000000000000000000') as coin1,
+        IFNULL(coin2,'0x0000000000000000000000000000000000000000') as coin2,
+        IFNULL(coin3,'0x0000000000000000000000000000000000000000') as coin3,
+        IFNULL(undercoin0,'0x0000000000000000000000000000000000000000') as undercoin0,
+        IFNULL(undercoin1,'0x0000000000000000000000000000000000000000') as undercoin1,
+        IFNULL(undercoin2,'0x0000000000000000000000000000000000000000') as undercoin2,
+        IFNULL(undercoin3,'0x0000000000000000000000000000000000000000') as undercoin3,
         deposit_contract,
-        coin3
     FROM
         {{ ref('curvefi_ethereum_pool_details') }}
 ),
@@ -36,15 +31,9 @@ regular_pools_deployed AS (
         `name`,
         symbol,
         pool_address,
-        CAST(
-            NULL AS VARCHAR(5)
-        ) AS A,
-        CAST(
-            NULL AS VARCHAR(5)
-        ) AS mid_fee,
-        CAST(
-            NULL AS VARCHAR(5)
-        ) AS out_fee,
+        NULL AS A,
+        NULL AS mid_fee,
+        NULL AS out_fee,
         token_address,
         deposit_contract,
         coin0,
@@ -82,27 +71,19 @@ plain_pools_deployed AS (
         _name AS `name`,
         _symbol AS symbol,
         output_0 AS pool_address,
-        "_A" AS A,
+        _A AS A,
         _fee AS mid_fee,
         _fee AS out_fee,
         output_0 AS token_address,
         output_0 AS deposit_contract,
-        _coins [0] AS coin0,
-        _coins [1] AS coin1,
-        _coins [2] AS coin2,
-        _coins [3] AS coin3,
-        CAST(
-            NULL AS VARCHAR(5)
-        ) AS undercoin0,
-        CAST(
-            NULL AS VARCHAR(5)
-        ) AS undercoin1,
-        CAST(
-            NULL AS VARCHAR(5)
-        ) AS undercoin2,
-        CAST(
-            NULL AS VARCHAR(5)
-        ) AS undercoin3
+        IFNULL(_coins [SAFE_OFFSET(0)], '0x0000000000000000000000000000000000000000') AS coin0,
+        IFNULL(_coins [SAFE_OFFSET(1)], '0x0000000000000000000000000000000000000000') AS coin1,
+        IFNULL(_coins [SAFE_OFFSET(2)], '0x0000000000000000000000000000000000000000') AS coin2,
+        IFNULL(_coins [SAFE_OFFSET(3)], '0x0000000000000000000000000000000000000000') AS coin3,
+        '0x0000000000000000000000000000000000000000' as undercoin0,
+        '0x0000000000000000000000000000000000000000' as undercoin1,
+        '0x0000000000000000000000000000000000000000' as undercoin2,
+        '0x0000000000000000000000000000000000000000' as undercoin3
     FROM
         plain_calls
 ),
@@ -117,7 +98,7 @@ meta_calls AS (
             call_tx_hash,
             _base_pool,
             _coin,
-            "_A",
+            _A,
             _fee 
         FROM 
         {{ source(
@@ -136,7 +117,7 @@ meta_calls AS (
             call_tx_hash,
             _base_pool,
             _coin,
-            "_A",
+            _A,
             _fee 
         FROM 
         {{ source(
@@ -153,24 +134,20 @@ meta_pools_deployed AS (
         _name AS `name`,
         _symbol AS symbol,
         output_0 AS pool_address,
-        "_A" AS A,
+        _A AS A,
         _fee AS mid_fee,
         _fee AS out_fee,
         output_0 AS token_address,
         output_0 AS deposit_contract,
-        _coin AS coin0,
-        r.token_address as coin1, --reference the token address of the base pool as coin1. meta pools swap into the base pool token, and then another swap is conducted.
-        CAST(
-            NULL AS VARCHAR(5)
-        ) AS coin2,
-        CAST(
-            NULL AS VARCHAR(5)
-        ) AS coin3,
-        _coin AS undercoin0,
+        IFNULL(_coin, '0x0000000000000000000000000000000000000000') AS coin0,
+        IFNULL(r.token_address, '0x0000000000000000000000000000000000000000') as coin1, --reference the token address of the base pool as coin1. meta pools swap into the base pool token, and then another swap is conducted.
+        '0x0000000000000000000000000000000000000000' AS coin2,
+        '0x0000000000000000000000000000000000000000' AS coin3,
+        IFNULL(_coin, '0x0000000000000000000000000000000000000000') AS undercoin0,
         --Listing underlying coins for the ExchangeUnderlying function
-        r.coin0 as undercoin1,
-        r.coin1 as undercoin2,
-        r.coin2 as undercoin3
+        IFNULL(r.coin0, '0x0000000000000000000000000000000000000000') as undercoin1,
+        IFNULL(r.coin1, '0x0000000000000000000000000000000000000000') as undercoin2,
+        IFNULL(r.coin2, '0x0000000000000000000000000000000000000000') as undercoin3
     FROM
         meta_calls mc 
     LEFT JOIN regular_pools r ON r.pool_address = mc._base_pool
@@ -198,22 +175,14 @@ v2_pools_deployed AS (
         p.out_fee AS out_fee,
         p.token AS token_address,
         output_0 AS deposit_contract,
-        coins [0] AS coin0,
-        coins [1] AS coin1,
-        coins [2] AS coin2,
-        coins [3] AS coin3,
-        CAST(
-            NULL AS VARCHAR(5)
-        ) AS undercoin0,
-        CAST(
-            NULL AS VARCHAR(5)
-        ) AS undercoin1,
-        CAST(
-            NULL AS VARCHAR(5)
-        ) AS undercoin2,
-        CAST(
-            NULL AS VARCHAR(5)
-        ) AS undercoin3
+        IFNULL(coins [SAFE_OFFSET(0)],"0x0000000000000000000000000000000000000000") AS coin0,
+        IFNULL(coins [SAFE_OFFSET(1)],"0x0000000000000000000000000000000000000000") AS coin1,
+        IFNULL(coins [SAFE_OFFSET(2)],"0x0000000000000000000000000000000000000000") AS coin2,
+        IFNULL(coins [SAFE_OFFSET(3)],"0x0000000000000000000000000000000000000000") AS coin3,
+        '0x0000000000000000000000000000000000000000' as undercoin0,
+        '0x0000000000000000000000000000000000000000' as undercoin1,
+        '0x0000000000000000000000000000000000000000' as undercoin2,
+        '0x0000000000000000000000000000000000000000' as undercoin3
     FROM
         {{ source(
             'curvefi_ethereum',
@@ -259,13 +228,22 @@ pools AS (
         ON pd2.pool_address = g2.token
 ),
 
+contract_name_pre AS (
+    SELECT c.name,
+            c.namespace,
+            c.address,
+            ROW_NUMBER() OVER (PARTITION BY c.address ORDER BY c.name DESC) AS rn
+    FROM `blocktrekker`.`ethereum`.`contracts` c
+    INNER JOIN pools ON c.address = pool_address
+    WHERE c.name IS NOT NULL
+),
+
 contract_name AS (
-    SELECT first(c.name, true) as name,
-           first(c.namespace, true) as namespace,
-           c.address
-    FROM {{ source('ethereum', 'contracts') }} c
-    INNER JOIN pools ON address = pool_address
-    GROUP BY address
+    SELECT name,
+        namespace,
+        address
+    FROM contract_name_pre
+    WHERE rn = 1
 )
 
 SELECT
@@ -292,8 +270,8 @@ SELECT
     undercoin1,
     undercoin2,
     undercoin3,
-    array(undercoin0, undercoin1, undercoin2, undercoin3) as undercoins,
-    array(coin0, coin1, coin2, coin3) as coins, --changing order to hopefully reset the CI
+    ARRAY<STRING>[undercoin0, undercoin1, undercoin2, undercoin3] as undercoins,
+    ARRAY<STRING>[coin0, coin1, coin2, coin3] as coins, --changing order to hopefully reset the CI
     gauge_contract
 FROM
     pools p

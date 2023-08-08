@@ -1,256 +1,334 @@
-version: 2
-
 models:
-  - name: aave_v3_optimism_interest_rates
-    meta:
-      blockchain: optimism
-      sector: lending
-      project: aave_v3
-      contributors: batwayne, chuxin
+- columns:
+  - &id001
+    description: Aave reserve contract address
+    name: reserve
+    tests: []
+  - &id002
+    description: Symbol of the reserve
+    name: symbol
+    tests: []
+  - &id003
+    description: Block timestamp truncated to hours
+    name: hour
+    tests: []
+  - &id004
+    description: Hourly deposit interest rate value of the reserve
+    name: deposit_apy
+    tests: []
+  - &id005
+    description: Hourly stable borrow interest rate value of the reserve
+    name: stable_borrow_apy
+    tests: []
+  - &id006
+    description: Hourly variable borrow interest rate value of the reserve
+    name: variable_borrow_apy
+    tests: []
+  config:
+    tags:
+    - optimism
+    - aave_v3
+    - interest
+    - aave
+    - lending
+  description: Hourly aave interest rates on optimism
+  meta:
+    blockchain: optimism
+    contributors: batwayne, chuxin
+    project: aave_v3
+    sector: lending
+  name: aave_v3_optimism_interest_rates
+  tests: []
+- columns:
+  - *id001
+  - *id002
+  - *id003
+  - *id004
+  - *id005
+  - *id006
+  config:
+    tags:
+    - optimism
+    - aave_v3
+    - interest
+    - aave
+    - lending
+  description: Hourly aave interest rates on optimism
+  meta:
+    blockchain: optimism
+    contributors: batwayne, chuxin
+    project: aave
+    sector: lending
+  name: aave_optimism_interest_rates
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - reserve
+      - symbol
+      - hour
+- columns:
+  - &id007
+    description: Aave version
+    name: version
+    tests: []
+  - &id008
+    description: The transaction type
+    name: transaction_type
+    tests: []
+  - *id002
+  - &id009
+    description: Aave reserve contract address
+    name: token_address
+    tests: []
+  - &id017
+    description: Depositor wallet address
+    name: depositor
+    tests: []
+  - &id018
+    description: The wallet address where the tokens are withdrawn
+    name: withdrawn_to
+    tests: []
+  - &id010
+    description: Liquidator wallet address
+    name: liquidator
+    tests: []
+  - &id011
+    description: 'Token amount present in the transaction. Note: withdraw amounts
+      may be more than deposited amounts due to interest'
+    name: amount
+    tests: []
+  - &id012
+    description: Token amount in USD
+    name: usd_amount
+    tests: []
+  - &id013
+    description: Transaction hash of the event
+    name: evt_tx_hash
+    tests: []
+  - &id014
+    description: Event index
+    name: evt_index
+    tests: []
+  - &id015
+    description: Timestamp for block event time in UTC
+    name: evt_block_time
+    tests: []
+  - &id016
+    description: Event block number
+    name: evt_block_number
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - aave_v3
+    - supply
+    - aave
+    - lending
+  description: All aave v3 transactions involving supply transactions on optimism
+  meta:
+    blockchain: optimism
+    contributors: batwayne, chuxin
+    project: aave_v3
+    sector: lending
+  name: aave_v3_optimism_supply
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - version
+      - token_address
+      - evt_tx_hash
+      - evt_block_number
+      - evt_index
+- columns:
+  - *id007
+  - *id008
+  - *id002
+  - *id009
+  - &id019
+    description: Borrower wallet address
+    name: borrower
+    tests: []
+  - &id020
+    description: Repayer wallet address
+    name: repayer
+    tests: []
+  - *id010
+  - *id011
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  config:
+    tags:
+    - ethereum
+    - aave_v3
+    - borrow
+    - aave
+    - lending
+  description: All aave v3 transactions involving borrow transactions on optimism
+  meta:
+    blockchain: optimism
+    contributors: batwayne, chuxin
+    project: aave_v3
+    sector: lending
+  name: aave_v3_optimism_borrow
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - version
+      - token_address
+      - evt_tx_hash
+      - evt_block_number
+      - evt_index
+- columns:
+  - *id007
+  - *id008
+  - *id002
+  - *id009
+  - *id017
+  - *id018
+  - *id010
+  - *id011
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  config:
+    tags:
+    - optimism
+    - aave
+    - supply
+    - aave
+    - lending
+  description: All aave transactions involving supply transactions on optimism
+  meta:
+    blockchain: optimism
+    contributors: batwayne, chuxin
+    project: aave
+    sector: lending
+  name: aave_optimism_supply
+  tests: []
+- columns:
+  - *id007
+  - *id008
+  - *id002
+  - *id009
+  - *id019
+  - *id020
+  - *id010
+  - *id011
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  config:
+    tags:
+    - optimism
+    - aave
+    - borrow
+    - aave
+    - lending
+  description: All aave v1 transactions involving borrow transactions on optimism
+  meta:
+    blockchain: optimism
+    contributors: batwayne, chuxin
+    project: aave
+    sector: lending
+  name: aave_optimism_borrow
+  tests: []
+- columns:
+  - name: blockchain
+    tests: []
+  - name: project
+    tests: []
+  - name: version
+    tests: []
+  - name: block_time
+    tests: []
+  - name: block_number
+    tests: []
+  - name: amount
+    tests: []
+  - name: amount_usd
+    tests: []
+  - name: tx_hash
+    tests: []
+  - name: evt_index
+    tests: []
+  - name: fee
+    tests: []
+  - name: currency_contract
+    tests: []
+  - name: currency_symbol
+    tests: []
+  - name: recipient
+    tests: []
+  - name: contract_address
+    tests: []
+  config:
+    tags:
+    - optimism
+    - flashloans
+  description: 'Aave v3 flashloans on Optimism
 
-    config:
-      tags: ['optimism', 'aave_v3', 'interest', 'aave', 'lending']
-    description: "Hourly aave interest rates on optimism"
-    columns:
-      - &reserve
-        name: reserve
-        description: "Aave reserve contract address"
-      - &symbol
-        name: symbol
-        description: "Symbol of the reserve"
-      - &hour
-        name: hour
-        description: "Block timestamp truncated to hours"
-      - &deposit_apy
-        name: deposit_apy
-        description: "Hourly deposit interest rate value of the reserve"
-      - &stable_borrow_apy
-        name: stable_borrow_apy
-        description: "Hourly stable borrow interest rate value of the reserve"
-      - &variable_borrow_apy
-        name: variable_borrow_apy
-        description: "Hourly variable borrow interest rate value of the reserve"
+    '
+  meta:
+    blockchain: optimism
+    contributors: hildobby
+    sector: lending
+  name: aave_v3_optimism_flashloans
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - tx_hash
+      - evt_index
+- columns:
+  - name: blockchain
+    tests: []
+  - name: project
+    tests: []
+  - name: version
+    tests: []
+  - name: block_time
+    tests: []
+  - name: block_number
+    tests: []
+  - name: amount
+    tests: []
+  - name: amount_usd
+    tests: []
+  - name: tx_hash
+    tests: []
+  - name: evt_index
+    tests: []
+  - name: fee
+    tests: []
+  - name: currency_contract
+    tests: []
+  - name: currency_symbol
+    tests: []
+  - name: recipient
+    tests: []
+  - name: contract_address
+    tests: []
+  config:
+    tags:
+    - optimism
+    - flashloans
+  description: 'All Aave flashloans on Optimism
 
-  - name: aave_optimism_interest_rates
-    meta:
-      blockchain: optimism
-      sector: lending
-      project: aave
-      contributors: batwayne, chuxin
-    config:
-      tags: ['optimism', 'aave_v3', 'interest', 'aave', 'lending']
-    description: "Hourly aave interest rates on optimism"
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - reserve
-            - symbol
-            - hour
-    columns:
-      - *reserve
-      - *symbol
-      - *hour
-      - *deposit_apy
-      - *stable_borrow_apy
-      - *variable_borrow_apy
-
-  - name: aave_v3_optimism_supply
-    meta:
-      blockchain: optimism
-      sector: lending
-      project: aave_v3
-      contributors: batwayne, chuxin
-    config:
-      tags: ['ethereum', 'aave_v3', 'supply', 'aave', 'lending']
-    description: "All aave v3 transactions involving supply transactions on optimism"
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - version
-            - token_address
-            - evt_tx_hash
-            - evt_block_number
-            - evt_index
-    columns:
-      - &version
-        name: version
-        description: "Aave version"
-      - &transaction_type
-        name: transaction_type
-        description: "The transaction type"
-      - *symbol
-      - &token_address
-        name: token_address
-        description: "Aave reserve contract address"
-      - &depositor
-        name: depositor
-        description: "Depositor wallet address"
-      - &withdrawn_to
-        name: withdrawn_to
-        description: "The wallet address where the tokens are withdrawn"
-      - &liquidator
-        name: liquidator
-        description: "Liquidator wallet address"
-      - &amount
-        name: amount
-        description: "Token amount present in the transaction. Note: withdraw amounts may be more than deposited amounts due to interest"
-      - &usd_amount
-        name: usd_amount
-        description: "Token amount in USD"
-      - &evt_tx_hash
-        name: evt_tx_hash
-        description: "Transaction hash of the event"
-      - &evt_index
-        name: evt_index
-        description: "Event index"
-      - &evt_block_time
-        name: evt_block_time
-        description: "Timestamp for block event time in UTC"
-      - &evt_block_number
-        name: evt_block_number
-        description: "Event block number"
-
-  - name: aave_v3_optimism_borrow
-    meta:
-      blockchain: optimism
-      sector: lending
-      project: aave_v3
-      contributors: batwayne, chuxin
-    config:
-      tags: ['ethereum', 'aave_v3', 'borrow', 'aave', 'lending']
-    description: "All aave v3 transactions involving borrow transactions on optimism"
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - version
-            - token_address
-            - evt_tx_hash
-            - evt_block_number
-            - evt_index
-    columns:
-      - *version
-      - *transaction_type
-      - *symbol
-      - *token_address
-      - &borrower
-        name: borrower
-        description: "Borrower wallet address"
-      - &repayer
-        name: repayer
-        description: "Repayer wallet address"
-      - *liquidator
-      - *amount
-      - *usd_amount
-      - *evt_tx_hash
-      - *evt_index
-      - *evt_block_time
-      - *evt_block_number
-
-  - name: aave_optimism_supply
-    meta:
-      blockchain: optimism
-      sector: lending
-      project: aave
-      contributors: batwayne, chuxin
-    config:
-      tags: ['optimism', 'aave', 'supply', 'aave', 'lending']
-    description: "All aave transactions involving supply transactions on optimism"
-    columns:
-      - *version
-      - *transaction_type
-      - *symbol
-      - *token_address
-      - *depositor
-      - *withdrawn_to
-      - *liquidator
-      - *amount
-      - *usd_amount
-      - *evt_tx_hash
-      - *evt_index
-      - *evt_block_time
-      - *evt_block_number
-
-  - name: aave_optimism_borrow
-    meta:
-      blockchain: optimism
-      sector: lending
-      project: aave
-      contributors: batwayne, chuxin
-    config:
-      tags: ['optimism', 'aave', 'borrow', 'aave', 'lending']
-    description: "All aave v1 transactions involving borrow transactions on optimism"
-    columns:
-      - *version
-      - *transaction_type
-      - *symbol
-      - *token_address
-      - *borrower
-      - *repayer
-      - *liquidator
-      - *amount
-      - *usd_amount
-      - *evt_tx_hash
-      - *evt_index
-      - *evt_block_time
-      - *evt_block_number    
-
-  - name: aave_v3_optimism_flashloans
-    meta:
-      blockchain: optimism
-      sector: lending
-      contributors: hildobby
-    config:
-        tags: ['optimism', 'flashloans']
-    description: >
-        Aave v3 flashloans on Optimism
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - tx_hash
-            - evt_index
-    columns:
-        - name: blockchain
-        - name: project
-        - name: version
-        - name: block_time
-        - name: block_number
-        - name: amount
-        - name: amount_usd
-        - name: tx_hash
-        - name: evt_index
-        - name: fee
-        - name: currency_contract
-        - name: currency_symbol
-        - name: recipient
-        - name: contract_address
-
-  - name: aave_optimism_flashloans
-    meta:
-      blockchain: optimism
-      sector: lending
-      contributors: hildobby
-    config:
-        tags: ['optimism', 'flashloans']
-    description: >
-        All Aave flashloans on Optimism
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - tx_hash
-            - evt_index
-    columns:
-        - name: blockchain
-        - name: project
-        - name: version
-        - name: block_time
-        - name: block_number
-        - name: amount
-        - name: amount_usd
-        - name: tx_hash
-        - name: evt_index
-        - name: fee
-        - name: currency_contract
-        - name: currency_symbol
-        - name: recipient
-        - name: contract_address
-        
+    '
+  meta:
+    blockchain: optimism
+    contributors: hildobby
+    sector: lending
+  name: aave_optimism_flashloans
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - tx_hash
+      - evt_index
+version: 2

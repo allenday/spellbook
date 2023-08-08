@@ -1,10 +1,6 @@
 {{ config(
        alias = 'top_erc1155_holders',
-       materialized='table',
-       post_hook='{{ expose_spells(\'["ethereum"]\',
-                                   "sector",
-                                   "nft",
-                                   \'["Henrystats"]\') }}'
+       materialized = 'view'
        )
    }}
 
@@ -44,4 +40,4 @@ FROM
  FROM 
  total_supply
 ) x 
-WHERE rn <= 50 
+WHERE rn <= 50

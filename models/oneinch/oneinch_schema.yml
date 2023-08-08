@@ -1,31 +1,50 @@
-version: 2
-
 models:
-  - name: oneinch_contract_addresses
-    meta:
-      blockchain: ['ethereum','optimism','polygon','arbitrum','avalanche_c','gnosis','bnb','fantom']
-      sector: oneinch
-      contributors: [grkhr]
-    config:
-      tags: ['oneinch', 'metadata']
-    description: >
-        (dictionary) contract addresses of 1inch and other projects for internal use
+- columns:
+  - name: blockchain
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - blockchain
-            - address
-    columns:
-      - &blockchain
-        name: blockchain
-        tests:
-          - accepted_values:
-              values: ['ethereum','optimism','polygon','arbitrum','avalanche_c','gnosis','bnb','fantom']
-      - &project
-        name: project
-      - &contract_name
-        name: contract_name
-      - &contract_type
-        name: contract_type
-      - &address
-        name: address
+    - accepted_values:
+        values:
+        - ethereum
+        - optimism
+        - polygon
+        - arbitrum
+        - avalanche_c
+        - gnosis
+        - bnb
+        - fantom
+  - name: project
+    tests: []
+  - name: contract_name
+    tests: []
+  - name: contract_type
+    tests: []
+  - name: address
+    tests: []
+  config:
+    tags:
+    - oneinch
+    - metadata
+  description: '(dictionary) contract addresses of 1inch and other projects for internal
+    use
+
+    '
+  meta:
+    blockchain:
+    - ethereum
+    - optimism
+    - polygon
+    - arbitrum
+    - avalanche_c
+    - gnosis
+    - bnb
+    - fantom
+    contributors:
+    - grkhr
+    sector: oneinch
+  name: oneinch_contract_addresses
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - blockchain
+      - address
+version: 2

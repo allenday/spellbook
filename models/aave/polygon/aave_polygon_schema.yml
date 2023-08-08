@@ -1,92 +1,140 @@
-version: 2
-
 models:
- - name: aave_v2_polygon_flashloans
-   meta:
-    blockchain: polygon
-    sector: lending
-    contributors: hildobby
-   config:
-      tags: ['polygon', 'flashloans']
-   description: >
-      Aave v2 flashloans on Polygon
-   tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - tx_hash
-            - evt_index
-   columns:
-      - name: blockchain
-      - name: project
-      - name: version
-      - name: block_time
-      - name: block_number
-      - name: amount
-      - name: amount_usd
-      - name: tx_hash
-      - name: evt_index
-      - name: fee
-      - name: currency_contract
-      - name: currency_symbol
-      - name: recipient
-      - name: contract_address
+- columns:
+  - name: blockchain
+    tests: []
+  - name: project
+    tests: []
+  - name: version
+    tests: []
+  - name: block_time
+    tests: []
+  - name: block_number
+    tests: []
+  - name: amount
+    tests: []
+  - name: amount_usd
+    tests: []
+  - name: tx_hash
+    tests: []
+  - name: evt_index
+    tests: []
+  - name: fee
+    tests: []
+  - name: currency_contract
+    tests: []
+  - name: currency_symbol
+    tests: []
+  - name: recipient
+    tests: []
+  - name: contract_address
+    tests: []
+  config:
+    tags:
+    - polygon
+    - flashloans
+  description: 'Aave v2 flashloans on Polygon
 
- - name: aave_v3_polygon_flashloans
-   meta:
+    '
+  meta:
     blockchain: polygon
-    sector: lending
     contributors: hildobby
-   config:
-      tags: ['polygon', 'flashloans']
-   description: >
-      Aave v3 flashloans on Polygon
-   tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - tx_hash
-            - evt_index
-   columns:
-      - name: blockchain
-      - name: project
-      - name: version
-      - name: block_time
-      - name: block_number
-      - name: amount
-      - name: amount_usd
-      - name: tx_hash
-      - name: evt_index
-      - name: fee
-      - name: currency_contract
-      - name: currency_symbol
-      - name: recipient
-      - name: contract_address
+    sector: lending
+  name: aave_v2_polygon_flashloans
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - tx_hash
+      - evt_index
+- columns:
+  - name: blockchain
+    tests: []
+  - name: project
+    tests: []
+  - name: version
+    tests: []
+  - name: block_time
+    tests: []
+  - name: block_number
+    tests: []
+  - name: amount
+    tests: []
+  - name: amount_usd
+    tests: []
+  - name: tx_hash
+    tests: []
+  - name: evt_index
+    tests: []
+  - name: fee
+    tests: []
+  - name: currency_contract
+    tests: []
+  - name: currency_symbol
+    tests: []
+  - name: recipient
+    tests: []
+  - name: contract_address
+    tests: []
+  config:
+    tags:
+    - polygon
+    - flashloans
+  description: 'Aave v3 flashloans on Polygon
 
- - name: aave_polygon_flashloans
-   meta:
+    '
+  meta:
     blockchain: polygon
-    sector: lending
     contributors: hildobby
-   config:
-      tags: ['polygon', 'flashloans']
-   description: >
-      All Aave flashloans on Polygon
-   tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - tx_hash
-            - evt_index
-   columns:
-      - name: blockchain
-      - name: project
-      - name: version
-      - name: block_time
-      - name: block_number
-      - name: amount
-      - name: amount_usd
-      - name: tx_hash
-      - name: evt_index
-      - name: fee
-      - name: currency_contract
-      - name: currency_symbol
-      - name: recipient
-      - name: contract_address
+    sector: lending
+  name: aave_v3_polygon_flashloans
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - tx_hash
+      - evt_index
+- columns:
+  - name: blockchain
+    tests: []
+  - name: project
+    tests: []
+  - name: version
+    tests: []
+  - name: block_time
+    tests: []
+  - name: block_number
+    tests: []
+  - name: amount
+    tests: []
+  - name: amount_usd
+    tests: []
+  - name: tx_hash
+    tests: []
+  - name: evt_index
+    tests: []
+  - name: fee
+    tests: []
+  - name: currency_contract
+    tests: []
+  - name: currency_symbol
+    tests: []
+  - name: recipient
+    tests: []
+  - name: contract_address
+    tests: []
+  config:
+    tags:
+    - polygon
+    - flashloans
+  description: 'All Aave flashloans on Polygon
+
+    '
+  meta:
+    blockchain: polygon
+    contributors: hildobby
+    sector: lending
+  name: aave_polygon_flashloans
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - tx_hash
+      - evt_index
+version: 2

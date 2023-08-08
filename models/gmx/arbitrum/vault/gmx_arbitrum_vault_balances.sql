@@ -1,14 +1,8 @@
 {{ config(
         alias = 'vault_balances',
-        partition_by = ['block_date'],
-        materialized = 'incremental',
-        file_format = 'delta',
-        incremental_strategy = 'merge',
-        unique_key = ['block_date', 'minute'],
-        post_hook='{{ expose_spells(\'["arbitrum"]\',
-                                    "project",
-                                    "gmx",
-                                    \'["1chioku"]\') }}'
+        partition_by = {"field": "block_date"},
+        materialized = 'view',
+                        unique_key = ['block_date', 'minute']
         )
 }}
 
@@ -20,10 +14,10 @@ WITH minute AS  -- This CTE generates a series of minute values
     FROM
         (
         {% if not is_incremental() %}
-        SELECT explode(sequence(TIMESTAMP '{{project_start_date}}', CURRENT_TIMESTAMP, INTERVAL 1 minute)) AS minute -- 2021-08-31 08:13 is the timestamp of the first vault transaction
+        SELECT explode(sequence(TIMESTAMP '{{project_start_date}}', CURRENT_TIMESTAMP, interval 1 minute)) AS minute -- 2021-08-31 08:13 is the timestamp of the first vault transaction
         {% endif %}
         {% if is_incremental() %}
-        SELECT explode(sequence(date_trunc("day", now() - interval '1 week'), CURRENT_TIMESTAMP, INTERVAL 1 minute)) AS minute
+        SELECT explode(sequence(date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week'), CURRENT_TIMESTAMP, interval 1 minute)) AS minute
         {% endif %}
         )
     ),
@@ -45,7 +39,7 @@ vault_balances_frax AS -- This CTE returns the balance of FRAX tokens in the GMX
         FROM
             (
             SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of FRAX tokens to and from the GMX Arbitrum Vault
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((value)/1e18) AS transfer_value -- FRAX 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `to` = '0x489ee077994b6658eafa855c308275ead8097c4a' -- GMX Arbitrum Vault Address
@@ -54,13 +48,13 @@ vault_balances_frax AS -- This CTE returns the balance of FRAX tokens in the GMX
                 AND evt_block_time >= '{{project_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}
-                AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+                AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
                 {% endif %}
     
             UNION ALL
                                     
             SELECT
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((-1 * value))/1e18 AS transfer_value -- FRAX 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `from` = '0x489ee077994b6658eafa855c308275ead8097c4a' -- GMX Arbitrum Vault Address
@@ -69,7 +63,7 @@ vault_balances_frax AS -- This CTE returns the balance of FRAX tokens in the GMX
                 AND evt_block_time >= '{{project_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}
-                AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+                AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
                 {% endif %}
             ) a
         GROUP BY a.minute
@@ -89,7 +83,7 @@ vault_balances_usdt AS -- This CTE returns the balance of USDT tokens in the GMX
         FROM
             (
             SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of USDT tokens to and from the GMX Arbitrum Vault
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((value)/1e6) AS transfer_value -- USDT 6dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `to` = '0x489ee077994b6658eafa855c308275ead8097c4a' -- GMX Arbitrum Vault Address
@@ -98,13 +92,13 @@ vault_balances_usdt AS -- This CTE returns the balance of USDT tokens in the GMX
                 AND evt_block_time >= '{{project_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}
-                AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+                AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
                 {% endif %}
 
             UNION ALL
                                     
             SELECT
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((-1 * value))/1e6 AS transfer_value -- USDT 6dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `from` = '0x489ee077994b6658eafa855c308275ead8097c4a' -- GMX Arbitrum Vault Address
@@ -113,7 +107,7 @@ vault_balances_usdt AS -- This CTE returns the balance of USDT tokens in the GMX
                 AND evt_block_time >= '{{project_start_date}}'
                 {% endif %}
                 {% if is_incremental() %}
-                AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+                AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
                 {% endif %}
             ) a
         GROUP BY a.minute
@@ -133,7 +127,7 @@ vault_balances_wbtc AS -- This CTE returns the balance of WBTC tokens in the GMX
         FROM
             (
             SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of WBTC tokens to and from the GMX Arbitrum Vault
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((value)/1e8) AS transfer_value -- WBTC 8dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `to` = '0x489ee077994b6658eafa855c308275ead8097c4a' -- GMX Arbitrum Vault Address
@@ -142,13 +136,13 @@ vault_balances_wbtc AS -- This CTE returns the balance of WBTC tokens in the GMX
             AND evt_block_time >= '{{project_start_date}}'
             {% endif %}
             {% if is_incremental() %}
-            AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
             UNION ALL
                                     
             SELECT
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((-1 * value))/1e8 AS transfer_value -- WBTC 8dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `from` = '0x489ee077994b6658eafa855c308275ead8097c4a' -- GMX Arbitrum Vault Address
@@ -157,7 +151,7 @@ vault_balances_wbtc AS -- This CTE returns the balance of WBTC tokens in the GMX
             AND evt_block_time >= '{{project_start_date}}'
             {% endif %}
             {% if is_incremental() %}
-            AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -177,7 +171,7 @@ vault_balances_usdc AS -- This CTE returns the balance of USDC tokens in the GMX
         FROM
             (
             SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of USDC tokens to and from the GMX Arbitrum Vault
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((value)/1e6) AS transfer_value -- USDC 6dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `to` = '0x489ee077994b6658eafa855c308275ead8097c4a' -- GMX Arbitrum Vault Address
@@ -186,13 +180,13 @@ vault_balances_usdc AS -- This CTE returns the balance of USDC tokens in the GMX
             AND evt_block_time >= '{{project_start_date}}'
             {% endif %}
             {% if is_incremental() %}
-            AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
             UNION ALL
                                     
             SELECT
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((-1 * value))/1e6 AS transfer_value -- USDC 6dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `from` = '0x489ee077994b6658eafa855c308275ead8097c4a' -- GMX Arbitrum Vault Address
@@ -201,7 +195,7 @@ vault_balances_usdc AS -- This CTE returns the balance of USDC tokens in the GMX
             AND evt_block_time >= '{{project_start_date}}'
             {% endif %}
             {% if is_incremental() %}
-            AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -221,7 +215,7 @@ vault_balances_uni AS -- This CTE returns the balance of UNI tokens in the GMX A
         FROM
             (
             SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of UNI tokens to and from the GMX Arbitrum Vault
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((value)/1e18) AS transfer_value -- UNI 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `to` = '0x489ee077994b6658eafa855c308275ead8097c4a' -- GMX Arbitrum Vault Address
@@ -230,13 +224,13 @@ vault_balances_uni AS -- This CTE returns the balance of UNI tokens in the GMX A
             AND evt_block_time >= '{{project_start_date}}'
             {% endif %}
             {% if is_incremental() %}
-            AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
             UNION ALL
                                     
             SELECT
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((-1 * value))/1e18 AS transfer_value -- UNI 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `from` = '0x489ee077994b6658eafa855c308275ead8097c4a' -- GMX Arbitrum Vault Address
@@ -245,7 +239,7 @@ vault_balances_uni AS -- This CTE returns the balance of UNI tokens in the GMX A
             AND evt_block_time >= '{{project_start_date}}'
             {% endif %}
             {% if is_incremental() %}
-            AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -265,7 +259,7 @@ vault_balances_link AS -- This CTE returns the balance of LINK tokens in the GMX
         FROM
             (
             SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of LINK tokens to and from the GMX Arbitrum Vault
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((value)/1e18) AS transfer_value -- LINK 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `to` = '0x489ee077994b6658eafa855c308275ead8097c4a' -- GMX Arbitrum Vault Address
@@ -274,13 +268,13 @@ vault_balances_link AS -- This CTE returns the balance of LINK tokens in the GMX
             AND evt_block_time >= '{{project_start_date}}'
             {% endif %}
             {% if is_incremental() %}
-            AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
             UNION ALL
                                     
             SELECT
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((-1 * value))/1e18 AS transfer_value -- LINK 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `from` = '0x489ee077994b6658eafa855c308275ead8097c4a'-- GMX Arbitrum Vault Address
@@ -289,7 +283,7 @@ vault_balances_link AS -- This CTE returns the balance of LINK tokens in the GMX
             AND evt_block_time >= '{{project_start_date}}'
             {% endif %}
             {% if is_incremental() %}
-            AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -309,7 +303,7 @@ vault_balances_weth AS -- This CTE returns the balance of WETH tokens in the GMX
         FROM
             (
             SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of WETH tokens to and from the GMX Arbitrum Vault
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((value)/1e18) AS transfer_value -- WETH 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `to` = '0x489ee077994b6658eafa855c308275ead8097c4a' -- GMX Arbitrum Vault Address
@@ -318,13 +312,13 @@ vault_balances_weth AS -- This CTE returns the balance of WETH tokens in the GMX
             AND evt_block_time >= '{{project_start_date}}'
             {% endif %}
             {% if is_incremental() %}
-            AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
             UNION ALL
                                     
             SELECT
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((-1 * value))/1e18 AS transfer_value -- WETH 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `from` = '0x489ee077994b6658eafa855c308275ead8097c4a' -- GMX Arbitrum Vault Address
@@ -333,7 +327,7 @@ vault_balances_weth AS -- This CTE returns the balance of WETH tokens in the GMX
             AND evt_block_time >= '{{project_start_date}}'
             {% endif %}
             {% if is_incremental() %}
-            AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -353,7 +347,7 @@ vault_balances_dai AS -- This CTE returns the balance of DAI tokens in the GMX A
         FROM
             (
             SELECT -- This subquery truncates the block time to a minute and aggregates the tranfers of DAI tokens to and from the GMX Arbitrum Vault
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((value)/1e18) AS transfer_value -- DAI 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `to` = '0x489ee077994b6658eafa855c308275ead8097c4a' -- GMX Arbitrum Vault Address
@@ -362,13 +356,13 @@ vault_balances_dai AS -- This CTE returns the balance of DAI tokens in the GMX A
             AND evt_block_time >= '{{project_start_date}}'
             {% endif %}
             {% if is_incremental() %}
-            AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
 
             UNION ALL
                                     
             SELECT
-                date_trunc('minute', evt_block_time) AS minute,
+                TIMESTAMP_TRUNC(evt_block_time, minute) AS minute,
                 ((-1 * value))/1e18 AS transfer_value -- DAI 18dp
             FROM {{ source('erc20_arbitrum', 'evt_transfer') }}
             WHERE `from` = '0x489ee077994b6658eafa855c308275ead8097c4a' --- GMX Arbitrum Vault Address
@@ -377,7 +371,7 @@ vault_balances_dai AS -- This CTE returns the balance of DAI tokens in the GMX A
             AND evt_block_time >= '{{project_start_date}}'
             {% endif %}
             {% if is_incremental() %}
-            AND evt_block_time >= date_trunc("day", now() - interval '1 week')
+            AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% endif %}
             ) a
         GROUP BY a.minute
@@ -386,7 +380,7 @@ vault_balances_dai AS -- This CTE returns the balance of DAI tokens in the GMX A
 
 SELECT -- This CTE returns the balance of all supported tokens in the GMX Arbitrum Vault in a designated minute
     x.minute AS minute,
-    TRY_CAST(date_trunc('DAY', x.minute) AS date) AS block_date,
+    SAFE_CAST(TIMESTAMP_TRUNC(x.minute, DAY) AS date) AS block_date,
     COALESCE(x.frax_balance,0) AS frax_balance, -- Removes null values
     COALESCE(x.usdt_balance,0) AS usdt_balance, -- Removes null values
     COALESCE(x.wbtc_balance,0) AS wbtc_balance, -- Removes null values

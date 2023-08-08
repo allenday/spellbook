@@ -1,23 +1,18 @@
 {{ 
     config(
-        materialized='incremental',
+        materialized = 'view',
         alias='safes',
-        partition_by = ['block_date'],
+        partition_by = {"field": "block_date"},
         unique_key = ['block_date', 'address'],
         on_schema_change='fail',
-        file_format ='delta',
-        incremental_strategy='merge',
-        post_hook='{{ expose_spells(\'["polygon"]\',
-                                    "project",
-                                    "safe",
-                                    \'["tschubotz"]\') }}'
+                incremental_strategy='merge'
     ) 
 }}
 
 select
     'polygon' as blockchain,
     et.from as address,
-    case
+    case 
         when et.to = '0x8942595a2dc5181df0465af0d7be08c8f23c93af' then '0.1.0'
         when et.to = '0xb6029ea3b2c51d09a50b53ca8012feeb05bda35a' then '1.0.0'
         when et.to = '0xae32496491b53841efb51829d6f886387708f99b' then '1.1.0'
@@ -29,14 +24,13 @@ select
         when et.to = '0xfb1bffc9d739b8d520daf37df666da4c687191ea' then '1.3.0L2' -- for chains with EIP-155
         else 'unknown'
     end as creation_version,
-    try_cast(date_trunc('day', et.block_time) as date) as block_date,
+    SAFE_CAST(TIMESTAMP_TRUNC(et.block_time, day) as date) as block_date,
     et.block_time as creation_time,
     et.tx_hash
-from {{ source('polygon', 'traces') }} as et
-inner join {{ ref('safe_polygon_singletons') }} as s
+from {{ source('polygon', 'traces') }} et 
+join {{ ref('safe_polygon_singletons') }} s
     on et.to = s.address
-where
-    et.success = true
+where et.success = true
     and et.call_type = 'delegatecall' -- delegatecall to singleton is Safe (proxy) address
     and substring(et.input, 0, 10) in (
         '0x0ec78d9e', -- setup method v0.1.0
@@ -48,5 +42,5 @@ where
     and et.block_time > '2021-03-07' -- for initial query optimisation    
     {% endif %}
     {% if is_incremental() %}
-        and et.block_time >= date_trunc('day', now() - interval '1 week')
+    and et.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}

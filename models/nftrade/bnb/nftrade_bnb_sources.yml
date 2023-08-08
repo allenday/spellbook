@@ -1,9 +1,10 @@
-version: 2
-
 sources:
-  - name: nftrade_bnb
-    freshness:
-      warn_after: { count: 12, period: hour }
-    tables:
-      - name: NiftyProtocol_evt_Fill
-        loaded_at_field: evt_block_time
+- freshness:
+    warn_after:
+      count: 12
+      period: hour
+  name: nftrade_bnb
+  tables:
+  - loaded_at_field: evt_block_time
+    name: NiftyProtocol_evt_Fill
+version: 2

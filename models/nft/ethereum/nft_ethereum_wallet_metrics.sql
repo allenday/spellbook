@@ -1,11 +1,6 @@
 {{ config(
     alias = 'wallet_metrics',
-    materialized='table',
-    file_format = 'delta',
-    post_hook='{{ expose_spells(\'["ethereum"]\',
-                                "sector",
-                                "nft",
-                                \'["NazihKalo"]\') }}'
+    materialized = 'view'
     )
 }}
 
@@ -22,10 +17,10 @@ nft_trades_no_wash as
 nft_trades_no_wash_w_mints as (
 select cast(aggregator_address as string)       as aggregator_address,
        cast(aggregator_name as string)          as aggregator_name,
-       cast(amount_original as double)          as amount_original,
-       cast(amount_raw as decimal(38, 0))       as amount_raw,
-       cast(amount_usd as double)               as amount_usd,
-       cast(block_number as double)             as block_number,
+       cast(amount_original as FLOAT64)          as amount_original,
+       CAST(amount_raw AS BIGNUMERIC)       as amount_raw,
+       cast(amount_usd as FLOAT64)               as amount_usd,
+       cast(block_number as FLOAT64)             as block_number,
        cast(block_time as timestamp)            as block_time,
        cast(blockchain as string)               as blockchain,
        cast(buyer as string)                    as buyer,
@@ -34,7 +29,7 @@ select cast(aggregator_address as string)       as aggregator_address,
        cast(currency_symbol as string)          as currency_symbol,
        cast(evt_type as string)                 as evt_type,
        cast(nft_contract_address as string)     as nft_contract_address,
-       cast(number_of_items as decimal(38, 0))  as number_of_items,
+       CAST(number_of_items AS BIGNUMERIC)  as number_of_items,
        cast(project as string)                  as project,
        cast(project_contract_address as string) as project_contract_address,
        cast(seller as string)                   as seller,
@@ -53,10 +48,10 @@ UNION ALL
 
 select cast(aggregator_address as string)       as aggregator_address,
        cast(aggregator_name as string)          as aggregator_name,
-       cast(amount_original as double)          as amount_original,
-       cast(amount_raw as decimal(38, 0))       as amount_raw,
-       cast(amount_usd as double)               as amount_usd,
-       cast(block_number as double)             as block_number,
+       cast(amount_original as FLOAT64)          as amount_original,
+       CAST(amount_raw AS BIGNUMERIC)       as amount_raw,
+       cast(amount_usd as FLOAT64)               as amount_usd,
+       cast(block_number as FLOAT64)             as block_number,
        cast(block_time as timestamp)            as block_time,
        cast(blockchain as string)               as blockchain,
        cast(buyer as string)                    as buyer,
@@ -65,7 +60,7 @@ select cast(aggregator_address as string)       as aggregator_address,
        cast(currency_symbol as string)          as currency_symbol,
        cast(evt_type as string)                 as evt_type,
        cast(nft_contract_address as string)     as nft_contract_address,
-       cast(number_of_items as decimal(38, 0))  as number_of_items,
+       CAST(number_of_items AS BIGNUMERIC)  as number_of_items,
        cast(project as string)                  as project,
        cast(project_contract_address as string) as project_contract_address,
        cast(seller as string)                   as seller,
@@ -278,9 +273,9 @@ select wallet,
        sum(eth_profit_unrealized)                                                            eth_profit_unrealized,
        avg(case when eth_profit_realized > 0 then eth_profit_realized end)                   avg_win_size,
        avg(case when eth_profit_realized < 0 then eth_profit_realized end)                   avg_loss_size,
-       -- count(distinct date_trunc('week', buy_block_time)) +  unique_weeks_active,
-       count(distinct date_trunc('week', buy_block_time))                                    unique_weeks_buying,
-       count(distinct date_trunc('week', sell_block_time))                                   unique_weeks_selling
+       -- count(distinct TIMESTAMP_TRUNC(buy_block_time, week)) +  unique_weeks_active,
+       count(distinct TIMESTAMP_TRUNC(buy_block_time, week))                                    unique_weeks_buying,
+       count(distinct TIMESTAMP_TRUNC(sell_block_time, week))                                   unique_weeks_selling
 
 from all_trades_profit_and_unrealized_profit_w_floors
 group by 1

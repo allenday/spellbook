@@ -1,10 +1,6 @@
 {{
   config(
-        alias='view_transactions',
-        post_hook='{{ expose_spells_hide_trino(\'["ethereum"]\',
-                                "project",
-                                "seaport",
-                                \'["sohawk","soispoke"]\') }}'
+        alias='view_transactions'
   )
 }}
 
@@ -38,7 +34,7 @@ with iv_availadv as (
           ,recipient as receiver
           ,zone
           ,each_offer:token as token_contract_address 
-          ,each_offer:amount::bigint as original_amount
+          ,each_offer:CAST(amount AS bigint) as original_amount
           ,each_offer:itemType as item_type
           ,each_offer:identifier as token_id
           ,contract_address as exchange_contract_address
@@ -60,7 +56,7 @@ with iv_availadv as (
           ,each_consideration:recipient as receiver
           ,zone
           ,each_consideration:token as token_contract_address
-          ,each_consideration:amount::bigint as original_amount
+          ,each_consideration:CAST(amount AS bigint) as original_amount
           ,each_consideration:itemType as item_type
           ,each_consideration:identifier as token_id
           ,contract_address as exchange_contract_address
@@ -82,7 +78,7 @@ with iv_availadv as (
           ,a.each_consideration:recipient as receiver
           ,a.zone
           ,a.each_consideration:token as token_contract_address
-          ,a.each_consideration:amount::bigint as original_amount
+          ,a.each_consideration:CAST(amount AS bigint) as original_amount
           ,a.each_consideration:itemType as item_type
           ,a.each_consideration:identifier as token_id
           ,a.contract_address as exchange_contract_address
@@ -247,16 +243,16 @@ with iv_availadv as (
           ,a.fee_amount / power(10, e2.decimals) * p2.price as fee_usd_amount
           ,a.zone as zone_address
           ,case when spc1.call_tx_hash is not null then 'Auction Settled'
-                when spc2.call_tx_hash is not null and spc2.parameters:basicOrderType::integer between 16 and 23 then 'Auction Settled'
-                when spc2.call_tx_hash is not null and spc2.parameters:basicOrderType::integer between 0 and 7 then 'Buy'
+                when spc2.call_tx_hash is not null and spc2.parameters:CAST(basicOrderType AS integer) between 16 and 23 then 'Auction Settled'
+                when spc2.call_tx_hash is not null and spc2.parameters:CAST(basicOrderType AS integer) between 0 and 7 then 'Buy'
                 when spc2.call_tx_hash is not null then 'Buy'
-                when spc3.call_tx_hash is not null and spc3.advancedOrder:parameters:consideration[0]:identifierOrCriteria > '0' then 'Trait Offer Accepted'
+                when spc3.call_tx_hash is not null and spc3.advancedOrder:parameters:consideration[0]:identifierOrCriteria >0 then 'Trait Offer Accepted'
                 when spc3.call_tx_hash is not null then 'Collection Offer Accepted'
                 else 'Private Sale'
            end as category          
           ,case when spc1.call_tx_hash is not null then 'Collection/Trait Offer Accepted' -- include English Auction and Dutch Auction
-                when spc2.call_tx_hash is not null and spc2.parameters:basicOrderType::integer between 0 and 15 then 'Buy' -- Buy it directly
-                when spc2.call_tx_hash is not null and spc2.parameters:basicOrderType::integer between 16 and 23 and spc2.parameters:considerationIdentifier = a.nft_token_id then 'Individual Offer Accepted'
+                when spc2.call_tx_hash is not null and spc2.parameters:CAST(basicOrderType AS integer) between 0 and 15 then 'Buy' -- Buy it directly
+                when spc2.call_tx_hash is not null and spc2.parameters:CAST(basicOrderType AS integer) between 16 and 23 and spc2.parameters:considerationIdentifier = a.nft_token_id then 'Individual Offer Accepted'
                 when spc2.call_tx_hash is not null then 'Buy'
                 when spc3.call_tx_hash is not null and a.original_currency_contract = '0x0000000000000000000000000000000000000000' then 'Buy'
                 when spc3.call_tx_hash is not null then 'Collection/Trait Offer Accepted' -- offer for collection
@@ -273,11 +269,11 @@ with iv_availadv as (
           left join {{ ref('tokens_ethereum_erc20') }} e1 on e1.contract_address = a.currency_contract
           left join {{ ref('tokens_ethereum_erc20') }} e2 on e2.contract_address = a.currency_contract2
           left join {{ source('prices', 'usd') }} p1 on p1.contract_address = a.currency_contract
-                                  and p1.minute = date_trunc('minute', a.block_time)
+                                  and p1.minute = TIMESTAMP_TRUNC(a.block_time, minute)
                                   and p1.minute >= '2022-05-15'
                                   and p1.blockchain = 'ethereum'
           left join {{ source('prices', 'usd') }} p2 on p2.contract_address = a.currency_contract2
-                                  and p2.minute = date_trunc('minute', a.block_time)
+                                  and p2.minute = TIMESTAMP_TRUNC(a.block_time, minute)
                                   and p2.minute >= '2022-05-15'
                                   and p2.blockchain = 'ethereum'
            left join {{ source('seaport_ethereum','Seaport_call_fulfillOrder') }} spc1 on spc1.call_tx_hash = a.tx_hash 

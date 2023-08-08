@@ -1,13 +1,8 @@
 {{ config(
         schema='prices',
         alias ='tokens',
-        materialized='table',
-        file_format = 'delta',
-        tags=['static'],
-        post_hook='{{ expose_spells(\'["ethereum", "solana", "arbitrum", "gnosis", "optimism", "bnb", "avalanche_c", "polygon", "fantom"]\',
-                                    "sector",
-                                    "prices",
-                                    \'["aalan3", "jeff-dude", "umer_h_adil", "0xBoxer"]\') }}'
+        materialized = 'view',
+                tags=['static']
         )
 }}
 
@@ -27,17 +22,17 @@ ref('prices_native_tokens')
 
 SELECT *
 FROM
-    (
-        {% for model in prices_models %}
-            SELECT
-                token_id,
-                blockchain,
-                symbol,
-                contract_address,
-                decimals
-            FROM {{ model }}
-            {% if not loop.last %}
-                UNION ALL
-            {% endif %}
-        {% endfor %}
-    )
+(
+    {% for model in prices_models %}
+    SELECT
+        token_id
+        , blockchain
+        , symbol
+        , contract_address
+        , decimals
+    FROM {{ model }}
+    {% if not loop.last %}
+    UNION ALL
+    {% endif %}
+    {% endfor %}
+)

@@ -1,552 +1,775 @@
-version: 2
-
 models:
-  - name: nft_aggregators
-    meta:
-      blockchain: avalanche_c, bnb, ethereum, polygon
-      sector: nft
-      contributors: hildobby, soispoke
-    config:
-      tags: ['nft','aggregators', 'avalanche_c', 'bnb','ethereum', 'polygon']
-    description: >
-        NFT aggregators
-    columns:
-      - name: contract_address
-        description: "Aggregator project's contract address"
-      - name: name
-        description: "Aggregator project's name"
+- columns:
+  - description: Aggregator project's contract address
+    name: contract_address
+    tests: []
+  - description: Aggregator project's name
+    name: name
+    tests: []
+  config:
+    tags:
+    - nft
+    - aggregators
+    - avalanche_c
+    - bnb
+    - ethereum
+    - polygon
+  description: 'NFT aggregators
 
-  - name: nft_events
-    meta:
-      blockchain: ethereum, solana, bnb, optimism, arbitrum, polygon
-      sector: nft
-      contributors: soispoke, hildobby, ilemi, 0xRob, cat, umer_h_adil
-    config:
-      tags: ['nft', 'opensea', 'looksrare', 'x2y2', 'magiceden', 'sudoswap', 'foundation', 'element', 'zora', 'ethereum', 'bnb', 'solana', 'events', 'polygon', 'optimism', 'arbitrum', 'rarible', 'aavegotchi', 'oneplanet', 'fractal']
-    description: >
-        NFT events
+    '
+  meta:
+    blockchain: avalanche_c, bnb, ethereum, polygon
+    contributors: hildobby, soispoke
+    sector: nft
+  name: nft_aggregators
+  tests: []
+- columns:
+  - &id001
+    description: Blockchain
+    name: blockchain
+    tests: []
+  - &id002
+    description: Project
+    name: project
+    tests: []
+  - &id003
+    description: Project version
+    name: version
+    tests: []
+  - &id004
+    description: UTC event block time
+    name: block_time
+    tests: []
+  - &id005
+    description: NFT Token ID
+    name: token_id
+    tests: []
+  - &id006
+    description: NFT collection name
+    name: collection
+    tests: []
+  - &id007
+    description: USD value of the trade at time of execution
+    name: amount_usd
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - unique_trade_id
-            - blockchain
-    columns:
-      - &blockchain
-        name: blockchain
-        description: "Blockchain"
-      - &project
-        name: project
-        description: "Project"
-      - &version
-        name: version
-        description: "Project version"
-      - &block_time
-        name: block_time
-        description: "UTC event block time"
-      - &token_id
-        name: token_id
-        description: "NFT Token ID"
-      - &collection
-        name: collection
-        description: "NFT collection name"
-      - &amount_usd
-        name: amount_usd
-        description:  "USD value of the trade at time of execution"
-        tests:
-          - dbt_utils.accepted_range:
-              max_value: 1000000000 # $1b is an arbitrary number, intended to flag outlier amounts early
-      - &token_standard
-        name: token_standard
-        description:  "Token standard"
-      - &trade_type
-        name: trade_type
-        description: "Identify whether it was a single NFT trade or multiple NFTs traded"
-      - &number_of_items
-        name: number_of_items
-        description:  "Number of items traded"
-      - &trade_category
-        name: trade_category
-        description:  "How was this NFT traded ? (Direct buy, auction, etc...)"
-      - &evt_type
-        name: evt_type
-        description:  "Event type (Trade, Mint, Burn)"
-      - &seller
-        name: seller
-        description:  "Seller wallet address"
-      - &buyer
-        name: buyer
-        description:  "Buyer wallet address"
-      - &amount_original
-        name: amount_original
-        description:  "Traded amount in original currency"
-      - &amount_raw
-        name: amount_raw
-        description:   "Traded amount in original currency before decimals correction"
-      - &currency_symbol
-        name: currency_symbol
-        description:  "Symbol of original currency used for payment"
-      - &currency_contract
-        name: currency_contract
-        description:  "Contract address of original token used for payment, with ETH contract address swapped for WETH"
-      - &nft_contract_address
-        name: nft_contract_address
-        description:  "NFT contract address, only if 1 nft was transacted"
-      - &project_contract_address
-        name: project_contract_address
-        description:  "Contract address used by the project, in this case wyvern contract"
-      - &aggregator_name
-        name: aggregator_name
-        description:  "If the trade was performed via an aggregator, displays aggregator name"
-      - &aggregator_address
-        name: aggregator_address
-        description:  "If the trade was performed via an aggregator, displays aggregator address"
-      - &tx_hash
-        name: tx_hash
-        description:  "Transaction hash"
-      - &block_number
-        name: block_number
-        description: "Block number in which the transaction was executed "
-      - &tx_from
-        name: tx_from
-        description:  "Address that initiated the transaction"
-      - &tx_to
-        name: tx_to
-        description:  "Address that received the transaction"
-      - &platform_fee_amount_raw
-        name: platform_fee_amount_raw
-        description:  "Raw numerical amount for platform fees"
-      - &platform_fee_amount
-        name: platform_fee_amount
-        description:  "Platform fee amount in original token currency (properly formatted in decimals)"
-      - &platform_fee_amount_usd
-        name: platform_fee_amount_usd
-        description:  "Platform fee amount in USD"
-      - &platform_fee_percentage
-        name: platform_fee_percentage
-        description:  "Platform fee in % of the amount paid for a given trade"
-      - &royalty_fee_receive_address
-        name: royalty_fee_receive_address
-        description:  "Wallet addresses receiving fees from the transaction"
-      - &royalty_fee_currency_symbol
-        name: royalty_fee_currency_symbol
-        description: "Symbol of the token in which fees are paid out"
-      - &royalty_fee_amount_raw
-        name: royalty_fee_amount_raw
-        description:  "Raw numerical amount for royalty fees"
-      - &royalty_fee_amount
-        name: royalty_fee_amount
-        description:  "Royalty fee amount in original token currency (properly formatted in decimals)"
-      - &royalty_fee_amount_usd
-        name: royalty_fee_amount_usd
-        description:  "Royalty fee amount in USD"
-      - &royalty_fee_percentage
-        name: royalty_fee_percentage
-        description:  "Royalty fee in % of the amount paid for a given trade"
-      - &unique_trade_id
-        name: unique_trade_id
-        description:  "Unique trade ID"
+    - dbt_utils.accepted_range:
+        max_value: 1000000000
+  - &id008
+    description: Token standard
+    name: token_standard
+    tests: []
+  - &id009
+    description: Identify whether it was a single NFT trade or multiple NFTs traded
+    name: trade_type
+    tests: []
+  - &id010
+    description: Number of items traded
+    name: number_of_items
+    tests: []
+  - &id011
+    description: How was this NFT traded ? (Direct buy, auction, etc...)
+    name: trade_category
+    tests: []
+  - &id012
+    description: Event type (Trade, Mint, Burn)
+    name: evt_type
+    tests: []
+  - &id013
+    description: Seller wallet address
+    name: seller
+    tests: []
+  - &id014
+    description: Buyer wallet address
+    name: buyer
+    tests: []
+  - &id015
+    description: Traded amount in original currency
+    name: amount_original
+    tests: []
+  - &id016
+    description: Traded amount in original currency before decimals correction
+    name: amount_raw
+    tests: []
+  - &id017
+    description: Symbol of original currency used for payment
+    name: currency_symbol
+    tests: []
+  - &id018
+    description: Contract address of original token used for payment, with ETH contract
+      address swapped for WETH
+    name: currency_contract
+    tests: []
+  - &id019
+    description: NFT contract address, only if 1 nft was transacted
+    name: nft_contract_address
+    tests: []
+  - &id020
+    description: Contract address used by the project, in this case wyvern contract
+    name: project_contract_address
+    tests: []
+  - &id021
+    description: If the trade was performed via an aggregator, displays aggregator
+      name
+    name: aggregator_name
+    tests: []
+  - &id022
+    description: If the trade was performed via an aggregator, displays aggregator
+      address
+    name: aggregator_address
+    tests: []
+  - &id023
+    description: Transaction hash
+    name: tx_hash
+    tests: []
+  - &id024
+    description: 'Block number in which the transaction was executed '
+    name: block_number
+    tests: []
+  - &id025
+    description: Address that initiated the transaction
+    name: tx_from
+    tests: []
+  - &id026
+    description: Address that received the transaction
+    name: tx_to
+    tests: []
+  - &id028
+    description: Raw numerical amount for platform fees
+    name: platform_fee_amount_raw
+    tests: []
+  - &id029
+    description: Platform fee amount in original token currency (properly formatted
+      in decimals)
+    name: platform_fee_amount
+    tests: []
+  - &id030
+    description: Platform fee amount in USD
+    name: platform_fee_amount_usd
+    tests: []
+  - &id031
+    description: Platform fee in % of the amount paid for a given trade
+    name: platform_fee_percentage
+    tests: []
+  - &id036
+    description: Wallet addresses receiving fees from the transaction
+    name: royalty_fee_receive_address
+    tests: []
+  - &id037
+    description: Symbol of the token in which fees are paid out
+    name: royalty_fee_currency_symbol
+    tests: []
+  - &id032
+    description: Raw numerical amount for royalty fees
+    name: royalty_fee_amount_raw
+    tests: []
+  - &id033
+    description: Royalty fee amount in original token currency (properly formatted
+      in decimals)
+    name: royalty_fee_amount
+    tests: []
+  - &id034
+    description: Royalty fee amount in USD
+    name: royalty_fee_amount_usd
+    tests: []
+  - &id035
+    description: Royalty fee in % of the amount paid for a given trade
+    name: royalty_fee_percentage
+    tests: []
+  - &id027
+    description: Unique trade ID
+    name: unique_trade_id
+    tests: []
+  config:
+    tags:
+    - nft
+    - opensea
+    - looksrare
+    - x2y2
+    - magiceden
+    - sudoswap
+    - foundation
+    - element
+    - zora
+    - ethereum
+    - bnb
+    - solana
+    - events
+    - polygon
+    - optimism
+    - arbitrum
+    - rarible
+    - aavegotchi
+    - oneplanet
+    - fractal
+  description: 'NFT events
 
-  - name: nft_trades
-    meta:
-      blockchain: ethereum, solana, bnb, optimism, arbitrum, polygon
-      sector: nft
-      contributors: soispoke, hildobby, ilemi, cat
-    config:
-      tags: ['nft', 'opensea', 'looksrare', 'x2y2', 'magiceden', 'sudoswap', 'foundation', 'element', 'zora', 'ethereum', 'bnb', 'solana', 'optimism', 'arbitrum', 'trades','superrare', 'polygon', 'rarible', 'aavegotchi', 'oneplanet', 'fractal']
-    description: >
-        NFT trades
+    '
+  meta:
+    blockchain: ethereum, solana, bnb, optimism, arbitrum, polygon
+    contributors: soispoke, hildobby, ilemi, 0xRob, cat, umer_h_adil
+    sector: nft
+  name: nft_events
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - unique_trade_id
+      - blockchain
+- columns:
+  - *id001
+  - *id002
+  - *id003
+  - *id004
+  - *id005
+  - *id006
+  - *id007
+  - *id008
+  - *id009
+  - *id010
+  - *id011
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  - *id017
+  - *id018
+  - *id019
+  - *id020
+  - *id021
+  - *id022
+  - *id023
+  - *id024
+  - *id025
+  - *id026
+  - *id027
+  config:
+    tags:
+    - nft
+    - opensea
+    - looksrare
+    - x2y2
+    - magiceden
+    - sudoswap
+    - foundation
+    - element
+    - zora
+    - ethereum
+    - bnb
+    - solana
+    - optimism
+    - arbitrum
+    - trades
+    - superrare
+    - polygon
+    - rarible
+    - aavegotchi
+    - oneplanet
+    - fractal
+  description: 'NFT trades
+
+    '
+  meta:
+    blockchain: ethereum, solana, bnb, optimism, arbitrum, polygon
+    contributors: soispoke, hildobby, ilemi, cat
+    sector: nft
+  name: nft_trades
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - unique_trade_id
+      - blockchain
+- columns:
+  - *id001
+  - *id002
+  - *id003
+  - *id004
+  - *id005
+  - *id006
+  - *id007
+  - *id008
+  - *id009
+  - *id010
+  - *id011
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  - *id017
+  - *id018
+  - *id019
+  - *id020
+  - *id021
+  - *id022
+  - *id023
+  - *id024
+  - *id025
+  - *id026
+  - *id027
+  config:
+    tags:
+    - nft
+    - opensea
+    - looksrare
+    - x2y2
+    - magiceden
+    - foundation
+    - element
+    - zora
+    - ethereum
+    - bnb
+    - solana
+    - mints
+    - polygon
+    - aavegotchi
+    - optimism
+    - arbitrum
+    - stealcam
+  description: 'NFT mints
+
+    '
+  meta:
+    blockchain: ethereum, solana, bnb, optimism, polygon, arbitrum
+    contributors: soispoke, hildobby, umer_h_adil
+    sector: nft
+  name: nft_mints
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - unique_trade_id
+      - blockchain
+- columns:
+  - *id001
+  - *id002
+  - *id003
+  - *id004
+  - *id005
+  - *id006
+  - *id007
+  - *id008
+  - *id009
+  - *id010
+  - *id011
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  - *id017
+  - *id018
+  - *id019
+  - *id020
+  - *id021
+  - *id022
+  - *id023
+  - *id024
+  - *id025
+  - *id026
+  - *id027
+  config:
+    tags:
+    - nft
+    - opensea
+    - looksrare
+    - x2y2
+    - magiceden
+    - foundation
+    - element
+    - zora
+    - ethereum
+    - bnb
+    - solana
+    - burns
+  description: 'NFT burns
+
+    '
+  meta:
+    blockchain: ethereum, solana
+    contributors: soispoke, hildobby
+    sector: nft
+  name: nft_burns
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - unique_trade_id
+      - blockchain
+- columns:
+  - *id001
+  - *id002
+  - *id003
+  - *id004
+  - *id005
+  - *id006
+  - *id028
+  - *id029
+  - *id030
+  - *id031
+  - *id032
+  - *id033
+  - *id034
+  - *id035
+  - *id036
+  - *id037
+  - *id008
+  - *id009
+  - *id010
+  - *id011
+  - *id012
+  - *id013
+  - *id014
+  - *id019
+  - *id020
+  - *id021
+  - *id022
+  - *id023
+  - *id024
+  - *id025
+  - *id026
+  - *id027
+  config:
+    tags:
+    - nft
+    - opensea
+    - looksrare
+    - x2y2
+    - magiceden
+    - sudoswap
+    - foundation
+    - element
+    - zora
+    - ethereum
+    - bnb
+    - solana
+    - fees
+    - superrare
+    - polygon
+    - rarible
+    - aavegotchi
+    - oneplanet
+    - fractal
+  description: 'NFT fees
+
+    '
+  meta:
+    blockchain: ethereum, solana, polygon
+    contributors: soispoke, hildobby, ilemi, cat
+    sector: nft
+  name: nft_fees
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - unique_trade_id
+      - blockchain
+- columns:
+  - *id001
+  - *id002
+  - *id003
+  - *id004
+  - *id005
+  - *id008
+  - *id011
+  - *id013
+  - *id014
+  - *id019
+  - *id020
+  - *id021
+  - *id022
+  - *id023
+  - *id024
+  - *id025
+  - *id026
+  - name: unique_trade_id
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - unique_trade_id
-            - blockchain
-    columns:
-      - *blockchain
-      - *project
-      - *version
-      - *block_time
-      - *token_id
-      - *collection
-      - *amount_usd
-      - *token_standard
-      - *trade_type
-      - *number_of_items
-      - *trade_category
-      - *evt_type
-      - *seller
-      - *buyer
-      - *amount_original
-      - *amount_raw
-      - *currency_symbol
-      - *currency_contract
-      - *nft_contract_address
-      - *project_contract_address
-      - *aggregator_name
-      - *aggregator_address
-      - *tx_hash
-      - *block_number
-      - *tx_from
-      - *tx_to
-      - *unique_trade_id
+    - is_unique_filtered
+  - description: Which wallet first funded the buyer's wallet in ETH
+    name: buyer_first_funded_by
+    tests: []
+  - description: Which wallet first funded the seller's wallet in ETH
+    name: seller_first_funded_by
+    tests: []
+  - description: Were the seller and buyer the same address in the trade?
+    name: filter_1_same_buyer_seller
+    tests: []
+  - description: Was the NFT ever traded the other way around (buyer<>seller)
+    name: filter_2_back_and_forth_trade
+    tests: []
+  - description: Was the same NFT bought 3+ times (Excluding ERC1155s)
+    name: filter_3_bought_or_sold_3x
+    tests: []
+  - description: Did the same wallet first fund the seller and buyer's wallets in
+      ETH?
+    name: filter_4_first_funded_by_same_wallet
+    tests: []
+  - description: Have any of the filters flag as true? Then it is labelled as a wash
+      trade
+    name: is_wash_trade
+    tests: []
+  config:
+    tags:
+    - nft
+    - opensea
+    - looksrare
+    - x2y2
+    - magiceden
+    - sudoswap
+    - foundation
+    - element
+    - zora
+    - arbitrum
+    - avalanche_c
+    - bnb
+    - ethereum
+    - gnosis
+    - optimism
+    - polygon
+    - wash_trades
+  description: 'NFT wash trades labelling
 
-  - name: nft_mints
-    meta:
-      blockchain: ethereum, solana, bnb, optimism, polygon, arbitrum
-      sector: nft
-      contributors: soispoke, hildobby, umer_h_adil
-    config:
-      tags: ['nft', 'opensea', 'looksrare', 'x2y2', 'magiceden', 'foundation', 'element', 'zora', 'ethereum', 'bnb', 'solana', 'mints', 'polygon', 'aavegotchi', 'optimism', 'arbitrum', 'stealcam']
-    description: >
-        NFT mints
+    '
+  meta:
+    blockchain: arbitrum, avalanche_c, bnb, ethereum, gnosis, optimism, polygon
+    contributors: hildobby
+    sector: nft
+  name: nft_wash_trades
+  tests: []
+- columns:
+  - *id001
+  - description: Master address
+    name: master_address
+    tests: []
+  - description: Alternative address
+    name: alternative_address
+    tests: []
+  - description: block_time of the last trade between the pair
+    name: last_interaction
+    tests: []
+  config:
+    tags:
+    - nft
+    - opensea
+    - looksrare
+    - x2y2
+    - magiceden
+    - sudoswap
+    - ethereum
+    - solana
+    - address
+  description: 'NFT linked addresses. Addresses that buy and sell NFTs from each other.
+    By definition (master address < alt address) alphabetically.
+
+    '
+  meta:
+    blockchain: ethereum, solana
+    contributors: springzh, 0xRob
+    sector: nft
+  name: nft_linked_addresses
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - blockchain
+      - master_address
+      - alternative_address
+- columns:
+  - *id001
+  - description: UTC event block time
+    name: block_time
+    tests: []
+  - description: Block number in which the transaction was executed
+    name: block_number
+    tests: []
+  - description: Token standard
+    name: token_standard
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - unique_trade_id
-            - blockchain
-    columns:
-      - *blockchain
-      - *project
-      - *version
-      - *block_time
-      - *token_id
-      - *collection
-      - *amount_usd
-      - *token_standard
-      - *trade_type
-      - *number_of_items
-      - *trade_category
-      - *evt_type
-      - *seller
-      - *buyer
-      - *amount_original
-      - *amount_raw
-      - *currency_symbol
-      - *currency_contract
-      - *nft_contract_address
-      - *project_contract_address
-      - *aggregator_name
-      - *aggregator_address
-      - *tx_hash
-      - *block_number
-      - *tx_from
-      - *tx_to
-      - *unique_trade_id
-
-  - name: nft_burns
-    meta:
-      blockchain: ethereum, solana
-      sector: nft
-      contributors: soispoke, hildobby
-    config:
-      tags: ['nft', 'opensea', 'looksrare', 'x2y2', 'magiceden', 'foundation', 'element', 'zora', 'ethereum', 'bnb', 'solana', 'burns']
-    description: >
-        NFT burns
+    - accepted_values:
+        values:
+        - erc721
+        - erc1155
+        - bep721
+        - bep1155
+  - description: single or batch transfer of tokens
+    name: transfer_type
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - unique_trade_id
-            - blockchain
-    columns:
-      - *blockchain
-      - *project
-      - *version
-      - *block_time
-      - *token_id
-      - *collection
-      - *amount_usd
-      - *token_standard
-      - *trade_type
-      - *number_of_items
-      - *trade_category
-      - *evt_type
-      - *seller
-      - *buyer
-      - *amount_original
-      - *amount_raw
-      - *currency_symbol
-      - *currency_contract
-      - *nft_contract_address
-      - *project_contract_address
-      - *aggregator_name
-      - *aggregator_address
-      - *tx_hash
-      - *block_number
-      - *tx_from
-      - *tx_to
-      - *unique_trade_id
-
-  - name: nft_fees
-    meta:
-      blockchain: ethereum, solana, polygon
-      sector: nft
-      contributors: soispoke, hildobby, ilemi, cat
-    config:
-      tags: ['nft', 'opensea', 'looksrare', 'x2y2', 'magiceden', 'sudoswap', 'foundation', 'element', 'zora', 'ethereum', 'bnb', 'solana', 'fees','superrare', 'polygon', 'rarible', 'aavegotchi', 'oneplanet', 'fractal']
-    description: >
-        NFT fees
+    - accepted_values:
+        values:
+        - single
+        - batch
+  - description: Event index
+    name: evt_index
+    tests: []
+  - description: NFT contract address
+    name: contract_address
+    tests: []
+  - description: ID of transfered token(s)
+    name: token_id
+    tests: []
+  - description: Amount of transfered tokens
+    name: amount
+    tests: []
+  - description: Address that sent the token(s)
+    name: from
+    tests: []
+  - description: Address that received the token(s)
+    name: to
+    tests: []
+  - description: Address that executed the transaction
+    name: executed_by
+    tests: []
+  - description: Transaction hash
+    name: tx_hash
+    tests: []
+  - description: Unique transfer ID
+    name: unique_transfer_id
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - unique_trade_id
-            - blockchain
-    columns:
-      - *blockchain
-      - *project
-      - *version
-      - *block_time
-      - *token_id
-      - *collection
-      - *platform_fee_amount_raw
-      - *platform_fee_amount
-      - *platform_fee_amount_usd
-      - *platform_fee_percentage
-      - *royalty_fee_amount_raw
-      - *royalty_fee_amount
-      - *royalty_fee_amount_usd
-      - *royalty_fee_percentage
-      - *royalty_fee_receive_address
-      - *royalty_fee_currency_symbol
-      - *token_standard
-      - *trade_type
-      - *number_of_items
-      - *trade_category
-      - *evt_type
-      - *seller
-      - *buyer
-      - *nft_contract_address
-      - *project_contract_address
-      - *aggregator_name
-      - *aggregator_address
-      - *tx_hash
-      - *block_number
-      - *tx_from
-      - *tx_to
-      - *unique_trade_id
+    - unique
+  config:
+    tags:
+    - nft
+    - ethereum
+    - polygon
+    - bnb
+    - avalanche_c
+    - gnosis
+    - optimism
+    - arbitrum
+    - fantom
+    - goerli
+    - transfers
+  description: 'NFT transfers
 
-  - name: nft_wash_trades
-    meta:
-      blockchain: arbitrum, avalanche_c, bnb, ethereum, gnosis, optimism, polygon
-      sector: nft
-      contributors: hildobby
-    config:
-      tags: ['nft', 'opensea', 'looksrare', 'x2y2', 'magiceden', 'sudoswap', 'foundation', 'element', 'zora', 'arbitrum', 'avalanche_c', 'bnb', 'ethereum', 'gnosis', 'optimism', 'polygon', 'wash_trades']
-    description: >
-        NFT wash trades labelling
-    columns:
-      - *blockchain
-      - *project
-      - *version
-      - *block_time
-      - *token_id
-      - *token_standard
-      - *trade_category
-      - *seller
-      - *buyer
-      - *nft_contract_address
-      - *project_contract_address
-      - *aggregator_name
-      - *aggregator_address
-      - *tx_hash
-      - *block_number
-      - *tx_from
-      - *tx_to
-      - name: unique_trade_id
-        tests:
-          - is_unique_filtered
-      - &buyer_first_funded_by
-        name: buyer_first_funded_by
-        description: "Which wallet first funded the buyer's wallet in ETH"
-      - &seller_first_funded_by
-        name: seller_first_funded_by
-        description: "Which wallet first funded the seller's wallet in ETH"
-      - &filter_1_same_buyer_seller
-        name: filter_1_same_buyer_seller
-        description: "Were the seller and buyer the same address in the trade?"
-      - &filter_2_back_and_forth_trade
-        name: filter_2_back_and_forth_trade
-        description: "Was the NFT ever traded the other way around (buyer<>seller)"
-      - &filter_3_bought_or_sold_3x
-        name: filter_3_bought_or_sold_3x
-        description: "Was the same NFT bought 3+ times (Excluding ERC1155s)"
-      - &filter_4_first_funded_by_same_wallet
-        name: filter_4_first_funded_by_same_wallet
-        description: "Did the same wallet first fund the seller and buyer's wallets in ETH?"
-      - &is_wash_trade
-        name: is_wash_trade
-        description: "Have any of the filters flag as true? Then it is labelled as a wash trade"
+    '
+  meta:
+    blockchain: ethereum, polygon, bnb, avalanche_c, gnosis, optimism, arbitrum, fantom,
+      goerli
+    contributors: hildobby
+    sector: nft
+  name: nft_transfers
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - blockchain
+      - unique_transfer_id
+- columns:
+  - *id001
+  - *id002
+  - *id003
+  - *id004
+  - description: UTC event block date
+    name: block_date
+    tests: []
+  - *id005
+  - *id006
+  - *id007
+  - *id008
+  - *id012
+  - description: Address repaying or borrowing
+    name: address
+    tests: []
+  - *id015
+  - *id016
+  - description: Symbol of collateral currency used for loan
+    name: collateral_currency_symbol
+    tests: []
+  - description: Contract address of collateral currency used for loan
+    name: collateral_currency_contract
+    tests: []
+  - *id019
+  - *id020
+  - *id023
+  - *id024
+  - *id025
+  - *id026
+  - description: Index of the corresponding lending event
+    name: evt_index
+    tests: []
+  config:
+    tags:
+    - ethereum
+    - nft
+    - lending
+  description: 'nft lending events (repay & borrow)
 
-  - name: nft_linked_addresses
-    meta:
-      blockchain: ethereum, solana
-      sector: nft
-      contributors: springzh, 0xRob
-    config:
-      tags: ['nft', 'opensea', 'looksrare', 'x2y2', 'magiceden', 'sudoswap', 'ethereum', 'solana', 'address']
-    description: >
-        NFT linked addresses. Addresses that buy and sell NFTs from each other. By definition (master address < alt address) alphabetically.
+    '
+  meta:
+    blockchain: ethereum
+    contributors: Henrystats
+    sector: nft
+  name: nft_lending
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - block_date
+      - blockchain
+      - project
+      - version
+      - tx_hash
+      - evt_index
+- columns:
+  - description: Blockchain
+    name: blockchain
+    tests: []
+  - description: UTC event block time
+    name: block_time
+    tests: []
+  - description: UTC event block date
+    name: block_date
+    tests: []
+  - description: Block number in which the transaction was executed
+    name: block_number
+    tests: []
+  - description: Address for which NFTs were approved
+    name: address
+    tests: []
+  - name: token_standard
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - blockchain
-            - master_address
-            - alternative_address
-    columns:
-      - *blockchain
-      - name: master_address
-        description: "Master address"
-      - name: alternative_address
-        description: "Alternative address"
-      - name: last_interaction
-        description: "block_time of the last trade between the pair"
+    - accepted_values:
+        values:
+        - erc721
+        - erc1155
+  - description: Was this an ApprovalForAll or a simple Approval?
+    name: approval_for_all
+    tests: []
+  - description: Contract address
+    name: contract_address
+    tests: []
+  - description: NFT token ID
+    name: token_id
+    tests: []
+  - description: Approved
+    name: approved
+    tests: []
+  - description: Transaction hash
+    name: tx_hash
+    tests: []
+  - description: Event index
+    name: evt_index
+    tests: []
+  config:
+    tags:
+    - nft
+    - ethereum
+    - polygon
+    - bnb
+    - avalanche_c
+    - gnosis
+    - optimism
+    - arbitrum
+    - fantom
+    - goerli
+    - approvals
+  description: 'NFT approvals
 
-
-  - name: nft_transfers
-    meta:
-      blockchain: ethereum, polygon, bnb, avalanche_c, gnosis, optimism, arbitrum, fantom, goerli
-      sector: nft
-      contributors: hildobby
-    config:
-      tags: ['nft', 'ethereum', 'polygon', 'bnb', 'avalanche_c', 'gnosis', 'optimism', 'arbitrum', 'fantom', 'goerli', 'transfers']
-    description: >
-        NFT transfers
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - blockchain
-            - unique_transfer_id
-    columns:
-      - *blockchain
-      - name: block_time
-        description: "UTC event block time"
-      - name: block_number
-        description: "Block number in which the transaction was executed"
-      - name: token_standard
-        tests:
-          - accepted_values:
-              values: ['erc721', 'erc1155', 'bep721', 'bep1155']
-        description: "Token standard"
-      - name: transfer_type
-        tests:
-          - accepted_values:
-              values: ['single', 'batch']
-        description: "single or batch transfer of tokens"
-      - name: evt_index
-        description: "Event index"
-      - name: contract_address
-        description: "NFT contract address"
-      - name: token_id
-        description: "ID of transfered token(s)"
-      - name: amount
-        description: "Amount of transfered tokens"
-      - name: from
-        description: "Address that sent the token(s)"
-      - name: to
-        description: "Address that received the token(s)"
-      - name: executed_by
-        description: "Address that executed the transaction"
-      - name: tx_hash
-        description: "Transaction hash"
-      - name: unique_transfer_id
-        tests:
-          - unique
-        description: "Unique transfer ID"
-
-  - name: nft_lending
-    meta:
-      blockchain: ethereum
-      sector: nft
-      contributors: Henrystats
-    config:
-      tags: ['ethereum','nft', 'lending']
-    description: >
-        nft lending events (repay & borrow)
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - block_date
-            - blockchain
-            - project
-            - version
-            - tx_hash
-            - evt_index
-    columns:
-      - *blockchain
-      - *project
-      - *version
-      - *block_time
-      - &block_date
-        name: block_date
-        description: "UTC event block date"
-      - *token_id
-      - *collection
-      - *amount_usd
-      - *token_standard
-      - *evt_type
-      - &address
-        name: address
-        description:  "Address repaying or borrowing"
-      - *amount_original
-      - *amount_raw
-      - &collateral_currency_symbol
-        name: collateral_currency_symbol
-        description:  "Symbol of collateral currency used for loan"
-      - &collateral_currency_contract
-        name: collateral_currency_contract
-        description:  "Contract address of collateral currency used for loan"
-      - *nft_contract_address
-      - *project_contract_address
-      - *tx_hash
-      - *block_number
-      - *tx_from
-      - *tx_to
-      - &evt_index
-        name: evt_index
-        description: "Index of the corresponding lending event"
-  
-  - name: nft_approvals
-    meta:
-      blockchain: ethereum, polygon, bnb, avalanche_c, gnosis, optimism, arbitrum, fantom, goerli
-      sector: nft
-      contributors: hildobby
-    config:
-      tags: ['nft', 'ethereum', 'polygon', 'bnb', 'avalanche_c', 'gnosis', 'optimism', 'arbitrum', 'fantom', 'goerli', 'approvals']
-    description: >
-        NFT approvals
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - blockchain
-            - block_number
-            - tx_hash
-            - evt_index
-    columns:
-      - name: blockchain
-        description: "Blockchain"
-      - name: block_time
-        description: "UTC event block time"
-      - name: block_date
-        description: "UTC event block date"
-      - name: block_number
-        description: "Block number in which the transaction was executed"
-      - name: address
-        description: "Address for which NFTs were approved"
-      - name: token_standard
-        tests:
-          - accepted_values:
-              values: ['erc721', 'erc1155']
-      - name: approval_for_all
-        description: "Was this an ApprovalForAll or a simple Approval?"
-      - name: contract_address
-        description: "Contract address"
-      - name: token_id
-        description: "NFT token ID"
-      - name: approved
-        description: "Approved"
-      - name: tx_hash
-        description: "Transaction hash"
-      # - name: tx_from
-      #   description: "Address that initiated the transaction"
-      # - name: tx_to
-      #   description: "Address that the transaction points to"
-      - name: evt_index
-        description: "Event index"
+    '
+  meta:
+    blockchain: ethereum, polygon, bnb, avalanche_c, gnosis, optimism, arbitrum, fantom,
+      goerli
+    contributors: hildobby
+    sector: nft
+  name: nft_approvals
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      combination_of_columns:
+      - blockchain
+      - block_number
+      - tx_hash
+      - evt_index
+version: 2

@@ -1,11 +1,9 @@
 {{ config(
     schema = 'tigris_v2_arbitrum',
     alias = 'events_open_position',
-    partition_by = ['day'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['evt_block_time', 'evt_tx_hash', 'position_id']
+    partition_by = {"field": "day"},
+    materialized = 'view',
+            unique_key = ['evt_block_time', 'evt_tx_hash', 'position_id']
     )
 }}
 
@@ -20,7 +18,7 @@ pairs as (
 
 open_positions_v1 as (
         SELECT 
-            date_trunc('day', t.evt_block_time) as day, 
+            TIMESTAMP_TRUNC(t.evt_block_time, day) AS `day`, 
             t.evt_block_time, 
             t.evt_index, 
             t.evt_tx_hash, 
@@ -40,13 +38,13 @@ open_positions_v1 as (
         pairs ta 
             ON t.tradeInfo:asset = ta.asset_id 
         {% if is_incremental() %}
-        WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE t.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 ),
 
 open_positions_v2 as (
         SELECT 
-            date_trunc('day', t.evt_block_time) as day, 
+            TIMESTAMP_TRUNC(t.evt_block_time, day) AS `day`, 
             t.evt_block_time, 
             t.evt_index, 
             t.evt_tx_hash, 
@@ -66,7 +64,7 @@ open_positions_v2 as (
         pairs ta 
             ON t.tradeInfo:asset = ta.asset_id 
         {% if is_incremental() %}
-        WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
+        WHERE t.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 )
 

@@ -1,6 +1,5 @@
 {{ config (
-    alias = 'distributions',
-    post_hook = '{{ expose_spells(\'["ethereum"]\', "project", "tessera",\'["amadarrrr"]\') }}'
+    alias = 'distributions'
 ) }}
 -- PROTOFORM DISTRIBUTION. for example LPDA
 WITH lpda_creations AS (
@@ -9,7 +8,7 @@ WITH lpda_creations AS (
         _token AS token,
         _vault AS vault,
         'LPDA' AS type,
-        _lpdainfo AS info,
+        _lpdaInfo AS info,
         evt_block_time AS block_time,
         evt_tx_hash AS tx_hash
     FROM
@@ -18,4 +17,4 @@ WITH lpda_creations AS (
 
 SELECT *
 FROM lpda_creations;
--- union with future distribution modules
+-- UNION ALL with future distribution modules

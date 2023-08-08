@@ -1,9 +1,9 @@
-version: 2
+sources:
+- description: 'Giveth gnosis contracts
 
-sources: 
-  - name: giveth_gnosis
-    description: >
-      Giveth gnosis contracts
-    tables:
-      - name: MerkleDistro_evt_Claimed
-        loaded_at_field: evt_block_time
+    '
+  name: giveth_gnosis
+  tables:
+  - loaded_at_field: evt_block_time
+    name: MerkleDistro_evt_Claimed
+version: 2

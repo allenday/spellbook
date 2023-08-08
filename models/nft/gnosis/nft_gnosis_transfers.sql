@@ -1,15 +1,14 @@
 {{ config(
         alias ='transfers',
         partition_by='block_date',
-        materialized='incremental',
-        file_format = 'delta',
-        unique_key = ['unique_transfer_id']
+        materialized = 'view',
+                unique_key = ['unique_transfer_id']
 )
 }}
 
  SELECT 'gnosis' as blockchain
 , t.evt_block_time AS block_time
-, date_trunc('day', t.evt_block_time) AS block_date
+, TIMESTAMP_TRUNC(t.evt_block_time, day) AS block_date
 , t.evt_block_number AS block_number
 , 'erc721' AS token_standard
 , 'single' AS transfer_type
@@ -30,17 +29,17 @@ FROM {{ source('erc721_gnosis','evt_transfer') }} t
 INNER JOIN {{ source('gnosis', 'transactions') }} gt ON gt.block_number = t.evt_block_number
     AND gt.hash = t.evt_tx_hash
     {% if is_incremental() %}
-    AND gt.block_time >= date_trunc("day", now() - interval '1 week')
+    AND gt.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 {% if is_incremental() %}
-WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
+WHERE t.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}
 
 UNION ALL
 
 SELECT 'gnosis' as blockchain
 , t.evt_block_time AS block_time
-, date_trunc('day', t.evt_block_time) AS block_date
+, TIMESTAMP_TRUNC(t.evt_block_time, day) AS block_date
 , t.evt_block_number AS block_number
 , 'erc1155' AS token_standard
 , 'single' AS transfer_type
@@ -61,17 +60,17 @@ FROM {{ source('erc1155_gnosis','evt_transfersingle') }} t
 INNER JOIN {{ source('gnosis', 'transactions') }} gt ON gt.block_number = t.evt_block_number
     AND gt.hash = t.evt_tx_hash
     {% if is_incremental() %}
-    AND gt.block_time >= date_trunc("day", now() - interval '1 week')
+    AND gt.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 {% if is_incremental() %}
-WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
+WHERE t.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}
 
 UNION ALL
 
 SELECT 'gnosis' as blockchain
 , t.evt_block_time AS block_time
-, date_trunc('day', t.evt_block_time) AS block_date
+, TIMESTAMP_TRUNC(t.evt_block_time, day) AS block_date
 , t.evt_block_number AS block_number
 , 'erc1155' AS token_standard
 , 'batch' AS transfer_type
@@ -93,14 +92,14 @@ FROM (
             ON t.evt_tx_hash = anti_table.tx_hash
     {% endif %}
     {% if is_incremental() %}
-    WHERE t.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    WHERE t.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
     GROUP BY t.evt_block_time, t.evt_block_number, t.evt_tx_hash, t.contract_address, t.from, t.to, t.evt_index, t.values, t.ids
     ) t
 INNER JOIN {{ source('gnosis', 'transactions') }} gt ON gt.block_number = t.evt_block_number
     AND gt.hash = t.evt_tx_hash
     {% if is_incremental() %}
-    AND gt.block_time >= date_trunc("day", now() - interval '1 week')
+    AND gt.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 WHERE t.ids_and_count.values > 0
 GROUP BY blockchain, t.evt_block_time, t.evt_block_number, t.evt_tx_hash, t.contract_address, t.from, t.to, gt.from, t.evt_index, token_id, amount

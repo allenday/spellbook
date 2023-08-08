@@ -1,11 +1,9 @@
 {{ config(
         schema='collectionswap_ethereum',
         alias = 'events',
-        partition_by = ['block_date'],
-        materialized = 'incremental',
-        file_format = 'delta',
-        incremental_strategy = 'merge',
-        unique_key = ['block_date', 'unique_trade_id']
+        partition_by = {"field": "block_date"},
+        materialized = 'view',
+                        unique_key = ['block_date', 'unique_trade_id']
         )
 }}
 
@@ -41,15 +39,15 @@ raw_trades as (
                 ,'Buy' as trade_category
                 ,nftIds as nft_id_array
                 ,cardinality(nftIds) as number_of_items
-                ,cast(outputAmount as decimal(38)) as amount_raw
-                ,cast(protocolFee as decimal(38)) as platform_fee_amount_raw
-                ,get_json_object(royaltyDue[0], '$.amount') as royalty_fee_amount_raw
-                ,get_json_object(royaltyDue[0], '$.recipient') as royalty_fee_receive_address
-                ,cast(tradeFee as decimal(38)) as trade_fee_amount_raw
+                ,CAST(outputAmount AS BIGNUMERIC) as amount_raw
+                ,CAST(protocolFee AS BIGNUMERIC) as platform_fee_amount_raw
+                ,JSON_EXTRACT_SCALAR(royaltyDue[0], '$.amount') as royalty_fee_amount_raw
+                ,JSON_EXTRACT_SCALAR(royaltyDue[0], '$.recipient') as royalty_fee_receive_address
+                ,CAST(tradeFee AS BIGNUMERIC) as trade_fee_amount_raw
                 ,contract_address as project_contract_address
             from {{ source('collectionswap_ethereum','CollectionPool_evt_SwapNFTOutPool') }} e
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% else %}
             WHERE evt_block_time >= '{{project_start_date}}'
             {% endif %}
@@ -64,15 +62,15 @@ raw_trades as (
                 ,'Sell' as trade_category
                 ,nftIds as nft_id_array
                 ,cardinality(nftIds) as number_of_items
-                ,cast(inputAmount + protocolFee + cast(get_json_object(royaltyDue[0], '$.amount') as decimal(38)) as decimal(38)) as amount_raw
-                ,cast(protocolFee as decimal(38)) as platform_fee_amount_raw
-                ,get_json_object(royaltyDue[0], '$.amount') as royalty_fee_amount_raw
-                ,get_json_object(royaltyDue[0], '$.recipient') as royalty_fee_receive_address
-                ,cast(tradeFee as decimal(38)) as trade_fee_amount_raw
+                ,cast(inputAmount + protocolFee + cast(JSON_EXTRACT_SCALAR(royaltyDue[0], '$.amount') as BIGNUMERIC) as BIGNUMERIC) as amount_raw
+                ,CAST(protocolFee AS BIGNUMERIC) as platform_fee_amount_raw
+                ,JSON_EXTRACT_SCALAR(royaltyDue[0], '$.amount') as royalty_fee_amount_raw
+                ,JSON_EXTRACT_SCALAR(royaltyDue[0], '$.recipient') as royalty_fee_receive_address
+                ,CAST(tradeFee AS BIGNUMERIC) as trade_fee_amount_raw
                 ,contract_address as project_contract_address
             from {{ source('collectionswap_ethereum','CollectionPool_evt_SwapNFTInPool') }} e
             {% if is_incremental() %}
-            WHERE evt_block_time >= date_trunc("day", now() - interval '1 week')
+            WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
             {% else %}
             WHERE evt_block_time >= '{{project_start_date}}'
             {% endif %}
@@ -98,7 +96,7 @@ select
     'ethereum' as blockchain
     ,'collectionswap' as project
     ,'v1' as version
-    ,date_trunc('day',t.block_time ) as block_date
+    ,TIMESTAMP_TRUNC(t.block_time, day) as block_date
     ,t.block_time
     ,t.block_number
     ,t.evt_index
@@ -113,26 +111,26 @@ select
     ,t.currency_contract
     ,erc20.symbol as currency_symbol
     ,erc20.symbol as royalty_fee_currency_symbol
-    ,cast(amount_raw as decimal(38)) as amount_raw
-    ,cast(platform_fee_amount_raw as decimal(38)) as platform_fee_amount_raw
-    ,cast(royalty_fee_amount_raw as decimal(38)) as royalty_fee_amount_raw
+    ,CAST(amount_raw AS BIGNUMERIC) as amount_raw
+    ,CAST(platform_fee_amount_raw AS BIGNUMERIC) as platform_fee_amount_raw
+    ,CAST(royalty_fee_amount_raw AS BIGNUMERIC) as royalty_fee_amount_raw
     ,amount_raw/pow(10,coalesce(erc20.decimals,18)) as amount_original
     ,platform_fee_amount_raw/pow(10,coalesce(erc20.decimals,18)) as platform_fee_amount
     ,royalty_fee_amount_raw/pow(10,coalesce(erc20.decimals,18)) as royalty_fee_amount
     ,amount_raw/pow(10,coalesce(erc20.decimals,18))*p.price as amount_usd
     ,platform_fee_amount_raw/pow(10,coalesce(erc20.decimals,18))*p.price as platform_fee_amount_usd
     ,royalty_fee_amount_raw/pow(10,coalesce(erc20.decimals,18))*p.price as royalty_fee_amount_usd
-    ,case when amount_raw > 0 then 100.0*cast(platform_fee_amount_raw as DOUBLE)/cast(amount_raw as DOUBLE) end as platform_fee_percentage
-    ,case when amount_raw > 0 then 100.0*cast(royalty_fee_amount_raw as DOUBLE)/cast(amount_raw as DOUBLE) end as royalty_fee_percentage
-    ,cast(trade_fee_amount_raw as double)/pow(10,coalesce(erc20.decimals,18)) as trade_fee_amount
-    ,cast(trade_fee_amount_raw as double)/pow(10,coalesce(erc20.decimals,18))*p.price as trade_fee_amount_usd
+    ,case when amount_raw > 0 then 100.0*cast(platform_fee_amount_raw as FLOAT64)/cast(amount_raw as FLOAT64) end as platform_fee_percentage
+    ,case when amount_raw > 0 then 100.0*cast(royalty_fee_amount_raw as FLOAT64)/cast(amount_raw as FLOAT64) end as royalty_fee_percentage
+    ,cast(trade_fee_amount_raw as FLOAT64)/pow(10,coalesce(erc20.decimals,18)) as trade_fee_amount
+    ,cast(trade_fee_amount_raw as FLOAT64)/pow(10,coalesce(erc20.decimals,18))*p.price as trade_fee_amount_usd
     ,t.trade_category
     ,t.number_of_items
     ,trade_type
-    ,cast(null as varchar(1)) as aggregator_name
-    ,cast(null as varchar(1)) as aggregator_address
+    ,cast(null as STRING) as aggregator_name
+    ,cast(null as STRING) as aggregator_address
     ,t.royalty_fee_receive_address
-    ,cast(null as varchar(1)) as platform_fee_receive_address
+    ,cast(null as STRING) as platform_fee_receive_address
     ,tx.`from` as tx_from
     ,tx.`to` as tx_to
     ,'Trade' as evt_type
@@ -143,21 +141,17 @@ left join {{ ref('tokens_ethereum_nft') }} nft
 left join {{ ref('tokens_ethereum_erc20') }} erc20
     ON erc20.contract_address = t.currency_contract
 left join {{ source('prices', 'usd') }} p
-    ON p.blockchain = 'ethereum' and p.minute = date_trunc('minute', t.block_time)
+    ON p.blockchain = 'ethereum' and p.minute = TIMESTAMP_TRUNC(t.block_time, minute)
     AND p.contract_address = t.currency_contract
     {% if is_incremental() %}
-    AND p.minute >= date_trunc("day", now() - interval '1 week')
+    AND p.minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% else %}
     AND p.minute >= '{{project_start_date}}'
     {% endif %}
 inner join {{ source('ethereum','transactions') }} tx
     ON tx.block_number = t.block_number and tx.hash =  t.tx_hash
     {% if is_incremental() %}
-    AND tx.block_time >= date_trunc("day", now() - interval '1 week')
+    AND tx.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% else %}
     AND tx.block_time >= '{{project_start_date}}'
     {% endif %}
-
-
-
-

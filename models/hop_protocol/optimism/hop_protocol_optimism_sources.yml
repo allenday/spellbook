@@ -1,126 +1,129 @@
-version: 2
-
 sources:
-  - name: hop_protocol_optimism
-    description: "Optimism decoded tables related to Hop Protocol contracts"
-    freshness:
-      warn_after: { count: 12, period: hour }
-    tables:
-      - name: L2_OptimismBridge_evt_TransferSent
-        loaded_at_field: evt_block_time
-        description: "Event logs for bridge transfers away from Optimism"
-        columns:
-          - &contract_address
-            name: contract_address
-            description: "L2 Bridge contract ddress"
-          - &evt_block_number
-            name: evt_block_number
-            description: "Block number which processed the unique transaction hash"
-          - &evt_block_time
-            name: evt_block_time
-            description: "Timestamp for block event time in UTC"
-          - &evt_index
-            name: evt_index
-            description: "Index value of the transaction"
-          - &evt_tx_hash
-            name: evt_tx_hash
-            description: "Primary key of the transaction"
-          - &amount
-            name: amount
-            description: "Amount of tokens sent or received (raw)"
-          - &bonderFee
-            name: bonderFee
-            description: "Amount of tokens paid in fees to the bonder (raw)"
-          - &transferId
-            name: transferId
-            description: "Unique ID used to tie bridge events together across chains"
-          - &chainId_dest
-            name: chainId
-            description: "ID of the destination chain (EIP-155)"
-          - &recipient
-            name: recipient
-            description: "Address receiving tokens when the bridge transfer is completed"
-
-      - name: L2_OptimismBridge_evt_TransferFromL1Completed
-        loaded_at_field: evt_block_time
-        description: "Event logs for bridge transfers to Optimism from L1 Ethereum"
-        columns:
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - *amount
-          - &relayerFee
-            name: relayerFee
-            description: "Amount of tokens paid in fees to the relayer (raw)"
-        
-      - name: L2_OptimismBridge_evt_WithdrawalBonded
-        loaded_at_field: evt_block_time
-        description: "Event logs for bridge transfers to Optimism from Non-L1 Ethereum Chains, when they are bonded (confirmed) on Optimism"
-        columns:
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - *amount
-  - name: hop_protocol_arbitrum
-    description: "Arbitrum decoded tables related to Hop Protocol contracts"
-    freshness:
-      warn_after: { count: 12, period: hour }
-    tables:
-      - name: L2_ArbitrumBridge_evt_TransferSent
-        loaded_at_field: evt_block_time
-        description: "Event logs for bridge transfers away from Arbitrum"
-        columns:
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - *amount
-          - *bonderFee
-          - *transferId
-          - *chainId_dest
-          - *recipient
-  
-  - name: hop_protocol_polygon
-    description: "Polygon decoded tables related to Hop Protocol contracts"
-    freshness:
-      warn_after: { count: 12, period: hour }
-    tables:
-      - name: L2_PolygonBridge_evt_TransferSent
-        loaded_at_field: evt_block_time
-        description: "Event logs for bridge transfers away from Polygon"
-        columns:
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - *amount
-          - *bonderFee
-          - *transferId
-          - *chainId_dest
-          - *recipient
-  
-  - name: hop_protocol_gnosis
-    description: "Gnosis decoded tables related to Hop Protocol contracts"
-    freshness:
-      warn_after: { count: 12, period: hour }
-    tables:
-      - name: L2_xDaiBridge_evt_TransferSent
-        loaded_at_field: evt_block_time
-        description: "Event logs for bridge transfers away from Gnosis Chain"
-        columns:
-          - *contract_address
-          - *evt_block_number
-          - *evt_block_time
-          - *evt_index
-          - *evt_tx_hash
-          - *amount
-          - *bonderFee
-          - *transferId
-          - *chainId_dest
-          - *recipient
+- description: Optimism decoded tables related to Hop Protocol contracts
+  freshness:
+    warn_after:
+      count: 12
+      period: hour
+  name: hop_protocol_optimism
+  tables:
+  - columns:
+    - &id001
+      description: L2 Bridge contract ddress
+      name: contract_address
+    - &id002
+      description: Block number which processed the unique transaction hash
+      name: evt_block_number
+    - &id003
+      description: Timestamp for block event time in UTC
+      name: evt_block_time
+    - &id004
+      description: Index value of the transaction
+      name: evt_index
+    - &id005
+      description: Primary key of the transaction
+      name: evt_tx_hash
+    - &id006
+      description: Amount of tokens sent or received (raw)
+      name: amount
+    - &id007
+      description: Amount of tokens paid in fees to the bonder (raw)
+      name: bonderFee
+    - &id008
+      description: Unique ID used to tie bridge events together across chains
+      name: transferId
+    - &id009
+      description: ID of the destination chain (EIP-155)
+      name: chainId
+    - &id010
+      description: Address receiving tokens when the bridge transfer is completed
+      name: recipient
+    description: Event logs for bridge transfers away from Optimism
+    loaded_at_field: evt_block_time
+    name: L2_OptimismBridge_evt_TransferSent
+  - columns:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - description: Amount of tokens paid in fees to the relayer (raw)
+      name: relayerFee
+    description: Event logs for bridge transfers to Optimism from L1 Ethereum
+    loaded_at_field: evt_block_time
+    name: L2_OptimismBridge_evt_TransferFromL1Completed
+  - columns:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    description: Event logs for bridge transfers to Optimism from Non-L1 Ethereum
+      Chains, when they are bonded (confirmed) on Optimism
+    loaded_at_field: evt_block_time
+    name: L2_OptimismBridge_evt_WithdrawalBonded
+- description: Arbitrum decoded tables related to Hop Protocol contracts
+  freshness:
+    warn_after:
+      count: 12
+      period: hour
+  name: hop_protocol_arbitrum
+  tables:
+  - columns:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id007
+    - *id008
+    - *id009
+    - *id010
+    description: Event logs for bridge transfers away from Arbitrum
+    loaded_at_field: evt_block_time
+    name: L2_ArbitrumBridge_evt_TransferSent
+- description: Polygon decoded tables related to Hop Protocol contracts
+  freshness:
+    warn_after:
+      count: 12
+      period: hour
+  name: hop_protocol_polygon
+  tables:
+  - columns:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id007
+    - *id008
+    - *id009
+    - *id010
+    description: Event logs for bridge transfers away from Polygon
+    loaded_at_field: evt_block_time
+    name: L2_PolygonBridge_evt_TransferSent
+- description: Gnosis decoded tables related to Hop Protocol contracts
+  freshness:
+    warn_after:
+      count: 12
+      period: hour
+  name: hop_protocol_gnosis
+  tables:
+  - columns:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id007
+    - *id008
+    - *id009
+    - *id010
+    description: Event logs for bridge transfers away from Gnosis Chain
+    loaded_at_field: evt_block_time
+    name: L2_xDaiBridge_evt_TransferSent
+version: 2

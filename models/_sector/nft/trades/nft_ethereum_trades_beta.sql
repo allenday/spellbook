@@ -1,11 +1,9 @@
 {{ config(
     schema = 'nft_ethereum',
     alias ='trades_beta',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['project','project_version','tx_hash','sub_tx_trade_id']
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['project','project_version','tx_hash','sub_tx_trade_id']
     )
 }}
 -- (project, project_version, model)
@@ -29,7 +27,7 @@ WITH cte_prices_patch as (
     FROM {{ ref('prices_usd_forward_fill') }}
     WHERE blockchain = 'ethereum'
     {% if is_incremental() %}
-    AND minute >= date_trunc("day", now() - interval '1 week')
+    AND minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
     UNION ALL
     SELECT
@@ -42,7 +40,7 @@ WITH cte_prices_patch as (
     FROM {{ ref('prices_usd_forward_fill') }}
     WHERE blockchain is null AND symbol = 'ETH'
     {% if is_incremental() %}
-    AND minute >= date_trunc("day", now() - interval '1 week')
+    AND minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 ),
 enriched_trades as (

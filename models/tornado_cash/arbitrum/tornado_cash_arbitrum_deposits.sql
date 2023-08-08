@@ -1,15 +1,9 @@
 {{ config(
         schema = 'tornado_cash_arbitrum',
         alias ='deposits',
-        materialized='incremental',
+        materialized = 'view',
         partition_by='block_date',
-        file_format = 'delta',
-        incremental_strategy = 'merge',
-        unique_key = ['block_date', 'tx_hash', 'evt_index'],
-        post_hook='{{ expose_spells(\'["arbitrum"]\',
-                                    "project",
-                                    "tornado_cash",
-                                    \'["hildobby", "dot2dotseurat"]\') }}'
+                        unique_key = ['block_date', 'tx_hash', 'evt_index']
         )
 }}
 
@@ -30,7 +24,7 @@ SELECT tc.evt_block_time AS block_time
 , tc.evt_tx_hash AS tx_hash
 , tc.leafIndex AS leaf_index
 , tc.evt_index
-, TRY_CAST(date_trunc('DAY', tc.evt_block_time) AS date) AS block_date
+, SAFE_CAST(TIMESTAMP_TRUNC(tc.evt_block_time, DAY) AS date) AS block_date
 FROM {{ source('tornado_cash_arbitrum','ETHTornado_evt_Deposit') }} tc
 INNER JOIN {{ source('arbitrum','transactions') }} at
         ON at.hash=tc.evt_tx_hash
@@ -38,11 +32,11 @@ INNER JOIN {{ source('arbitrum','transactions') }} at
         AND at.block_time >= '{{arbitrum_start_date}}'
         {% endif %}
         {% if is_incremental() %}
-        AND at.block_time >= date_trunc("day", now() - interval '1 week')
+        AND at.block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
 {% if not is_incremental() %}
 WHERE tc.evt_block_time >= '{{arbitrum_start_date}}'
 {% endif %}
 {% if is_incremental() %}
-WHERE tc.evt_block_time >= date_trunc("day", now() - interval '1 week')
+WHERE tc.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}

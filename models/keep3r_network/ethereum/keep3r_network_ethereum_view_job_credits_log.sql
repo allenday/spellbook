@@ -1,6 +1,5 @@
 {{ config (
-    alias = 'job_credits_log',
-    post_hook = '{{ expose_spells_hide_trino(\'["ethereum"]\', "project", "keep3r", \'["wei3erHase", "agaperste"]\') }}'
+    alias = 'job_credits_log'
 ) }}
 
 {% set kp3r_token = "0x1ceb5cb57c4d4e2b2433641b95dd330a33185a44" %}
@@ -15,7 +14,7 @@ WITH work_evt AS (
         _job AS job,
         _keeper AS keeper,
         _credit AS token,
-        cast(_amount as DOUBLE) / 1e18 AS amount
+        cast(_amount as FLOAT64) / 1e18 AS amount
     FROM
         (
             SELECT
@@ -32,7 +31,7 @@ WITH work_evt AS (
                     'keep3r_network_ethereum',
                     'Keep3r_evt_KeeperWork'
                 ) }}
-            UNION
+            UNION ALL
             SELECT
                 evt_block_time,
                 evt_tx_hash,
@@ -64,8 +63,8 @@ reward_evt AS (
         _job AS job,
         NULL AS keeper,
         '{{KP3R_token}}' AS token,
-        CAST(_currentCredits AS DOUBLE) / 1e18 AS amount,
-        CAST(_periodCredits AS DOUBLE) / 1e18 AS period_credits
+        CAST(_currentCredits AS FLOAT64) / 1e18 AS amount,
+        CAST(_periodCredits AS FLOAT64) / 1e18 AS period_credits
     FROM
         (
             SELECT
@@ -81,7 +80,7 @@ reward_evt AS (
                     'keep3r_network_ethereum',
                     'Keep3r_evt_LiquidityCreditsReward'
                 ) }}
-            UNION
+            UNION ALL
             SELECT
                 _rewardedAt,
                 evt_tx_hash,
@@ -110,7 +109,7 @@ SELECT
     NULL AS period_credits
 FROM
     work_evt
-UNION
+UNION ALL
 SELECT
     `timestamp`,
     tx_hash,
@@ -124,7 +123,7 @@ SELECT
     period_credits
 FROM
     reward_evt
-UNION
+UNION ALL
 SELECT
     `timestamp`,
     tx_hash,

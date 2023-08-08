@@ -1,13 +1,7 @@
 {{ config(
     alias='erc20',
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['transfer_type', 'evt_tx_hash', 'evt_index', 'wallet_address'],
-    post_hook='{{ expose_spells(\'["polygon"]\',
-                                    "sector",
-                                    "transfers",
-                                    \'["soispoke", "dot2dotseurat", "tschubotz", "hosuke"]\') }}'
+    materialized = 'view',
+            unique_key = ['transfer_type', 'evt_tx_hash', 'evt_index', 'wallet_address']
     )
 }}
 
@@ -22,7 +16,7 @@ with sent_transfers as (
     from
         {{ source('erc20_polygon', 'evt_transfer') }}
     {% if is_incremental() %}
-    where evt_block_time >= date_trunc("day", now() - interval '1 week')
+    where evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 ),
 received_transfers as (
@@ -32,11 +26,11 @@ received_transfers as (
            "from"                             as wallet_address,
            contract_address                   as token_address,
            evt_block_time,
-           '-' || CAST(value AS VARCHAR(100)) as amount_raw
+           '-' || CAST(`value` AS STRING) as amount_raw
     from
         {{ source('erc20_polygon', 'evt_transfer') }}
     {% if is_incremental() %}
-    where evt_block_time >= date_trunc("day", now() - interval '1 week')
+    where evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 ),
 deposited_wmatic as (
@@ -50,7 +44,7 @@ deposited_wmatic as (
     from
         {{ source('mahadao_polygon', 'wmatic_evt_deposit') }}
     {% if is_incremental() %}
-    where evt_block_time >= date_trunc("day", now() - interval '1 week')
+    where evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 ),
 withdrawn_wmatic as (
@@ -60,11 +54,11 @@ withdrawn_wmatic as (
            src                              as wallet_address,
            contract_address                 as token_address,
            evt_block_time,
-           '-' || CAST(wad AS VARCHAR(100)) as amount_raw
+           '-' || CAST(wad AS STRING) as amount_raw
     from
         {{ source('mahadao_polygon', 'wmatic_evt_withdrawal') }}
     {% if is_incremental() %}
-    where evt_block_time >= date_trunc("day", now() - interval '1 week')
+    where evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 )
     
@@ -75,9 +69,9 @@ select transfer_type,
        wallet_address,
        token_address,
        evt_block_time,
-       CAST(amount_raw AS VARCHAR(100)) as amount_raw
+       CAST(amount_raw AS STRING) as amount_raw
 from sent_transfers
-union
+UNION ALL
 select transfer_type,
        'polygon'                        as blockchain,
        evt_tx_hash,
@@ -85,9 +79,9 @@ select transfer_type,
        wallet_address,
        token_address,
        evt_block_time,
-       CAST(amount_raw AS VARCHAR(100)) as amount_raw
+       CAST(amount_raw AS STRING) as amount_raw
 from received_transfers
-union
+UNION ALL
 select transfer_type,
        'polygon'                        as blockchain,
        evt_tx_hash,
@@ -95,9 +89,9 @@ select transfer_type,
        wallet_address,
        token_address,
        evt_block_time,
-       CAST(amount_raw AS VARCHAR(100)) as amount_raw
+       CAST(amount_raw AS STRING) as amount_raw
 from deposited_wmatic
-union
+UNION ALL
 select transfer_type,
        'polygon'                        as blockchain,
        evt_tx_hash,
@@ -105,5 +99,5 @@ select transfer_type,
        wallet_address,
        token_address,
        evt_block_time,
-       CAST(amount_raw AS VARCHAR(100)) as amount_raw
+       CAST(amount_raw AS STRING) as amount_raw
 from withdrawn_wmatic

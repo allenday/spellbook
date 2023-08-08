@@ -1,14 +1,8 @@
 {{ config(
     alias = 'events',
-    partition_by = ['block_date'],
-    materialized = 'incremental',
-    file_format = 'delta',
-    incremental_strategy = 'merge',
-    unique_key = ['block_date', 'unique_trade_id'],
-    post_hook='{{ expose_spells(\'["optimism"]\',
-                        "project",
-                        "zonic",
-                        \'["chuxin"]\') }}'
+    partition_by = {"field": "block_date"},
+    materialized = 'view',
+            unique_key = ['block_date', 'unique_trade_id']
     )
 }}
 {% set c_native_token_address = "0x0000000000000000000000000000000000000000" %}
@@ -25,7 +19,7 @@ with source_optimism_transactions as (
     where block_number >= {{min_block_number}}  -- zonic first txn
     {% endif %}
     {% if is_incremental() %}
-    where block_time >= date_trunc("day", now() - interval '1 week')
+    where block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 )
 ,ref_tokens_nft as (
@@ -51,7 +45,7 @@ with source_optimism_transactions as (
       and minute >= '{{project_start_date}}'  -- first txn
     {% endif %}
     {% if is_incremental() %}
-      and minute >= date_trunc("day", now() - interval '1 week')
+      and minute >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 )
 ,events_raw as (
@@ -65,9 +59,9 @@ with source_optimism_transactions as (
        ,contract_address as project_contract_address
        ,identifier as token_id
        ,token as nft_contract_address
-       ,cast(totalPrice as decimal(38, 0)) as amount_raw
-       ,cast(marketplaceFee as double) as platform_fee_amount_raw
-       ,cast(creatorFee as double) as royalty_fee_amount_raw
+       ,CAST(totalPrice AS BIGNUMERIC) as amount_raw
+       ,cast(marketplaceFee as FLOAT64) as platform_fee_amount_raw
+       ,cast(creatorFee as FLOAT64) as royalty_fee_amount_raw
        ,case
             when currency =  '{{c_native_token_address}}' then '{{c_alternative_token_address}}'
             else currency
@@ -78,7 +72,7 @@ with source_optimism_transactions as (
     where evt_block_time >= '{{project_start_date}}'  -- zonic first txn
     {% endif %}
     {% if is_incremental() %}
-    where evt_block_time >= date_trunc("day", now() - interval '1 week')
+    where evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 )
 ,transfers_raw as (
@@ -107,7 +101,7 @@ with source_optimism_transactions as (
       and tr.tx_block_number >= {{min_block_number}}
       {% endif %}
       {% if is_incremental() %}
-      and tr.tx_block_time >= date_trunc("day", now() - interval '1 week')
+      and tr.tx_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
       {% endif %}
 
     union all
@@ -137,7 +131,7 @@ with source_optimism_transactions as (
       and erc20.evt_block_number >= {{min_block_number}}
       {% endif %}
       {% if is_incremental() %}
-      and erc20.evt_block_time >= date_trunc("day", now() - interval '1 week')
+      and erc20.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
       {% endif %}
 )
 ,transfers as (
@@ -160,7 +154,7 @@ select
     'optimism' as blockchain
     ,'zonic' as project
     ,'v1' as version
-    ,try_cast(date_trunc('day', er.block_time) as date) as block_date
+    ,SAFE_CAST(TIMESTAMP_TRUNC(er.block_time, day) as date) as block_date
     ,er.block_time
     ,er.token_id
     ,n.name as collection
@@ -170,7 +164,7 @@ select
         when erc1155.evt_tx_hash is not null then 'erc1155'
     end as token_standard
     ,'Single Item Trade' as trade_type
-    ,cast(1 as decimal(38, 0)) as number_of_items
+    ,CAST(1 AS BIGNUMERIC) as number_of_items
     ,'Buy' as trade_category
     ,'Trade' as evt_type
     ,er.seller
@@ -194,7 +188,7 @@ select
     ,er.platform_fee_amount_raw
     ,er.platform_fee_amount_raw / power(10, t1.decimals) as platform_fee_amount
     ,er.platform_fee_amount_raw / power(10, t1.decimals) * p1.price as platform_fee_amount_usd
-    ,cast(2.5 as double) as platform_fee_percentage
+    ,cast(2.5 as FLOAT64) as platform_fee_percentage
     ,er.royalty_fee_amount_raw
     ,er.royalty_fee_amount_raw / power(10, t1.decimals) as royalty_fee_amount
     ,er.royalty_fee_amount_raw / power(10, t1.decimals) * p1.price as royalty_fee_amount_usd
@@ -214,7 +208,7 @@ left join ref_tokens_nft as n
 left join ref_tokens_erc20 as t1
     on t1.contract_address = er.currency_contract
 left join source_prices_usd as p1
-    on p1.minute = date_trunc('minute', er.block_time)
+    on p1.minute = TIMESTAMP_TRUNC(er.block_time, minute)
     and p1.contract_address = er.currency_contract
 left join {{ source('erc721_optimism','evt_transfer') }} as erct2
     on erct2.evt_block_time=er.block_time
@@ -227,7 +221,7 @@ left join {{ source('erc721_optimism','evt_transfer') }} as erct2
     and erct2.evt_block_number >= {{min_block_number}}
     {% endif %}
     {% if is_incremental() %}
-    and erct2.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    and erct2.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 left join {{ source('erc1155_optimism','evt_transfersingle') }} as erc1155
     on erc1155.evt_block_time=er.block_time
@@ -240,7 +234,7 @@ left join {{ source('erc1155_optimism','evt_transfersingle') }} as erc1155
     and erc1155.evt_block_number >= '{{min_block_number}}'
     {% endif %}
     {% if is_incremental() %}
-    and erc1155.evt_block_time >= date_trunc("day", now() - interval '1 week')
+    and erc1155.evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
     {% endif %}
 left join transfers as tr
     on tr.tx_hash = er.tx_hash
