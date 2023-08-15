@@ -4,6 +4,8 @@ Welcome to the open spellbook Big Query version!  This project aims to return th
 ## Contributors
 We would love to make this a community effort and add additional maintainers.  Please join our Discord here: https://discord.gg/hNbNTy7v to join in the discussion and help us build the project you want to see!
 
+## Original Forked Spellbook Readme:
+
 
 ![spellbook-logo@10x](https://user-images.githubusercontent.com/2520869/200791687-76f1bc4f-05d0-4384-a753-e3b5da0e7a4a.png#gh-light-mode-only)
 ![spellbook-logo-negative_10x](https://user-images.githubusercontent.com/2520869/200865128-426354af-8059-494d-83f7-46947aae271c.png#gh-dark-mode-only)
