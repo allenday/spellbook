@@ -74,17 +74,15 @@ models:
   config:
     tags:
     - ethereum
-    - bnb
-    - polygon
     - dex
     - trades
     - apeswap
-  description: 'apeswap trades on all chains across all contracts and versions. This
+  description: 'apeswap trades on ethereum across all contracts and versions. This
     table will load dex trades downstream.
 
     '
   meta:
-    blockchain: bnb, ethereum, polygon
+    blockchain: ethereum
     contributors: codingsh, zhongyiio
     project: apeswap
     sector: dex
