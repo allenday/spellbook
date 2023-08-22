@@ -18,7 +18,7 @@ SELECT 'ethereum' AS blockchain
 , contract_address
 FROM {{ source('uniswap_v2_ethereum', 'Factory_evt_PairCreated') }}
 {% if is_incremental() %}
-WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+WHERE evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}
 
 UNION ALL
@@ -27,7 +27,7 @@ SELECT 'ethereum' AS blockchain
 , 'uniswap' AS project
 , 'v3' AS version
 , pool
-, fee
+, CAST(fee AS numeric)
 , token0
 , token1
 , evt_block_time AS creation_block_time
@@ -35,5 +35,5 @@ SELECT 'ethereum' AS blockchain
 , contract_address
 FROM {{ source('uniswap_v3_ethereum', 'Factory_evt_PoolCreated') }}
 {% if is_incremental() %}
-WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
+WHERE evt_block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
 {% endif %}
