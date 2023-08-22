@@ -73,7 +73,6 @@ models:
     tests: []
   config:
     tags:
-    - bnb
     - ethereum
     - pancakeswap
     - trades
@@ -85,7 +84,7 @@ models:
 
     '
   meta:
-    blockchain: bnb, ethereum
+    blockchain: ethereum
     contributors: hosuke, chef_seaweed
     project: pancakeswap
     sector: dex
