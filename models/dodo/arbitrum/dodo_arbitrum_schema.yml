@@ -148,7 +148,7 @@ models:
   - *id023
   config:
     tags:
-    - arbiturm
+    - arbitrum
     - dodo
     - pools
     - trades

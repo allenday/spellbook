@@ -114,8 +114,8 @@ event_decoding_legacy_router as (
         substring(`data`, 33, 32) as tx_id,
         substring(`data`, 109, 20) as maker_token,
         substring(`data`, 77, 20) as taker_token,
-        cast(conv(substring(`data`, 173, 20), 16, 10) as decimal) as maker_token_amount,
-        cast(conv(substring(`data`, 141, 20), 16, 10) as decimal) as taker_token_amount
+        cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(`data`, 173, 20))) as decimal) as maker_token_amount,
+        cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(`data`, 141, 20))) as decimal) as taker_token_amount
     from ethereum_logs
     where topic1 ='0x8cf3dec1929508e5677d7db003124e74802bfba7250a572205a9986d86ca9f1e' -- trade0()
 
@@ -128,8 +128,8 @@ event_decoding_legacy_router as (
         substring(`data`, 65, 32) as tx_id,
         substring(`data`, 141, 20) as maker_token,
         substring(`data`, 109, 20) as taker_token,
-        cast(conv(substring(`data`, 205, 20), 16, 10) as decimal) as maker_token_amount,
-        cast(conv(substring(`data`, 173, 20), 16, 10) as decimal) as taker_token_amount
+        cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(`data`, 205, 20))) as decimal) as maker_token_amount,
+        cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(`data`, 173, 20))) as decimal) as taker_token_amount
     from ethereum_logs l
     where topic1 ='0xb709ddcc6550418e9b89df1f4938071eeaa3f6376309904c77e15d46b16066f5' -- trade()
 ),
@@ -232,18 +232,18 @@ legacy_routers as (
         case when substring(input, 1, 4) = '0xc7f6b19d' then 'ETH'
             else e.symbol end as taker_symbol,
         case when substring(input, 1, 4) = '0xc7f6b19d'
-                then cast(conv(substring(input, 145, 20), 16, 10) as decimal)/power(10, e.decimals)
-            else cast(conv(substring(input, 145, 20), 16, 10) as decimal)/1e18 end as maker_token_amount,
+                then cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 145, 20))) as decimal)/power(10, e.decimals)
+            else cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 145, 20))) as decimal)/1e18 end as maker_token_amount,
         case when substring(input, 1, 4) = '0xc7f6b19d'
-                then cast(conv(substring(input, 113, 20), 16, 10) as decimal)/1e18
-            else cast(conv(substring(input, 113, 20), 16, 10) as decimal)/power(10,e.decimals) end as taker_token_amount,
+                then cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 113, 20))) as decimal)/1e18
+            else cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 113, 20))) as decimal)/power(10,e.decimals) end as taker_token_amount,
         case when substring(input, 1, 4) = '0xc7f6b19d'
-                then cast(conv(substring(input, 113, 20), 16, 10) as decimal)/1e18 * price
-            else cast(conv(substring(input, 145, 20), 16, 10) as decimal)/1e18 * price end as amount_usd
+                then cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 113, 20))) as decimal)/1e18 * price
+            else cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 145, 20))) as decimal)/1e18 * price end as amount_usd
     from ethereum_traces t
     left join prices_usd p on minute = TIMESTAMP_TRUNC(t.block_time, minute)
     left join erc20_tokens e on e.contract_address = substring(input, 81, 20)
-    where cast(trace_address as string) = '{}'  --top level call
+    where ARRAY_LENGTH(trace_address) = 0  --top level call
         and `to` in ('0x9d4fc735e1a596420d24a266b7b5402fe4ec153c', '0x2405cb057a9baf85daa11ce9832baed839b6871c')
         and substring(input, 1, 4) in ('0x9ec7605b',  -- token to eth
                                        '0xc7f6b19d') -- eth to token
@@ -263,15 +263,15 @@ legacy_routers as (
             substring(input, 81, 20) as taker_token,
             mp.symbol as maker_symbol,
             tp.symbol as taker_symbol,
-            cast(conv(substring(input, 177, 20), 16, 10) as decimal)/power(10, mp.decimals)  as maker_token_amount,
-            cast(conv(substring(input, 145, 20), 16, 10) as decimal)/power(10, tp.decimals)  as taker_token_amount,
+            cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 177, 20))) as decimal)/power(10, mp.decimals)  as maker_token_amount,
+            cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 145, 20))) as decimal)/power(10, tp.decimals)  as taker_token_amount,
             coalesce(
-                cast(conv(substring(input, 145, 20), 16, 10) as decimal)/power(10, tp.decimals) * tp.price,
-                cast(conv(substring(input, 177, 20), 16, 10) as decimal)/power(10, mp.decimals) * mp.price) as amount_usd
+                cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 145, 20))) as decimal)/power(10, tp.decimals) * tp.price,
+                cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 177, 20))) as decimal)/power(10, mp.decimals) * mp.price) as amount_usd
     from ethereum_traces t
     left join prices_usd tp on tp.minute = TIMESTAMP_TRUNC(t.block_time, minute) and tp.contract_address = substring(input, 81, 20)
     left join prices_usd mp on mp.minute = TIMESTAMP_TRUNC(t.block_time, minute) and mp.contract_address = substring(input, 113, 20)
-    where cast(trace_address as string) = '{}'
+    where ARRAY_LENGTH(trace_address) = 0
         and `to` in ('0x455a3B3Be6e7C8843f2b03A1cA22A5a5727ef5C4','0x9d4fc735e1a596420d24a266b7b5402fe4ec153c', '0x2405cb057a9baf85daa11ce9832baed839b6871c','0x043389f397ad72619d05946f5f35426a7ace6613')
         and substring(input, 1, 4) in ('0x064f0410','0x4d0246ad') -- token to token
 
@@ -294,18 +294,18 @@ legacy_routers as (
         case when substring(input, 1, 4) = '0xe43d9733' then 'ETH'
             else e.symbol end as taker_symbol,
         case when substring(input, 1, 4) = '0xe43d9733'
-                then cast(conv(substring(input, 145, 20), 16, 10) as decimal)/power(10,e.decimals)
-            else cast(conv(substring(input, 145, 20), 16, 10) as decimal)/1e18 end as maker_token_amount,
+                then cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 145, 20))) as decimal)/power(10,e.decimals)
+            else cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 145, 20))) as decimal)/1e18 end as maker_token_amount,
         case when substring(input, 1, 4) = '0xe43d9733'
-                then cast(conv(substring(input, 113, 20), 16, 10) as decimal)/1e18
-            else cast(conv(substring(input, 113, 20), 16, 10) as decimal)/power(10,e.decimals) end as taker_token_amount,
+                then cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 113, 20))) as decimal)/1e18
+            else cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 113, 20))) as decimal)/power(10,e.decimals) end as taker_token_amount,
         case when substring(input, 1, 4) = '0xe43d9733'
-                then cast(conv(substring(input, 113, 20), 16, 10) as decimal)/1e18 * price
-            else cast(conv(substring(input, 145, 20), 16, 10) as decimal)/1e18 * price end as amount_usd
+                then cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 113, 20))) as decimal)/1e18 * price
+            else cast(blocktrekker.udfs.bytea2numeric(CONCAT('0x',substring(input, 145, 20))) as decimal)/1e18 * price end as amount_usd
     from ethereum_traces t
     left join prices_usd p on minute = TIMESTAMP_TRUNC(t.block_time, minute)
     left join erc20_tokens e on e.contract_address = substring(input, 81, 20)
-    where cast(trace_address as string) = '{}'
+    where ARRAY_LENGTH(trace_address) = 0
         and `to` in ('0x455a3B3Be6e7C8843f2b03A1cA22A5a5727ef5C4','0x043389f397ad72619d05946f5f35426a7ace6613')
         and substring(input, 1, 4) in ('0xd0529c02',  -- token to eth
                                        '0xe43d9733') -- eth to token
@@ -317,11 +317,11 @@ new_pool as (
     -- same trade event abi, effectively only from table hashflow.pool_evt_trade since 2022-04-09
     select
         l.evt_index as composite_index,
-        null as source, -- no join on call for this batch, refer to metabase for source info
+        CAST(null as STRING) as source, -- no join on call for this batch, refer to metabase for source info
         tx.block_time as block_time,
         tx.hash as tx_hash,
         true as fill_status, -- without call we are only logging successful fills
-        null as method_id, -- without call we don't have function call info
+        CAST(null as STRING) as method_id, -- without call we don't have function call info
         tx.to as router_contract, -- taking top level contract called in tx as router, not necessarily HF contract
         l.pool as pool,
         tx.from as trader,

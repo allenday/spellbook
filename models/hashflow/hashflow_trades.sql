@@ -4,9 +4,7 @@
 }}
 
 {% set hashflow_models = [
-ref('hashflow_avalanche_c_trades')
-, ref('hashflow_ethereum_trades')
-, ref('hashflow_bnb_trades')
+ ref('hashflow_ethereum_trades')
 ] %}
  
 SELECT *
