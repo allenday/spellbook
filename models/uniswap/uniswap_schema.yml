@@ -173,7 +173,7 @@ models:
 
     '
   meta:
-    blockchain: ethereum, polygon, arbitrum
+    blockchain: ethereum
     contributors: hildobby
     sector: dex
   name: uniswap_pools
