@@ -108,7 +108,7 @@ models:
 
     '
   meta:
-    blockchain: ethereum, bnb, avalanche_c, gnosis, optimism, fantom, arbitrum
+    blockchain: ethereum
     contributors: jeff-dude
     sector: dex
   name: dex_trades
