@@ -74,16 +74,15 @@ models:
   config:
     tags:
     - ethereum
-    - arbitrum
     - dex
     - trades
     - integral
-  description: 'Integral trades across two networks. This table will load dex trades
+  description: 'Integral trades across ethereum. This table will load dex trades
     downstream.
 
     '
   meta:
-    blockchain: ethereum, arbitrum
+    blockchain: ethereum
     contributors: integralhq
     project: integral
     sector: dex

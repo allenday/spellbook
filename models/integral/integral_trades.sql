@@ -4,7 +4,6 @@
 }}
 
 {% set integral_models = [
-ref('integral_arbitrum_trades'),
 ref('integral_ethereum_trades')
 ] %}
 
