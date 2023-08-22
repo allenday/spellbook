@@ -5,8 +5,6 @@
 
 {% set uniswap_models = [
 ref('uniswap_ethereum_pools')
-, ref('uniswap_arbitrum_pools')
-, ref('uniswap_polygon_pools')
 ] %}
 
 
