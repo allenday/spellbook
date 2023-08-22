@@ -73,7 +73,7 @@ models:
     tests: []
   config:
     tags:
-    - avalanche_c
+    - Ethereum
     - hashflow
     - trades
     - dex
@@ -86,7 +86,7 @@ models:
 
     '
   meta:
-    blockchain: ethereum, avalanche_c, bnb
+    blockchain: ethereum, 
     contributors: hosuke, justabi, Henrystats
     project: hashflow
     sector: dex

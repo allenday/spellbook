@@ -6,7 +6,7 @@
 {% set hashflow_models = [
  ref('hashflow_ethereum_trades')
 ] %}
- 
+
 SELECT *
 FROM (
     {% for dex_model in hashflow_models %}
