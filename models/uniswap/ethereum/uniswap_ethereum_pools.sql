@@ -27,7 +27,7 @@ SELECT 'ethereum' AS blockchain
 , 'uniswap' AS project
 , 'v3' AS version
 , pool
-, CAST(fee AS numeric)
+, SAFE_CAST(udfs.hexToInt(fee) as numeric)
 , token0
 , token1
 , evt_block_time AS creation_block_time

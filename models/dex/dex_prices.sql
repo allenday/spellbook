@@ -51,7 +51,7 @@ FROM
         TIMESTAMP_TRUNC(block_time, hour) AS `hour`, 
         contract_address,
         blockchain,
-        (PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY price)) AS median_price,
+        APPROX_QUANTILES(price, 100)[OFFSET(50)] AS median_price,
         COUNT(price) as sample_size 
     FROM dex_trades
     GROUP BY 1, 2, 3
