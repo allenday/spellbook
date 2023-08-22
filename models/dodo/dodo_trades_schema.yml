@@ -75,10 +75,6 @@ models:
   config:
     tags:
     - ethereum
-    - bnb
-    - polygon
-    - arbitrum
-    - optimism
     - dex
     - aggregator
     - trades

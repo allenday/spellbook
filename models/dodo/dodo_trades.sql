@@ -5,10 +5,6 @@
 
 {% set dodo_models = [
 ref('dodo_ethereum_trades')
-, ref('dodo_bnb_trades')
-, ref('dodo_polygon_trades')
-, ref('dodo_arbitrum_trades')
-, ref('dodo_optimism_trades')
 ] %}
 
 
