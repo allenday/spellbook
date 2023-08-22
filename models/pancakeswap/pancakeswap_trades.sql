@@ -4,7 +4,7 @@
 }}
 
 {% set pancake_models = [
-,   ref('pancakeswap_ethereum_trades')
+   ref('pancakeswap_ethereum_trades')
 ] %}
 
 
