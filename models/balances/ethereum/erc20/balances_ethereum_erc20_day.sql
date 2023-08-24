@@ -3,15 +3,20 @@
         )
 }}
 
-with
-    days as (
-        select
-            explode(
-                sequence(
-                    to_date('2015-01-01'), date_trunc('day', CURRENT_TIMESTAMP()), interval 1 day
-                )
-            ) AS `day`
+WITH days AS (
+  SELECT
+    TIMESTAMP_ADD(
+      TIMESTAMP '2015-01-01 00:00:00 UTC', 
+      INTERVAL x DAY
+    ) AS `day`
+  FROM (
+    SELECT row_number() OVER () - 1 AS x
+    FROM (
+      SELECT NULL
+      FROM UNNEST(GENERATE_ARRAY(1, TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), TIMESTAMP '2015-01-01 00:00:00 UTC', DAY), 1)) -- generate enough numbers
     )
+  )
+)
 
 , daily_balances as
  (SELECT

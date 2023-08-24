@@ -13,7 +13,7 @@ SELECT
 FROM {{ ref('transfers_ethereum_erc20_rolling_hour') }} rh
 LEFT JOIN {{ source('prices', 'usd') }} p
     ON p.contract_address = rh.token_address
-    AND p.minute = TIMESTAMP_TRUNC(rh.last_updated, minute) - interval 10 minutes
+    AND p.minute = TIMESTAMP_TRUNC(rh.last_updated, minute) - interval 10 minute
     AND p.blockchain = 'ethereum'
 -- Removes rebase tokens from balances
 LEFT JOIN {{ ref('tokens_ethereum_rebase') }}  as r
