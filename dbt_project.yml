@@ -36,7 +36,7 @@ tests:
 # example: seeds/cryptopunks/schema.yml
 seeds:
   spellbook:
-    +schema: test_data
+    +schema: csv_uploads
     genesis_balances_seed:
       +column_types:
         address: STRING

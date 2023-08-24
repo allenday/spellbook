@@ -34,8 +34,8 @@ WITH oneinch_calls AS
     SELECT
         call_block_number as block_number,
         CAST(NULL as string) as taker,
-        JSON_EXTRACT_SCALAR(desc,'$.srcToken') as from_token,
-        JSON_EXTRACT_SCALAR(desc,'$.dstToken') as to_token,
+        JSON_EXTRACT_SCALAR(`desc`,'$.srcToken') as from_token,
+        JSON_EXTRACT_SCALAR(`desc`,'$.dstToken') as to_token,
         output_spentAmount as from_amount,
         output_returnAmount as to_amount,
         call_tx_hash as tx_hash,
@@ -150,7 +150,7 @@ SELECT
     ,src.tx_hash
     ,tx.from AS tx_from
     ,tx.to AS tx_to
-    ,CAST(src.trace_address as array<long>) as trace_address
+    ,CAST(src.trace_address as array<numeric>) as trace_address
     ,src.evt_index
 FROM oneinch as src
 INNER JOIN {{ source('ethereum', 'transactions') }} as tx

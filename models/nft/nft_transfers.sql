@@ -8,14 +8,6 @@
 
 {% set nft_models = [
  ref('nft_ethereum_transfers')
-,ref('nft_bnb_transfers')
-,ref('nft_avalanche_c_transfers')
-,ref('nft_gnosis_transfers')
-,ref('nft_optimism_transfers')
-,ref('nft_arbitrum_transfers')
-,ref('nft_polygon_transfers')
-,ref('nft_fantom_transfers')
-,ref('nft_goerli_transfers')
 ] %}
 
 SELECT *

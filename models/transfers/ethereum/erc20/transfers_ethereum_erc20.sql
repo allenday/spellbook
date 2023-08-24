@@ -33,7 +33,7 @@ with
             evt_block_time,
             wad as amount_raw
         from
-            {{ source('zeroex_ethereum', 'weth9_evt_deposit') }}
+            {{ source('zeroex_ethereum', 'weth9_evt_Deposit') }}
     )
 
     ,
@@ -45,7 +45,7 @@ with
             evt_block_time,
             '-' || CAST(wad AS STRING) as amount_raw
         from
-            {{ source('zeroex_ethereum', 'weth9_evt_withdrawal') }}
+            {{ source('zeroex_ethereum', 'weth9_evt_Withdrawal') }}
     )
     
 select unique_transfer_id, 'ethereum' as blockchain, wallet_address, token_address, evt_block_time, CAST(amount_raw AS STRING) as amount_raw

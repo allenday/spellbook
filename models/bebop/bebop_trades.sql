@@ -4,8 +4,6 @@
 }}
 
 {% set bebop_models = [
-    ref('bebop_polygon_trades'),
-    ref('bebop_arbitrum_trades'),
     ref('bebop_ethereum_trades')
 ] %}
 

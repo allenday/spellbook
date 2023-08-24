@@ -18,9 +18,9 @@ WITH limit_order_protocol AS
 (
     SELECT
         call_block_number,
-        JSON_EXTRACT_SCALAR(order,'$.maker') AS maker,
-        JSON_EXTRACT_SCALAR(order,'$.takerAsset') AS token_bought_address,
-        JSON_EXTRACT_SCALAR(order,'$.makerAsset') AS token_sold_address,
+        JSON_EXTRACT_SCALAR(`order`,'$.maker') AS maker,
+        JSON_EXTRACT_SCALAR(`order`,'$.takerAsset') AS token_bought_address,
+        JSON_EXTRACT_SCALAR(`order`,'$.makerAsset') AS token_sold_address,
         contract_address,
         output_0,
         output_1,
@@ -41,9 +41,9 @@ WITH limit_order_protocol AS
         
     SELECT
         call_block_number,
-        JSON_EXTRACT_SCALAR(order,'$.maker') AS maker,
-        JSON_EXTRACT_SCALAR(order,'$.takerAsset') AS token_bought_address,
-        JSON_EXTRACT_SCALAR(order,'$.makerAsset') AS token_sold_address,
+        JSON_EXTRACT_SCALAR(`order`,'$.maker') AS maker,
+        JSON_EXTRACT_SCALAR(`order`,'$.takerAsset') AS token_bought_address,
+        JSON_EXTRACT_SCALAR(`order`,'$.makerAsset') AS token_sold_address,
         contract_address,
         output_0,
         output_1,
@@ -64,9 +64,9 @@ WITH limit_order_protocol AS
         
     SELECT
         call_block_number,
-        JSON_EXTRACT_SCALAR(order,'$.maker') AS maker,
-        JSON_EXTRACT_SCALAR(order,'$.takerAsset') AS token_bought_address,
-        JSON_EXTRACT_SCALAR(order,'$.makerAsset') AS token_sold_address,
+        JSON_EXTRACT_SCALAR(`order`,'$.maker') AS maker,
+        JSON_EXTRACT_SCALAR(`order`,'$.takerAsset') AS token_bought_address,
+        JSON_EXTRACT_SCALAR(`order`,'$.makerAsset') AS token_sold_address,
         contract_address,
         output_0,
         output_1,

@@ -71,7 +71,7 @@ UNION ALL
     SELECT 
         'ethereum' as blockchain,
         t.evt_block_time AS block_time,
-        TIMESTAMP_TRUNC(DATE(t.evt_block_time), DAY) AS block_date,
+        TIMESTAMP_TRUNC(t.evt_block_time, DAY) AS block_date,
         t.evt_block_number AS block_number,
         'erc1155' AS token_standard,
         'batch' AS transfer_type,

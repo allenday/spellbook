@@ -16,27 +16,27 @@ WITH
       call_tx_hash AS tx_hash,
       evt_index,
       ex.contract_address,
-      JSON_EXTRACT_SCALAR(order, '$.expiry') AS expiry,
+      JSON_EXTRACT_SCALAR(`order`, '$.expiry') AS expiry,
       cast(
-        JSON_EXTRACT_SCALAR(order, '$.taker_address') AS string
+        JSON_EXTRACT_SCALAR(`order`, '$.taker_address') AS string
       ) AS taker_address,
       array_distinct(
         from_json(
-          JSON_EXTRACT_SCALAR(order, '$.maker_addresses'), 'array<string>'
+          JSON_EXTRACT_SCALAR(`order`, '$.maker_addresses'), 'array<string>'
         )
       ) AS maker_addresses,
       arrays_zip(
         array_distinct(
           flatten(
             from_json(
-              JSON_EXTRACT_SCALAR(order, '$.taker_tokens') , 'array<array<string>>'
+              JSON_EXTRACT_SCALAR(`order`, '$.taker_tokens') , 'array<array<string>>'
             )
           )
         ),
         array_distinct(
           flatten(
             from_json(
-              JSON_EXTRACT_SCALAR(order, '$.taker_amounts') , 'array<array<DECIMAL(38, 0)>>'
+              JSON_EXTRACT_SCALAR(`order`, '$.taker_amounts') , 'array<array<DECIMAL(38, 0)>>'
             )
           )
         )
@@ -45,14 +45,14 @@ WITH
         array_distinct(
           flatten(
             from_json(
-              JSON_EXTRACT_SCALAR(order, '$.maker_tokens') , 'array<array<string>>'
+              JSON_EXTRACT_SCALAR(`order`, '$.maker_tokens') , 'array<array<string>>'
             )
           )
         ),
         array_distinct(
           flatten(
             from_json(
-              JSON_EXTRACT_SCALAR(order, '$.maker_amounts') , 'array<array<DECIMAL(38, 0)>>'
+              JSON_EXTRACT_SCALAR(`order`, '$.maker_amounts') , 'array<array<DECIMAL(38, 0)>>'
             )
           )
         )
@@ -69,21 +69,25 @@ WITH
       AND evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
       {% endif %}
   ),
-  explode_taker_tokens_data as (
+    explode_taker_tokens_data AS (
     SELECT
-      *,
-      posexplode (taker_tokens) as (taker_ind, taker_token_pair)
+      br.*,
+      taker_tokens.offset AS taker_ind,
+      taker_tokens.value AS taker_token_pair
     FROM
-      bebop_raw_data
+      bebop_raw_data br,
+      UNNEST(br.taker_tokens) AS taker_tokens WITH OFFSET AS offset
   ),
-  explode_tokens_data as (
+  explode_tokens_data AS (
     SELECT
-      *,
-      posexplode (maker_tokens) as (maker_ind, maker_token_pair)
+      ett.*,
+      maker_tokens.offset AS maker_ind,
+      maker_tokens.value AS maker_token_pair
     FROM
-      explode_taker_tokens_data
+      explode_taker_tokens_data ett,
+      UNNEST(ett.maker_tokens) AS maker_tokens WITH OFFSET AS offset
   ),
-  simple_trades as (
+  simple_trades AS (
     SELECT
       block_time,
       block_number,
@@ -91,11 +95,11 @@ WITH
       tx_hash,
       evt_index,
       taker_address,
-      cast(array(taker_ind, maker_ind) as array<bigint>) as trace_address,
-      taker_token_pair.`0` as taker_token,
-      (taker_token_pair.`1` / cardinality(maker_tokens)) as taker_amount,
-      maker_token_pair.`0` as maker_token,
-      (maker_token_pair.`1` / cardinality(taker_tokens)) as maker_amount
+      array<INT64>[taker_ind, maker_ind] AS trace_address,
+      taker_token_pair[OFFSET(0)] AS taker_token,
+      taker_token_pair[OFFSET(1)] / ARRAY_LENGTH(maker_tokens) AS taker_amount,
+      maker_token_pair[OFFSET(0)] AS maker_token,
+      maker_token_pair[OFFSET(1)] / ARRAY_LENGTH(taker_tokens) AS maker_amount
     FROM
       explode_tokens_data
   )

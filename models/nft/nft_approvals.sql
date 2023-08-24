@@ -7,14 +7,6 @@
 
 {% set nft_models = [
  ref('nft_ethereum_approvals')
-,ref('nft_bnb_approvals')
-,ref('nft_avalanche_c_approvals')
-,ref('nft_gnosis_approvals')
-,ref('nft_optimism_approvals')
-,ref('nft_arbitrum_approvals')
-,ref('nft_polygon_approvals')
-,ref('nft_fantom_approvals')
-,ref('nft_goerli_approvals')
 ] %}
 
 SELECT *

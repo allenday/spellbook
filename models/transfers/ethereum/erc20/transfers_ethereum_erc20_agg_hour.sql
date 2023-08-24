@@ -13,8 +13,8 @@ select
     tr.token_address,
     t.symbol,
     tr.wallet_address || '-' || tr.token_address || '-' || TIMESTAMP_TRUNC(tr.evt_block_time, hour) as unique_transfer_id,
-    sum(tr.amount_raw) as amount_raw,
-    sum(tr.amount_raw / power(10, t.decimals)) as amount
+    sum(CAST(tr.amount_raw as BIGNUMERIC)) as amount_raw,
+    sum(CAST(tr.amount_raw as BIGNUMERIC) / power(10, t.decimals)) as amount
 from {{ ref('transfers_ethereum_erc20') }} tr
 left join {{ ref('tokens_ethereum_erc20') }} t on t.contract_address = tr.token_address
 {% if is_incremental() %}

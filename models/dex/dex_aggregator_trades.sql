@@ -14,12 +14,7 @@ spells with issues, to be excluded in short term:
 ********************************************************/
 
 {% set dex_aggregator_models = [
- ref('cow_protocol_trades')
- ,ref('oneinch_ethereum_trades')
- ,ref('openocean_trades')
- ,ref('paraswap_trades')
- ,ref('lifi_trades')
- ,ref('yield_yak_avalanche_c_trades')
+ ref('oneinch_ethereum_trades')
  ,ref('bebop_trades')
  ,ref('zeroex_trades')
 ] %}

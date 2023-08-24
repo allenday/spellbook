@@ -1,30 +1,34 @@
 {{ config(materialized = 'view', alias='erc1155') }}
 
-with
-  erc1155_ids_batch AS (
-    SELECT
-      *,
-      explode_id,
-    evt_tx_hash || '-' || CAST(ROW_NUMBER() OVER (PARTITION BY evt_tx_hash, ids ORDER BY ids) AS STRING) AS unique_transfer_id
-  FROM
-    `blocktrekker`.`erc1155_ethereum`.`evt_transferbatch`,
-    UNNEST(ids) AS explode_id
-  ),
+WITH erc1155_ids_batch AS (
+  SELECT
+    *,
+    evt_tx_hash || '-' || CAST(
+      ROW_NUMBER() OVER (
+        PARTITION BY evt_tx_hash, 
+        explode_id  -- Replaced `ids` with `explode_id`
+        ORDER BY 
+        explode_id  -- Replaced `ids` with `explode_id`
+      ) AS STRING
+    ) AS unique_transfer_id
+  FROM `blocktrekker`.`erc1155_ethereum`.`evt_transferbatch`,
+  UNNEST(ids) AS explode_id  -- Unnesting `ids` to `explode_id` to make it a scalar
+),
 
   erc1155_values_batch AS (
     SELECT
       *,
-      explode_value,
-      evt_tx_hash || '-' || cast(
-        row_number() OVER (
-          PARTITION BY evt_tx_hash,
-          ids
+      evt_tx_hash || '-' || CAST(
+        ROW_NUMBER() OVER (
+          PARTITION BY evt_tx_hash, 
+          explode_id  -- Replaced `ids` with `explode_id`
           ORDER BY
-            ids
-        ) as string
-      ) as unique_transfer_id
+            explode_id  -- Replaced `ids` with `explode_id`
+        ) AS STRING
+      ) AS unique_transfer_id
     FROM {{source('erc1155_ethereum', 'evt_transferbatch')}},
-    UNNEST(values) AS explode_value
+    UNNEST(values) AS explode_value,
+    UNNEST(ids) AS explode_id  -- Add this line to make `explode_id` available
   ),
 
   erc1155_transfers_batch AS (

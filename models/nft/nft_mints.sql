@@ -14,8 +14,6 @@ ref('opensea_mints')
 ,ref('foundation_ethereum_mints')
 ,ref('blur_ethereum_mints')
 ,ref('zora_ethereum_mints')
-,ref('nftb_bnb_mints')
-,ref('stealcam_arbitrum_mints')
 ] %}
 
 {% set native_mints = [

@@ -85,12 +85,12 @@ WITH limit_order_protocol_embedded_rfq AS
         '1inch Limit Order Protocol' AS project,
         'eRFQ v1' AS version,
         CAST(NULL as string) as taker, --will get from base table downstream
-        JSON_EXTRACT_SCALAR(order,'$.maker') AS maker,
+        JSON_EXTRACT_SCALAR(`order`,'$.maker') AS maker,
         output_1 AS token_bought_amount_raw,
         output_0 AS token_sold_amount_raw,
         CAST(NULL as FLOAT64) AS amount_usd,
-        JSON_EXTRACT_SCALAR(order,'$.takerAsset') AS token_bought_address,
-        JSON_EXTRACT_SCALAR(order,'$.makerAsset') AS token_sold_address,
+        JSON_EXTRACT_SCALAR(`order`,'$.takerAsset') AS token_bought_address,
+        JSON_EXTRACT_SCALAR(`order`,'$.makerAsset') AS token_sold_address,
         contract_address AS project_contract_address,
         call_tx_hash as tx_hash,
         call_trace_address AS trace_address,
@@ -159,7 +159,7 @@ SELECT
     ,src.tx_hash
     ,tx.from AS tx_from
     ,tx.to AS tx_to
-    ,CAST(src.trace_address as array<long>) as trace_address
+    ,CAST(src.trace_address as array<numeric>) as trace_address
     ,src.evt_index
 FROM oneinch as src
 INNER JOIN {{ source('ethereum', 'transactions') }} as tx

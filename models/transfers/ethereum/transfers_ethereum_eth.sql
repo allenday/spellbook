@@ -19,7 +19,7 @@ with eth_transfers as (
         ,r.block_time as tx_block_time 
         ,r.block_number as tx_block_number 
         ,substring(t.data, 1, 10) as tx_method_id
-        ,r.tx_hash || '-' || cast(r.trace_address as string) as unique_transfer_id
+        ,r.tx_hash || '-' || ARRAY_TO_STRING(r.trace_address, ', ') as unique_transfer_id
         ,t.to AS tx_to
         ,t.`from` AS tx_from
     from {{ source('ethereum', 'traces') }} as r 
@@ -30,7 +30,7 @@ with eth_transfers as (
         (r.call_type not in ('delegatecall', 'callcode', 'staticcall') or r.call_type is null)
         and r.tx_success
         and r.success
-        and r.value >0
+        and r.value > 0
         {% if is_incremental() %} -- this filter will only be applied on an incremental run 
         and r.block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')
         and t.block_time >= date_trunc('day', CURRENT_TIMESTAMP() - interval '1 week')

@@ -28,7 +28,7 @@ sources:
       name: wad
     description: WETH deposits
     loaded_at_field: evt_block_time
-    name: weth9_evt_deposit
+    name: weth9_evt_Deposit
   - columns:
     - *id001
     - description: Wallet address for WETH withdrawals
@@ -40,5 +40,5 @@ sources:
     - *id006
     description: WETH withdrawals
     loaded_at_field: evt_block_time
-    name: weth9_evt_withdrawal
+    name: weth9_evt_Withdrawal
 version: 2

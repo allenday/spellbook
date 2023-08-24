@@ -149,7 +149,7 @@ WITH uniswap AS
         , CASE
             WHEN CAST(pools[array_size(pools) - 1] / POWER(2, 252) as int) & 2 != 0
             THEN '{{burn_address}}'
-            ELSE to
+            ELSE `to`
         END as dstToken
         , pools
         , call_tx_hash

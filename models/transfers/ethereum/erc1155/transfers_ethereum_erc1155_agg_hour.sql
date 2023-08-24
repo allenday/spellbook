@@ -13,7 +13,7 @@ select
     token_address,
     tokenId,
     sum(amount) as amount,
-    unique_tx_id || '-' || wallet_address || '-' || token_address || tokenId || '-' || sum(amount)::string as unique_transfer_id
+    unique_tx_id || '-' || wallet_address || '-' || token_address || tokenId || '-' || CAST(sum(amount) as string) as unique_transfer_id
 FROM {{ ref('transfers_ethereum_erc1155') }}
 {% if is_incremental() %}
 -- this filter will only be applied on an incremental run

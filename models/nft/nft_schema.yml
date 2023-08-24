@@ -10,15 +10,12 @@ models:
     tags:
     - nft
     - aggregators
-    - avalanche_c
-    - bnb
     - ethereum
-    - polygon
   description: 'NFT aggregators
 
     '
   meta:
-    blockchain: avalanche_c, bnb, ethereum, polygon
+    blockchain: ethereum
     contributors: hildobby, soispoke
     sector: nft
   name: nft_aggregators
@@ -191,12 +188,7 @@ models:
     - element
     - zora
     - ethereum
-    - bnb
-    - solana
     - events
-    - polygon
-    - optimism
-    - arbitrum
     - rarible
     - aavegotchi
     - oneplanet
@@ -205,7 +197,7 @@ models:
 
     '
   meta:
-    blockchain: ethereum, solana, bnb, optimism, arbitrum, polygon
+    blockchain: ethereum
     contributors: soispoke, hildobby, ilemi, 0xRob, cat, umer_h_adil
     sector: nft
   name: nft_events
@@ -254,13 +246,8 @@ models:
     - element
     - zora
     - ethereum
-    - bnb
-    - solana
-    - optimism
-    - arbitrum
     - trades
     - superrare
-    - polygon
     - rarible
     - aavegotchi
     - oneplanet
@@ -269,7 +256,7 @@ models:
 
     '
   meta:
-    blockchain: ethereum, solana, bnb, optimism, arbitrum, polygon
+    blockchain: ethereum
     contributors: soispoke, hildobby, ilemi, cat
     sector: nft
   name: nft_trades
@@ -317,19 +304,14 @@ models:
     - element
     - zora
     - ethereum
-    - bnb
-    - solana
     - mints
-    - polygon
     - aavegotchi
-    - optimism
-    - arbitrum
     - stealcam
   description: 'NFT mints
 
     '
   meta:
-    blockchain: ethereum, solana, bnb, optimism, polygon, arbitrum
+    blockchain: ethereum
     contributors: soispoke, hildobby, umer_h_adil
     sector: nft
   name: nft_mints
@@ -377,14 +359,12 @@ models:
     - element
     - zora
     - ethereum
-    - bnb
-    - solana
     - burns
   description: 'NFT burns
 
     '
   meta:
-    blockchain: ethereum, solana
+    blockchain: ethereum
     contributors: soispoke, hildobby
     sector: nft
   name: nft_burns
@@ -438,11 +418,8 @@ models:
     - element
     - zora
     - ethereum
-    - bnb
-    - solana
     - fees
     - superrare
-    - polygon
     - rarible
     - aavegotchi
     - oneplanet
@@ -451,7 +428,7 @@ models:
 
     '
   meta:
-    blockchain: ethereum, solana, polygon
+    blockchain: ethereum
     contributors: soispoke, hildobby, ilemi, cat
     sector: nft
   name: nft_fees
@@ -515,19 +492,13 @@ models:
     - foundation
     - element
     - zora
-    - arbitrum
-    - avalanche_c
-    - bnb
     - ethereum
-    - gnosis
-    - optimism
-    - polygon
     - wash_trades
   description: 'NFT wash trades labelling
 
     '
   meta:
-    blockchain: arbitrum, avalanche_c, bnb, ethereum, gnosis, optimism, polygon
+    blockchain: ethereum
     contributors: hildobby
     sector: nft
   name: nft_wash_trades
@@ -552,14 +523,13 @@ models:
     - magiceden
     - sudoswap
     - ethereum
-    - solana
     - address
   description: 'NFT linked addresses. Addresses that buy and sell NFTs from each other.
     By definition (master address < alt address) alphabetically.
 
     '
   meta:
-    blockchain: ethereum, solana
+    blockchain: ethereum
     contributors: springzh, 0xRob
     sector: nft
   name: nft_linked_addresses
@@ -625,21 +595,12 @@ models:
     tags:
     - nft
     - ethereum
-    - polygon
-    - bnb
-    - avalanche_c
-    - gnosis
-    - optimism
-    - arbitrum
-    - fantom
-    - goerli
     - transfers
   description: 'NFT transfers
 
     '
   meta:
-    blockchain: ethereum, polygon, bnb, avalanche_c, gnosis, optimism, arbitrum, fantom,
-      goerli
+    blockchain: ethereum
     contributors: hildobby
     sector: nft
   name: nft_transfers
@@ -747,21 +708,12 @@ models:
     tags:
     - nft
     - ethereum
-    - polygon
-    - bnb
-    - avalanche_c
-    - gnosis
-    - optimism
-    - arbitrum
-    - fantom
-    - goerli
     - approvals
   description: 'NFT approvals
 
     '
   meta:
-    blockchain: ethereum, polygon, bnb, avalanche_c, gnosis, optimism, arbitrum, fantom,
-      goerli
+    blockchain: ethereum
     contributors: hildobby
     sector: nft
   name: nft_approvals

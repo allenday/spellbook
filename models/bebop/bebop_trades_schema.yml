@@ -73,15 +73,13 @@ models:
     tests: []
   config:
     tags:
-    - polygon
-    - arbitrum
     - ethereum
     - bebop
     - trades
     - dex
   description: Bebop trades - formatted for dex.trades
   meta:
-    blockchain: polygon, arbitrum, ethereum
+    blockchain: ethereum
     contributors: alekss
     project: bebop
     sector: dex

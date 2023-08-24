@@ -95,9 +95,10 @@ models:
     - treasure
     - nft
     - trades
+    - ethereum
   description: NFT trades on trove on all blockchain
   meta:
-    blockchain: arbitrum, ethereum
+    blockchain: ethereum
     contributors: bizzyvinci
     project: trove
     sector: nft
@@ -137,6 +138,7 @@ models:
     - treasure
     - nft
     - trades
+    - arbitrum
   description: NFT trades on trove on arbitrum blockchain
   meta:
     blockchain: arbitrum
@@ -179,6 +181,7 @@ models:
     - treasure
     - nft
     - trades
+    - arbitrum
   description: NFT trades on trove v2 on arbitrum blockchain
   meta:
     blockchain: arbitrum
@@ -231,6 +234,7 @@ models:
     - treasure
     - nft
     - trades
+    - arbitrum
   description: NFT trades on trove v1 on arbitrum blockchain
   meta:
     blockchain: arbitrum
@@ -283,6 +287,7 @@ models:
     - treasure
     - nft
     - trades
+    - ethereum
   description: NFT trades on trove on ethereum blockchain
   meta:
     blockchain: ethereum

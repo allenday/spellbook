@@ -41,9 +41,9 @@ WITH limit_order_protocol AS
         
     SELECT
         call_block_number,
-        JSON_EXTRACT_SCALAR(order,'$.maker') AS maker,
-        JSON_EXTRACT_SCALAR(order,'$.takerAsset') AS token_bought_address,
-        JSON_EXTRACT_SCALAR(order,'$.makerAsset') AS token_sold_address,
+        JSON_EXTRACT_SCALAR(`order`,'$.maker') AS maker,
+        JSON_EXTRACT_SCALAR(`order`,'$.takerAsset') AS token_bought_address,
+        JSON_EXTRACT_SCALAR(`order`,'$.makerAsset') AS token_sold_address,
         contract_address,
         output_0,
         output_1,
@@ -64,9 +64,9 @@ WITH limit_order_protocol AS
         
     SELECT
         call_block_number,
-        JSON_EXTRACT_SCALAR(order,'$.maker') AS maker,
-        JSON_EXTRACT_SCALAR(order,'$.takerAsset') AS token_bought_address,
-        JSON_EXTRACT_SCALAR(order,'$.makerAsset') AS token_sold_address,
+        JSON_EXTRACT_SCALAR(`order`,'$.maker') AS maker,
+        JSON_EXTRACT_SCALAR(`order`,'$.takerAsset') AS token_bought_address,
+        JSON_EXTRACT_SCALAR(`order`,'$.makerAsset') AS token_sold_address,
         contract_address,
         output_0,
         output_1,
@@ -165,7 +165,7 @@ SELECT
     ,src.tx_hash
     ,tx.from AS tx_from
     ,tx.to AS tx_to
-    ,CAST(src.trace_address as array<long>) as trace_address
+    ,CAST(src.trace_address as array<numeric>) as trace_address
     ,src.evt_index
 FROM oneinch as src
 INNER JOIN {{ source('ethereum', 'transactions') }} as tx

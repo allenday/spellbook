@@ -5,7 +5,6 @@
 }}
 
 {% set trove_models = [
-    ref('trove_arbitrum_trades'),
     ref('trove_ethereum_trades')
 ] %}
 
