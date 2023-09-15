@@ -198,7 +198,7 @@ WITH uniswap AS
         call_block_number
         , output_returnAmount
         , amount
-        , COALESCE(to, '{{burn_address}}') AS srcToken
+        , COALESCE(`to`, '{{burn_address}}') AS srcToken
         , pools
         , call_tx_hash
         , call_trace_address

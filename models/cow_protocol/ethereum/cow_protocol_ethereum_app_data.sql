@@ -9,8 +9,9 @@ partially_unpacked_app_content as (
         content.appCode as app_code,
         content.environment,
         content.metadata.orderClass.orderClass as order_class,
-        content.metadata.quote,
-        content.metadata.referrer
+        content.metadata.quote.slippageBips as slippageBips,
+        content.metadata.referrer.address as referrer_address,
+        content.metadata.referrer.referrer as referrer_referrer
     from {{ source('cowswap', 'raw_app_data') }}
 ),
 
@@ -20,9 +21,9 @@ unpacked_referrer_app_data as (
         app_code,
         environment,
         order_class,
-        quote,
+        slippageBips,
         -- different app data versions put referrer in two possible places.
-        lower(coalesce(referrer.address, referrer.referrer)) as referrer
+        lower(coalesce(referrer_address, referrer_referrer)) as referrer
     from partially_unpacked_app_content
 ),
 
@@ -33,10 +34,7 @@ results as (
         environment,
         order_class,
         referrer,
-        cast(quote.slippageBips as integer) slippage_bips
-        -- There is only one App Data using buyAmount/sellAmount fields.
-        -- cast(quote.sellAmount as FLOAT64) sell_amount,
-        -- cast(quote.buyAmount as FLOAT64) buy_amount
+        cast(slippageBips as integer) slippage_bips
     from unpacked_referrer_app_data
 )
 

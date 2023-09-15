@@ -9,12 +9,7 @@
 }}
 
 {% set aave_models = [
-ref('aave_arbitrum_flashloans')
-, ref('aave_avalanche_c_flashloans')
-, ref('aave_optimism_flashloans')
-, ref('aave_ethereum_flashloans')
-, ref('aave_polygon_flashloans')
-, ref('aave_fantom_flashloans')
+ ref('aave_ethereum_flashloans')
 ] %}
 
 SELECT *

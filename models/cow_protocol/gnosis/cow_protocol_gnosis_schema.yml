@@ -16,7 +16,7 @@ models:
     tests: []
   config:
     tags:
-    - gnosis_chain
+    - gnosis
     - cow_protocol
     - solver
   description: 'CoW Protocol solvers list on Gnosis Chain

@@ -38,6 +38,10 @@ models:
     - tokens
     - lending
     - borrowing
+    - optimsm
+    - polygon
+    - avalanche_c
+    - arbitrum
   description: Aave aToken list and mappings to underlying tokens
   meta:
     blockchain: optimism, ethereum, polygon, avalanche_c, arbitrum
@@ -81,13 +85,13 @@ models:
     tests: []
   config:
     tags:
-    - arbitrum
+    - ethereum
     - flashloans
-  description: 'All Aave flashloans on Arbitrum
+  description: 'All Aave flashloans on Ethereum
 
     '
   meta:
-    blockchain: arbitrum, avalanche_c, optimism, polygon, ethereum, fantom
+    blockchain: ethereum
     contributors: hildobby
     sector: lending
   name: aave_flashloans

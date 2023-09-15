@@ -142,7 +142,6 @@ models:
     tests: []
   config:
     tags:
-    - gnosis
     - cow_protocol
     - batches
     - dex
@@ -152,7 +151,7 @@ models:
 
     '
   meta:
-    blockchain: gnosis
+    blockchain: ethereum
     contributors: bh2smith
     project: cow_protocol
   name: cow_protocol_batches

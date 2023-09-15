@@ -19,9 +19,9 @@ FROM {{ source('ethereum','blocks') }} b
 
 cte_support as (SELECT 
         voter as voter,
-        CASE WHEN support = 0 THEN sum(votingPower/1e18) ELSE 0 END AS votes_against,
-        CASE WHEN support = 1 THEN sum(votingPower/1e18) ELSE 0 END AS votes_for,
-        CASE WHEN support = 2 THEN sum(votingPower/1e18) ELSE 0 END AS votes_abstain,
+        CASE WHEN support = false THEN sum(votingPower/1e18) ELSE 0 END AS votes_against,
+        CASE WHEN support = true THEN sum(votingPower/1e18) ELSE 0 END AS votes_for,
+        CASE WHEN support is null THEN sum(votingPower/1e18) ELSE 0 END AS votes_abstain,
         id
 FROM {{ source('aave_ethereum', 'AaveGovernanceV2_evt_VoteEmitted') }}
 GROUP BY support, id, voter),
@@ -60,7 +60,7 @@ SELECT DISTINCT
          WHEN pca.id is not null and CURRENT_TIMESTAMP() > pca.evt_block_time THEN 'Canceled'
          WHEN (SELECT latest_block FROM cte_latest_block) <= pcr.startBlock THEN 'Pending'
          WHEN (SELECT latest_block FROM cte_latest_block) <= pcr.endBlock THEN 'Active'
-         WHEN pqu.id is not null and CURRENT_TIMESTAMP() > pqu.evt_block_time and CURRENT_TIMESTAMP() < CAST(CAST(pqu.executionTime AS numeric) AS TIMESTAMP) THEN 'Queued'
+         WHEN pqu.id is not null and CURRENT_TIMESTAMP() > pqu.evt_block_time and CURRENT_TIMESTAMP() < timestamp_seconds(CAST(pqu.executionTime AS int64)) THEN 'Queued'
          ELSE 'Defeated' END AS status,
     cast(NULL as string) as description
 FROM  {{ source('aave_ethereum', 'AaveGovernanceV2_evt_ProposalCreated') }} pcr

@@ -73,7 +73,7 @@ WITH unoswap AS
         CAST(NULL as FLOAT64) AS amount_usd,
         CASE
             WHEN ll.to = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-                AND SUBSTRING(src.pools[ARRAY_SIZE(src.pools) - 1], 1, 4) IN ('0xc0', '0x40') --spark uses 0-based array index, subtract 1 from size output
+                AND SUBSTRING(src.pools[ARRAY_LENGTH(src.pools) - 1], 1, 4) IN ('0xc0', '0x40') --spark uses 0-based array index, subtract 1 from size output
             THEN '{{burn_address}}'
             ELSE ll.to
         END AS token_bought_address,
@@ -106,7 +106,7 @@ WITH unoswap AS
                 src.call_trace_address,
                 ARRAY
                 (
-                    ARRAY_SIZE(src.pools)
+                    ARRAY_LENGTH(src.pools)
                     * 2 
                     + CASE
                         WHEN src.srcToken = '{{generic_null_address}}'

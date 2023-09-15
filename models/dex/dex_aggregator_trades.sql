@@ -17,6 +17,7 @@ spells with issues, to be excluded in short term:
  ref('oneinch_ethereum_trades')
  ,ref('bebop_trades')
  ,ref('zeroex_trades')
+ ,ref('cow_protocol_trades')
 ] %}
 
 SELECT *
