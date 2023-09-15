@@ -35,13 +35,6 @@ models:
   meta:
     blockchain:
     - ethereum
-    - optimism
-    - polygon
-    - arbitrum
-    - avalanche_c
-    - gnosis
-    - bnb
-    - fantom
     contributors:
     - ilemi
     sector: abi

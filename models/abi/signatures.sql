@@ -9,13 +9,6 @@
 
 {% set chains = [
     source('ethereum', 'signatures')
-    ,source('optimism', 'signatures')
-    ,source('arbitrum', 'signatures')
-    ,source('avalanche_c', 'signatures')
-    ,source('polygon', 'signatures')
-    ,source('bnb', 'signatures')
-    ,source('gnosis', 'signatures')
-    ,source('fantom', 'signatures')
 ] %}
 
 WITH

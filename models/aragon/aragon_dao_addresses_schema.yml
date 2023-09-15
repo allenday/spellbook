@@ -23,9 +23,7 @@ models:
     tests: []
   config:
     tags:
-    - polygon
     - ethereum
-    - gnosis
     - dao
     - aragon
     - dao creator tools
@@ -36,7 +34,7 @@ models:
 
     '
   meta:
-    blockchain: polygon, ethereum, gnosis
+    blockchain: ethereum
     contributors: Henrystats
     project: aragon
   name: aragon_dao_addresses

@@ -8,15 +8,7 @@
 
 {% set prices_models = [
 ref('prices_native_tokens')
-,ref('prices_arbitrum_tokens')
-,ref('prices_avalanche_c_tokens')
-,ref('prices_bnb_tokens')
 ,ref('prices_ethereum_tokens')
-,ref('prices_fantom_tokens')
-,ref('prices_gnosis_tokens')
-,ref('prices_optimism_tokens')
-,ref('prices_polygon_tokens')
-,ref('prices_solana_tokens')
 ] %}
 
 

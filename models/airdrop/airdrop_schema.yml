@@ -47,15 +47,10 @@ models:
     - table
     - airdrop
     - ethereum
-    - optimism
-    - arbitrum
-    - avalanche_c
-    - bnb
-    - gnosis
     - claim
   description: List of claim transactions for all airdrops
   meta:
-    blockchain: ethereum, optimism, arbitrum, avalanche_c, bnb, gnosis
+    blockchain: ethereum
     contributors: hildobby
     project: addresses
     sector: airdrop

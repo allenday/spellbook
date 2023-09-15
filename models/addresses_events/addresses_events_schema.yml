@@ -27,11 +27,11 @@ models:
     - table
     - funded
     - addresses_events
-    - mainnets
+    - ethereum
   description: Table showing who first funded each address in its native asset on
     every chain
   meta:
-    blockchain: arbitrum, avalanche_c, bnb, ethereum, fantom, gnosis, optimism, polygon
+    blockchain: ethereum
     contributors: hildobby
     project: addresses
     sector: addresses_events

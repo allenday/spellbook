@@ -23,12 +23,20 @@ WITH
     where minute > CURRENT_TIMESTAMP() - interval {{lookback_interval}}
 )
 
-, timeseries as (
-    select explode(sequence(
-        date_trunc('minute', CURRENT_TIMESTAMP() - interval {{lookback_interval}})
-        ,date_trunc('minute', CURRENT_TIMESTAMP())
-        ,interval 1 minute)) as minute
+, timeseries AS (
+    SELECT timestamp as minute
+    FROM UNNEST(
+        GENERATE_TIMESTAMP_ARRAY(
+            TIMESTAMP_SUB(
+                TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), MINUTE),
+                INTERVAL {{lookback_interval}}
+            ),
+            TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), MINUTE),
+            INTERVAL 60 SECOND  -- Here, 60 seconds is equivalent to 1 minute
+        )
+    ) AS timestamp
 )
+
 
 , forward_fill as (
     select
