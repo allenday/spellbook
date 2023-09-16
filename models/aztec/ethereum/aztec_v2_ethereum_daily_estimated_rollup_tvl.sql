@@ -27,21 +27,22 @@ rollup_balance_changes as (
   from rollup_balance_changes
 )
 
-, day_series as (
-  SELECT explode(sequence(CAST('2022-06-06' as date), CAST(CURRENT_TIMESTAMP() as date), interval '1 Day')) as date 
+, day_series AS (
+  SELECT TIMESTAMP(date) AS date
+  FROM UNNEST(GENERATE_DATE_ARRAY(DATE '2022-06-06', CURRENT_DATE(), INTERVAL 1 DAY)) AS date
 )
 
-, token_balances_filled as (
-  select d.date
+, token_balances_filled AS (
+  SELECT d.date
     , b.symbol
     , b.token_address
     , b.balance
-  from day_series d
-  inner join token_balances b
-        on d.date >= b.date
-        and d.date < coalesce(b.next_date,CAST(CURRENT_TIMESTAMP() as date) + 1) -- if it's missing that means it's the last entry in the series
+  FROM day_series d
+  INNER JOIN token_balances b
+        ON d.date >= b.date
+        AND d.date < COALESCE(b.next_date, TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 SECOND)) 
+        -- Adding 1 second to the current timestamp
 )
-
 , token_addresses as (
     SELECT 
         DISTINCT(token_address) as token_address FROM rollup_balance_changes
@@ -53,10 +54,10 @@ rollup_balance_changes as (
         p.contract_address as token_address, 
         p.symbol, 
         AVG(p.price) as price
-    FROM 
-    {{ source('prices', 'usd') }} p 
+    FROM token_addresses t
+    LEFT JOIN {{ source('prices', 'usd') }} p 
+    ON p.contract_address = t.token_address
     WHERE p.minute >= '{{first_transfer_date}}'
-    AND p.contract_address IN (SELECT token_address FROM token_addresses)
     AND p.blockchain = 'ethereum'
     GROUP BY 1, 2, 3 
 )

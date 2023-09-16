@@ -7,8 +7,8 @@
 with all_listing_events as (
     select  punk_id
             , event_type
-            , case  when event_type = 'Offered' and to is null then 'Public Listing'
-                    when event_type = 'Offered' and to is not null then 'Private Listing'
+            , case  when event_type = 'Offered' and `to` is null then 'Public Listing'
+                    when event_type = 'Offered' and `to` is not null then 'Private Listing'
                 else 'Listing Withdrawn' end as event_sub_type
             , eth_amount as listed_price
             , `to` as listing_offered_to

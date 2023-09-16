@@ -19,7 +19,7 @@ SELECT
     , CAST(JSON_EXTRACT_SCALAR(bm.sell, '$.tokenId') AS string) AS token_id
     , nft.standard AS token_standard
     , nft.name AS collection
-    , CASE WHEN JSON_EXTRACT_SCALAR(bm.buy, '$.amount')=1 THEN 'Single Item Trade'
+    , CASE WHEN CAST(JSON_EXTRACT_SCALAR(bm.buy, '$.amount') as FLOAT64)=1 THEN 'Single Item Trade'
         ELSE 'Bundle Trade'
         END AS trade_type
     , CAST(JSON_EXTRACT_SCALAR(bm.buy, '$.amount') AS BIGNUMERIC) AS number_of_items
@@ -33,11 +33,11 @@ SELECT
         ELSE 'Unknown'
         END AS trade_category
     , CAST(JSON_EXTRACT_SCALAR(bm.buy, '$.price') AS BIGNUMERIC) AS amount_raw
-    , CASE WHEN JSON_EXTRACT_SCALAR(bm.buy, '$.paymentToken') IN ('0x0000000000000000000000000000000000000000', '0x0000000000a39bb272e79075ade125fd351887ac') THEN CAST(JSON_EXTRACT_SCALAR(bm.buy, '$.price')/POWER(10, 18) AS FLOAT64)
-        ELSE CAST(JSON_EXTRACT_SCALAR(bm.buy, '$.price')/POWER(10, pu.decimals) AS FLOAT64)
+    , CASE WHEN JSON_EXTRACT_SCALAR(bm.buy, '$.paymentToken') IN ('0x0000000000000000000000000000000000000000', '0x0000000000a39bb272e79075ade125fd351887ac') THEN CAST(JSON_EXTRACT_SCALAR(bm.buy, '$.price') as FLOAT64) / power(10,18)
+        ELSE CAST(JSON_EXTRACT_SCALAR(bm.buy, '$.price') as FLOAT64) / POWER(10, pu.decimals)
         END AS amount_original
-    , CASE WHEN JSON_EXTRACT_SCALAR(bm.buy, '$.paymentToken') IN ('0x0000000000000000000000000000000000000000', '0x0000000000a39bb272e79075ade125fd351887ac') THEN CAST(pu.price*JSON_EXTRACT_SCALAR(bm.buy, '$.price')/POWER(10, 18) AS FLOAT64)
-        ELSE CAST(pu.price*JSON_EXTRACT_SCALAR(bm.buy, '$.price')/POWER(10, pu.decimals) AS FLOAT64)
+    , CASE WHEN JSON_EXTRACT_SCALAR(bm.buy, '$.paymentToken') IN ('0x0000000000000000000000000000000000000000', '0x0000000000a39bb272e79075ade125fd351887ac') THEN pu.price * CAST(JSON_EXTRACT_SCALAR(bm.buy, '$.price') as FLOAT64) / POWER(10, 18) 
+        ELSE pu.price * CAST(JSON_EXTRACT_SCALAR(bm.buy, '$.price') as FLOAT64)/POWER(10, pu.decimals)
         END AS amount_usd
     , CASE WHEN JSON_EXTRACT_SCALAR(bm.buy, '$.paymentToken') IN ('0x0000000000000000000000000000000000000000', '0x0000000000a39bb272e79075ade125fd351887ac') THEN 'ETH'
         ELSE pu.symbol
@@ -56,20 +56,20 @@ SELECT
     , CAST(0 AS FLOAT64) AS platform_fee_amount
     , CAST(0 AS FLOAT64) AS platform_fee_amount_usd
     , CAST(0 AS FLOAT64) AS platform_fee_percentage
-    , CAST(COALESCE(JSON_EXTRACT_SCALAR(bm.buy, '$.price')*JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(bm.sell, '$.fees[0]'), '$.rate')/10000, 0) AS FLOAT64) AS royalty_fee_amount_raw
-    , CASE WHEN JSON_EXTRACT_SCALAR(bm.buy, '$.paymentToken') IN ('0x0000000000000000000000000000000000000000', '0x0000000000a39bb272e79075ade125fd351887ac') THEN CAST(COALESCE(JSON_EXTRACT_SCALAR(bm.buy, '$.price')/POWER(10, 18)*JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(bm.sell, '$.fees[0]'), '$.rate')/10000, 0) AS FLOAT64)
-        ELSE CAST(COALESCE(JSON_EXTRACT_SCALAR(bm.buy, '$.price')/POWER(10, pu.decimals)*JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(bm.sell, '$.fees[0]'), '$.rate')/10000, 0) AS FLOAT64)
+    , CAST(COALESCE(CAST(JSON_EXTRACT_SCALAR(bm.buy, '$.price') AS FLOAT64) * CAST(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(bm.sell, '$.fees[0]'), '$.rate') as FLOAT64)/10000, 0) AS FLOAT64) AS royalty_fee_amount_raw
+    , CASE WHEN JSON_EXTRACT_SCALAR(bm.buy, '$.paymentToken') IN ('0x0000000000000000000000000000000000000000', '0x0000000000a39bb272e79075ade125fd351887ac') THEN COALESCE(CAST(JSON_EXTRACT_SCALAR(bm.buy, '$.price') as FLOAT64)/POWER(10, 18)*CAST(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(bm.sell, '$.fees[0]'), '$.rate')AS FLOAT64)/10000, 0)
+        ELSE CAST(COALESCE(CAST(JSON_EXTRACT_SCALAR(bm.buy, '$.price') as FLOAT64)/POWER(10, pu.decimals)*CAST(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(bm.sell, '$.fees[0]'), '$.rate') as FLOAT64)/10000, 0) AS FLOAT64)
         END AS royalty_fee_amount
-    , CASE WHEN JSON_EXTRACT_SCALAR(bm.buy, '$.paymentToken') IN ('0x0000000000000000000000000000000000000000', '0x0000000000a39bb272e79075ade125fd351887ac') THEN CAST(COALESCE(pu.price*JSON_EXTRACT_SCALAR(bm.buy, '$.price')/POWER(10, 18)*JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(bm.sell, '$.fees[0]'), '$.rate')/10000, 0) AS FLOAT64)
-        ELSE CAST(COALESCE(pu.price*JSON_EXTRACT_SCALAR(bm.buy, '$.price')/POWER(10, pu.decimals)*JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(bm.sell, '$.fees[0]'), '$.rate')/10000, 0) AS FLOAT64)
+    , CASE WHEN JSON_EXTRACT_SCALAR(bm.buy, '$.paymentToken') IN ('0x0000000000000000000000000000000000000000', '0x0000000000a39bb272e79075ade125fd351887ac') THEN COALESCE(pu.price*CAST(JSON_EXTRACT_SCALAR(bm.buy, '$.price') as FLOAT64)/POWER(10, 18)*CAST(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(bm.sell, '$.fees[0]'), '$.rate') as FLOAT64) /10000, 0)
+        ELSE COALESCE(pu.price*CAST(JSON_EXTRACT_SCALAR(bm.buy, '$.price') as FLOAT64)/POWER(10, pu.decimals)*CAST(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(bm.sell, '$.fees[0]'), '$.rate') as FLOAT64)/10000, 0)
         END AS royalty_fee_amount_usd
-    , CAST(COALESCE(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(bm.sell, '$.fees[0]'), '$.rate')/100, 0) AS FLOAT64) AS royalty_fee_percentage
+    , COALESCE(CAST(JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(bm.sell, '$.fees[0]'), '$.rate') as FLOAT64)/100, 0) AS royalty_fee_percentage
     , JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(bm.sell, '$.fees[0]'), '$.recipient') AS royalty_fee_receive_address
     , CASE WHEN JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(bm.sell, '$.fees[0]'), '$.recipient') IS NOT NULL AND JSON_EXTRACT_SCALAR(bm.buy, '$.paymentToken') IN ('0x0000000000000000000000000000000000000000', '0x0000000000a39bb272e79075ade125fd351887ac') THEN 'ETH'
         WHEN JSON_EXTRACT_SCALAR(JSON_EXTRACT_SCALAR(bm.sell, '$.fees[0]'), '$.recipient') IS NOT NULL THEN pu.symbol
         END AS royalty_fee_currency_symbol
     ,  CAST('ethereum-blur-v1-' || bm.evt_block_number || '-' || bm.evt_tx_hash || '-' || bm.evt_index AS string) AS unique_trade_id
-FROM {{ source('blur_ethereum','BlurExchange_evt_OrdersMatched') }} bm
+    FROM {{ source('blur_ethereum','BlurExchange_evt_OrdersMatched') }} bm
 JOIN {{ source('ethereum','transactions') }} et ON et.block_number=bm.evt_block_number
     AND et.hash=bm.evt_tx_hash
     {% if not is_incremental() %}
@@ -110,15 +110,15 @@ SELECT
     , CAST(JSON_EXTRACT_SCALAR(s.offer[0], '$.identifier') AS string) AS token_id
     , nft_tok.standard AS token_standard
     , nft_tok.name AS collection
-    , CASE WHEN JSON_EXTRACT_SCALAR(s.offer[0], '$.amount')=1 THEN 'Single Item Trade' ELSE 'Bundle Trade' END AS trade_type
+    , CASE WHEN CAST(JSON_EXTRACT_SCALAR(s.offer[0], '$.amount') as FLOAT64)=1 THEN 'Single Item Trade' ELSE 'Bundle Trade' END AS trade_type
     , CAST(JSON_EXTRACT_SCALAR(s.offer[0], '$.amount') AS BIGNUMERIC) AS number_of_items
     , 'Trade' AS evt_type
     , s.offerer AS seller
     , s.recipient AS buyer
     , 'Buy' AS trade_category
-    , CAST(JSON_EXTRACT_SCALAR(s.consideration[0], '$.amount')+JSON_EXTRACT_SCALAR(s.consideration[1], '$.amount') AS BIGNUMERIC) AS amount_raw
-    , CAST((JSON_EXTRACT_SCALAR(s.consideration[0], '$.amount')+JSON_EXTRACT_SCALAR(s.consideration[1], '$.amount'))/POWER(10, 18) AS FLOAT64) AS amount_original
-    , CAST(pu.price*(JSON_EXTRACT_SCALAR(s.consideration[0], '$.amount')+JSON_EXTRACT_SCALAR(s.consideration[1], '$.amount'))/POWER(10, 18) AS FLOAT64) AS amount_usd
+    , CAST(JSON_EXTRACT_SCALAR(s.consideration[0], '$.amount') as BIGNUMERIC)+CAST(JSON_EXTRACT_SCALAR(s.consideration[1], '$.amount') AS BIGNUMERIC) AS amount_raw
+    , CAST(JSON_EXTRACT_SCALAR(s.consideration[0], '$.amount') as BIGNUMERIC)+CAST(JSON_EXTRACT_SCALAR(s.consideration[1], '$.amount') as BIGNUMERIC)/POWER(10, 18) AS amount_original
+    , pu.price*(CAST(JSON_EXTRACT_SCALAR(s.consideration[0], '$.amount') as FLOAT64) + CAST(JSON_EXTRACT_SCALAR(s.consideration[1], '$.amount') AS FLOAT64)/POWER(10, 18)) AS amount_usd
     , CASE WHEN JSON_EXTRACT_SCALAR(s.consideration[0], '$.token')='0x0000000000000000000000000000000000000000' THEN 'ETH' ELSE currency_tok.symbol END AS currency_symbol
     , JSON_EXTRACT_SCALAR(s.consideration[0], '$.token') AS currency_contract
     , s.contract_address AS project_contract_address

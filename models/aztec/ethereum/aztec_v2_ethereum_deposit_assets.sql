@@ -7,7 +7,7 @@ WITH
 
 assets_added as (
         SELECT
-            CAST('0' AS STRING) as asset_id,
+            CAST(0 as BIGNUMERIC) as asset_id,
             '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' as asset_address,
             null as asset_gas_limit,
             null as date_added
@@ -17,7 +17,7 @@ assets_added as (
         SELECT 
             assetId as asset_id,
             assetAddress as asset_address,
-            assetGasLimit as asset_gas_limit,
+            null as asset_gas_limit,
             evt_block_time as date_added
         FROM 
         {{source('aztec_v2_ethereum', 'RollupProcessor_evt_AssetAdded')}}

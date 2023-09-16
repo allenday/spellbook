@@ -56,61 +56,61 @@ all_bridges as (
 ), 
 
 erc20_tfers as (
-        SELECT 
-            * 
-        FROM 
-        {{ source('erc20_ethereum', 'evt_transfer') }}
+        SELECT
+            t.*
+        FROM all_bridges a
+        LEFT JOIN {{ source('erc20_ethereum', 'evt_transfer') }} t
+        ON t.`from` = a.contract_address
         {% if not is_incremental() %}
         WHERE evt_block_time >= '{{first_transfer_date}}'
         {% endif %}
         {% if is_incremental() %}
         WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
-        AND `from` IN (SELECT contract_address FROM all_bridges)
         
         UNION ALL 
         
-        SELECT 
-            * 
-        FROM 
-        {{ source('erc20_ethereum', 'evt_transfer') }}
+        SELECT
+            t.*
+        FROM all_bridges a
+        LEFT JOIN {{ source('erc20_ethereum', 'evt_transfer') }} t
+        ON t.`to` = a.contract_address
         {% if not is_incremental() %}
         WHERE evt_block_time >= '{{first_transfer_date}}'
         {% endif %}
         {% if is_incremental() %}
         WHERE evt_block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
-        AND `to` IN (SELECT contract_address FROM all_bridges)
 ),
 
 eth_tfers as (
         SELECT 
-            * 
-        FROM 
-        {{ source('ethereum', 'traces') }}
+            t.* 
+        FROM all_bridges a
+        LEFT JOIN {{ source('ethereum', 'traces') }} t
+        ON t.`from` = a.contract_address
         {% if not is_incremental() %}
         WHERE block_time >= '{{first_transfer_date}}'
         {% endif %}
         {% if is_incremental() %}
         WHERE block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
-        AND `from` IN (SELECT contract_address FROM all_bridges)
         AND (LOWER(call_type) NOT IN ('delegatecall', 'callcode', 'staticcall') or call_type IS NULL)
         AND success = true 
         
         UNION ALL 
 
         SELECT 
-            * 
-        FROM 
-        {{ source('ethereum', 'traces') }}
+            t.* 
+        FROM all_bridges a
+        LEFT JOIN {{ source('ethereum', 'traces') }} t
+        ON t.`to` = a.contract_address
         {% if not is_incremental() %}
         WHERE block_time >= '{{first_transfer_date}}'
         {% endif %}
         {% if is_incremental() %}
         WHERE block_time >= date_trunc("day", CURRENT_TIMESTAMP() - interval '1 week')
         {% endif %}
-        AND `to` IN (SELECT contract_address FROM all_bridges)
         AND (LOWER(call_type) NOT IN ('delegatecall', 'callcode', 'staticcall') or call_type IS NULL)
         AND success = true 
 ), 
@@ -125,7 +125,7 @@ tfers_raw as (
             er.evt_index, 
             er.evt_block_time, 
             er.evt_block_number,
-            array('') as trace_address 
+            null as trace_address 
         FROM 
         erc20_tfers er 
         
