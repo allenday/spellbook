@@ -1,11 +1,11 @@
 # Open Spellbook
-Welcome to the open spellbook Big Query version!  This project aims to return the spellbook dbt project to being an open-source MIT-licensed project. In the organization, we have repos for different SQL/cloud provider versions being maintained.  This is the Big Query version, which runs on GCP.  It was forked on May 15th and has been tweaked for anyone to run it on GCP with the proper dependencies. The creation of dependencies, including decoded events and functions, can be found in the Spellbook Decodes BQ DBT project repo (To Do: add the repo), but additional data is required to run all sections of the Open Spellbook.  This repo needs to be cleaned up to accommodate additional contributors so please have some patience.  Tt was not built with this project in mind, but is being repurposed after Dune licensed the original Spellbook version.  
+
+Welcome to the open spellbook Big Query version!  This project aims to return the [spellbook](https://github.com/duneanalytics/spellbook) dbt project to being an open-source MIT-licensed project. In the organization, we have repos for different SQL/cloud provider versions being maintained.  This is the BigQuery version, which runs on [GCP](https://cloud.google.com/bigquery).  It was forked on May 15th just before the [license was replaced](https://github.com/duneanalytics/spellbook/pull/3453) and has been tweaked for anyone to run it on GCP with the proper dependencies. The creation of dependencies, including decoded events and functions, can be found in the Spellbook Decodes BQ dbt project repo (To Do: add the repo), but additional data is required to run all sections of the Open Spellbook.  This repo needs to be cleaned up to accommodate additional contributors so please have some patience.  It was not built with this project in mind, but is being repurposed after Dune relicensed the original Spellbook version.  
 
 ## Contributors
-We would love to make this a community effort and add additional maintainers.  Please join our Discord here: https://discord.gg/hNbNTy7v to join in the discussion and help us build the project you want to see!
+We would love to make this a community effort and add additional maintainers.  Please join our [Discord server](https://discord.gg/hNbNTy7v) to join in the discussion and help us build the project you want to see!
 
 ## Original Forked Spellbook Readme:
-
 
 ![spellbook-logo@10x](https://user-images.githubusercontent.com/2520869/200791687-76f1bc4f-05d0-4384-a753-e3b5da0e7a4a.png#gh-light-mode-only)
 ![spellbook-logo-negative_10x](https://user-images.githubusercontent.com/2520869/200865128-426354af-8059-494d-83f7-46947aae271c.png#gh-dark-mode-only)
